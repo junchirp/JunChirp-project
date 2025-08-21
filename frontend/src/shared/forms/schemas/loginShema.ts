@@ -1,7 +1,8 @@
 import { z } from 'zod';
 import { nonEmptyValidator } from '../validators/nonEmptyValidator';
+import { basicEmailValidator } from '../validators/emailValidator';
 
 export const loginSchema = z.object({
-  email: nonEmptyValidator,
+  email: basicEmailValidator,
   password: nonEmptyValidator,
 });
