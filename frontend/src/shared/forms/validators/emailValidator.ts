@@ -14,7 +14,14 @@ export const basicEmailValidator = z
   })
   .regex(/^(?!.*[а-яА-ЯґҐіІєЄїЇ])/, 'Невірний формат e-mail');
 
-export const availableEmailValidator = basicEmailValidator.refine(
+export const forbiddenDomainValidator = basicEmailValidator.refine(
+  (val) => !val.endsWith('.ru'),
+  {
+    message: `Домен '.ru' не підтримується`,
+  },
+);
+
+export const availableEmailValidator = forbiddenDomainValidator.refine(
   async (val) => {
     try {
       const res = await fetch(
@@ -35,7 +42,7 @@ export const availableEmailValidator = basicEmailValidator.refine(
   },
 );
 
-export const usedEmailValidator = basicEmailValidator.refine(
+export const usedEmailValidator = forbiddenDomainValidator.refine(
   async (val) => {
     try {
       const res = await fetch(
