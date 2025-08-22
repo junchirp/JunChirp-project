@@ -4,7 +4,6 @@ import { UpdateTaskDto } from './dto/update-task.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { TaskMapper } from '../shared/mappers/task.mapper';
 import { TaskWithStatusResponseDto } from './dto/task-with-status.response-dto';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { UpdateStatusTaskDto } from './dto/update-status-task.dto';
 
 @Injectable()
@@ -36,10 +35,7 @@ export class TasksService {
 
       return TaskMapper.toExpandResponse(task);
     } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2003'
-      ) {
+      if (error.code === 'P2003') {
         throw new NotFoundException('Task status not found');
       }
       throw error;
@@ -66,10 +62,7 @@ export class TasksService {
 
       return TaskMapper.toExpandResponse(task);
     } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2025'
-      ) {
+      if (error.code === 'P2025') {
         throw new NotFoundException('Task not found');
       }
       throw error;
@@ -100,10 +93,7 @@ export class TasksService {
 
       return TaskMapper.toExpandResponse(task);
     } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2025'
-      ) {
+      if (error.code === 'P2025') {
         throw new NotFoundException('Task not found');
       }
       throw error;
@@ -116,10 +106,7 @@ export class TasksService {
         where: { id },
       });
     } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2025'
-      ) {
+      if (error.code === 'P2025') {
         throw new NotFoundException('Task not found');
       }
       throw error;
@@ -154,10 +141,7 @@ export class TasksService {
 
       return TaskMapper.toExpandResponse(task);
     } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2025'
-      ) {
+      if (error.code === 'P2025') {
         throw new NotFoundException('Task or status not found');
       }
       throw error;

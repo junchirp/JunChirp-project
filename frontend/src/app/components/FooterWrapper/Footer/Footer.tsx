@@ -26,10 +26,6 @@ export default function Footer(): ReactElement {
     window.location.href = 'https://www.linkedin.com/company/jun-chirp';
   };
 
-  const openDialog = (): void => {
-    support();
-  };
-
   return (
     <footer className={styles.footer}>
       <div className={styles.footer__inner}>
@@ -57,11 +53,7 @@ export default function Footer(): ReactElement {
               icon={<Linkedin />}
               onClick={goLinkedin}
             ></Button>
-            <Button
-              color="green"
-              variant="secondary-footer"
-              onClick={openDialog}
-            >
+            <Button color="green" variant="secondary-footer" onClick={support}>
               Підтримка
             </Button>
           </div>

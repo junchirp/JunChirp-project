@@ -2,7 +2,6 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import {
@@ -26,7 +25,6 @@ import { ResetPasswordDto } from './dto/reset-password.dto';
 import * as bcrypt from 'bcrypt';
 import { CreateGoogleUserDto } from './dto/create-google-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { UserMapper } from '../shared/mappers/user.mapper';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { ProjectsService } from '../projects/projects.service';
@@ -96,10 +94,7 @@ export class UsersService {
 
         return UserMapper.toFullResponse(user, false);
       } catch (error) {
-        if (
-          error instanceof PrismaClientKnownRequestError &&
-          error.code === 'P2002'
-        ) {
+        if (error.code === 'P2002') {
           await this.loggerService.log(
             ip,
             createUserDto.email,
@@ -162,10 +157,7 @@ export class UsersService {
 
       return UserMapper.toFullResponse(user, false);
     } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2025'
-      ) {
+      if (error.code === 'P2025') {
         throw new NotFoundException('User not found');
       }
       throw error;
@@ -401,10 +393,7 @@ export class UsersService {
         );
       });
     } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2025'
-      ) {
+      if (error.code === 'P2025') {
         await this.loggerService.log(
           ip,
           payload.email,
@@ -672,17 +661,13 @@ export class UsersService {
 
       return UserMapper.toFullResponse(updatedUser, false);
     } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError) {
-        switch (error.code) {
-          case 'P2025':
-            throw new NotFoundException('User not found');
-          case 'P2002':
-            throw new ConflictException('Email is already in use');
-          default:
-            throw new InternalServerErrorException('Database error');
-        }
-      } else {
-        throw error;
+      switch (error.code) {
+        case 'P2025':
+          throw new NotFoundException('User not found');
+        case 'P2002':
+          throw new ConflictException('Email is already in use');
+        default:
+          throw error;
       }
     }
   }
@@ -780,10 +765,7 @@ export class UsersService {
         },
       });
     } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2025'
-      ) {
+      if (error.code === 'P2025') {
         throw new NotFoundException('User not found');
       }
       throw error;
@@ -829,10 +811,7 @@ export class UsersService {
     try {
       await this.prisma.resetPasswordToken.delete({ where: { token } });
     } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2025'
-      ) {
+      if (error.code === 'P2025') {
         throw new NotFoundException('Token not found');
       }
       throw error;

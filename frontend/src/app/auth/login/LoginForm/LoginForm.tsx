@@ -42,10 +42,6 @@ export default function LoginForm(): ReactElement {
   const support = useSupport();
   const dispatch = useAppDispatch();
 
-  const openDialog = (): void => {
-    support();
-  };
-
   const onSubmit = async (data: FormData): Promise<void> => {
     if (isActive('login')) {
       return;
@@ -84,7 +80,7 @@ export default function LoginForm(): ReactElement {
                 className={styles['login-form__message-button']}
                 variant="link"
                 color="blue"
-                onClick={openDialog}
+                onClick={support}
               >
                 підтримки
               </Button>
@@ -101,7 +97,7 @@ export default function LoginForm(): ReactElement {
                 className={styles['login-form__message-button']}
                 variant="link"
                 color="blue"
-                onClick={openDialog}
+                onClick={support}
               >
                 підтримки
               </Button>
@@ -118,7 +114,7 @@ export default function LoginForm(): ReactElement {
                 className={styles['login-form__message-button']}
                 variant="link"
                 color="blue"
-                onClick={openDialog}
+                onClick={support}
               >
                 підтримки
               </Button>

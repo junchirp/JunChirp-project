@@ -10,6 +10,7 @@ import { useParams } from 'next/navigation';
 import { useGetUserByIdQuery } from '@/api/usersApi';
 import UserDetails from '@/app/users/[id]/UserDetails/UserDetails';
 import UserSkeleton from '@/app/users/[id]/UserSkeleton/UserSkeleton';
+import Page404 from '../../../shared/components/Page404/Page404';
 
 export default function User(): ReactElement {
   const params = useParams();
@@ -21,7 +22,7 @@ export default function User(): ReactElement {
   }
 
   if (error) {
-    return <></>;
+    return <Page404 />;
   }
 
   return (
