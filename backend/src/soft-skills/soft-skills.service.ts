@@ -2,14 +2,12 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateSoftSkillDto } from './dto/create-soft-skill.dto';
 import { UpdateSoftSkillDto } from './dto/update-soft-skill.dto';
 import { SoftSkillResponseDto } from './dto/soft-skill.response-dto';
 import { PrismaService } from '../prisma/prisma.service';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { SoftSkillMapper } from '../shared/mappers/soft-skill.mapper';
 
 @Injectable()
@@ -38,10 +36,7 @@ export class SoftSkillsService {
 
       return SoftSkillMapper.toResponse(softSkill);
     } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2002'
-      ) {
+      if (error.code === 'P2002') {
         throw new ConflictException('Soft skill is already in list');
       }
       throw error;
@@ -62,17 +57,13 @@ export class SoftSkillsService {
 
       return SoftSkillMapper.toResponse(softSkill);
     } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError) {
-        switch (error.code) {
-          case 'P2025':
-            throw new NotFoundException('Soft skill not found');
-          case 'P2002':
-            throw new ConflictException('Soft skill is already in list');
-          default:
-            throw new InternalServerErrorException('Database error');
-        }
-      } else {
-        throw error;
+      switch (error.code) {
+        case 'P2025':
+          throw new NotFoundException('Soft skill not found');
+        case 'P2002':
+          throw new ConflictException('Soft skill is already in list');
+        default:
+          throw error;
       }
     }
   }
@@ -84,10 +75,7 @@ export class SoftSkillsService {
       });
       return id;
     } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2025'
-      ) {
+      if (error.code === 'P2025') {
         throw new NotFoundException('Soft skill not found');
       }
       throw error;

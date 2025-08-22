@@ -2,14 +2,12 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateSocialDto } from './dto/create-social.dto';
 import { UpdateSocialDto } from './dto/update-social.dto';
 import { SocialResponseDto } from './dto/social.response-dto';
 import { PrismaService } from '../prisma/prisma.service';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { SocialMapper } from '../shared/mappers/social.mapper';
 
 @Injectable()
@@ -37,10 +35,7 @@ export class SocialsService {
 
       return SocialMapper.toResponse(social);
     } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2002'
-      ) {
+      if (error.code === 'P2002') {
         throw new ConflictException(
           'You have already added a profile in this social network',
         );
@@ -63,19 +58,15 @@ export class SocialsService {
 
       return SocialMapper.toResponse(social);
     } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError) {
-        switch (error.code) {
-          case 'P2025':
-            throw new NotFoundException('Profile not found');
-          case 'P2002':
-            throw new ConflictException(
-              'Profile with this network already exists',
-            );
-          default:
-            throw new InternalServerErrorException('Database error');
-        }
-      } else {
-        throw error;
+      switch (error.code) {
+        case 'P2025':
+          throw new NotFoundException('Profile not found');
+        case 'P2002':
+          throw new ConflictException(
+            'Profile with this network already exists',
+          );
+        default:
+          throw error;
       }
     }
   }
@@ -87,10 +78,7 @@ export class SocialsService {
       });
       return id;
     } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2025'
-      ) {
+      if (error.code === 'P2025') {
         throw new NotFoundException('Profile not found');
       }
       throw error;

@@ -2,14 +2,12 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateEducationDto } from './dto/create-education.dto';
 import { UpdateEducationDto } from './dto/update-education.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { EducationResponseDto } from './dto/education.response-dto';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { EducationMapper } from '../shared/mappers/education.mapper';
 
 @Injectable()
@@ -71,17 +69,13 @@ export class EducationsService {
 
         return EducationMapper.toResponse(education);
       } catch (error) {
-        if (error instanceof PrismaClientKnownRequestError) {
-          switch (error.code) {
-            case 'P2003':
-              throw new BadRequestException('Specialization not found');
-            case 'P2002':
-              throw new ConflictException('Education is already in list');
-            default:
-              throw new InternalServerErrorException('Database error');
-          }
-        } else {
-          throw error;
+        switch (error.code) {
+          case 'P2003':
+            throw new BadRequestException('Specialization not found');
+          case 'P2002':
+            throw new ConflictException('Education is already in list');
+          default:
+            throw error;
         }
       }
     });
@@ -117,19 +111,15 @@ export class EducationsService {
 
         return EducationMapper.toResponse(education);
       } catch (error) {
-        if (error instanceof PrismaClientKnownRequestError) {
-          switch (error.code) {
-            case 'P2025':
-              throw new NotFoundException('Education not found');
-            case 'P2002':
-              throw new ConflictException('Education is already in list');
-            case 'P2003':
-              throw new BadRequestException('Specialization not found');
-            default:
-              throw new InternalServerErrorException('Database error');
-          }
-        } else {
-          throw error;
+        switch (error.code) {
+          case 'P2025':
+            throw new NotFoundException('Education not found');
+          case 'P2002':
+            throw new ConflictException('Education is already in list');
+          case 'P2003':
+            throw new BadRequestException('Specialization not found');
+          default:
+            throw error;
         }
       }
     });
@@ -142,10 +132,7 @@ export class EducationsService {
       });
       return id;
     } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2025'
-      ) {
+      if (error.code === 'P2025') {
         throw new NotFoundException('Education not found');
       }
       throw error;

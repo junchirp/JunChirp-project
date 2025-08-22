@@ -2,14 +2,12 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateHardSkillDto } from './dto/create-hard-skill.dto';
 import { UpdateHardSkillDto } from './dto/update-hard-skill.dto';
 import { HardSkillResponseDto } from './dto/hard-skill.response-dto';
 import { PrismaService } from '../prisma/prisma.service';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { HardSkillMapper } from '../shared/mappers/hard-skill.mapper';
 
 @Injectable()
@@ -38,10 +36,7 @@ export class HardSkillsService {
 
       return HardSkillMapper.toResponse(hardSkill);
     } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2002'
-      ) {
+      if (error.code === 'P2002') {
         throw new ConflictException('Hard skill is already in list');
       }
       throw error;
@@ -62,17 +57,13 @@ export class HardSkillsService {
 
       return HardSkillMapper.toResponse(hardSkill);
     } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError) {
-        switch (error.code) {
-          case 'P2025':
-            throw new NotFoundException('Hard skill not found');
-          case 'P2002':
-            throw new ConflictException('Hard skill is already in list');
-          default:
-            throw new InternalServerErrorException('Database error');
-        }
-      } else {
-        throw error;
+      switch (error.code) {
+        case 'P2025':
+          throw new NotFoundException('Hard skill not found');
+        case 'P2002':
+          throw new ConflictException('Hard skill is already in list');
+        default:
+          throw error;
       }
     }
   }
@@ -84,10 +75,7 @@ export class HardSkillsService {
       });
       return id;
     } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2025'
-      ) {
+      if (error.code === 'P2025') {
         throw new NotFoundException('Hard skill not found');
       }
       throw error;

@@ -9,7 +9,6 @@ import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { BoardMapper } from '../shared/mappers/board.mapper';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { UpdateColumnsOrderDto } from './dto/update-columns-order.dto';
 import { BoardWithColumnsResponseDto } from './dto/board-with-columns.response-dto';
 
@@ -63,10 +62,7 @@ export class BoardsService {
       });
       return BoardMapper.toExpandResponse(board);
     } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2002'
-      ) {
+      if (error.code === 'P2002') {
         throw new ConflictException('Board with this name already exists');
       }
       throw error;
@@ -99,10 +95,7 @@ export class BoardsService {
 
       return BoardMapper.toExpandResponse(board);
     } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2025'
-      ) {
+      if (error.code === 'P2025') {
         throw new NotFoundException('Board not found');
       }
       throw error;
@@ -138,17 +131,13 @@ export class BoardsService {
 
       return BoardMapper.toExpandResponse(board);
     } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError) {
-        switch (error.code) {
-          case 'P2025':
-            throw new NotFoundException('Board not found');
-          case 'P2002':
-            throw new ConflictException('Board with this name already exists');
-          default:
-            throw new InternalServerErrorException('Database error');
-        }
-      } else {
-        throw error;
+      switch (error.code) {
+        case 'P2025':
+          throw new NotFoundException('Board not found');
+        case 'P2002':
+          throw new ConflictException('Board with this name already exists');
+        default:
+          throw error;
       }
     }
   }
@@ -159,10 +148,7 @@ export class BoardsService {
         where: { id },
       });
     } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2025'
-      ) {
+      if (error.code === 'P2025') {
         throw new NotFoundException('Board not found');
       }
       throw error;

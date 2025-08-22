@@ -4,7 +4,6 @@ import {
   forwardRef,
   Inject,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateInviteDto } from './dto/create-invite.dto';
@@ -15,7 +14,6 @@ import { ProjectParticipationResponseDto } from './dto/project-participation.res
 import { MailService } from '../mail/mail.service';
 import { ConfigService } from '@nestjs/config';
 import { ProjectParticipationMapper } from '../shared/mappers/project-participation.mapper';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { CreateRequestDto } from './dto/create-request.dto';
 import { DiscordService } from '../discord/discord.service';
 import { UserCardResponseDto } from '../users/dto/user-card.response-dto';
@@ -102,19 +100,15 @@ export class ParticipationsService {
 
         return UserParticipationMapper.toResponse(invite);
       } catch (error) {
-        if (error instanceof PrismaClientKnownRequestError) {
-          switch (error.code) {
-            case 'P2003':
-              throw new NotFoundException('User or project role not found');
-            case 'P2002':
-              throw new ConflictException(
-                'User has already been invited to this role',
-              );
-            default:
-              throw new InternalServerErrorException('Database error');
-          }
-        } else {
-          throw error;
+        switch (error.code) {
+          case 'P2003':
+            throw new NotFoundException('User or project role not found');
+          case 'P2002':
+            throw new ConflictException(
+              'User has already been invited to this role',
+            );
+          default:
+            throw error;
         }
       }
     });
@@ -197,19 +191,15 @@ export class ParticipationsService {
 
         return ProjectParticipationMapper.toResponse(request);
       } catch (error) {
-        if (error instanceof PrismaClientKnownRequestError) {
-          switch (error.code) {
-            case 'P2003':
-              throw new NotFoundException('Project role not found');
-            case 'P2002':
-              throw new ConflictException(
-                'You have already sent a request to this project',
-              );
-            default:
-              throw new InternalServerErrorException('Database error');
-          }
-        } else {
-          throw error;
+        switch (error.code) {
+          case 'P2003':
+            throw new NotFoundException('Project role not found');
+          case 'P2002':
+            throw new ConflictException(
+              'You have already sent a request to this project',
+            );
+          default:
+            throw error;
         }
       }
     });
@@ -292,10 +282,7 @@ export class ParticipationsService {
 
         return UserMapper.toCardResponse(user);
       } catch (error) {
-        if (
-          error instanceof PrismaClientKnownRequestError &&
-          error.code === 'P2025'
-        ) {
+        if (error.code === 'P2025') {
           throw new NotFoundException('Invite not found');
         }
         throw error;
@@ -309,10 +296,7 @@ export class ParticipationsService {
         where: { id, userId },
       });
     } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2025'
-      ) {
+      if (error.code === 'P2025') {
         throw new NotFoundException('Invite not found');
       }
       throw error;
@@ -384,10 +368,7 @@ export class ParticipationsService {
           );
         }
       } catch (error) {
-        if (
-          error instanceof PrismaClientKnownRequestError &&
-          error.code === 'P2025'
-        ) {
+        if (error.code === 'P2025') {
           throw new NotFoundException('Request not found');
         }
         throw error;
@@ -401,10 +382,7 @@ export class ParticipationsService {
         where: { id },
       });
     } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2025'
-      ) {
+      if (error.code === 'P2025') {
         throw new NotFoundException('Request not found');
       }
       throw error;
@@ -417,10 +395,7 @@ export class ParticipationsService {
         where: { id, userId },
       });
     } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2025'
-      ) {
+      if (error.code === 'P2025') {
         throw new NotFoundException('Request not found');
       }
       throw error;
@@ -433,10 +408,7 @@ export class ParticipationsService {
         where: { id },
       });
     } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2025'
-      ) {
+      if (error.code === 'P2025') {
         throw new NotFoundException('Invite not found');
       }
       throw error;

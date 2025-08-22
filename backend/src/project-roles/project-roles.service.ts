@@ -9,7 +9,6 @@ import { ProjectRoleTypeResponseDto } from './dto/project-role-type.response-dto
 import { ProjectRoleResponseDto } from './dto/project-role.response-dto';
 import { ProjectRoleMapper } from '../shared/mappers/project-role.mapper';
 import { CreateProjectRoleDto } from './dto/create-project-role.dto';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { ProjectRoleWithUserResponseDto } from './dto/project-role-with-user.response-dto';
 import { DiscordService } from '../discord/discord.service';
 
@@ -57,10 +56,7 @@ export class ProjectRolesService {
 
       return ProjectRoleMapper.toBaseResponse(role);
     } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2025'
-      ) {
+      if (error.code === 'P2025') {
         throw new NotFoundException('Project or role type not found');
       }
       throw error;
@@ -95,10 +91,7 @@ export class ProjectRolesService {
           });
         }
       } catch (error) {
-        if (
-          error instanceof PrismaClientKnownRequestError &&
-          error.code === 'P2025'
-        ) {
+        if (error.code === 'P2025') {
           throw new NotFoundException('Project role not found');
         }
         throw error;
@@ -199,10 +192,7 @@ export class ProjectRolesService {
           return ProjectRoleMapper.toUserResponse(updatedRole);
         }
       } catch (error) {
-        if (
-          error instanceof PrismaClientKnownRequestError &&
-          error.code === 'P2025'
-        ) {
+        if (error.code === 'P2025') {
           throw new NotFoundException('Role not found');
         }
         throw error;

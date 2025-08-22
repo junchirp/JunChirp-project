@@ -1,7 +1,6 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateSupportDto } from './dto/create-support.dto';
 import { PrismaService } from '../prisma/prisma.service';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { MailService } from '../mail/mail.service';
 import { MessageResponseDto } from '../users/dto/message.response-dto';
 
@@ -28,10 +27,7 @@ export class SupportService {
         message: 'Support request created successfully',
       };
     } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError) {
-        throw new InternalServerErrorException('Database error');
-      }
-      throw error;
+      throw new InternalServerErrorException(error);
     }
   }
 }

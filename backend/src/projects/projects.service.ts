@@ -3,7 +3,6 @@ import {
   forwardRef,
   Inject,
   Injectable,
-  InternalServerErrorException,
   MethodNotAllowedException,
   NotFoundException,
 } from '@nestjs/common';
@@ -15,7 +14,6 @@ import { ProjectResponseDto } from './dto/project.response-dto';
 import { ProjectsListResponseDto } from './dto/projects-list.response-dto';
 import { ProjectMapper } from '../shared/mappers/project.mapper';
 import { Prisma, ProjectStatus } from '@prisma/client';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { ProjectRolesService } from '../project-roles/project-roles.service';
 import { ParticipationsService } from '../participations/participations.service';
@@ -195,10 +193,7 @@ export class ProjectsService {
           adminRoleId,
           memberRoleId,
         );
-        if (
-          error instanceof PrismaClientKnownRequestError &&
-          error.code === 'P2003'
-        ) {
+        if (error.code === 'P2003') {
           throw new BadRequestException(
             'Some role type IDs or category ID are invalid',
           );
@@ -243,10 +238,7 @@ export class ProjectsService {
 
       return ProjectMapper.toFullResponse(project);
     } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2025'
-      ) {
+      if (error.code === 'P2025') {
         throw new NotFoundException('Project not found');
       }
       throw error;
@@ -283,17 +275,13 @@ export class ProjectsService {
 
       return ProjectMapper.toFullResponse(updatedProject);
     } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError) {
-        switch (error.code) {
-          case 'P2003':
-            throw new BadRequestException('Project category ID not found');
-          case 'P2025':
-            throw new NotFoundException('Project not found');
-          default:
-            throw new InternalServerErrorException('Database error');
-        }
-      } else {
-        throw error;
+      switch (error.code) {
+        case 'P2003':
+          throw new BadRequestException('Project category ID not found');
+        case 'P2025':
+          throw new NotFoundException('Project not found');
+        default:
+          throw error;
       }
     }
   }
@@ -341,10 +329,7 @@ export class ProjectsService {
 
         return ProjectMapper.toFullResponse(closedProject);
       } catch (error) {
-        if (
-          error instanceof PrismaClientKnownRequestError &&
-          error.code === 'P2025'
-        ) {
+        if (error.code === 'P2025') {
           throw new NotFoundException('Project or user in team not found');
         }
         throw error;
@@ -396,10 +381,7 @@ export class ProjectsService {
           deletedProject.discordMemberRoleId,
         );
       } catch (error) {
-        if (
-          error instanceof PrismaClientKnownRequestError &&
-          error.code === 'P2025'
-        ) {
+        if (error.code === 'P2025') {
           throw new NotFoundException('Project or user in team not found');
         }
         throw error;
@@ -438,10 +420,7 @@ export class ProjectsService {
 
       return ProjectMapper.toFullResponse(updatedProject);
     } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2025'
-      ) {
+      if (error.code === 'P2025') {
         throw new NotFoundException('Project not found');
       }
       throw error;
@@ -477,10 +456,7 @@ export class ProjectsService {
 
       return ProjectMapper.toFullResponse(updatedProject);
     } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2025'
-      ) {
+      if (error.code === 'P2025') {
         throw new NotFoundException('Project not found');
       }
       throw error;

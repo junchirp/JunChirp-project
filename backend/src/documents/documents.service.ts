@@ -2,14 +2,12 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateDocumentDto } from './dto/create-document.dto';
 import { UpdateDocumentDto } from './dto/update-document.dto';
 import { DocumentResponseDto } from './dto/document.response-dto';
 import { PrismaService } from '../prisma/prisma.service';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { DocumentMapper } from '../shared/mappers/document.mapper';
 
 @Injectable()
@@ -38,10 +36,7 @@ export class DocumentsService {
 
       return DocumentMapper.toResponse(document);
     } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2002'
-      ) {
+      if (error.code === 'P2002') {
         throw new ConflictException('Duplicate document url');
       }
       throw error;
@@ -60,17 +55,13 @@ export class DocumentsService {
 
       return DocumentMapper.toResponse(document);
     } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError) {
-        switch (error.code) {
-          case 'P2025':
-            throw new NotFoundException('Document not found');
-          case 'P2002':
-            throw new ConflictException('Duplicate document url');
-          default:
-            throw new InternalServerErrorException('Database error');
-        }
-      } else {
-        throw error;
+      switch (error.code) {
+        case 'P2025':
+          throw new NotFoundException('Document not found');
+        case 'P2002':
+          throw new ConflictException('Duplicate document url');
+        default:
+          throw error;
       }
     }
   }
@@ -81,10 +72,7 @@ export class DocumentsService {
         where: { id },
       });
     } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2025'
-      ) {
+      if (error.code === 'P2025') {
         throw new NotFoundException('Document not found');
       }
       throw error;
