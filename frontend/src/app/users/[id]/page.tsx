@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactElement } from 'react';
+import { ReactElement, useState } from 'react';
 import AuthGuard from '@/shared/components/AuthGuard/AuthGuard';
 import styles from './page.module.scss';
 import Button from '@/shared/components/Button/Button';
@@ -11,11 +11,18 @@ import { useGetUserByIdQuery } from '@/api/usersApi';
 import UserDetails from '@/app/users/[id]/UserDetails/UserDetails';
 import UserSkeleton from '@/app/users/[id]/UserSkeleton/UserSkeleton';
 import Page404 from '../../../shared/components/Page404/Page404';
+import ProjectsCount from './ProjectsCount/ProjectsCount';
+import UserProjectsList from './UserProjectsList/UserProjectsList';
+import InvitePopup from '../../../shared/components/InvitePopup/InvitePopup';
 
 export default function User(): ReactElement {
   const params = useParams();
   const userId = params.id as string;
-  const { data, isLoading, error } = useGetUserByIdQuery(userId);
+  const [isModalOpen, setModalOpen] = useState(false);
+  const { data: user, isLoading, error } = useGetUserByIdQuery(userId);
+
+  const closeModal = (): void => setModalOpen(false);
+  const openModal = (): void => setModalOpen(true);
 
   if (isLoading) {
     return <UserSkeleton />;
@@ -28,33 +35,30 @@ export default function User(): ReactElement {
   return (
     <AuthGuard requireVerified>
       <div className={styles.user}>
-        <UserBaseInfo user={data} />
+        <UserBaseInfo user={user} />
         <div className={styles.user__details}>
           <UserDetails
             title="Освіта"
-            items={data.educations}
+            items={user.educations}
             columnsCount={1}
           />
-          <UserDetails title="Hard Skills" items={data.hardSkills} />
+          <UserDetails title="Hard Skills" items={user.hardSkills} />
           <UserDetails
             title="Контактні дані"
-            items={[{ email: data.email, id: data.email }, ...data.socials]}
+            items={[{ email: user.email, id: user.email }, ...user.socials]}
             columnsCount={1}
           />
-          <UserDetails title="Soft Skills" items={data.softSkills} />
+          <UserDetails title="Soft Skills" items={user.softSkills} />
         </div>
-        <div className={styles.user_4}>
-          <div className={styles.user_5}>6</div>
-          <div className={styles.user_5}>7</div>
-          <div className={styles.user_5}>8</div>
-          <div className={styles.user_6}>9</div>
-          <div className={styles.user_6}>10</div>
-          <div className={styles.user_6}>11</div>
-          <div className={styles.user_6}>12</div>
-          <div className={styles.user_6}>13</div>
-          <div className={styles.user_6}>14</div>
-          <div className={styles.user_6}>15</div>
-          <div className={styles.user_6}>16</div>
+        <div className={styles.user__projects}>
+          <UserDetails
+            title="Проєкти користувача"
+            items={[]}
+            columnsCount={1}
+          />
+          <ProjectsCount status="active" count={user.activeProjectsCount} />
+          <ProjectsCount status="done" count={user.doneProjectsCount} />
+          <UserProjectsList userId={user.id} />
         </div>
         <div className={styles.user__actions}>
           <Button
@@ -62,11 +66,13 @@ export default function User(): ReactElement {
             color="green"
             iconPosition="right"
             icon={<ArrowUpRight />}
+            onClick={openModal}
           >
             Запросити в проєкт
           </Button>
         </div>
       </div>
+      {isModalOpen && <InvitePopup onClose={closeModal} user={user} />}
     </AuthGuard>
   );
 }

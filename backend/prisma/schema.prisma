@@ -21,6 +21,7 @@ model User {
   lastName              String                 @map("last_name")
   roleId                String                 @map("role_id")
   activeProjectsCount   Int                    @default(0) @map("active_projects_count")
+  doneProjectsCount     Int                    @default(0) @map("done_projects_count")
   educations            Education[]
   loginAttempt          LoginAttempt?
   ownProjects           Project[]

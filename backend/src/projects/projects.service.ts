@@ -323,6 +323,7 @@ export class ProjectsService {
             },
             data: {
               activeProjectsCount: { decrement: 1 },
+              doneProjectsCount: { increment: 1 },
             },
           });
         }

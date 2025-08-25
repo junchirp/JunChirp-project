@@ -6,23 +6,17 @@ export const usersApi = mainApi.injectEndpoints({
       query: (params) => {
         const query = new URLSearchParams();
 
-        if (params.page) {
-          query.set('page', params.page.toString());
-        }
-        if (params.limit) {
-          query.set('limit', params.limit.toString());
-        }
-        if (params.activeProjectsCount != null) {
-          query.set(
-            'activeProjectsCount',
-            params.activeProjectsCount.toString(),
-          );
-        }
-        if (params.specializationIds?.length) {
-          params.specializationIds.forEach((id: string) =>
-            query.append('specializationIds', id),
-          );
-        }
+        Object.entries(params).forEach(([key, value]) => {
+          if (value == null) {
+            return;
+          }
+
+          if (Array.isArray(value)) {
+            value.forEach((v) => query.append(key, v.toString()));
+          } else {
+            query.set(key, value.toString());
+          }
+        });
 
         return {
           url: `/users?${query.toString()}`,
@@ -45,6 +39,21 @@ export const usersApi = mainApi.injectEndpoints({
         };
       },
     }),
+    getUserProjects: builder.query({
+      query: ({ id, params }) => {
+        const query = new URLSearchParams();
+        Object.entries(params).forEach(([key, value]) => {
+          if (value == null) {
+            return;
+          }
+
+          query.set(key, value.toString());
+        });
+        return {
+          url: `/users/${id}/projects?${query.toString()}`,
+        };
+      },
+    }),
   }),
 });
 
@@ -52,4 +61,5 @@ export const {
   useGetUsersQuery,
   useLazyGetMyProjectsQuery,
   useGetUserByIdQuery,
+  useGetUserProjectsQuery,
 } = usersApi;

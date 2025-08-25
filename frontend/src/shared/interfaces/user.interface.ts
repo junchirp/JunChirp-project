@@ -9,6 +9,7 @@ export interface UserInterface extends UserCardInterface {
   discordId: string | null;
   email: string;
   isVerified: boolean;
+  doneProjectsCount: number;
   role: RoleInterface;
   softSkills: SoftSkillInterface[];
   hardSkills: HardSkillInterface[];

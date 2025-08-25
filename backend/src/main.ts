@@ -39,7 +39,9 @@ async function bootstrap(): Promise<void> {
     return handle(req, res);
   });
 
-  const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
+  const app = await NestFactory.create(AppModule, new ExpressAdapter(server), {
+    logger: ['log', 'error', 'warn', 'debug', 'verbose'],
+  });
 
   const csrfService = app.get(CsrfService);
 

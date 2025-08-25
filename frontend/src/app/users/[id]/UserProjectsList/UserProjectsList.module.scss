@@ -1,0 +1,14 @@
+.user-projects-list {
+  grid-column: span 3;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+
+  &__more {
+    padding: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 32px;
+  }
+}

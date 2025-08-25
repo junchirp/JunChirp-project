@@ -1,0 +1,34 @@
+@use '@/assets/styles/variables';
+
+.projects-count {
+  grid-column: span 1;
+  border-radius: 32px;
+  padding: 40px;
+  border: 1px solid variables.$black-2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  &--active {
+    background-color: variables.$green-5;
+  }
+
+  &--done {
+    background-color: variables.$gray-11;
+  }
+
+  &__title {
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 1.4;
+    text-align: center;
+  }
+
+  &__count {
+    font-weight: 700;
+    font-size: 32px;
+    line-height: 1.2;
+  }
+}
