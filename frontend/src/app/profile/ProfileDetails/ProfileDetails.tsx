@@ -78,7 +78,7 @@ export default function ProfileDetails<T extends WithIdInterface>(
                 />
               ))}
             </ul>
-            {items.length > 5 ? (
+            {items.length > COLLAPSE_LIMIT ? (
               <Button
                 className={styles['profile-details__toggle']}
                 size="md"

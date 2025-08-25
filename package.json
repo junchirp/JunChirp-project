@@ -12,10 +12,10 @@
   "scripts": {
     "build:backend": "npm run build --workspace backend",
     "format:backend": "npm run format --workspace backend",
-    "start": "npm run start:backend",
+    "start": "npm run start:dev",
     "start:backend": "npm run start --workspace backend",
-    "start:dev": "nest start --watch --workspace backend",
-    "start:debug": "nest start --debug --watch",
+    "start:dev": "npm run start:dev --workspace backend",
+    "start:debug": "npm run start:debug --workspace backend",
     "start:prod": "node backend/dist/main",
     "lint:backend": "npm run lint --workspace backend",
     "test": "jest",

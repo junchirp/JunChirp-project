@@ -3,7 +3,6 @@
 import { ReactElement, useState } from 'react';
 import styles from './UserDetails.module.scss';
 import Button from '@/shared/components/Button/Button';
-import Plus from '@/assets/icons/plus.svg';
 import Up from '@/assets/icons/chevron-up.svg';
 import Down from '@/assets/icons/chevron-down.svg';
 import { useColumns } from '@/hooks/useColumns';
@@ -14,6 +13,7 @@ import { EducationInterface } from '@/shared/interfaces/education.interface';
 import { SocialInterface } from '@/shared/interfaces/social.interface';
 import UserDetailsItem from '@/app/users/[id]/UserDetails/UserDetailsItem/UserDetailsItem';
 import { EmailWithIdInterface } from '@/shared/interfaces/email-with-id.interface';
+import { isEducation } from '../../../../shared/utils/typeGuards';
 
 interface UserDetailsProps<
   T extends WithIdInterface =
@@ -43,92 +43,44 @@ export default function UserDetails<T extends WithIdInterface>({
     columns === 1
       ? styles['user-details']
       : `${styles['user-details']} ${styles['user-details--two-columns']}`;
+  const classNameEmptyContainer = !items.length
+    ? `${styles['user-details--no-gap']}`
+    : '';
+
+  const collapseLimit = items.length
+    ? isEducation(items[0])
+      ? 2
+      : columns === 1
+        ? 3
+        : 6
+    : 0;
+
+  const [isCollapsed, setIsCollapsed] = useState(true);
+  const visibleItems = isCollapsed ? items.slice(0, collapseLimit) : items;
+
+  const toggleList = (): void => setIsCollapsed(!isCollapsed);
 
   return (
-    <div className={classNameContainer}>
+    <div className={`${classNameContainer} ${classNameEmptyContainer}`}>
       <div className={styles['user-details__header']}>
         <p className={styles['user-details__title']}>{title}</p>
         <div className={styles['user-details__border']}></div>
       </div>
       <ul className={classNameList}>
-        {items.map((item) => (
+        {visibleItems.map((item) => (
           <UserDetailsItem<T> item={item} key={item.id} />
         ))}
       </ul>
+      {items.length > collapseLimit ? (
+        <Button
+          className={styles['user-details__toggle']}
+          size="md"
+          variant="link"
+          color="black"
+          icon={isCollapsed ? <Down /> : <Up />}
+          onClick={toggleList}
+        />
+      ) : null}
     </div>
   );
-  // const { title, items } = props;
-  // const [isCollapsed, setIsCollapsed] = useState(true);
-  // const visibleItems = isCollapsed ? items.slice(0, COLLAPSE_LIMIT) : items;
-  //
-  // const toggleList = (): void => setIsCollapsed(!isCollapsed);
-  //
-  // return (
-  //   <div className={styles['profile-details']}>
-  //     {items.length ? (
-  //       <div
-  //         className={`${styles['profile-details__inner']} ${styles['profile-details__inner--full']}`}
-  //       >
-  //         <div className={styles['profile-details__content']}>
-  //           <div className={styles['profile-details__header']}>
-  //             <div className={styles['profile-details__title-wrapper']}>
-  //               <div className={styles['profile-details__title']}>{title}</div>
-  //               <div className={styles['profile-details__counter']}>
-  //                 {items.length}{' '}
-  //                 <span className={styles['profile-details__total']}>
-  //                   / {maxSize}
-  //                 </span>
-  //               </div>
-  //             </div>
-  //             <div className={styles['profile-details__divider']}></div>
-  //           </div>
-  //           <div className={styles['profile-details__list']}>
-  //             {visibleItems.map((item) => (
-  //               <ProfileDetailsItem<T>
-  //                 item={item}
-  //                 isEditable={isEditable}
-  //                 key={item.id}
-  //                 handleEditItem={handleEditItem}
-  //                 handleDeleteItem={handleDeleteItem}
-  //               />
-  //             ))}
-  //           </div>
-  //           {items.length > 5 ? (
-  //             <Button
-  //               className={styles['profile-details__toggle']}
-  //               size="md"
-  //               variant="link"
-  //               color="black"
-  //               icon={isCollapsed ? <Down /> : <Up />}
-  //               onClick={toggleList}
-  //             />
-  //           ) : null}
-  //         </div>
-  //         <Button
-  //           color="green"
-  //           fullWidth
-  //           icon={<Plus />}
-  //           disabled={items.length === maxSize}
-  //           onClick={handleAddItem}
-  //         >
-  //           Додати
-  //         </Button>
-  //       </div>
-  //     ) : (
-  //       <div
-  //         className={`${styles['profile-details__inner']} ${styles['profile-details__inner--empty']}`}
-  //       >
-  //         <div className={styles['profile-details__title']}>{title}</div>
-  //         <Button
-  //           color="green"
-  //           fullWidth
-  //           icon={<Plus />}
-  //           onClick={handleAddItem}
-  //         >
-  //           Додати
-  //         </Button>
-  //       </div>
-  //     )}
-  //   </div>
-  // );
 }

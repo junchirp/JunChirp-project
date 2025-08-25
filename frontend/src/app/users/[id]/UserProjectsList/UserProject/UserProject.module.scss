@@ -1,0 +1,77 @@
+@use '@/assets/styles/variables';
+
+.user-project {
+  position: relative;
+  border-radius: 32px;
+  padding: 40px;
+  background-color: variables.$gray-1;
+
+  &__header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 48px;
+    border-radius: 32px 32px 0 0;
+
+    &--active {
+      background-color: variables.$green-7;
+    }
+
+    &--done {
+      background-color: variables.$gray-3;
+    }
+  }
+
+  &__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 20px;
+  }
+
+  &__status {
+    position: relative;
+    z-index: 1;
+    align-self: flex-end;
+    background-color: variables.$gray-5;
+    font-weight: 500;
+    font-size: 14px;
+    padding: 4px;
+    border-radius: 4px;
+
+    &--active {
+      color: variables.$green-2;
+    }
+
+    &--done {
+      color: variables.$gray-4;
+    }
+  }
+
+  &__text {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  &__title {
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 1.4;
+  }
+
+  &__description {
+    font-size: 16px;
+    line-height: 1.4;
+  }
+}

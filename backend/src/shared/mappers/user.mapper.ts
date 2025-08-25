@@ -37,6 +37,7 @@ export class UserMapper {
       isVerified: user.isVerified,
       role: user.role,
       activeProjectsCount: user.activeProjectsCount,
+      doneProjectsCount: user.doneProjectsCount,
       educations: user.educations.map((education) =>
         EducationMapper.toResponse(education),
       ),

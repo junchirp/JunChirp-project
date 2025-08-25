@@ -14,6 +14,10 @@
     grid-column: span 2;
   }
 
+  &--no-gap {
+    gap: 0;
+  }
+
   &__list {
     display: grid;
     grid-template-columns: 1fr;
@@ -42,5 +46,9 @@
     border-radius: 4px;
     width: 100%;
     background-color: variables.$green-2;
+  }
+
+  &__toggle {
+    align-self: center;
   }
 }

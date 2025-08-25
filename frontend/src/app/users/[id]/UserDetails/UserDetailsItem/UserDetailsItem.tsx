@@ -11,9 +11,6 @@ import {
 import { socialNetworks } from '@/shared/constants/social-networks';
 import styles from './UserDetailsItem.module.scss';
 import Image from 'next/image';
-import Button from '@/shared/components/Button/Button';
-import Edit from '@/assets/icons/edit.svg';
-import Trash from '@/assets/icons/trash.svg';
 
 interface UserDetailItemProps<T> {
   item: T;
