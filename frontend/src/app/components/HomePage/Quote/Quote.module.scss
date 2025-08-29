@@ -1,0 +1,33 @@
+@use '@/assets/styles/variables';
+
+.quote {
+  padding: 128px 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &__inner {
+    width: 100%;
+    max-width: 860px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 23px;
+  }
+  
+  &__quote {
+    font-family: variables.$montserrat;
+    font-weight: 600;
+    font-size: 40px;
+    line-height: 1.2;
+    text-align: center;
+  }
+
+  &__top-star {
+    align-self: flex-start;
+  }
+
+  &__bottom-star {
+    align-self: flex-end;
+  }
+}
