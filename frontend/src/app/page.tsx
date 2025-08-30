@@ -10,6 +10,7 @@ import Quote from './components/HomePage/Quote/Quote';
 import ThreeSteps from './components/HomePage/ThreeSteps/ThreeSteps';
 import AnimatedBlocks from './components/HomePage/AnimatedBlocks/AnimatedBlocks';
 import AnimatedBlocksTwo from './components/HomePage/AnimatedBlocksTwo/AnimatedBlocksTwo';
+import AnimatedBlocksThree from './components/HomePage/AnimatedBlocksThree/AnimatedBlocksThree';
 
 export default function Home(): ReactElement {
   const user = useAppSelector(authSelector.selectUser);
@@ -128,6 +129,105 @@ export default function Home(): ReactElement {
           dolor et explicabo ipsam magni modi natus provident, reiciendis rem.
         </div>
         <AnimatedBlocksTwo />
+        <div className={styles.home__5}>
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias
+          architecto consequatur cumque delectus doloremque, esse est et labore
+          minima nam nisi obcaecati, odit pariatur placeat quibusdam vitae,
+          voluptate! Ab amet asperiores aspernatur assumenda at blanditiis
+          consectetur consequatur culpa cum cupiditate dicta dignissimos
+          doloremque dolores doloribus eaque enim et eum excepturi explicabo hic
+          illo iste libero maxime natus non porro provident quas quo repellendus
+          saepe sapiente similique sint tempore, temporibus velit vitae
+          voluptatum! A dicta eius error eum minima necessitatibus nesciunt,
+          nostrum veniam. A ab, alias cupiditate eaque fuga inventore laborum
+          maiores nesciunt, nihil nobis nulla omnis quia tempore temporibus
+          vitae! A animi consequatur deleniti dolorem doloribus et fugit
+          incidunt iure magnam molestias, nemo nobis odit officia quam quidem
+          quis quo rem repellendus saepe similique sit suscipit ullam veniam,
+          voluptas voluptatem? Ab dignissimos dolore dolores doloribus eius est
+          eveniet facere facilis illo itaque, laborum libero molestias nobis
+          omnis optio perspiciatis placeat quasi quis quisquam recusandae
+          repellat repudiandae suscipit ullam unde ut vero voluptas, voluptates?
+          Amet atque aut cum debitis, deleniti deserunt dicta dolor enim error
+          est facere id libero molestiae nobis possimus provident quam quis
+          quisquam quod ratione, reiciendis repudiandae saepe sequi suscipit
+          temporibus ut, voluptas! Dolorem nostrum quo ullam voluptatem.
+        </div>
+        <div className={styles.home__6}>
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur
+          excepturi illo quidem. Aut cum minus non! Autem beatae culpa cumque
+          dolorem ea eaque facilis hic, illo, inventore ipsam maiores minima
+          nemo nisi nobis porro quaerat quidem quis quos repudiandae voluptas!
+          Accusamus, adipisci at autem beatae dicta, dignissimos eum neque,
+          officia quae quas quo reiciendis rem ullam! Corporis cum repudiandae
+          tenetur! Ab aperiam deserunt distinctio ducimus enim natus officiis
+          possimus, quis quos, ullam ut, voluptate. Adipisci aperiam atque
+          blanditiis dignissimos dolor doloribus, eveniet explicabo hic illum
+          iure laborum molestiae mollitia non nulla odit quas quis repellendus,
+          ullam voluptatem voluptates! Assumenda, commodi inventore ipsam
+          laudantium nam non optio quibusdam vel veniam! Itaque, nihil, velit?
+          Ad dicta, doloremque dolores ea excepturi explicabo facilis fugiat
+          maiores minus neque optio quod ratione recusandae repellendus saepe
+          sequi similique ut vero vitae voluptatum. Ad, autem blanditiis
+          corporis, ducimus harum laudantium maxime natus, necessitatibus
+          obcaecati optio sunt totam veritatis voluptatibus. Amet aperiam beatae
+          et excepturi, fugiat reprehenderit sed! Accusantium ex possimus,
+          quaerat quidem rerum ullam voluptatum. At doloribus eligendi est,
+          excepturi explicabo facilis impedit incidunt iusto labore laborum
+          maxime molestias necessitatibus, nobis non nostrum, omnis perferendis
+          possimus quam qui quos rem repudiandae sequi soluta ut voluptate!
+          Doloribus, omnis.
+        </div>
+        <AnimatedBlocksThree />
+        <div className={styles.home__5}>
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias
+          architecto consequatur cumque delectus doloremque, esse est et labore
+          minima nam nisi obcaecati, odit pariatur placeat quibusdam vitae,
+          voluptate! Ab amet asperiores aspernatur assumenda at blanditiis
+          consectetur consequatur culpa cum cupiditate dicta dignissimos
+          doloremque dolores doloribus eaque enim et eum excepturi explicabo hic
+          illo iste libero maxime natus non porro provident quas quo repellendus
+          saepe sapiente similique sint tempore, temporibus velit vitae
+          voluptatum! A dicta eius error eum minima necessitatibus nesciunt,
+          nostrum veniam. A ab, alias cupiditate eaque fuga inventore laborum
+          maiores nesciunt, nihil nobis nulla omnis quia tempore temporibus
+          vitae! A animi consequatur deleniti dolorem doloribus et fugit
+          incidunt iure magnam molestias, nemo nobis odit officia quam quidem
+          quis quo rem repellendus saepe similique sit suscipit ullam veniam,
+          voluptas voluptatem? Ab dignissimos dolore dolores doloribus eius est
+          eveniet facere facilis illo itaque, laborum libero molestias nobis
+          omnis optio perspiciatis placeat quasi quis quisquam recusandae
+          repellat repudiandae suscipit ullam unde ut vero voluptas, voluptates?
+          Amet atque aut cum debitis, deleniti deserunt dicta dolor enim error
+          est facere id libero molestiae nobis possimus provident quam quis
+          quisquam quod ratione, reiciendis repudiandae saepe sequi suscipit
+          temporibus ut, voluptas! Dolorem nostrum quo ullam voluptatem.
+        </div>
+        <div className={styles.home__6}>
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur
+          excepturi illo quidem. Aut cum minus non! Autem beatae culpa cumque
+          dolorem ea eaque facilis hic, illo, inventore ipsam maiores minima
+          nemo nisi nobis porro quaerat quidem quis quos repudiandae voluptas!
+          Accusamus, adipisci at autem beatae dicta, dignissimos eum neque,
+          officia quae quas quo reiciendis rem ullam! Corporis cum repudiandae
+          tenetur! Ab aperiam deserunt distinctio ducimus enim natus officiis
+          possimus, quis quos, ullam ut, voluptate. Adipisci aperiam atque
+          blanditiis dignissimos dolor doloribus, eveniet explicabo hic illum
+          iure laborum molestiae mollitia non nulla odit quas quis repellendus,
+          ullam voluptatem voluptates! Assumenda, commodi inventore ipsam
+          laudantium nam non optio quibusdam vel veniam! Itaque, nihil, velit?
+          Ad dicta, doloremque dolores ea excepturi explicabo facilis fugiat
+          maiores minus neque optio quod ratione recusandae repellendus saepe
+          sequi similique ut vero vitae voluptatum. Ad, autem blanditiis
+          corporis, ducimus harum laudantium maxime natus, necessitatibus
+          obcaecati optio sunt totam veritatis voluptatibus. Amet aperiam beatae
+          et excepturi, fugiat reprehenderit sed! Accusantium ex possimus,
+          quaerat quidem rerum ullam voluptatum. At doloribus eligendi est,
+          excepturi explicabo facilis impedit incidunt iusto labore laborum
+          maxime molestias necessitatibus, nobis non nostrum, omnis perferendis
+          possimus quam qui quos rem repudiandae sequi soluta ut voluptate!
+          Doloribus, omnis.
+        </div>
         <div className={styles.home__5}>
           Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias
           architecto consequatur cumque delectus doloremque, esse est et labore
