@@ -1,0 +1,44 @@
+@use '@/assets/styles/variables';
+
+.call-to-action {
+  padding: 40px;
+
+  &__inner {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 80px 40px;
+    border-radius: 32px;
+    background-color: variables.$gray-1;
+  }
+
+  &__header {
+    font-family: variables.$montserrat;
+    font-weight: 600;
+    font-size: 40px;
+    line-height: 1.2;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: 64px;
+    align-items: flex-start;
+  }
+
+  &__description {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    max-width: 640px;
+  }
+
+  &__text {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 1.4;
+  }
+}

@@ -1,7 +1,7 @@
 'use client';
 
-import { ReactElement } from 'react';
-import { useForm } from 'react-hook-form';
+import React, { ReactElement } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Input from '@/shared/components/Input/Input';
@@ -11,6 +11,7 @@ import { useUpdateUserMutation } from '@/api/authApi';
 import { UserInterface } from '@/shared/interfaces/user.interface';
 import { useToast } from '../../../../hooks/useToast';
 import { userNameSchema } from '../../../../shared/forms/schemas/userNameSchema';
+import { normalizeApostrophes } from '../../../../shared/utils/normalizeApostrophes';
 
 type FormData = z.infer<typeof userNameSchema>;
 
@@ -23,7 +24,7 @@ export default function UserNameForm(props: UserNameFormProps): ReactElement {
   const [updateUser, { isLoading }] = useUpdateUserMutation();
   const { onCancel, initialValues } = props;
   const {
-    register,
+    control,
     handleSubmit,
     formState: { errors, isValid },
   } = useForm<FormData>({
@@ -71,21 +72,45 @@ export default function UserNameForm(props: UserNameFormProps): ReactElement {
         className={styles['user-name-form__fieldset']}
         disabled={isLoading}
       >
-        <Input
-          {...register('firstName')}
-          label="Ім'я"
-          placeholder="Ім'я"
-          withError
-          errorMessages={
-            errors.firstName?.message && [errors.firstName.message]
-          }
+        <Controller
+          name="firstName"
+          control={control}
+          render={({ field }) => (
+            <Input
+              label="Ім'я"
+              placeholder="Ім'я"
+              {...field}
+              value={field.value ?? ''}
+              onChange={(e) => {
+                const normalized = normalizeApostrophes(e.target.value);
+                field.onChange(normalized);
+              }}
+              withError
+              errorMessages={
+                errors.firstName?.message && [errors.firstName.message]
+              }
+            />
+          )}
         />
-        <Input
-          {...register('lastName')}
-          label="Прізвище"
-          placeholder="Прізвище"
-          withError
-          errorMessages={errors.lastName?.message && [errors.lastName.message]}
+        <Controller
+          name="lastName"
+          control={control}
+          render={({ field }) => (
+            <Input
+              label="Прізвище"
+              placeholder="Прізвище"
+              {...field}
+              value={field.value ?? ''}
+              onChange={(e) => {
+                const normalized = normalizeApostrophes(e.target.value);
+                field.onChange(normalized);
+              }}
+              withError
+              errorMessages={
+                errors.lastName?.message && [errors.lastName.message]
+              }
+            />
+          )}
         />
       </fieldset>
       <div className={styles['user-name-form__actions']}>

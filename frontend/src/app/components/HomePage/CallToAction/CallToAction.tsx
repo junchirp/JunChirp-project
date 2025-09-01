@@ -1,0 +1,72 @@
+'use client';
+
+import { ReactElement } from 'react';
+import { UserInterface } from '../../../../shared/interfaces/user.interface';
+import styles from './CallToAction.module.scss';
+import Image from 'next/image';
+import Button from '../../../../shared/components/Button/Button';
+import { useRouter } from 'next/navigation';
+
+interface CallToActionProps {
+  user: UserInterface | null;
+}
+
+export default function CallToAction({
+  user,
+}: CallToActionProps): ReactElement {
+  const router = useRouter();
+
+  const handleRegistration = (): void => {
+    router.push('/auth/registration');
+  };
+
+  return (
+    <div className={styles['call-to-action']}>
+      <div className={styles['call-to-action__inner']}>
+        <div className={styles['call-to-action__content']}>
+          <div className={styles['call-to-action__description']}>
+            {user ? (
+              <h2 className={styles['call-to-action__header']}>
+                Створювати щось велике разом з друзями &mdash; це завжди круто!
+              </h2>
+            ) : (
+              <h2 className={styles['call-to-action__header']}>
+                Тепер твій момент!
+              </h2>
+            )}
+            {user ? (
+              <div className={styles['call-to-action__text']}>
+                <p>
+                  Запроси своїх знайомих, об'єднайтесь, генеруйте ідеї та
+                  створюйте інноваційні проєкти, які змінять світ!
+                </p>
+                <p>
+                  Коли працюєш з тими, кого знаєш, процес стає ще більш
+                  захоплюючим та надихаючим. Разом досягнемо більше!
+                </p>
+              </div>
+            ) : (
+              <div className={styles['call-to-action__text']}>
+                <p>
+                  Долистав до кінця? Тепер вибір за тобою! Час не чекає. Зараз
+                  твоя черга: залишайся спостерігачем або починай підкорювати
+                  нові горизонти!
+                </p>
+                <p>Реєструйся і зроби перший крок до своєї кар'єри в ІТ.</p>
+                <p>Успіх чекає на тебе!</p>
+              </div>
+            )}
+          </div>
+          {user ? (
+            <Button color="green">Запросити</Button>
+          ) : (
+            <Button color="green" onClick={handleRegistration}>
+              Зареєструватись
+            </Button>
+          )}
+        </div>
+        <Image src="/images/bird-4.svg" alt="bird" width={420} height={352} />
+      </div>
+    </div>
+  );
+}

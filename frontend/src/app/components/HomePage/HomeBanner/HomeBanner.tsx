@@ -16,7 +16,7 @@ export default function HomeBanner({ user }: HomeBannerProps): ReactElement {
   const router = useRouter();
 
   const hadleRedirect = (): void => {
-    router.push(user ? '/projects' : '/auth/register');
+    router.push(user ? '/projects' : '/auth/registration');
   };
 
   return (
@@ -26,7 +26,7 @@ export default function HomeBanner({ user }: HomeBannerProps): ReactElement {
           <Image
             className={styles['home-banner__star']}
             src="/images/star.svg"
-            alt="bird"
+            alt="star"
             width={33}
             height={35}
           />
@@ -72,7 +72,13 @@ export default function HomeBanner({ user }: HomeBannerProps): ReactElement {
             )}
           </div>
         </div>
-        <Image src="/images/bird-3.svg" alt="bird" height={336} width={441} />
+        <Image
+          src="/images/bird-3.svg"
+          alt="bird"
+          height={336}
+          width={441}
+          priority
+        />
         <div className={styles['home-banner__button-wrapper']}>
           <Button
             size="lg"
