@@ -1,7 +1,7 @@
 'use client';
 
 import { z } from 'zod';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useRegisterMutation } from '@/api/authApi';
@@ -19,6 +19,7 @@ import CheckboxChecked from '@/assets/icons/checkbox-checked.svg';
 import PasswordStrengthIndicator from '@/shared/components/PasswordStrengthIndicator/PasswordStrengthIndicator';
 import { getPasswordStrength } from '@/shared/utils/getPasswordStrength';
 import { registrationSchema } from '../../../../shared/forms/schemas/registrationSchema';
+import { normalizeApostrophes } from '../../../../shared/utils/normalizeApostrophes';
 
 type FormData = z.infer<typeof registrationSchema>;
 
@@ -28,6 +29,7 @@ export default function RegistrationForm(): ReactElement {
     trigger,
     watch,
     handleSubmit,
+    control,
     formState: { errors, dirtyFields, isSubmitted },
   } = useForm<FormData>({
     resolver: zodResolver(registrationSchema),
@@ -112,21 +114,45 @@ export default function RegistrationForm(): ReactElement {
         className={styles['registration-form__fieldset']}
         disabled={isLoading}
       >
-        <Input
-          label="Ім'я"
-          placeholder="Ім'я"
-          {...register('firstName')}
-          withError
-          errorMessages={
-            errors.firstName?.message && [errors.firstName.message]
-          }
+        <Controller
+          name="firstName"
+          control={control}
+          render={({ field }) => (
+            <Input
+              label="Ім'я"
+              placeholder="Ім'я"
+              {...field}
+              value={field.value ?? ''}
+              onChange={(e) => {
+                const normalized = normalizeApostrophes(e.target.value);
+                field.onChange(normalized);
+              }}
+              withError
+              errorMessages={
+                errors.firstName?.message && [errors.firstName.message]
+              }
+            />
+          )}
         />
-        <Input
-          label="Прізвище"
-          placeholder="Прізвище"
-          {...register('lastName')}
-          withError
-          errorMessages={errors.lastName?.message && [errors.lastName.message]}
+        <Controller
+          name="lastName"
+          control={control}
+          render={({ field }) => (
+            <Input
+              label="Прізвище"
+              placeholder="Прізвище"
+              {...field}
+              value={field.value ?? ''}
+              onChange={(e) => {
+                const normalized = normalizeApostrophes(e.target.value);
+                field.onChange(normalized);
+              }}
+              withError
+              errorMessages={
+                errors.lastName?.message && [errors.lastName.message]
+              }
+            />
+          )}
         />
         <Input
           label="Email"

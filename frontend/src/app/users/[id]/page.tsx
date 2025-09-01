@@ -67,6 +67,7 @@ export default function User(): ReactElement {
             iconPosition="right"
             icon={<ArrowUpRight />}
             onClick={openModal}
+            disabled={user.activeProjectsCount >= 2}
           >
             Запросити в проєкт
           </Button>
