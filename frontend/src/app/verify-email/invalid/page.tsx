@@ -58,9 +58,9 @@ export default function Invalid(): ReactElement {
       } else {
         showToast({
           severity: 'error',
-          summary: 'Винкла помилка при обробці запиту.',
+          summary: 'Виникла помилка при обробці запиту.',
           detail:
-            'Можливо посилання було скопійовано і змінено. Email не знайдено.',
+            'Можливо, посилання було скопійовано і змінено. Email не знайдено.',
           life: 3000,
           actionKey: 'confirm email',
         });
