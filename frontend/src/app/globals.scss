@@ -25,6 +25,7 @@
   @include meta.load-css('@/shared/components/ProjectRoleDropdown/ProjectRoleDropdown.module');
   @include meta.load-css('@/shared/components/SupportPopup/SupportPopup.module');
   @include meta.load-css('@/shared/components/Page404/Page404.module');
+  @include meta.load-css('@/app/components/HomePage/CallToAction/SocialInvitePopup/SocialInvitePopup.module');
 }
 
 html,

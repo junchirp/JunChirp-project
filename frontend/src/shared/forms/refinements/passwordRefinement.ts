@@ -21,7 +21,7 @@ export const passwordRefinement = (
     ctx.addIssue({
       path: ['password'],
       code: 'custom',
-      message: `Пароль не може містити твоє ім’я чи прізвище`,
+      message: `Пароль не може містити твоє ім'я чи прізвище`,
     });
   }
 
@@ -29,7 +29,7 @@ export const passwordRefinement = (
     ctx.addIssue({
       path: ['password'],
       code: 'custom',
-      message: `Пароль не може містити твоє ім’я чи прізвище`,
+      message: `Пароль не може містити твоє ім'я чи прізвище`,
     });
   }
 
@@ -37,7 +37,7 @@ export const passwordRefinement = (
     ctx.addIssue({
       path: ['password'],
       code: 'custom',
-      message: 'Уникай очевидних паролів, як-от Password1',
+      message: 'Уникай занадто простих або очевидних паролів',
     });
   }
 

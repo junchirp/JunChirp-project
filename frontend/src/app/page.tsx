@@ -9,7 +9,7 @@ import HomeSkeleton from './components/HomePage/HomeSkeleton/HomeSkeleton';
 import Quote from './components/HomePage/Quote/Quote';
 import CallToAction from './components/HomePage/CallToAction/CallToAction';
 import NextLevel from './components/HomePage/NextLevel/NextLevel';
-import AnimatedBlocksFour from './components/HomePage/AnimatedBlocksFour/AnimatedBlocksFour';
+import ThreeSteps from './components/HomePage/ThreeSteps/ThreeSteps';
 
 export default function Home(): ReactElement {
   const user = useAppSelector(authSelector.selectUser);
@@ -24,7 +24,7 @@ export default function Home(): ReactElement {
       <div className={styles.home}>
         <HomeBanner user={user} />
         <Quote />
-        <AnimatedBlocksFour />
+        <ThreeSteps />
         <NextLevel />
         <CallToAction user={user} />
       </div>

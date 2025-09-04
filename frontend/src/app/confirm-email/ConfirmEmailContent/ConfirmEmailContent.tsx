@@ -27,7 +27,15 @@ export default function ConfirmEmailContent(): ReactElement {
 
     const result = await sendEmail({ email: user?.email ?? '' });
 
-    if ('error' in result) {
+    if ('data' in result) {
+      showToast({
+        severity: 'success',
+        summary: 'Запит успішно оброблено.',
+        detail: 'Перевір пошту для підтвердження.',
+        life: 3000,
+        actionKey: 'confirm email',
+      });
+    } else if ('error' in result) {
       const errorData = result.error as
         | ((FetchBaseQueryError | SerializedError) & { status: number })
         | undefined;

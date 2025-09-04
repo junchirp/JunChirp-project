@@ -1,16 +1,11 @@
 @use '@/assets/styles/variables';
 
 .three-steps {
-  position: sticky;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 64px;
   padding: 40px 0;
-
-  &__wrapper {
-    position: relative;
-  }
 
   &__header {
     font-family: variables.$montserrat;
@@ -26,45 +21,62 @@
     display: flex;
     width: 1070px;
     position: relative;
+    overflow-x: hidden;
   }
 
   &__one {
     background-color: variables.$green-8;
-    transition: opacity 80ms linear;
     border-radius: 32px;
     width: 416px;
     min-width: 416px;
     display: flex;
     flex-direction: column;
     gap: 32px;
-    position: relative;
     clip-path: url(#puzzle-clip-1);
+    transform: translateX(-100vw);
+    transition: transform 0.5s ease;
+
+    &.three-steps__show {
+      transition-delay: 0s;
+      transform: translateX(0);
+    }
   }
 
   &__two {
     background-color: variables.$green-1;
-    transition: opacity 80ms linear;
     border-radius: 32px;
     width: 606px;
     min-width: 606px;
     display: flex;
     flex-direction: column;
     gap: 32px;
-    transform: translateX(-186px);
     clip-path: url(#puzzle-clip-2);
+    transform: scale(0) translateX(-186px);
+    transform-origin: center;
+    transition: transform 0.5s ease;
+
+    &.three-steps__show {
+      transform: scale(1) translateX(-186px);
+      transition-delay: 0.5s;
+    }
   }
 
   &__three {
     background-color: variables.$green-2;
-    transition: opacity 80ms linear;
     border-radius: 32px;
     width: 479px;
     min-width: 479px;
     display: flex;
     flex-direction: column;
     gap: 32px;
-    transform: translateX(-430px);
     clip-path: url(#puzzle-clip-3);
+    transform: translateX(100vw);
+    transition: transform 0.5s ease;
+
+    &.three-steps__show {
+      transition-delay: 1s;
+      transform: translateX(-430px);
+    }
   }
 
   &__step-title {
@@ -119,3 +131,4 @@
     }
   }
 }
+
