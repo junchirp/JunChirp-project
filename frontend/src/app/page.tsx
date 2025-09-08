@@ -10,6 +10,7 @@ import Quote from './components/HomePage/Quote/Quote';
 import CallToAction from './components/HomePage/CallToAction/CallToAction';
 import NextLevel from './components/HomePage/NextLevel/NextLevel';
 import ThreeSteps from './components/HomePage/ThreeSteps/ThreeSteps';
+import WhatWeNeed from './components/HomePage/WhatWeNeed/WhatWeNeed';
 
 export default function Home(): ReactElement {
   const user = useAppSelector(authSelector.selectUser);
@@ -25,6 +26,7 @@ export default function Home(): ReactElement {
         <HomeBanner user={user} />
         <Quote />
         <ThreeSteps />
+        <WhatWeNeed user={user} />
         <NextLevel />
         <CallToAction user={user} />
       </div>
