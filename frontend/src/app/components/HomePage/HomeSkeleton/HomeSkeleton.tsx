@@ -11,11 +11,21 @@ export default function HomeSkeleton(): ReactElement {
           </div>
         </div>
       </div>
-      {/*<div className={styles['home-skeleton__1']}>2</div>*/}
-      {/*<div className={styles['home-skeleton__1']}>3</div>*/}
-      {/*<div className={styles['home-skeleton__1']}>4</div>*/}
-      {/*<div className={styles['home-skeleton__1']}>5</div>*/}
-      {/*<div className={styles['home-skeleton__1']}>6</div>*/}
+      <div className={styles['home-skeleton__1']}>
+        <div className={styles['home-skeleton__2']} />
+      </div>
+      <div className={styles['home-skeleton__1']}>
+        <div className={styles['home-skeleton__2']} />
+      </div>
+      <div className={styles['home-skeleton__1']}>
+        <div className={styles['home-skeleton__2']} />
+      </div>
+      <div className={styles['home-skeleton__1']}>
+        <div className={styles['home-skeleton__2']} />
+      </div>
+      <div className={styles['home-skeleton__1']}>
+        <div className={styles['home-skeleton__2']} />
+      </div>
     </div>
   );
 }
