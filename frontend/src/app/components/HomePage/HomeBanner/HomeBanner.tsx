@@ -15,7 +15,7 @@ interface HomeBannerProps {
 export default function HomeBanner({ user }: HomeBannerProps): ReactElement {
   const router = useRouter();
 
-  const hadleRedirect = (): void => {
+  const handleRedirect = (): void => {
     router.push(user ? '/projects' : '/auth/registration');
   };
 
@@ -32,7 +32,7 @@ export default function HomeBanner({ user }: HomeBannerProps): ReactElement {
           />
           <div className={styles['home-banner__describe']}>
             <div className={styles['home-banner__title-wrapper']}>
-              {user ? (
+              {user?.isVerified ? (
                 <h2 className={styles['home-banner__title']}>
                   Вітаємо,{' '}
                   <span className={styles['home-banner__title--green']}>
@@ -48,13 +48,13 @@ export default function HomeBanner({ user }: HomeBannerProps): ReactElement {
                   </span>
                 </h2>
               )}
-              {!user && (
+              {!user?.isVerified && (
                 <h3 className={styles['home-banner__sub-title']}>
                   Твоя IT-кар'єра починається тут!
                 </h3>
               )}
             </div>
-            {user ? (
+            {user?.isVerified ? (
               <p className={styles['home-banner__text']}>
                 Обирай проєкт, прокачуй навички та зроби перший крок у реальних
                 IT-розробках!
@@ -86,9 +86,9 @@ export default function HomeBanner({ user }: HomeBannerProps): ReactElement {
             iconPosition="right"
             icon={<ArrowUpRight />}
             fullWidth
-            onClick={hadleRedirect}
+            onClick={handleRedirect}
           >
-            {user ? 'Обрати' : 'Зареєструватися'}
+            {user?.isVerified ? 'Обрати' : 'Зареєструватися'}
           </Button>
         </div>
       </div>

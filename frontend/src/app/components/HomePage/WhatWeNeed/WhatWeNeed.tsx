@@ -29,7 +29,7 @@ export default function WhatWeNeed({ user }: WhatWeNeedProps): ReactElement {
   const [containerH, setContainerH] = useState(1);
   const [translate, setTranslate] = useState(0);
   const router = useRouter();
-  const blocks = user ? authBlocks : noAuthBlocks;
+  const blocks = user?.isVerified ? authBlocks : noAuthBlocks;
 
   useLayoutEffect(() => {
     const cH = containerRef.current?.offsetHeight ?? 0;

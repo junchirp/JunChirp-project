@@ -23,7 +23,7 @@ export default function Footer(): ReactElement {
   };
 
   const goLinkedin = (): void => {
-    window.location.href = 'https://www.linkedin.com/company/jun-chirp';
+    window.open('https://www.linkedin.com/company/jun-chirp', '_blank');
   };
 
   return (

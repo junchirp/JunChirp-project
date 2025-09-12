@@ -84,7 +84,7 @@ export default function EducationForm(props: EducationFormProps): ReactElement {
             <EducationAutocomplete
               {...field}
               label="Освітній заклад"
-              placeholder="Вкажи назву навчалнього закладу"
+              placeholder="Освітній заклад"
               onSelectEducation={() => {}}
               errorMessages={
                 errors.institution?.message && [errors.institution.message]
