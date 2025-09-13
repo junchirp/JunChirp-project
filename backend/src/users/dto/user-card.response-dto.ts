@@ -20,6 +20,9 @@ export class UserCardResponseDto {
   @ApiProperty({ example: 2, description: 'Number of active projects' })
   public readonly activeProjectsCount: number;
 
+  @ApiProperty({ example: 5, description: 'Number of done projects' })
+  public readonly doneProjectsCount: number;
+
   @ApiProperty({ type: () => [EducationResponseDto] })
   public readonly educations: EducationResponseDto[];
 }

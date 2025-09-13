@@ -72,6 +72,7 @@ export class UserMapper {
         EducationMapper.toResponse(education),
       ),
       activeProjectsCount: user.activeProjectsCount,
+      doneProjectsCount: user.doneProjectsCount,
     };
   }
 }

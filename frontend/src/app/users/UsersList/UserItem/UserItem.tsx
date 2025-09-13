@@ -53,10 +53,20 @@ export default function UserItem({
                 </li>
               ))}
             </ul>
-            <p className={styles['user-item__projects-text']}>
+            <p
+              className={`${styles['user-item__projects-text']} ${styles['user-item__projects-text--green']}`}
+            >
               Кількість активних проєктів:{' '}
               <span className={styles['user-item__projects-count']}>
                 {user.activeProjectsCount}
+              </span>
+            </p>
+            <p
+              className={`${styles['user-item__projects-text']} ${styles['user-item__projects-text--gray']}`}
+            >
+              Кількість завершених проєктів:{' '}
+              <span className={styles['user-item__projects-count']}>
+                {user.doneProjectsCount}
               </span>
             </p>
           </div>
