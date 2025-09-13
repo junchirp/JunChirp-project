@@ -6,5 +6,6 @@ export interface UserCardInterface {
   lastName: string;
   avatarUrl: string;
   activeProjectsCount: number;
+  doneProjectsCount: number;
   educations: EducationInterface[];
 }

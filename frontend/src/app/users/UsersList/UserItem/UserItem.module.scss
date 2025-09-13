@@ -52,14 +52,21 @@
     justify-content: space-between;
     align-items: flex-end;
     gap: 16px;
-    color: variables.$green-1;
     font-size: 14px;
     line-height: 1.2;
+
+    &--green {
+      color: variables.$green-1;
+    }
+
+    &--gray {
+      color: variables.$gray-7;
+    }
   }
 
   &__projects-count {
-    font-size: 32px;
+    font-size: 20px;
     line-height: 0.9;
-    font-weight: 700;
+    font-weight: 600;
   }
 }

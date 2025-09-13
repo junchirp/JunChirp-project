@@ -26,9 +26,6 @@ export class UserResponseDto extends UserCardResponseDto {
   @ApiProperty({ example: false, description: `Is user's email verified?` })
   public readonly isVerified: boolean;
 
-  @ApiProperty({ example: 5, description: 'Number of done projects' })
-  public readonly doneProjectsCount: number;
-
   @ApiProperty({ type: () => RoleResponseDto })
   public readonly role: RoleResponseDto;
 

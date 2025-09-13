@@ -31,7 +31,7 @@ export default function CallToAction({
         <div className={styles['call-to-action__inner']}>
           <div className={styles['call-to-action__content']}>
             <div className={styles['call-to-action__description']}>
-              {user ? (
+              {user?.isVerified ? (
                 <h2 className={styles['call-to-action__header']}>
                   Створювати щось велике разом з друзями &mdash; це завжди
                   круто!
@@ -41,7 +41,7 @@ export default function CallToAction({
                   Тепер твій момент!
                 </h2>
               )}
-              {user ? (
+              {user?.isVerified ? (
                 <div className={styles['call-to-action__text']}>
                   <p>
                     Запроси своїх знайомих, об'єднайтесь, генеруйте ідеї та
@@ -64,7 +64,7 @@ export default function CallToAction({
                 </div>
               )}
             </div>
-            {user ? (
+            {user?.isVerified ? (
               <Button color="green" onClick={openPopup}>
                 Запросити
               </Button>
@@ -77,7 +77,7 @@ export default function CallToAction({
           <Image src="/images/bird-4.svg" alt="bird" width={420} height={352} />
         </div>
       </div>
-      {user && isOpen && (
+      {user?.isVerified && isOpen && (
         <SocialInvitePopup onClose={closePopup} userId={user.id} />
       )}
     </>
