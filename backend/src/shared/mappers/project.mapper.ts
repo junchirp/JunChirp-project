@@ -29,6 +29,7 @@ export class ProjectMapper {
       status: project.status,
       createdAt: project.createdAt,
       category: project.category,
+      logoUrl: project.logoUrl ?? '',
       roles: project.roles.map((role) =>
         ProjectRoleMapper.toBaseResponse(role),
       ),

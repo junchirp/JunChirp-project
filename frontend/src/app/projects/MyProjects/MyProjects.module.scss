@@ -1,0 +1,30 @@
+.my-projects {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+
+  &__title {
+    font-weight: 600;
+    font-size: 28px;
+    line-height: 1.4;
+    text-align: center;
+  }
+
+  &__list-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 40px;
+    padding: 0 40px 40px;
+  }
+
+  &__button {
+    align-self: flex-end;
+  }
+
+  &__list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+}

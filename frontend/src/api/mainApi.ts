@@ -141,6 +141,9 @@ const mainApi = createApi({
     'users',
     'my-projects',
     'invites',
+    'projects',
+    'my-requests',
+    'my-invites',
   ],
   endpoints: () => ({}),
 });

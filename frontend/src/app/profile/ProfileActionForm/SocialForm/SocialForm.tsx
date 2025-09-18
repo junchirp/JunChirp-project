@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, ReactElement } from 'react';
+import { useEffect, ReactElement, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -35,12 +35,11 @@ export default function SocialForm(props: SocialFormProps): ReactElement {
   const [addSocial, { isLoading: addSocialLoading }] = useAddSocialMutation();
   const { showToast, isActive } = useToast();
   const { initialValues, onCancel } = props;
+  const [urlPlaceholder, setUrlPlaceholder] = useState('Посилання');
   const {
     register,
     handleSubmit,
     control,
-    setValue,
-    getValues,
     reset,
     watch,
     trigger,
@@ -131,8 +130,10 @@ export default function SocialForm(props: SocialFormProps): ReactElement {
   };
 
   const handleSelectSocial = (match: ClientSocialInterface | null): void => {
-    if (match && !getValues('url')) {
-      setValue('url', match.url, { shouldValidate: true });
+    if (match) {
+      setUrlPlaceholder(match.url);
+    } else {
+      setUrlPlaceholder('Посилання');
     }
   };
 
@@ -162,7 +163,7 @@ export default function SocialForm(props: SocialFormProps): ReactElement {
         <Input
           {...register('url')}
           label="Посилання"
-          placeholder="Встав посилання на свій профіль"
+          placeholder={urlPlaceholder}
           withError
           errorMessages={errors.url?.message && [errors.url.message]}
         />

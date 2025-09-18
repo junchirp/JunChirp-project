@@ -5,18 +5,19 @@ import styles from './UsersList.module.scss';
 import UserItem from './UserItem/UserItem';
 import { useAppSelector } from '@/hooks/reduxHooks';
 import authSelector from '@/redux/auth/authSelector';
-import MyProjectsSelector from '@/redux/myProjects/myProjectsSelector';
 import { UserCardInterface } from '@/shared/interfaces/user-card.interface';
+import { ProjectCardInterface } from '../../../shared/interfaces/project-card.interface';
 
 interface UsersListProps {
   users: UserCardInterface[];
+  myProjects: ProjectCardInterface[];
 }
 
 export default function UsersList({
   users,
+  myProjects,
 }: UsersListProps): ReactElement | null {
   const currentUser = useAppSelector(authSelector.selectUser);
-  const myProjects = useAppSelector(MyProjectsSelector.selectMyOwnedProjects);
 
   if (!currentUser) {
     return null;

@@ -7,8 +7,8 @@ import Image from 'next/image';
 import UsersFilters from './UsersFilters/UsersFilters';
 import UsersList from './UsersList/UsersList';
 import { useUsersFilters } from '@/hooks/useUsersFilters';
-import { useGetUsersQuery } from '@/api/usersApi';
-import UsersListSkeleton from './UsersListSkeleton/UsersListSkeleton';
+import { useGetMyProjectsQuery, useGetUsersQuery } from '@/api/usersApi';
+import ListSkeleton from '../../shared/components/ListSkeleton/ListSkeleton';
 import { useToast } from '@/hooks/useToast';
 import Pagination from '@/shared/components/Pagination/Pagination';
 
@@ -20,7 +20,13 @@ export default function Users(): ReactElement {
     updateFilters({ page });
   };
 
-  const { data, isLoading, isError } = useGetUsersQuery(filters);
+  const {
+    data: usersList,
+    isLoading: usersLoading,
+    isError,
+  } = useGetUsersQuery(filters);
+  const { data: myProjectsList, isLoading: myProjectsLoading } =
+    useGetMyProjectsQuery(undefined);
 
   useEffect(() => {
     if (isError) {
@@ -34,7 +40,7 @@ export default function Users(): ReactElement {
   }, [isError]);
 
   useEffect(() => {
-    if (!isLoading && !isError && data?.users.length === 0) {
+    if (!usersLoading && !isError && usersList?.users.length === 0) {
       showToast({
         severity: 'error',
         summary: 'Немає учасників за цими критеріями.',
@@ -42,7 +48,7 @@ export default function Users(): ReactElement {
         actionKey: 'get users',
       });
     }
-  }, [isLoading, isError, data]);
+  }, [usersLoading, isError, usersList]);
 
   return (
     <AuthGuard requireVerified>
@@ -69,14 +75,17 @@ export default function Users(): ReactElement {
         </div>
         <div className={styles.users__container}>
           <UsersFilters />
-          {isLoading ? (
-            <UsersListSkeleton />
-          ) : data?.users.length ? (
-            <UsersList users={data.users} />
+          {usersLoading || myProjectsLoading ? (
+            <ListSkeleton height={288} lines={10} />
+          ) : usersList?.users.length ? (
+            <UsersList
+              users={usersList.users}
+              myProjects={myProjectsList?.projects ?? []}
+            />
           ) : null}
-          {!!data?.users.length && (
+          {!!usersList?.users.length && (
             <Pagination
-              total={data.total}
+              total={usersList.total}
               limit={filters.limit}
               page={filters.page}
               onPageChange={onPageChange}
