@@ -13,6 +13,7 @@ import Edit from '@/assets/icons/edit.svg';
 import Trash from '@/assets/icons/trash.svg';
 import { socialNetworks } from '@/shared/constants/social-networks';
 import Image from 'next/image';
+import Link from 'next/link';
 
 interface ProfileDetailItemProps<T> {
   item: T;
@@ -45,13 +46,13 @@ export default function ProfileDetailsItem<T>(
         ) : (
           <div className={styles['profile-details-item__no-icon']}></div>
         )}
-        <a
+        <Link
           className={styles['profile-details-item__link']}
           href={item.url}
           target="_blank"
         >
           {item.network}
-        </a>
+        </Link>
       </div>
     );
   }

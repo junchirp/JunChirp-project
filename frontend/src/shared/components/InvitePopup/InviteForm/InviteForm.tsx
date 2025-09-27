@@ -4,8 +4,6 @@ import { ReactElement } from 'react';
 import styles from './InviteForm.module.scss';
 import ProjectDropdown from '@/shared/components/ProjectDropdown/ProjectDropdown';
 import { UserCardInterface } from '@/shared/interfaces/user-card.interface';
-import myProjectsSelector from '@/redux/myProjects/myProjectsSelector';
-import { useAppSelector } from '@/hooks/reduxHooks';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import ProjectRoleDropdown from '@/shared/components/ProjectRoleDropdown/ProjectRoleDropdown';
@@ -13,6 +11,7 @@ import Button from '@/shared/components/Button/Button';
 import { z } from 'zod';
 import { useInviteUserMutation } from '@/api/participationsApi';
 import { useToast } from '@/hooks/useToast';
+import { ProjectCardInterface } from '../../../interfaces/project-card.interface';
 
 const schema = z.object({
   projectId: z.string().nonempty('Поле не може бути порожнім'),
@@ -24,12 +23,12 @@ type FormData = z.infer<typeof schema>;
 
 interface InviteFormProps {
   user: UserCardInterface;
+  myProjects: ProjectCardInterface[];
   onClose: () => void;
 }
 
 export default function InviteForm(props: InviteFormProps): ReactElement {
-  const { user, onClose } = props;
-  const myProjects = useAppSelector(myProjectsSelector.selectMyOwnedProjects);
+  const { user, onClose, myProjects } = props;
   const [invite] = useInviteUserMutation();
   const { showToast, isActive } = useToast();
 
@@ -96,7 +95,7 @@ export default function InviteForm(props: InviteFormProps): ReactElement {
               {...field}
               options={myProjects}
               label="Проєкт"
-              placeholder="Оберіть проєкт"
+              placeholder="Обери проєкт"
               onChange={(value) => {
                 field.onChange(value);
                 setValue('projectRoleId', '');
@@ -113,7 +112,7 @@ export default function InviteForm(props: InviteFormProps): ReactElement {
               options={roleOptions}
               label="Роль"
               placeholder={
-                selectedProject ? 'Оберіть роль' : 'Спочатку оберіть проєкт'
+                selectedProject ? 'Обери роль' : 'Спочатку обери проєкт'
               }
               disabled={!selectedProject}
               allowedRoleTypeIds={allowedRoleTypeIds}

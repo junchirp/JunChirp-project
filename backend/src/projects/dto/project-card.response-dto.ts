@@ -43,6 +43,13 @@ export class ProjectCardResponseDto {
   })
   public readonly ownerId: string;
 
+  @ApiProperty({
+    example: 'logo-url',
+    description: 'Project logo url',
+    type: String,
+  })
+  public readonly logoUrl: string | null;
+
   @ApiProperty({ type: () => ProjectCategoryResponseDto })
   public readonly category: ProjectCategoryResponseDto;
 

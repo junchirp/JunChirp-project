@@ -6,11 +6,11 @@ import styles from './ProjectsCountDropdown.module.scss';
 import Button from '@/shared/components/Button/Button';
 import Up from '@/assets/icons/chevron-up.svg';
 import Down from '@/assets/icons/chevron-down.svg';
-import { ProjectsCountOptionsInterface } from '@/shared/interfaces/projects-count-options.interface';
+import { SelectOptionsInterface } from '../../interfaces/select-options.interface';
 
 interface ProjectsCountDropdownProps extends Partial<ControllerRenderProps> {
   label?: string;
-  options: ProjectsCountOptionsInterface[];
+  options: SelectOptionsInterface[];
   placeholder?: string;
 }
 
@@ -43,7 +43,7 @@ export default function ProjectsCountDropdown({
       document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleSelect = (option: ProjectsCountOptionsInterface): void => {
+  const handleSelect = (option: SelectOptionsInterface): void => {
     onChange?.(option.value);
     setIsOpen(false);
   };

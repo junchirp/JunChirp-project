@@ -20,6 +20,7 @@ import { ParticipationsService } from '../participations/participations.service'
 import { UserParticipationResponseDto } from '../participations/dto/user-participation.response-dto';
 import { DiscordService } from '../discord/discord.service';
 import { UsersService } from '../users/users.service';
+import { ProjectCardResponseDto } from './dto/project-card.response-dto';
 
 interface GetProjectsOptionsInterface {
   userId: string;
@@ -90,11 +91,15 @@ export class ProjectsService {
         include: {
           category: true,
           roles: {
-            where: {
-              userId: null,
-            },
             include: {
               roleType: true,
+              user: {
+                include: {
+                  educations: {
+                    include: { specialization: true },
+                  },
+                },
+              },
             },
           },
         },
@@ -212,7 +217,15 @@ export class ProjectsService {
     return ProjectMapper.toFullResponse(newProject);
   }
 
-  public async getProjectById(id: string): Promise<ProjectResponseDto> {
+  public async getProjectById<T extends boolean>(
+    id: string,
+    withDetails: T,
+  ): Promise<T extends true ? ProjectResponseDto : ProjectCardResponseDto>;
+
+  public async getProjectById(
+    id: string,
+    withDetails: boolean,
+  ): Promise<ProjectResponseDto | ProjectCardResponseDto> {
     try {
       const project = await this.prisma.project.findUniqueOrThrow({
         where: { id },
@@ -236,7 +249,9 @@ export class ProjectsService {
         },
       });
 
-      return ProjectMapper.toFullResponse(project);
+      return withDetails
+        ? ProjectMapper.toFullResponse(project)
+        : ProjectMapper.toCardResponse(project);
     } catch (error) {
       if (error.code === 'P2025') {
         throw new NotFoundException('Project not found');

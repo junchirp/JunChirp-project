@@ -1,14 +1,8 @@
 'use client';
 
+import { UsersFiltersInterface } from '@/shared/interfaces/users-filters.interface';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useMemo } from 'react';
-
-interface UsersFiltersInterface {
-  page: number;
-  limit: number;
-  activeProjectsCount?: number;
-  specializationIds?: string[];
-}
 
 interface UsersFiltersResultInterface {
   filters: UsersFiltersInterface;

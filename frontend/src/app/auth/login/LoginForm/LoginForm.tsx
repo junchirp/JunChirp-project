@@ -22,6 +22,7 @@ import { setHardSkills } from '@/redux/hardSkills/hardSkillsSlice';
 import { setSocials } from '@/redux/socials/socialsSlice';
 import { setSoftSkills } from '@/redux/softSkills/softSkillsSlice';
 import { loginSchema } from '../../../../shared/forms/schemas/loginShema';
+import { useGetMyProjectsQuery } from '../../../../api/usersApi';
 
 type FormData = z.infer<typeof loginSchema>;
 

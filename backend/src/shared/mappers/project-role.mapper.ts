@@ -27,7 +27,14 @@ export class ProjectRoleMapper {
       roleType: ProjectRoleType;
       project: Project & {
         category: ProjectCategory;
-        roles: (ProjectRole & { roleType: ProjectRoleType })[];
+        roles: (ProjectRole & {
+          roleType: ProjectRoleType;
+          user:
+            | (User & {
+                educations: (Education & { specialization: ProjectRoleType })[];
+              })
+            | null;
+        })[];
       };
     },
   ): ProjectRoleWithProjectResponseDto {

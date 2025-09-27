@@ -4,7 +4,6 @@ import { BoardInterface } from '@/shared/interfaces/board.interface';
 
 export interface ProjectInterface extends ProjectCardInterface {
   discordUrl: string;
-  logoUrl: string | null;
   documents: DocumentInterface[];
   boards: BoardInterface[];
 }

@@ -94,7 +94,9 @@ export default function UserItem({
           </Button>
         </div>
       </div>
-      {isModalOpen && <InvitePopup onClose={closeModal} user={user} />}
+      {isModalOpen && (
+        <InvitePopup onClose={closeModal} user={user} myProjects={myProjects} />
+      )}
     </>
   );
 }

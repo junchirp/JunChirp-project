@@ -1,9 +1,11 @@
 import { Participation } from '../types/participation.type';
 import {
+  Education,
   Project,
   ProjectCategory,
   ProjectRole,
   ProjectRoleType,
+  User,
 } from '@prisma/client';
 import { ProjectRoleMapper } from './project-role.mapper';
 import { ProjectParticipationResponseDto } from '../../participations/dto/project-participation.response-dto';
@@ -15,7 +17,16 @@ export class ProjectParticipationMapper {
         roleType: ProjectRoleType;
         project: Project & {
           category: ProjectCategory;
-          roles: (ProjectRole & { roleType: ProjectRoleType })[];
+          roles: (ProjectRole & {
+            roleType: ProjectRoleType;
+            user:
+              | (User & {
+                  educations: (Education & {
+                    specialization: ProjectRoleType;
+                  })[];
+                })
+              | null;
+          })[];
         };
       };
     },

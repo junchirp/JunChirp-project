@@ -23,6 +23,16 @@ export default function ConfirmPasswordResetContent(): ReactElement {
 
     const result = await reqResetPassword({ email });
 
+    if ('data' in result) {
+      showToast({
+        severity: 'success',
+        summary: 'Запит успішно оброблено.',
+        detail: 'Перевір пошту для підтвердження.',
+        life: 3000,
+        actionKey: 'confirm password reset',
+      });
+    }
+
     if ('error' in result) {
       const errorData = result.error as (
         | FetchBaseQueryError

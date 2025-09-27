@@ -46,6 +46,7 @@ import { ParseUUIDv4Pipe } from '../shared/pipes/parse-UUIDv4/parse-UUIDv4.pipe'
 import { Member } from '../auth/decorators/member.decorator';
 import { UserParticipationResponseDto } from '../participations/dto/user-participation.response-dto';
 import { User } from '../auth/decorators/user.decorator';
+import { ProjectCardResponseDto } from './dto/project-card.response-dto';
 
 @User()
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
@@ -154,7 +155,7 @@ export class ProjectsController {
   public async getProjectById(
     @Param('id', ParseUUIDv4Pipe) id: string,
   ): Promise<ProjectResponseDto> {
-    return this.projectsService.getProjectById(id);
+    return this.projectsService.getProjectById(id, true);
   }
 
   @Owner()
@@ -265,5 +266,19 @@ export class ProjectsController {
     @Param('id', ParseUUIDv4Pipe) id: string,
   ): Promise<UserParticipationResponseDto[]> {
     return this.projectsService.getRequests(id);
+  }
+
+  @ApiOperation({ summary: 'Get project card by project id' })
+  @ApiOkResponse({ type: ProjectCardResponseDto })
+  @ApiNotFoundResponse({ description: 'Project not found' })
+  @ApiForbiddenResponse({
+    description:
+      'Access denied: you are not a participant of this project / Access denied: email not confirmed / Access denied: discord not confirmed',
+  })
+  @Get(':id/card')
+  public async getProjectCardById(
+    @Param('id', ParseUUIDv4Pipe) id: string,
+  ): Promise<ProjectCardResponseDto> {
+    return this.projectsService.getProjectById(id, false);
   }
 }

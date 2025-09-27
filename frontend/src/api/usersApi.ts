@@ -1,8 +1,14 @@
 import mainApi from './mainApi';
+import { UsersListInterface } from '../shared/interfaces/users-list.interface';
+import { UsersFiltersInterface } from '../shared/interfaces/users-filters.interface';
+import { ProjectsListInterface } from '../shared/interfaces/projects-list.interface';
+import { UserInterface } from '../shared/interfaces/user.interface';
+import { ProjectsFiltersInterface } from '../shared/interfaces/projects-filters.interface';
+import { ProjectParticipationInterface } from '../shared/interfaces/project-participation.interface';
 
 export const usersApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({
-    getUsers: builder.query({
+    getUsers: builder.query<UsersListInterface, UsersFiltersInterface>({
       query: (params) => {
         const query = new URLSearchParams();
 
@@ -24,7 +30,7 @@ export const usersApi = mainApi.injectEndpoints({
       },
       providesTags: ['users'],
     }),
-    getMyProjects: builder.query({
+    getMyProjects: builder.query<ProjectsListInterface, undefined>({
       query: () => {
         return {
           url: '/users/me/projects?status=active',
@@ -32,14 +38,17 @@ export const usersApi = mainApi.injectEndpoints({
       },
       providesTags: ['my-projects'],
     }),
-    getUserById: builder.query({
+    getUserById: builder.query<UserInterface, string>({
       query: (id: string) => {
         return {
           url: `/users/${id}`,
         };
       },
     }),
-    getUserProjects: builder.query({
+    getUserProjects: builder.query<
+      ProjectsListInterface,
+      { id: string; params: ProjectsFiltersInterface }
+    >({
       query: ({ id, params }) => {
         const query = new URLSearchParams();
         Object.entries(params).forEach(([key, value]) => {
@@ -54,12 +63,30 @@ export const usersApi = mainApi.injectEndpoints({
         };
       },
     }),
+    getMyInvites: builder.query<ProjectParticipationInterface[], undefined>({
+      query: () => {
+        return {
+          url: 'users/me/invites',
+        };
+      },
+      providesTags: ['my-invites'],
+    }),
+    getMyRequests: builder.query<ProjectParticipationInterface[], undefined>({
+      query: () => {
+        return {
+          url: 'users/me/requests',
+        };
+      },
+      providesTags: ['my-requests'],
+    }),
   }),
 });
 
 export const {
   useGetUsersQuery,
-  useLazyGetMyProjectsQuery,
+  useGetMyProjectsQuery,
   useGetUserByIdQuery,
   useGetUserProjectsQuery,
+  useGetMyInvitesQuery,
+  useGetMyRequestsQuery,
 } = usersApi;

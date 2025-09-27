@@ -170,6 +170,13 @@ export class ParticipationsService {
                     roles: {
                       include: {
                         roleType: true,
+                        user: {
+                          include: {
+                            educations: {
+                              include: { specialization: true },
+                            },
+                          },
+                        },
                       },
                     },
                     owner: true,
@@ -430,6 +437,13 @@ export class ParticipationsService {
                 roles: {
                   include: {
                     roleType: true,
+                    user: {
+                      include: {
+                        educations: {
+                          include: { specialization: true },
+                        },
+                      },
+                    },
                   },
                 },
               },
@@ -469,6 +483,13 @@ export class ParticipationsService {
                 roles: {
                   include: {
                     roleType: true,
+                    user: {
+                      include: {
+                        educations: {
+                          include: { specialization: true },
+                        },
+                      },
+                    },
                   },
                 },
               },

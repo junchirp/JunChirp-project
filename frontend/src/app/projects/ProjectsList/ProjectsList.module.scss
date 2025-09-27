@@ -1,0 +1,15 @@
+.projects-list {
+  &__title {
+    font-weight: 600;
+    font-size: 28px;
+    line-height: 1.4;
+    text-align: center;
+  }
+
+  &__list {
+    padding: 40px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+}

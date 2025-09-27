@@ -17,7 +17,14 @@ export class ProjectMapper {
   public static toCardResponse(
     project: Project & {
       category: ProjectCategory;
-      roles: (ProjectRole & { roleType: ProjectRoleType })[];
+      roles: (ProjectRole & {
+        roleType: ProjectRoleType;
+        user:
+          | (User & {
+              educations: (Education & { specialization: ProjectRoleType })[];
+            })
+          | null;
+      })[];
     },
   ): ProjectCardResponseDto {
     return {
@@ -29,8 +36,9 @@ export class ProjectMapper {
       status: project.status,
       createdAt: project.createdAt,
       category: project.category,
+      logoUrl: project.logoUrl ?? '',
       roles: project.roles.map((role) =>
-        ProjectRoleMapper.toBaseResponse(role),
+        ProjectRoleMapper.toUserResponse(role),
       ),
     };
   }

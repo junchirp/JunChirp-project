@@ -26,6 +26,9 @@
   @include meta.load-css('@/shared/components/SupportPopup/SupportPopup.module');
   @include meta.load-css('@/shared/components/Page404/Page404.module');
   @include meta.load-css('@/app/components/HomePage/CallToAction/SocialInvitePopup/SocialInvitePopup.module');
+  @include meta.load-css('@/shared/components/CategoryDropdown/CategoryDropdown.module');
+  @include meta.load-css('@/shared/components/ProjectParticipantsDropdown/ProjectParticipantsDropdown.module');
+  @include meta.load-css('@/shared/components/ProjectStatusDropdown/ProjectStatusDropdown.module');
 }
 
 html,

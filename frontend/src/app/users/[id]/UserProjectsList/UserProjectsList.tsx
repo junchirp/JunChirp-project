@@ -2,7 +2,7 @@ import { ReactElement, useEffect, useState } from 'react';
 import { ProjectCardInterface } from '../../../../shared/interfaces/project-card.interface';
 import { useGetUserProjectsQuery } from '../../../../api/usersApi';
 import styles from './UserProjectsList.module.scss';
-import UserProject from './UserProject/UserProject';
+import UserProjectCard from '../../../../shared/components/UserProjectCard/UserProjectCard';
 import Button from '../../../../shared/components/Button/Button';
 import Image from 'next/image';
 
@@ -51,7 +51,7 @@ export default function UserProjectsList({
   return (
     <div className={styles['user-projects-list']}>
       {allProjects.map((project) => (
-        <UserProject key={project.id} project={project} />
+        <UserProjectCard key={project.id} project={project} />
       ))}
       {hasMoreProjects && (
         <div className={styles['user-projects-list__more']}>
