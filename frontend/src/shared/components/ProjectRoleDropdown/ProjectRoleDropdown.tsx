@@ -1,3 +1,5 @@
+'use client';
+
 import { ReactElement, useEffect, useId, useRef, useState } from 'react';
 import styles from './ProjectRoleDropdown.module.scss';
 import Button from '@/shared/components/Button/Button';

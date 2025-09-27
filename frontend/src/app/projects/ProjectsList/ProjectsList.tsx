@@ -7,14 +7,12 @@ interface ProjectsListProps {
   projects: ProjectCardInterface[];
   invitesProjectsIds: string[];
   requestsProjectsIds: string[];
-  myProjectsIds: string[];
 }
 
 export default function ProjectsList({
   projects,
   invitesProjectsIds,
   requestsProjectsIds,
-  myProjectsIds,
 }: ProjectsListProps): ReactElement {
   return (
     <div className={styles['projects-list']}>
@@ -26,7 +24,6 @@ export default function ProjectsList({
             project={project}
             invitesProjectsIds={invitesProjectsIds}
             requestsProjectsIds={requestsProjectsIds}
-            myProjectsIds={myProjectsIds}
           />
         ))}
       </div>

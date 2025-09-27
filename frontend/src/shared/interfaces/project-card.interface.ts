@@ -1,5 +1,5 @@
-import { ProjectRoleInterface } from '@/shared/interfaces/project-role.interface';
 import { ProjectCategoryInterface } from './project-category.interface';
+import { RoleWithUserInterface } from './role-with-user.interface';
 
 export interface ProjectCardInterface {
   id: string;
@@ -10,6 +10,6 @@ export interface ProjectCardInterface {
   participantsCount: number;
   ownerId: string;
   logoUrl: string | null;
-  roles: ProjectRoleInterface[];
+  roles: RoleWithUserInterface[];
   category: ProjectCategoryInterface;
 }

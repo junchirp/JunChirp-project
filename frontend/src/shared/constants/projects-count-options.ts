@@ -1,6 +1,6 @@
-import { ProjectsCountOptionsInterface } from '@/shared/interfaces/projects-count-options.interface';
+import { SelectOptionsInterface } from '../interfaces/select-options.interface';
 
-export const projectsCountOptions: ProjectsCountOptionsInterface[] = [
+export const projectsCountOptions: SelectOptionsInterface[] = [
   {
     id: '-1',
     label: 'Всі',

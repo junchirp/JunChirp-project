@@ -1,25 +1,42 @@
-import { ReactElement } from 'react';
+'use client';
+
+import { Fragment, ReactElement } from 'react';
 import styles from './ProjectCard.module.scss';
 import { ProjectCardInterface } from '@/shared/interfaces/project-card.interface';
 import Button from '../../../../shared/components/Button/Button';
 import Image from 'next/image';
+import { useAppSelector } from '../../../../hooks/reduxHooks';
+import authSelector from '../../../../redux/auth/authSelector';
+import { membersPipe } from '../../../../shared/utils/membersPipe';
+import { datePipe } from '../../../../shared/utils/datePipe';
+import { useRouter } from 'next/navigation';
 
 interface ProjectCardProps {
   project: ProjectCardInterface;
   invitesProjectsIds: string[];
   requestsProjectsIds: string[];
-  myProjectsIds: string[];
 }
 
 export default function ProjectCard({
   project,
   invitesProjectsIds,
   requestsProjectsIds,
-  myProjectsIds,
 }: ProjectCardProps): ReactElement {
+  const router = useRouter();
+  const user = useAppSelector(authSelector.selectUser);
   const isInvite = invitesProjectsIds.includes(project.id);
   const isRequest = requestsProjectsIds.includes(project.id);
-  const isMyProject = myProjectsIds.includes(project.id);
+  const vacantRolesNames = project.roles
+    .filter((role) => !role.user)
+    .map((role) => role.roleType.roleName);
+  const members = project.roles
+    .map((role) => role.user)
+    .filter((member) => member !== null);
+  const isMyProject = members.some((member) => member.id === user?.id);
+
+  const goProject = (): void => {
+    router.push(`/projects/${project.id}`);
+  };
 
   return (
     <div className={styles['project-card']}>
@@ -64,38 +81,59 @@ export default function ProjectCard({
         </p>
         <div className={styles['project-card__footer']}>
           <div className={styles['project-card__team']}>
-            <div className={styles['project-card__members']}>111</div>
-            <div className={styles['project-card__created']}>
-              {project.createdAt.toString()}
+            <div className={styles['project-card__members']}>
+              <Image
+                src="/images/users-2.svg"
+                alt="users"
+                width={24}
+                height={24}
+              />
+              <span className={styles['project-card__team-text']}>
+                {membersPipe(members.length)}
+              </span>
+            </div>
+            <span className={styles['project-card__team-text']}>
+              {datePipe(project.createdAt.toString())}
+            </span>
+          </div>
+          <div className={styles['project-card__vacant-roles']}>
+            <p className={styles['project-card__label']}>В пошуку:</p>
+            <div className={styles['project-card__roles']}>
+              {vacantRolesNames.map((role, index) => (
+                <Fragment key={index}>
+                  {index !== 0 && <span>/</span>}
+                  <span>{role}</span>
+                </Fragment>
+              ))}
             </div>
           </div>
         </div>
       </div>
-      <div className={styles['project-card__actions']}>
-        {isMyProject && (
-          <Button color="green" variant="secondary-frame">
-            Перейти в кабінет проєкту
-          </Button>
-        )}
-        {isRequest && (
-          <Button color="green" disabled>
-            Запит відправлено
-          </Button>
-        )}
-        {isInvite && (
-          <>
-            <Button color="red" variant="secondary-frame">
-              Відхилити
+      {(isMyProject || project.status === 'active') && (
+        <div className={styles['project-card__actions']}>
+          {isMyProject && (
+            <Button color="green" variant="secondary-frame" onClick={goProject}>
+              Перейти в кабінет проєкту
             </Button>
-            <Button color="green">Прийняти</Button>
-          </>
-        )}
-        {!isMyProject && !isInvite && !isRequest && (
-          <Button color="green" disabled={project.status === 'done'}>
-            Подати заявку
-          </Button>
-        )}
-      </div>
+          )}
+          {isRequest && (
+            <Button color="green" disabled>
+              Заявку відправлено
+            </Button>
+          )}
+          {isInvite && (
+            <>
+              <Button color="red" variant="secondary-frame">
+                Відхилити
+              </Button>
+              <Button color="green">Прийняти</Button>
+            </>
+          )}
+          {!isMyProject && !isInvite && !isRequest && (
+            <Button color="green">Подати заявку</Button>
+          )}
+        </div>
+      )}
     </div>
   );
 }

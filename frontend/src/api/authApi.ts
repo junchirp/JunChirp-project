@@ -72,6 +72,7 @@ export const authApi = mainApi.injectEndpoints({
       }),
       invalidatesTags: [
         'auth',
+        'my-projects',
         { type: 'soft-skills', id: 'LIST' },
         { type: 'hard-skills', id: 'LIST' },
         { type: 'educations', id: 'LIST' },

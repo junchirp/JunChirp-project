@@ -6,7 +6,6 @@ import styles from './page.module.scss';
 import Image from 'next/image';
 import MyProjects from './MyProjects/MyProjects';
 import { useGetProjectsQuery } from '../../api/projectsApi';
-import { useUsersFilters } from '../../hooks/useUsersFilters';
 import { useToast } from '../../hooks/useToast';
 import Pagination from '../../shared/components/Pagination/Pagination';
 import ListSkeleton from '../../shared/components/ListSkeleton/ListSkeleton';
@@ -16,9 +15,11 @@ import {
   useGetMyProjectsQuery,
   useGetMyRequestsQuery,
 } from '../../api/usersApi';
+import ProjectsFilters from './ProjectsFilters/ProjectsFilters';
+import { useProjectsFilters } from '../../hooks/useProjectsFilters';
 
 export default function Projects(): ReactElement {
-  const { filters, updateFilters } = useUsersFilters();
+  const { filters, updateFilters } = useProjectsFilters();
   const { showToast } = useToast();
 
   const onPageChange = (page: number): void => {
@@ -43,8 +44,6 @@ export default function Projects(): ReactElement {
   const requestsProjectsIds = requests.map(
     (request) => request.projectRole.project.id,
   );
-  const myProjectsIds =
-    myProjectsList?.projects.map((project) => project.id) ?? [];
 
   const isLoading =
     listLoading || requestsLoading || invitesLoading || myProjectsLoading;
@@ -81,7 +80,7 @@ export default function Projects(): ReactElement {
           />
         </div>
         <div className={styles.projects__container}>
-          <div>TODO: projects filter</div>
+          <ProjectsFilters />
           {myProjectsLoading ? (
             <ListSkeleton height={341} />
           ) : myProjectsList ? (
@@ -94,7 +93,6 @@ export default function Projects(): ReactElement {
               projects={list.projects}
               invitesProjectsIds={invitesProjectsIds}
               requestsProjectsIds={requestsProjectsIds}
-              myProjectsIds={myProjectsIds}
             />
           ) : null}
           {!!list?.projects.length && (

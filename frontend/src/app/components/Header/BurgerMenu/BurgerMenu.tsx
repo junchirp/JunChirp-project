@@ -6,20 +6,14 @@ import Menu from '@/assets/icons/menu.svg';
 import Close from '@/assets/icons/close.svg';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useLogoutMutation } from '@/api/authApi';
-import { setEducations } from '@/redux/educations/educationsSlice';
-import { useAppDispatch } from '@/hooks/reduxHooks';
-import { setHardSkills } from '@/redux/hardSkills/hardSkillsSlice';
-import { setSocials } from '@/redux/socials/socialsSlice';
-import { setSoftSkills } from '@/redux/softSkills/softSkillsSlice';
+import { useLogout } from '../../../../hooks/useLogout';
 
 export default function BurgerMenu(): ReactElement {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLElement>(null);
-  const [logout] = useLogoutMutation();
-  const dispatch = useAppDispatch();
+  const { logout } = useLogout();
 
   const toggleMenu = (): void => setIsOpen((prev) => !prev);
   const closeMenu = (): void => setIsOpen(false);
@@ -53,11 +47,7 @@ export default function BurgerMenu(): ReactElement {
   };
 
   const handleLogout = (): void => {
-    logout(undefined);
-    dispatch(setEducations([]));
-    dispatch(setSoftSkills([]));
-    dispatch(setHardSkills([]));
-    dispatch(setSocials([]));
+    logout();
     closeMenu();
   };
 

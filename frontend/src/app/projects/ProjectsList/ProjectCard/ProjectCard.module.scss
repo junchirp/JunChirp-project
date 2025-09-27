@@ -97,4 +97,48 @@
     gap: 8px;
     align-items: stretch;
   }
+
+  &__team {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  &__members {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  &__team-text {
+    font-size: 14px;
+    line-height: 1.2;
+    color: variables.$gray-4;
+  }
+
+  &__vacant-roles {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+
+  &__label {
+    border-radius: 8px;
+    padding: 4px 8px;
+    background-color: variables.$gray-1;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 1.4;
+    white-space: nowrap;
+  }
+
+  &__roles {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 16px;
+    line-height: 1.4;
+  }
 }

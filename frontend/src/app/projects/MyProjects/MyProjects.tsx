@@ -23,11 +23,7 @@ export default function MyProjects({
         {!!myProjects.length && (
           <div className={styles['my-projects__list']}>
             {myProjects.map((project) => (
-              <UserProjectCard
-                key={project.id}
-                project={project}
-                detailsLevel="full"
-              />
+              <UserProjectCard key={project.id} project={project} />
             ))}
           </div>
         )}

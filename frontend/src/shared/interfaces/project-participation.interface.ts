@@ -1,7 +1,7 @@
-import { ProjectRoleWithProjectInterface } from './project-role-with-project.interface';
+import { RoleWithProjectInterface } from './role-with-project.interface';
 
 export interface ProjectParticipationInterface {
   id: string;
   userId: string;
-  projectRole: ProjectRoleWithProjectInterface;
+  projectRole: RoleWithProjectInterface;
 }

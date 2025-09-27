@@ -1,4 +1,5 @@
 import mainApi from './mainApi';
+import { ProjectCategoryInterface } from '../shared/interfaces/project-category.interface';
 
 export const projectsApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -19,7 +20,14 @@ export const projectsApi = mainApi.injectEndpoints({
       },
       providesTags: ['projects'],
     }),
+    getCategories: builder.query<ProjectCategoryInterface[], undefined>({
+      query: () => {
+        return {
+          url: '/projects/categories',
+        };
+      },
+    }),
   }),
 });
 
-export const { useGetProjectsQuery } = projectsApi;
+export const { useGetProjectsQuery, useGetCategoriesQuery } = projectsApi;

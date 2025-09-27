@@ -2,26 +2,26 @@
 
 import { useState, useId, useRef, useEffect, ReactElement } from 'react';
 import { ControllerRenderProps } from 'react-hook-form';
-import styles from './ProjectsCountDropdown.module.scss';
+import styles from './ProjectStatusDropdown.module.scss';
 import Button from '@/shared/components/Button/Button';
 import Up from '@/assets/icons/chevron-up.svg';
 import Down from '@/assets/icons/chevron-down.svg';
 import { SelectOptionsInterface } from '../../interfaces/select-options.interface';
 
-interface ProjectsCountDropdownProps extends Partial<ControllerRenderProps> {
+interface ProjectsStatusDropdownProps extends Partial<ControllerRenderProps> {
   label?: string;
   options: SelectOptionsInterface[];
   placeholder?: string;
 }
 
-export default function ProjectsCountDropdown({
+export default function ProjectStatusDropdown({
   label,
   options,
   value,
   onChange,
   onBlur,
   placeholder = '',
-}: ProjectsCountDropdownProps): ReactElement {
+}: ProjectsStatusDropdownProps): ReactElement {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedLabel, setSelectedLabel] = useState<string | null>(null);
   const id = useId();
@@ -49,11 +49,11 @@ export default function ProjectsCountDropdown({
   };
 
   return (
-    <div className={styles['projects-count-dropdown']} ref={ref}>
-      <div className={styles['projects-count-dropdown__field']}>
+    <div className={styles['project-status-dropdown']} ref={ref}>
+      <div className={styles['project-status-dropdown__field']}>
         {label && (
           <label
-            className={styles['projects-count-dropdown__label']}
+            className={styles['project-status-dropdown__label']}
             htmlFor={id}
           >
             {label}
@@ -62,7 +62,7 @@ export default function ProjectsCountDropdown({
         <Button
           type="button"
           id={id}
-          className={styles['projects-count-dropdown__button']}
+          className={styles['project-status-dropdown__button']}
           fullWidth
           onClick={() => setIsOpen((prev) => !prev)}
           onBlur={onBlur}
@@ -70,22 +70,22 @@ export default function ProjectsCountDropdown({
           icon={isOpen ? <Up /> : <Down />}
         >
           {selectedLabel ? (
-            <span className={styles['projects-count-dropdown__selected']}>
+            <span className={styles['project-status-dropdown__selected']}>
               {selectedLabel}
             </span>
           ) : (
-            <span className={styles['projects-count-dropdown__selected']}>
+            <span className={styles['project-status-dropdown__selected']}>
               {placeholder}
             </span>
           )}
         </Button>
       </div>
       {isOpen && (
-        <ul className={styles['projects-count-dropdown__list']}>
+        <ul className={styles['project-status-dropdown__list']}>
           {options.map((option) => (
             <li
               key={option.id}
-              className={styles['projects-count-dropdown__item']}
+              className={styles['project-status-dropdown__item']}
               onClick={() => handleSelect(option)}
             >
               {option.label}

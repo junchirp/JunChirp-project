@@ -91,11 +91,15 @@ export class ProjectsService {
         include: {
           category: true,
           roles: {
-            where: {
-              userId: null,
-            },
             include: {
               roleType: true,
+              user: {
+                include: {
+                  educations: {
+                    include: { specialization: true },
+                  },
+                },
+              },
             },
           },
         },

@@ -17,6 +17,8 @@ interface ProjectsFiltersResultInterface {
 export const useProjectsFilters = (): ProjectsFiltersResultInterface => {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const min = searchParams.get('minParticipants');
+  const max = searchParams.get('maxParticipants');
 
   const filters = useMemo(() => {
     return {
@@ -24,14 +26,8 @@ export const useProjectsFilters = (): ProjectsFiltersResultInterface => {
       limit: Number(searchParams.get('limit') ?? 5),
       status: (searchParams.get('status') as 'active' | 'done') ?? undefined,
       categoryId: searchParams.get('categoryId') ?? undefined,
-      minParticipants:
-        searchParams.get('minParticipants') !== undefined
-          ? Number(searchParams.get('minParticipants'))
-          : undefined,
-      maxParticipants:
-        searchParams.get('maxParticipants') !== undefined
-          ? Number(searchParams.get('maxParticipants'))
-          : undefined,
+      minParticipants: min !== null ? Number(min) : undefined,
+      maxParticipants: max !== null ? Number(max) : undefined,
     };
   }, [searchParams]);
 
@@ -41,7 +37,12 @@ export const useProjectsFilters = (): ProjectsFiltersResultInterface => {
     const current = new URLSearchParams(searchParams.toString());
 
     Object.entries(newParams).forEach(([key, value]) => {
-      if (value === undefined || value === null || value === '') {
+      if (
+        value === undefined ||
+        value === null ||
+        value === '' ||
+        value === 0
+      ) {
         current.delete(key);
       } else {
         current.set(key, String(value));
