@@ -95,7 +95,7 @@ export default function InviteForm(props: InviteFormProps): ReactElement {
               {...field}
               options={myProjects}
               label="Проєкт"
-              placeholder="Оберіть проєкт"
+              placeholder="Обери проєкт"
               onChange={(value) => {
                 field.onChange(value);
                 setValue('projectRoleId', '');
@@ -112,7 +112,7 @@ export default function InviteForm(props: InviteFormProps): ReactElement {
               options={roleOptions}
               label="Роль"
               placeholder={
-                selectedProject ? 'Оберіть роль' : 'Спочатку оберіть проєкт'
+                selectedProject ? 'Обери роль' : 'Спочатку обери проєкт'
               }
               disabled={!selectedProject}
               allowedRoleTypeIds={allowedRoleTypeIds}

@@ -46,7 +46,7 @@ export default function Developers(): ReactElement {
   useEffect(() => {
     const t = setInterval(() => {
       next();
-    }, 6000);
+    }, 10000);
     return (): void => clearInterval(t);
   }, [index]);
 

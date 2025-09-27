@@ -11,6 +11,7 @@ import {
 import { socialNetworks } from '@/shared/constants/social-networks';
 import styles from './UserDetailsItem.module.scss';
 import Image from 'next/image';
+import Link from 'next/link';
 
 interface UserDetailItemProps<T> {
   item: T;
@@ -41,13 +42,13 @@ export default function UserDetailsItem<T>({
           ) : (
             <div className={styles['user-details-item__no-icon']}></div>
           )}
-          <a
+          <Link
             className={styles['user-details-item__link']}
             href={item.url}
             target="_blank"
           >
             {item.network}
-          </a>
+          </Link>
         </div>
       );
     } else if (isEmailWithId(item)) {
@@ -60,9 +61,12 @@ export default function UserDetailsItem<T>({
             width={20}
             height={20}
           />
-          <span className={styles['user-details-item__link']}>
+          <Link
+            className={styles['user-details-item__link']}
+            href={`mailto:${item.email}`}
+          >
             {item.email}
-          </span>
+          </Link>
         </div>
       );
     }
