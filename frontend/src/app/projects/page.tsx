@@ -17,10 +17,13 @@ import {
 } from '../../api/usersApi';
 import ProjectsFilters from './ProjectsFilters/ProjectsFilters';
 import { useProjectsFilters } from '../../hooks/useProjectsFilters';
+import { useAppSelector } from '../../hooks/reduxHooks';
+import authSelector from '../../redux/auth/authSelector';
 
 export default function Projects(): ReactElement {
   const { filters, updateFilters } = useProjectsFilters();
   const { showToast } = useToast();
+  const user = useAppSelector(authSelector.selectUser);
 
   const onPageChange = (page: number): void => {
     updateFilters({ page });
@@ -32,15 +35,18 @@ export default function Projects(): ReactElement {
     isError: listError,
   } = useGetProjectsQuery(filters);
   const { data: requests = [], isLoading: requestsLoading } =
-    useGetMyRequestsQuery(undefined);
+    useGetMyRequestsQuery(user ? { userId: user.id } : undefined, {
+      skip: !user,
+    });
   const { data: invites = [], isLoading: invitesLoading } =
-    useGetMyInvitesQuery(undefined);
+    useGetMyInvitesQuery(user ? { userId: user.id } : undefined, {
+      skip: !user,
+    });
   const { data: myProjectsList, isLoading: myProjectsLoading } =
-    useGetMyProjectsQuery(undefined);
+    useGetMyProjectsQuery(user ? { userId: user.id } : undefined, {
+      skip: !user,
+    });
 
-  const invitesProjectsIds = invites.map(
-    (invite) => invite.projectRole.project.id,
-  );
   const requestsProjectsIds = requests.map(
     (request) => request.projectRole.project.id,
   );
@@ -91,7 +97,7 @@ export default function Projects(): ReactElement {
           ) : list?.projects.length ? (
             <ProjectsList
               projects={list.projects}
-              invitesProjectsIds={invitesProjectsIds}
+              invites={invites}
               requestsProjectsIds={requestsProjectsIds}
             />
           ) : null}

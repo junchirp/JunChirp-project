@@ -17,7 +17,11 @@ export default function MyProjects({
     <div className={styles['my-projects']}>
       <h3 className={styles['my-projects__title']}>Мої проєкти</h3>
       <div className={styles['my-projects__list-wrapper']}>
-        <Button className={styles['my-projects__button']} color="green">
+        <Button
+          className={styles['my-projects__button']}
+          color="green"
+          disabled={myProjects.length >= 2}
+        >
           Створити проєкт
         </Button>
         {!!myProjects.length && (

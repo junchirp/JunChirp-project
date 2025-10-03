@@ -143,21 +143,6 @@ export class ProjectsController {
     return this.projectsService.closeProject(id);
   }
 
-  @Member()
-  @ApiOperation({ summary: 'Get project by id' })
-  @ApiOkResponse({ type: ProjectResponseDto })
-  @ApiNotFoundResponse({ description: 'Project not found' })
-  @ApiForbiddenResponse({
-    description:
-      'Access denied: you are not a participant of this project / Access denied: email not confirmed / Access denied: discord not confirmed',
-  })
-  @Get(':id')
-  public async getProjectById(
-    @Param('id', ParseUUIDv4Pipe) id: string,
-  ): Promise<ProjectResponseDto> {
-    return this.projectsService.getProjectById(id, true);
-  }
-
   @Owner()
   @ApiOperation({ summary: 'Delete project' })
   @ApiNoContentResponse()
@@ -280,5 +265,20 @@ export class ProjectsController {
     @Param('id', ParseUUIDv4Pipe) id: string,
   ): Promise<ProjectCardResponseDto> {
     return this.projectsService.getProjectById(id, false);
+  }
+
+  @Member()
+  @ApiOperation({ summary: 'Get project by id' })
+  @ApiOkResponse({ type: ProjectResponseDto })
+  @ApiNotFoundResponse({ description: 'Project not found' })
+  @ApiForbiddenResponse({
+    description:
+      'Access denied: you are not a participant of this project / Access denied: email not confirmed / Access denied: discord not confirmed',
+  })
+  @Get(':id')
+  public async getProjectById(
+    @Param('id', ParseUUIDv4Pipe) id: string,
+  ): Promise<ProjectResponseDto> {
+    return this.projectsService.getProjectById(id, true);
   }
 }

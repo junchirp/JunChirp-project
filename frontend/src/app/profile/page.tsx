@@ -201,58 +201,56 @@ export default function Profile(): ReactElement | null {
     setBanner(false);
   };
 
-  if (!user) {
-    return null;
-  }
-
   return (
     <AuthGuard requireVerified>
-      <div className={styles.profile}>
-        <div className={styles.profile__details}>
-          <ProfileBaseInfo user={user} handleEditName={handleEditName} />
-          <ProfileDetails<SocialInterface>
-            title="Соцмережі"
-            isEditable
-            items={socials}
-            maxSize={5}
-            handleAddItem={handleAddSocial}
-            handleEditItem={handleEditSocial}
-            handleDeleteItem={openModal}
-          />
-          <ProfileDetails<EducationInterface>
-            title="Освіта"
-            isEditable
-            items={educations}
-            maxSize={5}
-            handleAddItem={handleAddEducation}
-            handleEditItem={handleEditEducation}
-            handleDeleteItem={openModal}
-          />
-          <ProfileDetails<HardSkillInterface>
-            title="Хард скіли"
-            items={hardSkills}
-            maxSize={20}
-            handleAddItem={handleAddHardSkill}
-            handleDeleteItem={openModal}
-          />
-          <ProfileDetails<SoftSkillInterface>
-            title="Софт скіли"
-            items={softSkills}
-            maxSize={20}
-            handleAddItem={handleAddSoftSkill}
-            handleDeleteItem={openModal}
-          />
+      {user && (
+        <div className={styles.profile}>
+          <div className={styles.profile__details}>
+            <ProfileBaseInfo user={user} handleEditName={handleEditName} />
+            <ProfileDetails<SocialInterface>
+              title="Соцмережі"
+              isEditable
+              items={socials}
+              maxSize={5}
+              handleAddItem={handleAddSocial}
+              handleEditItem={handleEditSocial}
+              handleDeleteItem={openModal}
+            />
+            <ProfileDetails<EducationInterface>
+              title="Освіта"
+              isEditable
+              items={educations}
+              maxSize={5}
+              handleAddItem={handleAddEducation}
+              handleEditItem={handleEditEducation}
+              handleDeleteItem={openModal}
+            />
+            <ProfileDetails<HardSkillInterface>
+              title="Хард скіли"
+              items={hardSkills}
+              maxSize={20}
+              handleAddItem={handleAddHardSkill}
+              handleDeleteItem={openModal}
+            />
+            <ProfileDetails<SoftSkillInterface>
+              title="Софт скіли"
+              items={softSkills}
+              maxSize={20}
+              handleAddItem={handleAddSoftSkill}
+              handleDeleteItem={openModal}
+            />
+          </div>
+          <div className={styles.profile__actions} ref={formRef}>
+            <ProfileAction action={action} />
+            <ProfileActionForm
+              user={user}
+              action={action}
+              allField={allFilled}
+              onCancel={handleCancel}
+            />
+          </div>
         </div>
-        <div className={styles.profile__actions} ref={formRef}>
-          <ProfileAction action={action} />
-          <ProfileActionForm
-            user={user}
-            action={action}
-            allField={allFilled}
-            onCancel={handleCancel}
-          />
-        </div>
-      </div>
+      )}
       {isModalOpen && deletedItem && isSocial(deletedItem.item) && (
         <DeleteItemPopup<SocialInterface>
           item={deletedItem.item}

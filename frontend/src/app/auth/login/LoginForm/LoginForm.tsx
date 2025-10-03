@@ -8,9 +8,8 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLoginMutation } from '@/api/authApi';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import React, { ReactElement } from 'react';
-import { UserInterface } from '@/shared/interfaces/user.interface';
 import { useToast } from '@/hooks/useToast';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
@@ -22,7 +21,6 @@ import { setHardSkills } from '@/redux/hardSkills/hardSkillsSlice';
 import { setSocials } from '@/redux/socials/socialsSlice';
 import { setSoftSkills } from '@/redux/softSkills/softSkillsSlice';
 import { loginSchema } from '../../../../shared/forms/schemas/loginShema';
-import { useGetMyProjectsQuery } from '../../../../api/usersApi';
 
 type FormData = z.infer<typeof loginSchema>;
 
@@ -42,6 +40,7 @@ export default function LoginForm(): ReactElement {
   const [loadRoles] = useLazyGetProjectRolesListQuery();
   const support = useSupport();
   const dispatch = useAppDispatch();
+  const searchParams = useSearchParams();
 
   const onSubmit = async (data: FormData): Promise<void> => {
     if (isActive('login')) {
@@ -56,6 +55,21 @@ export default function LoginForm(): ReactElement {
       dispatch(setSoftSkills(user.softSkills));
       dispatch(setHardSkills(user.hardSkills));
       dispatch(setSocials(user.socials));
+
+      if (user) {
+        const next = searchParams.get('next');
+        const isSafeNext =
+          next && next.startsWith('/') && !next.startsWith('//');
+
+        if (isSafeNext) {
+          router.replace(next);
+        } else if (user.isVerified) {
+          loadRoles(undefined);
+          router.replace('/');
+        } else {
+          router.replace('/confirm-email?type=login');
+        }
+      }
     }
 
     if ('error' in result) {
@@ -152,15 +166,6 @@ export default function LoginForm(): ReactElement {
         actionKey: 'login',
       });
       return;
-    }
-
-    const user: UserInterface = result.data;
-
-    if (user.isVerified) {
-      await loadRoles(undefined);
-      router.push('/');
-    } else {
-      router.push('/confirm-email?type=login');
     }
   };
 
