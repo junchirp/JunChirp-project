@@ -2,16 +2,17 @@ import { ReactElement } from 'react';
 import styles from './ProjectsList.module.scss';
 import { ProjectCardInterface } from '../../../shared/interfaces/project-card.interface';
 import ProjectCard from './ProjectCard/ProjectCard';
+import { ProjectParticipationInterface } from '../../../shared/interfaces/project-participation.interface';
 
 interface ProjectsListProps {
   projects: ProjectCardInterface[];
-  invitesProjectsIds: string[];
+  invites: ProjectParticipationInterface[];
   requestsProjectsIds: string[];
 }
 
 export default function ProjectsList({
   projects,
-  invitesProjectsIds,
+  invites,
   requestsProjectsIds,
 }: ProjectsListProps): ReactElement {
   return (
@@ -22,7 +23,7 @@ export default function ProjectsList({
           <ProjectCard
             key={project.id}
             project={project}
-            invitesProjectsIds={invitesProjectsIds}
+            invites={invites}
             requestsProjectsIds={requestsProjectsIds}
           />
         ))}

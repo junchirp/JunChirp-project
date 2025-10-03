@@ -14,13 +14,23 @@ import Page404 from '../../../shared/components/Page404/Page404';
 import ProjectsCount from './ProjectsCount/ProjectsCount';
 import UserProjectsList from './UserProjectsList/UserProjectsList';
 import InvitePopup from '../../../shared/components/InvitePopup/InvitePopup';
+import { useAppSelector } from '../../../hooks/reduxHooks';
+import authSelector from '../../../redux/auth/authSelector';
 
 export default function User(): ReactElement {
   const params = useParams();
   const userId = params.id as string;
   const [isModalOpen, setModalOpen] = useState(false);
   const { data: user, isLoading } = useGetUserByIdQuery(userId);
-  const { data: myProjectsList } = useGetMyProjectsQuery(undefined);
+  const authUser = useAppSelector(authSelector.selectUser);
+  const { data: myProjectsList } = useGetMyProjectsQuery(
+    authUser ? { userId: authUser.id } : undefined,
+    { skip: !authUser },
+  );
+  const myProjects =
+    myProjectsList?.projects.filter(
+      (project) => project.ownerId === authUser?.id,
+    ) ?? [];
 
   const closeModal = (): void => setModalOpen(false);
   const openModal = (): void => setModalOpen(true);
@@ -76,7 +86,7 @@ export default function User(): ReactElement {
           <InvitePopup
             onClose={closeModal}
             user={user}
-            myProjects={myProjectsList?.projects ?? []}
+            myProjects={myProjects}
           />
         )}
       </AuthGuard>

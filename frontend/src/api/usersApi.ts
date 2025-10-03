@@ -30,7 +30,10 @@ export const usersApi = mainApi.injectEndpoints({
       },
       providesTags: ['users'],
     }),
-    getMyProjects: builder.query<ProjectsListInterface, undefined>({
+    getMyProjects: builder.query<
+      ProjectsListInterface,
+      { userId: string } | undefined
+    >({
       query: () => {
         return {
           url: '/users/me/projects?status=active',
@@ -63,7 +66,10 @@ export const usersApi = mainApi.injectEndpoints({
         };
       },
     }),
-    getMyInvites: builder.query<ProjectParticipationInterface[], undefined>({
+    getMyInvites: builder.query<
+      ProjectParticipationInterface[],
+      { userId: string } | undefined
+    >({
       query: () => {
         return {
           url: 'users/me/invites',
@@ -71,13 +77,27 @@ export const usersApi = mainApi.injectEndpoints({
       },
       providesTags: ['my-invites'],
     }),
-    getMyRequests: builder.query<ProjectParticipationInterface[], undefined>({
+    getMyRequests: builder.query<
+      ProjectParticipationInterface[],
+      { userId: string } | undefined
+    >({
       query: () => {
         return {
           url: 'users/me/requests',
         };
       },
       providesTags: ['my-requests'],
+    }),
+    getMyInviteById: builder.query<
+      ProjectParticipationInterface,
+      { inviteId: string; userId: string | undefined }
+    >({
+      query: ({ inviteId }) => {
+        return {
+          url: `/users/me/invites/${inviteId}`,
+        };
+      },
+      providesTags: ['my-invites'],
     }),
   }),
 });
@@ -89,4 +109,5 @@ export const {
   useGetUserProjectsQuery,
   useGetMyInvitesQuery,
   useGetMyRequestsQuery,
+  useGetMyInviteByIdQuery,
 } = usersApi;

@@ -1,32 +1,29 @@
 @use '@/assets/styles/variables';
 
-.project-card {
+.invited-project-card {
   padding: 40px;
-  border-radius: 32px;
-  background-color: variables.$gray-5;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: space-between;
-  gap: 40px;
-  min-width: 0;
+  min-height: calc(100vh - 380px);
 
-  &__actions {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
+  &__skeleton {
+    width: 100%;
+    height: 100%;
+    animation: pulse 1.2s ease-in-out infinite;
+    border-radius: 32px;
+    background-color: variables.$gray-1;
   }
 
-  &__info {
+  &__card {
+    width: 100%;
+    border-radius: 32px;
+    background-color: variables.$gray-1;
+    padding: 80px 40px;
     display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 24px;
+    gap: 32px;
   }
 
   &__image-wrapper {
     position: relative;
-    width: 180px;
+    width: 236px;
     border-radius: 12px;
 
     &--empty {
@@ -34,8 +31,8 @@
       justify-content: center;
       align-items: center;
       background-color: variables.$gray-3;
-      min-width: 180px;
-      height: 180px;
+      min-width: 236px;
+      height: 236px;
     }
   }
 
@@ -44,26 +41,35 @@
     border-radius: 12px;
   }
 
-  &__header {
-    display: flex;
-    gap: 20px;
-  }
-
-  &__title-wrapper {
+  &__content {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    justify-content: stretch;
+    gap: 32px;
     width: 100%;
   }
 
+  &__info {
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    gap: 24px;
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    align-items: flex-start;
+  }
+
   &__status {
-    align-self: flex-end;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 1;
+    color: variables.$white-2;
     border-radius: 4px;
     padding: 4px;
-    font-weight: 600;
-    font-size: 16px;
-    line-height: 1.4;
-    color: variables.$white-2;
 
     &--active {
       background-color: variables.$green-2;
@@ -76,18 +82,18 @@
 
   &__title {
     font-weight: 600;
-    font-size: 28px;
-    line-height: 1.4;
+    font-size: 32px;
+    line-height: 1.2;
   }
 
   &__description {
-    font-size: 16px;
+    font-size: 20px;
     line-height: 1.4;
   }
 
   &__category {
     font-weight: 500;
-    font-size: 16px;
+    font-size: 20px;
     line-height: 1.4;
   }
 
@@ -114,7 +120,7 @@
   &__team-text {
     font-size: 14px;
     line-height: 1.2;
-    color: variables.$gray-4;
+    color: variables.$gray-6;
   }
 
   &__vacant-roles {
@@ -141,5 +147,23 @@
     flex-wrap: wrap;
     font-size: 16px;
     line-height: 1.4;
+
+    &--current {
+      color: variables.$green-2;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: 32px;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
   }
 }

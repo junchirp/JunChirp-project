@@ -817,4 +817,11 @@ export class UsersService {
       throw error;
     }
   }
+
+  public async getInviteById(
+    id: string,
+    userId: string,
+  ): Promise<ProjectParticipationResponseDto> {
+    return this.participationsService.getInviteWithProjectById(id, userId);
+  }
 }

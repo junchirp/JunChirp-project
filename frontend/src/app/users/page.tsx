@@ -11,10 +11,13 @@ import { useGetMyProjectsQuery, useGetUsersQuery } from '@/api/usersApi';
 import ListSkeleton from '../../shared/components/ListSkeleton/ListSkeleton';
 import { useToast } from '@/hooks/useToast';
 import Pagination from '@/shared/components/Pagination/Pagination';
+import { useAppSelector } from '../../hooks/reduxHooks';
+import authSelector from '../../redux/auth/authSelector';
 
 export default function Users(): ReactElement {
   const { filters, updateFilters } = useUsersFilters();
   const { showToast } = useToast();
+  const user = useAppSelector(authSelector.selectUser);
 
   const onPageChange = (page: number): void => {
     updateFilters({ page });
@@ -26,7 +29,13 @@ export default function Users(): ReactElement {
     isError,
   } = useGetUsersQuery(filters);
   const { data: myProjectsList, isLoading: myProjectsLoading } =
-    useGetMyProjectsQuery(undefined);
+    useGetMyProjectsQuery(user ? { userId: user.id } : undefined, {
+      skip: !user,
+    });
+  const myProjects =
+    myProjectsList?.projects.filter(
+      (project) => project.ownerId === user?.id,
+    ) ?? [];
 
   useEffect(() => {
     if (isError) {
@@ -78,10 +87,7 @@ export default function Users(): ReactElement {
           {usersLoading || myProjectsLoading ? (
             <ListSkeleton height={288} lines={10} />
           ) : usersList?.users.length ? (
-            <UsersList
-              users={usersList.users}
-              myProjects={myProjectsList?.projects ?? []}
-            />
+            <UsersList users={usersList.users} myProjects={myProjects} />
           ) : null}
           {!!usersList?.users.length && (
             <Pagination
