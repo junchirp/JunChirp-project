@@ -72,7 +72,7 @@ export default function InvitedProjectCard(): ReactElement | null {
         if (status === 403 && !user?.discordId) {
           showToast({
             severity: 'error',
-            summary: 'Запрошення не прийнято - підключи Discord',
+            summary: 'Запрошення не прийнято - підключи Discord.',
             life: 3000,
             actionKey: 'invite',
           });
