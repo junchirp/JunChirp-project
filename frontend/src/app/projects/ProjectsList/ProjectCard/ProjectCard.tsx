@@ -15,6 +15,7 @@ import { ProjectParticipationInterface } from '../../../../shared/interfaces/pro
 import { useAcceptInviteMutation } from '../../../../api/participationsApi';
 import DiscordBanner from '../../../../shared/components/DiscordBanner/DiscordBanner';
 import RequestPopup from './RequestPopup/RequestPopup';
+import Link from 'next/link';
 
 interface ProjectCardProps {
   project: ProjectCardInterface;
@@ -112,9 +113,12 @@ export default function ProjectCard({
               >
                 {project.status === 'active' ? 'Активний' : 'Завершений'}
               </p>
-              <h3 className={styles['project-card__title']}>
+              <Link
+                className={styles['project-card__title']}
+                href={`/projects/${project.id}`}
+              >
                 {project.projectName}
-              </h3>
+              </Link>
             </div>
           </div>
           <p className={styles['project-card__description']}>
