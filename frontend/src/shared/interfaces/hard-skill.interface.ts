@@ -1,4 +1,5 @@
-export interface HardSkillInterface {
+import { CreateHardSkillInterface } from './create-hard-skill.interface';
+
+export interface HardSkillInterface extends CreateHardSkillInterface {
   id: string;
-  hardSkillName: string;
 }

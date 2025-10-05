@@ -32,7 +32,7 @@ export default function RejectInvitePopup(
     if ('data' in result) {
       showToast({
         severity: 'success',
-        summary: `Запрошення до проєкту ${projectName} відхилено.`,
+        summary: `Запрошення до проєкту [${projectName}] відхилено.`,
         life: 3000,
         actionKey: 'invite',
       });

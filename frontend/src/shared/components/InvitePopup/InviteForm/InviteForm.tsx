@@ -12,14 +12,9 @@ import { z } from 'zod';
 import { useInviteUserMutation } from '@/api/participationsApi';
 import { useToast } from '@/hooks/useToast';
 import { ProjectCardInterface } from '../../../interfaces/project-card.interface';
+import { inviteSchema } from '../../../forms/schemas/inviteSchema';
 
-const schema = z.object({
-  projectId: z.string().nonempty('Поле не може бути порожнім'),
-  projectRoleId: z.string().nonempty('Поле не може бути порожнім'),
-  userId: z.string(),
-});
-
-type FormData = z.infer<typeof schema>;
+type FormData = z.infer<typeof inviteSchema>;
 
 interface InviteFormProps {
   user: UserCardInterface;
@@ -29,7 +24,7 @@ interface InviteFormProps {
 
 export default function InviteForm(props: InviteFormProps): ReactElement {
   const { user, onClose, myProjects } = props;
-  const [invite] = useInviteUserMutation();
+  const [inviteUser] = useInviteUserMutation();
   const { showToast, isActive } = useToast();
 
   const {
@@ -38,7 +33,7 @@ export default function InviteForm(props: InviteFormProps): ReactElement {
     setValue,
     formState: { isValid },
   } = useForm<FormData>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(inviteSchema),
     mode: 'onChange',
     defaultValues: {
       projectId: '',
@@ -54,7 +49,7 @@ export default function InviteForm(props: InviteFormProps): ReactElement {
   const selectedProject = myProjects.find(
     (item) => item.id === selectedProjectId,
   );
-  const roleOptions = selectedProject?.roles ?? [];
+  const roleOptions = selectedProject?.roles.filter((role) => !role.user) ?? [];
   const allowedRoleTypeIds = user.educations.map(
     (edu) => edu.specialization.id,
   );
@@ -64,7 +59,7 @@ export default function InviteForm(props: InviteFormProps): ReactElement {
       return;
     }
 
-    const result = await invite(data);
+    const result = await inviteUser(data);
 
     if ('data' in result) {
       onClose();
@@ -121,7 +116,7 @@ export default function InviteForm(props: InviteFormProps): ReactElement {
         />
       </fieldset>
       <div className={styles['invite-form__actions']}>
-        <Button color="green" variant={'secondary-frame'} onClick={onClose}>
+        <Button color="green" variant="secondary-frame" onClick={onClose}>
           Скасувати
         </Button>
         <Button type="submit" color="green" disabled={!isValid}>

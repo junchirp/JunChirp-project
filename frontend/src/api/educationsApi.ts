@@ -1,13 +1,18 @@
 import mainApi from './mainApi';
+import { EducationInterface } from '../shared/interfaces/education.interface';
+import { CreateEducationInterface } from '../shared/interfaces/create-education.interface';
 
 export const educationsApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({
-    getEducationsAutocomplete: builder.query({
+    getEducationsAutocomplete: builder.query<string[], string>({
       query: (fragment) => ({
         url: `educations/autocomplete?institution=${encodeURIComponent(fragment)}`,
       }),
     }),
-    addEducation: builder.mutation({
+    addEducation: builder.mutation<
+      EducationInterface,
+      CreateEducationInterface
+    >({
       query: (data) => ({
         url: 'educations',
         method: 'POST',
@@ -15,7 +20,10 @@ export const educationsApi = mainApi.injectEndpoints({
       }),
       invalidatesTags: [{ type: 'educations', id: 'LIST' }, 'users'],
     }),
-    updateEducation: builder.mutation({
+    updateEducation: builder.mutation<
+      EducationInterface,
+      { id: string; data: CreateEducationInterface }
+    >({
       query: ({ id, data }) => ({
         url: `educations/${id}`,
         method: 'PUT',
@@ -26,7 +34,7 @@ export const educationsApi = mainApi.injectEndpoints({
         'users',
       ],
     }),
-    deleteEducation: builder.mutation({
+    deleteEducation: builder.mutation<string, string>({
       query: (id) => ({
         url: `educations/${id}`,
         method: 'DELETE',
