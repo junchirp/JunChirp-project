@@ -1,5 +1,5 @@
 export interface TokenValidationInterface {
   isValid: boolean;
-  firstName?: string;
-  lastName?: string;
+  firstName: string;
+  lastName: string;
 }
