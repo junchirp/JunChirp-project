@@ -1,4 +1,4 @@
-type UpdateUserType = {
+export type UpdateUserType = {
   firstName?: string;
   lastName?: string;
   email?: string;

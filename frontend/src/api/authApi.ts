@@ -11,6 +11,7 @@ import { EmailInterface } from '../shared/interfaces/email.interface';
 import { ConfirmEmailInterface } from '../shared/interfaces/confirm-email.interface';
 import { TokenValidationInterface } from '../shared/interfaces/token-validation.interface';
 import { ResetPasswordInterface } from '../shared/interfaces/reset-password.interface';
+import { UpdateUserType } from '../shared/types/update-user.type';
 
 export const authApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({
