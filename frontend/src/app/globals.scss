@@ -16,7 +16,7 @@
   @include meta.load-css('@/app/profile/ProfileDetails/ProfileDetails.module');
   @include meta.load-css('@/app/confirm-email/ConfirmEmailContent/ConfirmEmailContent.module');
   @include meta.load-css('@/app/confirm-password-reset/ConfirmPasswordResetContent/ConfirmPasswordResetContent.module');
-  @include meta.load-css('@/app/profile/ProfileBanner/ProfileBanner.module');
+  @include meta.load-css('@/shared/components/DiscordBanner/DiscordBanner.module');
   @include meta.load-css('@/shared/components/ProjectsCountDropdown/ProjectsCountDropdown.module');
   @include meta.load-css('@/shared/components/EducationDropdown/EducationDropdown.module');
   @include meta.load-css('@/shared/components/EducationMultiSelect/EducationMultiSelect.module');

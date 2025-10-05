@@ -141,6 +141,7 @@ const mainApi = createApi({
     'users',
     'my-projects',
     'invites',
+    'requests',
     'projects',
     'my-requests',
     'my-invites',

@@ -17,15 +17,12 @@ import { UserCardInterface } from '../../../shared/interfaces/user-card.interfac
 import { useAppSelector } from '../../../hooks/reduxHooks';
 import authSelector from '../../../redux/auth/authSelector';
 import { useAcceptInviteMutation } from '../../../api/participationsApi';
-import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
-import { SerializedError } from '@reduxjs/toolkit';
-import { useToast } from '../../../hooks/useToast';
+import DiscordBanner from '../../../shared/components/DiscordBanner/DiscordBanner';
 
 export default function InvitedProjectCard(): ReactElement | null {
   const user = useAppSelector(authSelector.selectUser);
   const params = useParams();
   const router = useRouter();
-  const { showToast, isActive } = useToast();
   const inviteId = params.id as string;
   const { data: invite, isLoading } = useGetMyInviteByIdQuery(
     { inviteId, userId: user?.id },
@@ -34,6 +31,7 @@ export default function InvitedProjectCard(): ReactElement | null {
   const [isModalOpen, setModalOpen] = useState(false);
   const pathname = usePathname();
   const [acceptInvite] = useAcceptInviteMutation();
+  const [isBanner, setBanner] = useState(false);
 
   let project: ProjectCardInterface | null = null;
   let vacantRoles: RoleWithUserInterface[] = [];
@@ -49,8 +47,10 @@ export default function InvitedProjectCard(): ReactElement | null {
 
   const closeModal = (): void => setModalOpen(false);
   const openModal = (): void => setModalOpen(true);
+  const closeBanner = (): void => setBanner(false);
   const handleAccept = async (): Promise<void> => {
-    if (isActive('invite')) {
+    if (!user?.discordId) {
+      setBanner(true);
       return;
     }
 
@@ -59,24 +59,6 @@ export default function InvitedProjectCard(): ReactElement | null {
 
       if ('data' in result) {
         router.push(`/projects/${project.id}`);
-      }
-
-      if ('error' in result) {
-        const errorData = result.error as
-          | ((FetchBaseQueryError | SerializedError) & {
-              status: number;
-            })
-          | undefined;
-        const status = errorData?.status;
-
-        if (status === 403 && !user?.discordId) {
-          showToast({
-            severity: 'error',
-            summary: 'Запрошення не прийнято - підключи Discord.',
-            life: 3000,
-            actionKey: 'invite',
-          });
-        }
       }
     }
   };
@@ -194,6 +176,14 @@ export default function InvitedProjectCard(): ReactElement | null {
               onClose={closeModal}
               projectName={project.projectName}
               inviteId={invite.id}
+            />
+          )}
+          {isBanner && (
+            <DiscordBanner
+              closeBanner={closeBanner}
+              message="Підключи Discord, щоб прийняти запрошення. Це дозволить отримати доступ до проєктного чату."
+              isCancelButton
+              withWrapper
             />
           )}
         </>

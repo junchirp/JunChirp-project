@@ -1,12 +1,10 @@
-export interface SocialInterface {
+import { CreateSocialInterface } from './create-social.interface';
+
+export interface SocialInterface extends CreateSocialInterface {
   id: string;
-  network: string;
-  url: string;
 }
 
-export interface ClientSocialInterface {
-  network: string;
-  url: string;
+export interface ClientSocialInterface extends CreateSocialInterface {
   icon: string;
   urlRegex: RegExp;
 }

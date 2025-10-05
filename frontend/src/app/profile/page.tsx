@@ -30,8 +30,8 @@ import { useToast } from '@/hooks/useToast';
 import { useDeleteEducationMutation } from '@/api/educationsApi';
 import { useDeleteSoftSkillMutation } from '@/api/softSkillsApi';
 import { useDeleteHardSkillMutation } from '@/api/hardSkillsApi';
-import ProfileBanner from './ProfileBanner/ProfileBanner';
 import { useAppSelector } from '@/hooks/reduxHooks';
+import DiscordBanner from '../../shared/components/DiscordBanner/DiscordBanner';
 
 export default function Profile(): ReactElement | null {
   const [action, setAction] = useState<ProfileActionType>(null);
@@ -296,7 +296,13 @@ export default function Profile(): ReactElement | null {
         />
       )}
       <Suspense fallback={null}>
-        {isBanner && <ProfileBanner closeBanner={closeBanner} />}
+        {isBanner && (
+          <DiscordBanner
+            closeBanner={closeBanner}
+            message="Підключи Discord, щоб мати змогу приєднуватися до проєктів та отримати
+        доступ до проєктних чатів."
+          />
+        )}
       </Suspense>
     </AuthGuard>
   );

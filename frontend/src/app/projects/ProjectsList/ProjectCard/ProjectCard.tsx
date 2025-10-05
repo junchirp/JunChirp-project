@@ -13,9 +13,9 @@ import { useRouter } from 'next/navigation';
 import RejectInvitePopup from '../../../../shared/components/RejectInvitePopup/RejectInvitePopup';
 import { ProjectParticipationInterface } from '../../../../shared/interfaces/project-participation.interface';
 import { useAcceptInviteMutation } from '../../../../api/participationsApi';
-import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
-import { SerializedError } from '@reduxjs/toolkit';
-import { useToast } from '../../../../hooks/useToast';
+import DiscordBanner from '../../../../shared/components/DiscordBanner/DiscordBanner';
+import RequestPopup from './RequestPopup/RequestPopup';
+import Link from 'next/link';
 
 interface ProjectCardProps {
   project: ProjectCardInterface;
@@ -29,7 +29,6 @@ export default function ProjectCard({
   requestsProjectsIds,
 }: ProjectCardProps): ReactElement {
   const router = useRouter();
-  const { showToast, isActive } = useToast();
   const user = useAppSelector(authSelector.selectUser);
   const isInvite = invites
     .map((invite) => invite.projectRole.project.id)
@@ -45,16 +44,24 @@ export default function ProjectCard({
     .map((role) => role.user)
     .filter((member) => member !== null);
   const isMyProject = members.some((member) => member.id === user?.id);
-  const [isModalOpen, setModalOpen] = useState(false);
+  const [isInvitePopupOpen, setInvitePopupOpen] = useState(false);
+  const [isRequestPopupOpen, setRequestPopupOpen] = useState(false);
   const [acceptInvite] = useAcceptInviteMutation();
+  const [isInviteBanner, setInviteBanner] = useState(false);
+  const [isRequestBanner, setRequestBanner] = useState(false);
 
   const goProject = (): void => {
     router.push(`/projects/${project.id}`);
   };
-  const closeModal = (): void => setModalOpen(false);
-  const openModal = (): void => setModalOpen(true);
+  const closeInvitePopup = (): void => setInvitePopupOpen(false);
+  const openInvitePopup = (): void => setInvitePopupOpen(true);
+  const closeInviteBanner = (): void => setInviteBanner(false);
+  const closeRequestBanner = (): void => setRequestBanner(false);
+  const closeRequestPopup = (): void => setRequestPopupOpen(false);
+
   const handleAccept = async (): Promise<void> => {
-    if (isActive('invite')) {
+    if (!user?.discordId) {
+      setInviteBanner(true);
       return;
     }
 
@@ -64,25 +71,15 @@ export default function ProjectCard({
       if ('data' in result) {
         goProject();
       }
-
-      if ('error' in result) {
-        const errorData = result.error as
-          | ((FetchBaseQueryError | SerializedError) & {
-              status: number;
-            })
-          | undefined;
-        const status = errorData?.status;
-
-        if (status === 403 && !user?.discordId) {
-          showToast({
-            severity: 'error',
-            summary: 'Запрошення не прийнято - підключи Discord',
-            life: 3000,
-            actionKey: 'invite',
-          });
-        }
-      }
     }
+  };
+
+  const sendRequest = (): void => {
+    if (!user?.discordId) {
+      setRequestBanner(true);
+      return;
+    }
+    setRequestPopupOpen(true);
   };
 
   return (
@@ -116,9 +113,12 @@ export default function ProjectCard({
               >
                 {project.status === 'active' ? 'Активний' : 'Завершений'}
               </p>
-              <h3 className={styles['project-card__title']}>
+              <Link
+                className={styles['project-card__title']}
+                href={`/projects/${project.id}`}
+              >
                 {project.projectName}
-              </h3>
+              </Link>
             </div>
           </div>
           <p className={styles['project-card__description']}>
@@ -174,7 +174,7 @@ export default function ProjectCard({
                 <Button
                   color="red"
                   variant="secondary-frame"
-                  onClick={openModal}
+                  onClick={openInvitePopup}
                 >
                   Відхилити
                 </Button>
@@ -184,16 +184,37 @@ export default function ProjectCard({
               </>
             )}
             {!isMyProject && !isInvite && !isRequest && (
-              <Button color="green">Подати заявку</Button>
+              <Button color="green" onClick={sendRequest}>
+                Подати заявку
+              </Button>
             )}
           </div>
         )}
       </div>
-      {isModalOpen && currentInvite && (
+      {isInvitePopupOpen && currentInvite && (
         <RejectInvitePopup
-          onClose={closeModal}
+          onClose={closeInvitePopup}
           projectName={project.projectName}
           inviteId={currentInvite.id}
+        />
+      )}
+      {isRequestPopupOpen && (
+        <RequestPopup onClose={closeRequestPopup} project={project} />
+      )}
+      {isInviteBanner && (
+        <DiscordBanner
+          closeBanner={closeInviteBanner}
+          message="Підключи Discord, щоб прийняти запрошення. Це дозволить отримати доступ до проєктного чату."
+          isCancelButton
+          withWrapper
+        />
+      )}
+      {isRequestBanner && (
+        <DiscordBanner
+          closeBanner={closeRequestBanner}
+          message="Підключи Discord, щоб подати заявку. Це дозволить отримати доступ до проєктного чату після прийняття."
+          isCancelButton
+          withWrapper
         />
       )}
     </>
