@@ -51,12 +51,13 @@ export default function LoginForm(): ReactElement {
 
     if ('data' in result) {
       const user = result.data;
-      dispatch(setEducations(user.educations));
-      dispatch(setSoftSkills(user.softSkills));
-      dispatch(setHardSkills(user.hardSkills));
-      dispatch(setSocials(user.socials));
 
       if (user) {
+        dispatch(setEducations(user.educations));
+        dispatch(setSoftSkills(user.softSkills));
+        dispatch(setHardSkills(user.hardSkills));
+        dispatch(setSocials(user.socials));
+
         const next = searchParams.get('next');
         const isSafeNext =
           next && next.startsWith('/') && !next.startsWith('//');
