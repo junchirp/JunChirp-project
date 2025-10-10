@@ -5,50 +5,80 @@ import styles from './ProjectCard.module.scss';
 import { ProjectCardInterface } from '@/shared/interfaces/project-card.interface';
 import Button from '../../../../shared/components/Button/Button';
 import Image from 'next/image';
-import { useAppSelector } from '../../../../hooks/reduxHooks';
-import authSelector from '../../../../redux/auth/authSelector';
 import { membersPipe } from '../../../../shared/utils/membersPipe';
 import { datePipe } from '../../../../shared/utils/datePipe';
 import { useRouter } from 'next/navigation';
 import RejectInvitePopup from '../../../../shared/components/RejectInvitePopup/RejectInvitePopup';
 import { ProjectParticipationInterface } from '../../../../shared/interfaces/project-participation.interface';
-import { useAcceptInviteMutation } from '../../../../api/participationsApi';
+import {
+  useAcceptInviteMutation,
+  useCreateRequestMutation,
+} from '../../../../api/participationsApi';
 import DiscordBanner from '../../../../shared/components/DiscordBanner/DiscordBanner';
-import RequestPopup from './RequestPopup/RequestPopup';
 import Link from 'next/link';
+import { UserInterface } from '../../../../shared/interfaces/user.interface';
+import { ProjectRoleInterface } from '../../../../shared/interfaces/project-role.interface';
+import RadioGroup from '../../../../shared/components/RadioGroup/RadioGroup';
+import { Controller, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { requestSchema } from '../../../../shared/forms/schemas/requestSchema';
+import { useToast } from '../../../../hooks/useToast';
+import { useAppSelector } from '../../../../hooks/reduxHooks';
+import { selectAllEducations } from '../../../../redux/educations/educationsSlice';
 
 interface ProjectCardProps {
   project: ProjectCardInterface;
   invites: ProjectParticipationInterface[];
-  requestsProjectsIds: string[];
+  requests: ProjectParticipationInterface[];
+  user: UserInterface | null;
 }
+
+type FormData = z.infer<typeof requestSchema>;
 
 export default function ProjectCard({
   project,
   invites,
-  requestsProjectsIds,
+  requests,
+  user,
 }: ProjectCardProps): ReactElement {
+  const {
+    control,
+    handleSubmit,
+    formState: { isValid },
+  } = useForm<FormData>({
+    resolver: zodResolver(requestSchema),
+    mode: 'onChange',
+    defaultValues: {
+      projectId: project.id,
+      projectRoleId: '',
+      userId: user?.id ?? '',
+    },
+  });
   const router = useRouter();
-  const user = useAppSelector(authSelector.selectUser);
-  const isInvite = invites
-    .map((invite) => invite.projectRole.project.id)
-    .includes(project.id);
+  const [createRequest] = useCreateRequestMutation();
+  const { showToast, isActive } = useToast();
+  const educations = useAppSelector(selectAllEducations);
   const currentInvite = invites.find(
     (invite) => invite.projectRole.project.id === project.id,
   );
-  const isRequest = requestsProjectsIds.includes(project.id);
-  const vacantRolesNames = project.roles
+  const isInvite = !!currentInvite;
+  const currentRequest = requests.find(
+    (req) => req.projectRole.project.id === project.id,
+  );
+  const isRequest = !!currentRequest;
+  const vacantRoles: ProjectRoleInterface[] = project.roles
     .filter((role) => !role.user)
-    .map((role) => role.roleType.roleName);
+    .map((role) => ({ id: role.id, roleType: role.roleType }));
   const members = project.roles
     .map((role) => role.user)
     .filter((member) => member !== null);
   const isMyProject = members.some((member) => member.id === user?.id);
   const [isInvitePopupOpen, setInvitePopupOpen] = useState(false);
-  const [isRequestPopupOpen, setRequestPopupOpen] = useState(false);
   const [acceptInvite] = useAcceptInviteMutation();
   const [isInviteBanner, setInviteBanner] = useState(false);
   const [isRequestBanner, setRequestBanner] = useState(false);
+  const roleTypeIds = educations.map((edu) => edu.specialization.id) ?? [];
 
   const goProject = (): void => {
     router.push(`/projects/${project.id}`);
@@ -57,7 +87,6 @@ export default function ProjectCard({
   const openInvitePopup = (): void => setInvitePopupOpen(true);
   const closeInviteBanner = (): void => setInviteBanner(false);
   const closeRequestBanner = (): void => setRequestBanner(false);
-  const closeRequestPopup = (): void => setRequestPopupOpen(false);
 
   const handleAccept = async (): Promise<void> => {
     if (!user?.discordId) {
@@ -74,12 +103,34 @@ export default function ProjectCard({
     }
   };
 
-  const sendRequest = (): void => {
+  const sendRequest = async (data: FormData): Promise<void> => {
     if (!user?.discordId) {
       setRequestBanner(true);
       return;
     }
-    setRequestPopupOpen(true);
+
+    if (isActive('request')) {
+      return;
+    }
+
+    const result = await createRequest(data);
+
+    if ('data' in result) {
+      showToast({
+        severity: 'success',
+        summary: 'Запит на участь в проєкті надіслано успішно!',
+        life: 3000,
+        actionKey: 'request',
+      });
+    } else if ('error' in result) {
+      showToast({
+        severity: 'error',
+        summary: 'Не вдалося надіслати заявку.',
+        detail: 'Спробуй пізніше.',
+        life: 3000,
+        actionKey: 'request',
+      });
+    }
   };
 
   return (
@@ -127,79 +178,169 @@ export default function ProjectCard({
           <p className={styles['project-card__category']}>
             {project.category.categoryName}
           </p>
-          <div className={styles['project-card__footer']}>
-            <div className={styles['project-card__team']}>
-              <div className={styles['project-card__members']}>
-                <Image
-                  src="/images/users-2.svg"
-                  alt="users"
-                  width={24}
-                  height={24}
-                />
-                <span className={styles['project-card__team-text']}>
-                  {membersPipe(members.length)}
-                </span>
-              </div>
+          <div className={styles['project-card__team']}>
+            <div className={styles['project-card__members']}>
+              <Image
+                src="/images/users-2.svg"
+                alt="users"
+                width={24}
+                height={24}
+              />
               <span className={styles['project-card__team-text']}>
-                {datePipe(project.createdAt.toString())}
+                {membersPipe(project.participantsCount)}
               </span>
             </div>
-            <div className={styles['project-card__vacant-roles']}>
-              <p className={styles['project-card__label']}>В пошуку:</p>
-              <div className={styles['project-card__roles']}>
-                {vacantRolesNames.map((role, index) => (
-                  <Fragment key={index}>
-                    {index !== 0 && <span>/</span>}
-                    <span>{role}</span>
-                  </Fragment>
-                ))}
-              </div>
-            </div>
+            <span className={styles['project-card__team-text']}>
+              {datePipe(project.createdAt.toString())}
+            </span>
           </div>
         </div>
         {(isMyProject || project.status === 'active') && (
-          <div className={styles['project-card__actions']}>
+          <div className={styles['project-card__footer']}>
             {isMyProject && (
-              <Button color="green" onClick={goProject}>
-                Перейти в кабінет проєкту
-              </Button>
+              <>
+                {vacantRoles.length ? (
+                  <div className={styles['project-card__vacant-roles']}>
+                    <p className={styles['project-card__label']}>В пошуку:</p>
+                    <div className={styles['project-card__roles']}>
+                      {vacantRoles.map((role, index) => (
+                        <Fragment key={index}>
+                          {index !== 0 && (
+                            <span className={styles['project-card__role']}>
+                              /
+                            </span>
+                          )}
+                          <span className={styles['project-card__role']}>
+                            {role.roleType.roleName}
+                          </span>
+                        </Fragment>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+                <div
+                  className={`${styles['project-card__actions']} ${!vacantRoles.length ? styles['project-card__actions--empty'] : ''}`}
+                >
+                  <Button color="green" onClick={goProject}>
+                    Перейти в кабінет проєкту
+                  </Button>
+                </div>
+              </>
             )}
             {isRequest && (
-              <Button color="green" disabled>
-                Заявку відправлено
-              </Button>
+              <>
+                <div className={styles['project-card__vacant-roles']}>
+                  <p className={styles['project-card__label']}>В пошуку:</p>
+                  <div className={styles['project-card__roles']}>
+                    {vacantRoles.map((role, index) => (
+                      <Fragment key={role.id}>
+                        {index !== 0 && (
+                          <span className={styles['project-card__role']}>
+                            /
+                          </span>
+                        )}
+                        {role.roleType.id ===
+                        currentRequest.projectRole.roleType.id ? (
+                          <span
+                            className={`${styles['project-card__role']} ${styles['project-card__role--green']}`}
+                          >
+                            [{role.roleType.roleName}]
+                          </span>
+                        ) : (
+                          <span className={styles['project-card__role']}>
+                            {role.roleType.roleName}
+                          </span>
+                        )}
+                      </Fragment>
+                    ))}
+                  </div>
+                </div>
+                <div className={styles['project-card__actions']}>
+                  <Button color="green" disabled>
+                    Заявка подана
+                  </Button>
+                </div>
+              </>
             )}
             {isInvite && (
               <>
-                <Button
-                  color="red"
-                  variant="secondary-frame"
-                  onClick={openInvitePopup}
-                >
-                  Відхилити
-                </Button>
-                <Button color="green" onClick={handleAccept}>
-                  Прийняти
-                </Button>
+                <div className={styles['project-card__vacant-roles']}>
+                  <p className={styles['project-card__label']}>В пошуку:</p>
+                  <div className={styles['project-card__roles']}>
+                    {vacantRoles.map((role, index) => (
+                      <Fragment key={role.id}>
+                        {index !== 0 && (
+                          <span className={styles['project-card__role']}>
+                            /
+                          </span>
+                        )}
+                        {role.roleType.id ===
+                        currentInvite.projectRole.roleType.id ? (
+                          <span
+                            className={`${styles['project-card__role']} ${styles['project-card__role--green']}`}
+                          >
+                            [{role.roleType.roleName}]
+                          </span>
+                        ) : (
+                          <span className={styles['project-card__role']}>
+                            {role.roleType.roleName}
+                          </span>
+                        )}
+                      </Fragment>
+                    ))}
+                  </div>
+                </div>
+                <div className={styles['project-card__actions']}>
+                  <Button
+                    color="red"
+                    variant="secondary-frame"
+                    onClick={openInvitePopup}
+                  >
+                    Відхилити
+                  </Button>
+                  <Button color="green" onClick={handleAccept}>
+                    Прийняти
+                  </Button>
+                </div>
               </>
             )}
             {!isMyProject && !isInvite && !isRequest && (
-              <Button color="green" onClick={sendRequest}>
-                Подати заявку
-              </Button>
+              <form
+                className={styles['project-card__form']}
+                onSubmit={handleSubmit(sendRequest)}
+              >
+                <div className={styles['project-card__form-inner']}>
+                  <p className={styles['project-card__label']}>В пошуку:</p>
+                  <Controller
+                    name="projectRoleId"
+                    control={control}
+                    render={({ field }) => (
+                      <RadioGroup
+                        {...field}
+                        options={vacantRoles}
+                        name="roles"
+                        roleTypeIds={roleTypeIds}
+                      />
+                    )}
+                  />
+                </div>
+                <div className={styles['project-card__actions']}>
+                  <Button color="green" type="submit" disabled={!isValid}>
+                    Подати заявку
+                  </Button>
+                </div>
+              </form>
             )}
           </div>
         )}
       </div>
-      {isInvitePopupOpen && currentInvite && (
+      {isInvitePopupOpen && currentInvite && user && (
         <RejectInvitePopup
           onClose={closeInvitePopup}
           projectName={project.projectName}
           inviteId={currentInvite.id}
+          user={user}
         />
-      )}
-      {isRequestPopupOpen && (
-        <RequestPopup onClose={closeRequestPopup} project={project} />
       )}
       {isInviteBanner && (
         <DiscordBanner

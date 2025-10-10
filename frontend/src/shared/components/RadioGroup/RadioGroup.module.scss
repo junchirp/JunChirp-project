@@ -1,0 +1,88 @@
+@use '@/assets/styles/variables';
+
+.radio-group {
+  padding: 4px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  &__label {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-size: 16px;
+    line-height: 1.4;
+
+    &--disabled {
+      color: variables.$gray-4;
+    }
+  }
+
+  &__option {
+    &:hover {
+      & .radio-group__radio--default {
+        rect {
+          fill: variables.$gray-2;
+          stroke: variables.$green-2;
+        }
+
+        circle {
+          fill: variables.$gray-2;
+        }
+      }
+    }
+  }
+
+  &__radio {
+    width: 16px;
+    height: 16px;
+
+    &--default {
+      rect {
+        fill: variables.$white-2;
+        stroke: variables.$gray-8;
+      }
+
+      circle {
+        fill: variables.$white-2;
+      }
+    }
+
+    &--checked {
+      rect {
+        fill: variables.$gray-2;
+        stroke: variables.$green-2;
+      }
+
+      circle {
+        fill: variables.$green-2;
+      }
+    }
+
+    &--disabled {
+      rect {
+        fill: variables.$gray-13;
+        stroke: variables.$gray-11;
+      }
+
+      circle {
+        fill: variables.$gray-13;
+      }
+    }
+
+    &--checked--disabled {
+      rect {
+        fill: variables.$gray-13;
+        stroke: variables.$gray-11;
+      }
+
+      circle {
+        fill: variables.$gray-11;
+      }
+    }
+  }
+
+  &__hidden-input {
+    display: none;
+  }
+}

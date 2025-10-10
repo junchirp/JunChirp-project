@@ -6,7 +6,7 @@ import styles from './page.module.scss';
 import Button from '@/shared/components/Button/Button';
 import ArrowUpRight from '@/assets/icons/arrow-up-right.svg';
 import UserBaseInfo from './UserBaseInfo/UserBaseInfo';
-import { useParams } from 'next/navigation';
+import { useParams, usePathname } from 'next/navigation';
 import { useGetMyProjectsQuery, useGetUserByIdQuery } from '@/api/usersApi';
 import UserDetails from '@/app/users/[id]/UserDetails/UserDetails';
 import UserSkeleton from '@/app/users/[id]/UserSkeleton/UserSkeleton';
@@ -19,6 +19,7 @@ import authSelector from '../../../redux/auth/authSelector';
 
 export default function User(): ReactElement {
   const params = useParams();
+  const pathname = usePathname();
   const userId = params.id as string;
   const [isModalOpen, setModalOpen] = useState(false);
   const { data: user, isLoading } = useGetUserByIdQuery(userId);
@@ -39,7 +40,10 @@ export default function User(): ReactElement {
     return <UserSkeleton />;
   } else if (user) {
     return (
-      <AuthGuard requireVerified>
+      <AuthGuard
+        requireVerified
+        redirectTo={`/auth/login?next=${encodeURIComponent(pathname)}`}
+      >
         <div className={styles.user}>
           <UserBaseInfo user={user} />
           <div className={styles.user__details}>

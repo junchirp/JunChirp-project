@@ -75,7 +75,7 @@ export const usersApi = mainApi.injectEndpoints({
           url: 'users/me/invites',
         };
       },
-      providesTags: ['my-invites'],
+      providesTags: ['invites-me-in-projects'],
     }),
     getMyRequests: builder.query<
       ProjectParticipationInterface[],
@@ -88,17 +88,6 @@ export const usersApi = mainApi.injectEndpoints({
       },
       providesTags: ['my-requests'],
     }),
-    getMyInviteById: builder.query<
-      ProjectParticipationInterface,
-      { inviteId: string; userId: string | undefined }
-    >({
-      query: ({ inviteId }) => {
-        return {
-          url: `/users/me/invites/${inviteId}`,
-        };
-      },
-      providesTags: ['my-invites'],
-    }),
   }),
 });
 
@@ -109,5 +98,4 @@ export const {
   useGetUserProjectsQuery,
   useGetMyInvitesQuery,
   useGetMyRequestsQuery,
-  useGetMyInviteByIdQuery,
 } = usersApi;
