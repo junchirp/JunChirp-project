@@ -19,7 +19,8 @@ export function useLogout(): { logout: () => void } {
         'auth',
         'my-projects',
         'my-requests',
-        'my-invites',
+        'invites-me-in-projects',
+        'invites-in-my-projects',
       ]),
     );
     dispatch(setEducations([]));

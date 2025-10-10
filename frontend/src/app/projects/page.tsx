@@ -47,10 +47,6 @@ export default function Projects(): ReactElement {
       skip: !user,
     });
 
-  const requestsProjectsIds = requests.map(
-    (request) => request.projectRole.project.id,
-  );
-
   const isLoading =
     listLoading || requestsLoading || invitesLoading || myProjectsLoading;
 
@@ -89,8 +85,8 @@ export default function Projects(): ReactElement {
           <ProjectsFilters />
           {myProjectsLoading ? (
             <ListSkeleton height={341} />
-          ) : myProjectsList ? (
-            <MyProjects myProjects={myProjectsList.projects} />
+          ) : myProjectsList && user ? (
+            <MyProjects myProjects={myProjectsList.projects} user={user} />
           ) : null}
           {isLoading ? (
             <ListSkeleton height={562} lines={10} />
@@ -98,7 +94,8 @@ export default function Projects(): ReactElement {
             <ProjectsList
               projects={list.projects}
               invites={invites}
-              requestsProjectsIds={requestsProjectsIds}
+              requests={requests}
+              user={user}
             />
           ) : null}
           {!!list?.projects.length && (

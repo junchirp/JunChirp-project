@@ -91,7 +91,7 @@ export class ParticipationsService {
 
         this.mailService
           .sendParticipationInvite(
-            `${this.configService.get<string>('BASE_FRONTEND_URL')}/invited-project-card`,
+            `${this.configService.get<string>('BASE_FRONTEND_URL')}/project/${invite.projectRole.projectId}`,
             invite,
           )
           .catch((err) => {
@@ -556,47 +556,5 @@ export class ParticipationsService {
     return requests.map((request) =>
       UserParticipationMapper.toResponse(request),
     );
-  }
-
-  public async getInviteWithProjectById(
-    id: string,
-    userId: string,
-  ): Promise<ProjectParticipationResponseDto> {
-    try {
-      const invite = await this.prisma.participationInvite.findUniqueOrThrow({
-        where: { id, userId },
-        include: {
-          projectRole: {
-            include: {
-              roleType: true,
-              project: {
-                include: {
-                  category: true,
-                  roles: {
-                    include: {
-                      roleType: true,
-                      user: {
-                        include: {
-                          educations: {
-                            include: { specialization: true },
-                          },
-                        },
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-      });
-
-      return ProjectParticipationMapper.toResponse(invite);
-    } catch (error) {
-      if (error.code === 'P2025') {
-        throw new NotFoundException('Invite not found');
-      }
-      throw error;
-    }
   }
 }

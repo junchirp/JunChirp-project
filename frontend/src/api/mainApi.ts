@@ -140,11 +140,11 @@ const mainApi = createApi({
     'project-roles-list',
     'users',
     'my-projects',
-    'invites',
+    'invites-me-in-projects',
+    'invites-in-my-projects',
     'requests',
     'projects',
     'my-requests',
-    'my-invites',
   ],
   endpoints: () => ({}),
 });

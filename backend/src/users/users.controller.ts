@@ -287,24 +287,6 @@ export class UsersController {
 
   @User()
   @ApiOperation({
-    summary: 'Get current user invite by id',
-  })
-  @ApiOkResponse({ type: ProjectParticipationResponseDto })
-  @ApiForbiddenResponse({ description: 'Access denied: email not confirmed' })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @ApiNotFoundResponse({ description: 'Invite not found' })
-  @Get('me/invites/:id')
-  public async getInviteById(
-    @Req() req: Request,
-    @Param('id', ParseUUIDv4Pipe) id: string,
-  ): Promise<ProjectParticipationResponseDto> {
-    const user: UserWithPasswordResponseDto =
-      req.user as UserWithPasswordResponseDto;
-    return this.usersService.getInviteById(id, user.id);
-  }
-
-  @User()
-  @ApiOperation({
     summary: 'Get current user requests',
   })
   @ApiOkResponse({ type: [ProjectParticipationResponseDto] })

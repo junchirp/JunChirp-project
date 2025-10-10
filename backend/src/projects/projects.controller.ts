@@ -126,7 +126,9 @@ export class ProjectsController {
   @Owner()
   @ApiOperation({ summary: 'Close project' })
   @ApiCreatedResponse({ type: ProjectResponseDto })
-  @ApiNotFoundResponse({ description: 'Project or user in team not found' })
+  @ApiNotFoundResponse({
+    description: 'Project, role or user in team not found',
+  })
   @ApiForbiddenResponse({
     description:
       'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Invalid CSRF token',

@@ -304,6 +304,13 @@ export class ProjectsService {
   public async closeProject(id: string): Promise<ProjectResponseDto> {
     return this.prisma.$transaction(async (prisma) => {
       try {
+        await prisma.projectRole.deleteMany({
+          where: {
+            projectId: id,
+            userId: null,
+          },
+        });
+
         const closedProject = await prisma.project.update({
           where: { id },
           data: { status: 'done' },
@@ -346,7 +353,9 @@ export class ProjectsService {
         return ProjectMapper.toFullResponse(closedProject);
       } catch (error) {
         if (error.code === 'P2025') {
-          throw new NotFoundException('Project or user in team not found');
+          throw new NotFoundException(
+            'Project, role or user in team not found',
+          );
         }
         throw error;
       }

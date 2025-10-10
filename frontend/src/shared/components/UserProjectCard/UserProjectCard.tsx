@@ -16,6 +16,10 @@ export default function UserProjectCard({
   project,
 }: UserProjectCardProps): ReactElement {
   const router = useRouter();
+  const cardClassName =
+    project.status === 'active'
+      ? `${styles['user-project-card']} ${styles['user-project-card--active']}`
+      : `${styles['user-project-card']} ${styles['user-project-card--done']}`;
   const headerClassName =
     project.status === 'active'
       ? `${styles['user-project-card__header']} ${styles['user-project-card__header--active']}`
@@ -29,7 +33,7 @@ export default function UserProjectCard({
     (role) => role.user && role.user.id === user?.id,
   );
 
-  const hadleRedirect = (): void => {
+  const handleRedirect = (): void => {
     if (isMember) {
       router.push(`/projects/${project.id}`);
     } else {
@@ -38,7 +42,7 @@ export default function UserProjectCard({
   };
 
   return (
-    <div className={styles['user-project-card']}>
+    <div className={cardClassName}>
       <div className={headerClassName} />
       <div className={styles['user-project-card__inner']}>
         <div className={styles['user-project-card__content']}>
@@ -54,7 +58,11 @@ export default function UserProjectCard({
             </p>
           </div>
         </div>
-        <Button variant="secondary-frame" color="green" onClick={hadleRedirect}>
+        <Button
+          variant="secondary-frame"
+          color="green"
+          onClick={handleRedirect}
+        >
           {!isMember ? 'Переглянути деталі' : 'Перейти в кабінет проєкту'}
         </Button>
       </div>

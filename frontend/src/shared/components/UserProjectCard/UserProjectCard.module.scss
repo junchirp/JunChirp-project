@@ -4,8 +4,15 @@
   position: relative;
   border-radius: 32px;
   padding: 40px;
-  background-color: variables.$gray-1;
   min-width: 0;
+
+  &--active {
+    background-color: variables.$gray-1;
+  }
+
+  &--done {
+    background-color: variables.$gray-13;
+  }
 
   &__header {
     position: absolute;

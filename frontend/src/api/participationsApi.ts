@@ -16,7 +16,7 @@ export const participationsApi = mainApi.injectEndpoints({
         method: 'POST',
         body: data,
       }),
-      invalidatesTags: [{ type: 'invites', id: 'LIST' }],
+      invalidatesTags: [{ type: 'invites-in-my-projects', id: 'LIST' }],
     }),
     createRequest: builder.mutation<
       ProjectParticipationInterface,
@@ -49,12 +49,36 @@ export const participationsApi = mainApi.injectEndpoints({
         { type: 'my-requests', id: 'LIST' },
       ],
     }),
-    rejectInvite: builder.mutation<void, string>({
-      query: (id) => ({
+    rejectInvite: builder.mutation<void, { id: string; userId: string }>({
+      query: ({ id }) => ({
         url: `participations/invite/${id}/reject`,
         method: 'DELETE',
       }),
-      invalidatesTags: [{ type: 'invites', id: 'LIST' }],
+      async onQueryStarted(
+        { id: inviteId, userId },
+        { dispatch, queryFulfilled },
+      ) {
+        try {
+          await queryFulfilled;
+          dispatch(
+            usersApi.util.updateQueryData(
+              'getMyInvites',
+              { userId },
+              (draft: ProjectParticipationInterface[]) => {
+                const index = draft.findIndex(
+                  (invite) => invite.id === inviteId,
+                );
+                if (index !== -1) {
+                  draft.splice(index, 1);
+                }
+              },
+            ),
+          );
+        } catch {
+          return;
+        }
+      },
+      invalidatesTags: [{ type: 'invites-me-in-projects', id: 'LIST' }],
     }),
     acceptInvite: builder.mutation<void, string>({
       query: (id) => ({
@@ -62,7 +86,7 @@ export const participationsApi = mainApi.injectEndpoints({
         method: 'PUT',
       }),
       invalidatesTags: [
-        { type: 'invites', id: 'LIST' },
+        { type: 'invites-me-in-projects', id: 'LIST' },
         { type: 'my-projects', id: 'LIST' },
       ],
     }),

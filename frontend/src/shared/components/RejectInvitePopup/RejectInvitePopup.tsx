@@ -5,28 +5,28 @@ import styles from './RejectInvitePopup.module.scss';
 import Button from '../Button/Button';
 import { useRejectInviteMutation } from '../../../api/participationsApi';
 import { useToast } from '../../../hooks/useToast';
-import { useRouter } from 'next/navigation';
+import { UserInterface } from '../../interfaces/user.interface';
 
 interface RejectInvitePopupProps {
   projectName: string;
   inviteId: string;
   onClose: () => void;
+  user: UserInterface;
 }
 
 export default function RejectInvitePopup(
   props: RejectInvitePopupProps,
 ): ReactElement {
-  const { projectName, inviteId, onClose } = props;
+  const { projectName, inviteId, onClose, user } = props;
   const [rejectInvite] = useRejectInviteMutation();
   const { showToast, isActive } = useToast();
-  const router = useRouter();
 
   const onSubmit = async (): Promise<void> => {
     if (isActive('invite')) {
       return;
     }
 
-    const result = await rejectInvite(inviteId);
+    const result = await rejectInvite({ id: inviteId, userId: user.id });
     onClose();
 
     if ('data' in result) {
@@ -36,7 +36,6 @@ export default function RejectInvitePopup(
         life: 3000,
         actionKey: 'invite',
       });
-      router.push('/');
     } else {
       showToast({
         severity: 'error',
