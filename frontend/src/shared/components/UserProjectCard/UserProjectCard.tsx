@@ -35,9 +35,9 @@ export default function UserProjectCard({
 
   const handleRedirect = (): void => {
     if (isMember) {
-      router.push(`/projects/${project.id}`);
+      router.push(`/projects/${project.id}/cab`);
     } else {
-      router.push(`/projects/${project.id}/card`);
+      router.push(`/projects/${project.id}`);
     }
   };
 

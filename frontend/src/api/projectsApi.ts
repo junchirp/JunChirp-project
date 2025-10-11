@@ -2,6 +2,7 @@ import mainApi from './mainApi';
 import { ProjectCategoryInterface } from '../shared/interfaces/project-category.interface';
 import { ProjectsListInterface } from '../shared/interfaces/projects-list.interface';
 import { ProjectsFiltersInterface } from '../shared/interfaces/projects-filters.interface';
+import { ProjectInterface } from '../shared/interfaces/project.interface';
 
 export const projectsApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -31,7 +32,22 @@ export const projectsApi = mainApi.injectEndpoints({
         };
       },
     }),
+    getProjectCardById: builder.query<
+      ProjectInterface,
+      { id: string; userId: string }
+    >({
+      query: ({ id }) => {
+        return {
+          url: `/projects/${id}/card`,
+        };
+      },
+      providesTags: ['projects'],
+    }),
   }),
 });
 
-export const { useGetProjectsQuery, useGetCategoriesQuery } = projectsApi;
+export const {
+  useGetProjectsQuery,
+  useGetCategoriesQuery,
+  useGetProjectCardByIdQuery,
+} = projectsApi;
