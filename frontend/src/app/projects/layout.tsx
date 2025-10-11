@@ -6,8 +6,8 @@ export default function ProjectsLayout({
   children: ReactNode;
 }): ReactElement {
   return (
-    <Suspense fallback={<div />}>
-      <div>{children}</div>
+    <Suspense fallback={null}>
+      <>{children}</>
     </Suspense>
   );
 }

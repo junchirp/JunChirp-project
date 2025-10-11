@@ -1,0 +1,295 @@
+@use '@/assets/styles/variables';
+
+.project-card {
+  padding: 40px;
+  border-radius: 32px;
+  display: grid;
+  grid-template-rows: auto auto auto;
+  min-width: 0;
+  border: 2px solid variables.$gray-5;
+
+  &--small {
+    grid-template-columns: 180px 1fr;
+    gap: 24px 20px;
+    background-color: variables.$gray-5;
+
+    &:hover {
+      border: 2px solid variables.$green-5;
+      background-color: variables.$gray-1;
+
+      .project-card__label {
+        background-color: variables.$gray-5;
+      }
+    }
+  }
+
+  &--large {
+    grid-template-columns: 236px 1fr;
+    gap: 24px 32px;
+    background-color: variables.$gray-1;
+  }
+
+  &__actions {
+    display: flex;
+
+    &--empty {
+      margin-top: 24px;
+    }
+
+    &--small {
+      justify-content: center;
+      gap: 20px;
+    }
+
+    &--large {
+      justify-content: flex-start;
+      gap: 32px;
+    }
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 24px;
+  }
+
+  &__image-wrapper {
+    position: relative;
+    width: 180px;
+    border-radius: 12px;
+
+    &--empty {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: variables.$gray-3;
+      min-width: 180px;
+      height: 180px;
+    }
+
+    &--small {
+      grid-area: 1 / 1;
+    }
+
+    &--large {
+      grid-column: 1;
+      grid-row: 1 / -1;
+    }
+  }
+
+  &__image {
+    height: auto;
+    border-radius: 12px;
+  }
+
+  &__title-wrapper {
+    grid-area: 1 / 2;
+    display: flex;
+    gap: 20px;
+
+    &--small {
+      flex-direction: column;
+    }
+
+    &--large {
+      flex-direction: row-reverse;
+      justify-content: space-between;
+    }
+  }
+
+  &__status {
+    border-radius: 4px;
+    padding: 4px;
+    font-weight: 600;
+    color: variables.$white-2;
+
+    &--active {
+      background-color: variables.$green-2;
+    }
+
+    &--done {
+      background-color: variables.$gray-4;
+    }
+
+    &--small {
+      font-size: 16px;
+      line-height: 1.4;
+      align-self: flex-end;
+    }
+
+    &--large {
+      font-size: 14px;
+      line-height: 1;
+      align-self: flex-start;
+    }
+  }
+
+  &__link {
+    font-weight: 600;
+    font-size: 28px;
+    line-height: 1.4;
+    color: variables.$black-2;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &__title {
+    font-weight: 600;
+    font-size: 32px;
+    line-height: 1.2;
+  }
+
+  &__details {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+
+    &--small {
+      grid-row: 2 / 4;
+      grid-column: 1 / 3;
+      gap: 16px;
+    }
+
+    &--large {
+      grid-row: 2 / 4;
+      grid-column: 2;
+      gap: 24px;
+    }
+  }
+
+  &__description {
+    line-height: 1.4;
+
+    &--small {
+      font-size: 16px;
+    }
+
+    &--large {
+      font-size: 20px;
+    }
+  }
+
+  &__category {
+    font-weight: 500;
+    line-height: 1.4;
+
+    &--small {
+      font-size: 16px;
+    }
+
+    &--large {
+      font-size: 20px;
+    }
+  }
+
+  &__footer {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    justify-content: space-between;
+    align-items: stretch;
+    height: 100%;
+  }
+
+  &__team {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+
+    &--small {
+      align-items: flex-start;
+    }
+
+    &--large {
+      align-items: center;
+    }
+  }
+
+  &__members {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  &__team-text {
+    font-size: 14px;
+    line-height: 1.2;
+
+    &--small {
+      color: variables.$gray-4;
+    }
+
+    &--large {
+      color: variables.$gray-6;
+    }
+  }
+
+  &__vacant-roles {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+
+    &--small {
+      gap: 12px;
+    }
+
+    &--large {
+      gap: 20px;
+    }
+  }
+
+  &__label {
+    border-radius: 8px;
+    padding: 4px 8px;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 1.4;
+    white-space: nowrap;
+
+    &--small {
+      background-color: variables.$gray-1;
+    }
+
+    &--large {
+      background-color: variables.$gray-5;
+    }
+  }
+
+  &__roles {
+    padding-top: 6px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  &__role {
+    display: block;
+    font-size: 16px;
+    line-height: 1.2;
+
+    &--green {
+      color: variables.$green-2;
+      font-weight: 600;
+    }
+  }
+
+  //&__form {
+  //  display: flex;
+  //  flex-direction: column;
+  //  align-items: stretch;
+  //  justify-content: space-between;
+  //  gap: 40px;
+  //  height: 100%;
+  //}
+  //
+  //&__form-inner {
+  //  display: flex;
+  //  gap: 20px;
+  //  justify-content: flex-start;
+  //  align-items: flex-start;
+  //}
+}
