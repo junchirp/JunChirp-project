@@ -15,6 +15,7 @@ export class UserParticipationMapper {
   ): UserParticipationResponseDto {
     return {
       id: participation.id,
+      createdAt: participation.createdAt,
       user: UserMapper.toCardResponse(participation.user),
       projectRole: ProjectRoleMapper.toBaseResponse(participation.projectRole),
     };

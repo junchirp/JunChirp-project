@@ -65,13 +65,15 @@ export default function Project(): ReactElement | null {
           <div className={styles['project__skeleton']} />
         </div>
       ) : project ? (
-        <ProjectCard
-          project={project}
-          invites={invites}
-          requests={requests}
-          user={user}
-          size="large"
-        />
+        <div className={styles['project']}>
+          <ProjectCard
+            project={project}
+            invites={invites}
+            requests={requests}
+            user={user}
+            size="large"
+          />
+        </div>
       ) : (
         <Page404 />
       )}

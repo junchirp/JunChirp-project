@@ -18,9 +18,11 @@ export function useLogout(): { logout: () => void } {
       mainApi.util.invalidateTags([
         'auth',
         'my-projects',
-        'my-requests',
+        'my-requests-in-projects',
+        'requests-in-my-projects',
         'invites-me-in-projects',
         'invites-in-my-projects',
+        { type: 'user-projects', id: 'LIST' },
       ]),
     );
     dispatch(setEducations([]));

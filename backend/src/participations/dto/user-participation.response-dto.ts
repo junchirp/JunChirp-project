@@ -12,6 +12,12 @@ export class UserParticipationResponseDto {
   @ApiProperty({ type: () => UserCardResponseDto })
   public readonly user: UserCardResponseDto;
 
+  @ApiProperty({
+    example: '2025-04-11 11:51:05.224',
+    description: 'Creation date and time',
+  })
+  public readonly createdAt: Date;
+
   @ApiProperty({ type: () => ProjectRoleResponseDto })
   public readonly projectRole: ProjectRoleResponseDto;
 }

@@ -277,19 +277,19 @@
     }
   }
 
-  //&__form {
-  //  display: flex;
-  //  flex-direction: column;
-  //  align-items: stretch;
-  //  justify-content: space-between;
-  //  gap: 40px;
-  //  height: 100%;
-  //}
-  //
-  //&__form-inner {
-  //  display: flex;
-  //  gap: 20px;
-  //  justify-content: flex-start;
-  //  align-items: flex-start;
-  //}
+  &__form {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: space-between;
+    gap: 40px;
+    height: 100%;
+  }
+
+  &__form-inner {
+    display: flex;
+    gap: 20px;
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
 }

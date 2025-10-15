@@ -283,6 +283,7 @@ model ParticipationInvite {
   projectRoleId String      @map("project_role_id")
   user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   projectRole   ProjectRole @relation(fields: [projectRoleId], references: [id], onDelete: Cascade)
+  createdAt     DateTime    @default(now()) @map("created_at")
 
   @@unique([userId, projectRoleId])
   @@map("participation_invites")
@@ -294,6 +295,7 @@ model ParticipationRequest {
   projectRoleId String      @map("project_role_id")
   user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   projectRole   ProjectRole @relation(fields: [projectRoleId], references: [id], onDelete: Cascade)
+  createdAt     DateTime    @default(now()) @map("created_at")
 
   @@unique([userId, projectRoleId])
   @@map("participation_requests")

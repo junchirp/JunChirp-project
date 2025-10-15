@@ -4,6 +4,7 @@ import { UserParticipationInterface } from '../shared/interfaces/user-participat
 import { CreateInviteInterface } from '../shared/interfaces/create-invite.interface';
 import { ProjectParticipationInterface } from '../shared/interfaces/project-participation.interface';
 import { CreateRequestInterface } from '../shared/interfaces/create-request.interface';
+import { triggerResetUserProjects } from '../redux/ui/uiSlice';
 
 export const participationsApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -44,10 +45,7 @@ export const participationsApi = mainApi.injectEndpoints({
           return;
         }
       },
-      invalidatesTags: [
-        { type: 'requests', id: 'LIST' },
-        { type: 'my-requests', id: 'LIST' },
-      ],
+      invalidatesTags: [{ type: 'my-requests-in-projects', id: 'LIST' }],
     }),
     rejectInvite: builder.mutation<void, { id: string; userId: string }>({
       query: ({ id }) => ({
@@ -90,6 +88,73 @@ export const participationsApi = mainApi.injectEndpoints({
         { type: 'my-projects', id: 'LIST' },
       ],
     }),
+    acceptRequest: builder.mutation<void, { id: string; userId: string }>({
+      query: ({ id }) => ({
+        url: `participations/request/${id}/accept`,
+        method: 'PUT',
+      }),
+      async onQueryStarted(
+        { id: requestId, userId },
+        { dispatch, queryFulfilled },
+      ) {
+        try {
+          await queryFulfilled;
+          dispatch(
+            usersApi.util.updateQueryData(
+              'getRequestsInMyProjects',
+              userId,
+              (draft: ProjectParticipationInterface[]) => {
+                const index = draft.findIndex(
+                  (request) => request.id === requestId,
+                );
+                if (index !== -1) {
+                  draft.splice(index, 1);
+                }
+              },
+            ),
+          );
+          dispatch(triggerResetUserProjects());
+        } catch {
+          return;
+        }
+      },
+      invalidatesTags: [
+        { type: 'requests-in-my-projects', id: 'LIST' },
+        'user',
+        { type: 'user-projects', id: 'LIST' },
+      ],
+    }),
+    rejectRequest: builder.mutation<void, { id: string; userId: string }>({
+      query: ({ id }) => ({
+        url: `participations/request/${id}/reject`,
+        method: 'DELETE',
+      }),
+      async onQueryStarted(
+        { id: requestId, userId },
+        { dispatch, queryFulfilled },
+      ) {
+        try {
+          await queryFulfilled;
+          dispatch(
+            usersApi.util.updateQueryData(
+              'getRequestsInMyProjects',
+              userId,
+              (draft: ProjectParticipationInterface[]) => {
+                const index = draft.findIndex(
+                  (request) => request.id === requestId,
+                );
+                if (index !== -1) {
+                  draft.splice(index, 1);
+                }
+              },
+            ),
+          );
+        } catch {
+          return;
+        }
+      },
+      invalidatesTags: [{ type: 'requests-in-my-projects', id: 'LIST' }],
+    }),
   }),
 });
 
@@ -98,4 +163,6 @@ export const {
   useAcceptInviteMutation,
   useRejectInviteMutation,
   useCreateRequestMutation,
+  useRejectRequestMutation,
+  useAcceptRequestMutation,
 } = participationsApi;

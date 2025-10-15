@@ -1,0 +1,109 @@
+@use '@/assets/styles/variables';
+
+.user-requests {
+  border-radius: 32px;
+  padding: 40px;
+  background-color: variables.$gray-1;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 32px;
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__title {
+    font-weight: 600;
+    font-size: 28px;
+    line-height: 1.4;
+  }
+
+  &__border {
+    height: 4px;
+    border-radius: 4px;
+    width: 100%;
+    background-color: variables.$green-2;
+  }
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+
+  &__col-1 {
+    width: 100px;
+  }
+
+  &__col-5 {
+    width: 280px;
+  }
+
+  &__col-auto {
+    width: auto;
+  }
+
+  &__cell {
+    padding: 12px;
+    font-weight: 600;
+    line-height: 1.4;
+
+    &--header {
+      background-color: variables.$green-5;
+      font-size: 20px;
+      text-align: center;
+      vertical-align: middle;
+
+      &:first-child {
+        border-top-left-radius: 16px;
+      }
+
+      &:last-child {
+        border-top-right-radius: 16px;
+      }
+    }
+
+    &--body {
+      background-color: variables.$white-2;
+      font-size: 16px;
+      text-align: center;
+      vertical-align: middle;
+
+      &:nth-child(2) {
+        text-align: start;
+      }
+    }
+  }
+
+  &__row {
+    &:not(:last-child) {
+      border-bottom: 1px solid variables.$gray-11;
+    }
+
+    &:last-child {
+      & .user-requests__cell--body {
+        &:first-child {
+          border-bottom-left-radius: 16px;
+        }
+
+        &:last-child {
+          border-bottom-right-radius: 16px;
+        }
+      }
+    }
+  }
+
+  &__link {
+    color: variables.$black-2;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+}

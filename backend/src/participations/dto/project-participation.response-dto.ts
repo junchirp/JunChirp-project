@@ -14,6 +14,12 @@ export class ProjectParticipationResponseDto {
   })
   public readonly userId: string;
 
+  @ApiProperty({
+    example: '2025-04-11 11:51:05.224',
+    description: 'Creation date and time',
+  })
+  public readonly createdAt: Date;
+
   @ApiProperty({ type: () => ProjectRoleWithProjectResponseDto })
   public readonly projectRole: ProjectRoleWithProjectResponseDto;
 }
