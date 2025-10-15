@@ -256,7 +256,7 @@ export default function ProjectCard({
                       ${size === 'small' ? styles['project-card__team-text--small'] : styles['project-card__team-text--large']}
                     `}
                   >
-                    {datePipe(project.createdAt.toString())}
+                    {datePipe(project.createdAt.toString(), 'DD/MM/YYYY')}
                   </span>
                 </div>
               </div>

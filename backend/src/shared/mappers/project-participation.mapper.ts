@@ -33,6 +33,7 @@ export class ProjectParticipationMapper {
   ): ProjectParticipationResponseDto {
     return {
       id: participation.id,
+      createdAt: participation.createdAt,
       userId: participation.userId,
       projectRole: ProjectRoleMapper.toProjectResponse(
         participation.projectRole,

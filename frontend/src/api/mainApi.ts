@@ -142,9 +142,11 @@ const mainApi = createApi({
     'my-projects',
     'invites-me-in-projects',
     'invites-in-my-projects',
-    'requests',
+    'my-requests-in-projects',
+    'requests-in-my-projects',
     'projects',
-    'my-requests',
+    'user-projects',
+    'user',
   ],
   endpoints: () => ({}),
 });

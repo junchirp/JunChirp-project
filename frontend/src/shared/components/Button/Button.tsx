@@ -20,7 +20,7 @@ type Variant =
   | 'tertiary'
   | 'link';
 type IconPosition = 'left' | 'right';
-type Color = 'green' | 'red' | 'gray' | 'black' | 'blue';
+type Color = 'green' | 'red' | 'gray' | 'gray-2' | 'black' | 'blue';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   color?: Color;

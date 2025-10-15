@@ -36,6 +36,7 @@
   &__radio {
     width: 16px;
     height: 16px;
+    border-radius: 50%;
 
     &--default {
       rect {
@@ -79,6 +80,10 @@
       circle {
         fill: variables.$gray-11;
       }
+    }
+
+    &:active {
+      box-shadow: 0 0 0 4px variables.$gray-9;
     }
   }
 

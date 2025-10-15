@@ -5,6 +5,8 @@ import styles from './UserProjectsList.module.scss';
 import UserProjectCard from '../../../../shared/components/UserProjectCard/UserProjectCard';
 import Button from '../../../../shared/components/Button/Button';
 import Image from 'next/image';
+import { useAppSelector } from '../../../../hooks/reduxHooks';
+import uiSelector from '../../../../redux/ui/uiSelector';
 
 interface UserProjectsListProps {
   userId: string;
@@ -15,6 +17,7 @@ export default function UserProjectsList({
 }: UserProjectsListProps): ReactElement {
   const [page, setPage] = useState(1);
   const [allProjects, setAllProjects] = useState<ProjectCardInterface[]>([]);
+  const resetKey = useAppSelector(uiSelector.selectResetUserProjectsKey);
 
   const {
     data: list,
@@ -29,15 +32,25 @@ export default function UserProjectsList({
   });
 
   useEffect(() => {
-    if (list) {
-      setAllProjects((prev) => [...prev, ...list.projects]);
+    if (!list) {
+      return;
     }
-  }, [list]);
+
+    setAllProjects((prev) => {
+      if (page === 1) {
+        return list.projects;
+      }
+      const merged = [...prev, ...list.projects];
+      return merged.filter(
+        (p, i, arr) => arr.findIndex((x) => x.id === p.id) === i,
+      );
+    });
+  }, [list, page]);
 
   useEffect(() => {
     setAllProjects([]);
     setPage(1);
-  }, [userId]);
+  }, [resetKey, userId]);
 
   const hasMoreProjects = list && allProjects.length < list.total;
 
