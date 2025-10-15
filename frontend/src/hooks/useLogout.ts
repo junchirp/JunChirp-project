@@ -22,7 +22,7 @@ export function useLogout(): { logout: () => void } {
         'requests-in-my-projects',
         'invites-me-in-projects',
         'invites-in-my-projects',
-        'user-projects',
+        { type: 'user-projects', id: 'LIST' },
       ]),
     );
     dispatch(setEducations([]));
