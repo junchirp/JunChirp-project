@@ -4,7 +4,7 @@ import { ReactElement } from 'react';
 import styles from './InvitePopup.module.scss';
 import InviteForm from '@/shared/components/InvitePopup/InviteForm/InviteForm';
 import { UserCardInterface } from '@/shared/interfaces/user-card.interface';
-import { ProjectCardInterface } from '../../interfaces/project-card.interface';
+import { ProjectCardInterface } from '@/shared/interfaces/project-card.interface';
 
 interface InvitePopupProps {
   user: UserCardInterface;

@@ -1,24 +1,24 @@
 'use client';
 
 import { ReactElement, useEffect } from 'react';
-import AuthGuard from '../../shared/components/AuthGuard/AuthGuard';
+import AuthGuard from '@/shared/components/AuthGuard/AuthGuard';
 import styles from './page.module.scss';
 import Image from 'next/image';
 import MyProjects from './MyProjects/MyProjects';
-import { useGetProjectsQuery } from '../../api/projectsApi';
-import { useToast } from '../../hooks/useToast';
-import Pagination from '../../shared/components/Pagination/Pagination';
-import ListSkeleton from '../../shared/components/ListSkeleton/ListSkeleton';
+import { useGetProjectsQuery } from '@/api/projectsApi';
+import { useToast } from '@/hooks/useToast';
+import Pagination from '@/shared/components/Pagination/Pagination';
+import ListSkeleton from '@/shared/components/ListSkeleton/ListSkeleton';
 import ProjectsList from './ProjectsList/ProjectsList';
 import {
   useGetMyInvitesQuery,
   useGetMyProjectsQuery,
   useGetMyRequestsQuery,
-} from '../../api/usersApi';
+} from '@/api/usersApi';
 import ProjectsFilters from './ProjectsFilters/ProjectsFilters';
-import { useProjectsFilters } from '../../hooks/useProjectsFilters';
-import { useAppSelector } from '../../hooks/reduxHooks';
-import authSelector from '../../redux/auth/authSelector';
+import { useProjectsFilters } from '@/hooks/useProjectsFilters';
+import { useAppSelector } from '@/hooks/reduxHooks';
+import authSelector from '@/redux/auth/authSelector';
 
 export default function Projects(): ReactElement {
   const { filters, updateFilters } = useProjectsFilters();

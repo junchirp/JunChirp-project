@@ -12,7 +12,7 @@ import { useRequestPasswordResetMutation } from '@/api/authApi';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
 import { useRouter } from 'next/navigation';
-import { usedEmailSchema } from '../../../shared/forms/schemas/usedEmailSchema';
+import { usedEmailSchema } from '@/shared/forms/schemas/usedEmailSchema';
 
 type FormData = z.infer<typeof usedEmailSchema>;
 

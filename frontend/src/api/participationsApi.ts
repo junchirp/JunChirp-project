@@ -1,10 +1,10 @@
 import mainApi from './mainApi';
 import { usersApi } from './usersApi';
-import { UserParticipationInterface } from '../shared/interfaces/user-participation.interface';
-import { CreateInviteInterface } from '../shared/interfaces/create-invite.interface';
-import { ProjectParticipationInterface } from '../shared/interfaces/project-participation.interface';
-import { CreateRequestInterface } from '../shared/interfaces/create-request.interface';
-import { triggerResetUserProjects } from '../redux/ui/uiSlice';
+import { UserParticipationInterface } from '@/shared/interfaces/user-participation.interface';
+import { CreateInviteInterface } from '@/shared/interfaces/create-invite.interface';
+import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
+import { CreateRequestInterface } from '@/shared/interfaces/create-request.interface';
+import { triggerResetUserProjects } from '@/redux/ui/uiSlice';
 
 export const participationsApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({

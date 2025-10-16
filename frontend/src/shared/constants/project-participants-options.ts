@@ -1,4 +1,4 @@
-import { ParticipantsOptionsInterface } from '../interfaces/participants-options.interface';
+import { ParticipantsOptionsInterface } from '@/shared/interfaces/participants-options.interface';
 
 export const projectParticipantsOptions: ParticipantsOptionsInterface[] = [
   {

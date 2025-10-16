@@ -1,6 +1,6 @@
 import mainApi from './mainApi';
-import { SoftSkillInterface } from '../shared/interfaces/soft-skill.interface';
-import { CreateSoftSkillInterface } from '../shared/interfaces/create-soft-skill.interface';
+import { SoftSkillInterface } from '@/shared/interfaces/soft-skill.interface';
+import { CreateSoftSkillInterface } from '@/shared/interfaces/create-soft-skill.interface';
 
 export const softSkillsApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({

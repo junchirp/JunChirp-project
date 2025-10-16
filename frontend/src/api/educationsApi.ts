@@ -1,6 +1,6 @@
 import mainApi from './mainApi';
-import { EducationInterface } from '../shared/interfaces/education.interface';
-import { CreateEducationInterface } from '../shared/interfaces/create-education.interface';
+import { EducationInterface } from '@/shared/interfaces/education.interface';
+import { CreateEducationInterface } from '@/shared/interfaces/create-education.interface';
 
 export const educationsApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({

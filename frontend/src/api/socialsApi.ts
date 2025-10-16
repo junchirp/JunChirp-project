@@ -1,6 +1,6 @@
 import mainApi from './mainApi';
-import { SocialInterface } from '../shared/interfaces/social.interface';
-import { CreateSocialInterface } from '../shared/interfaces/create-social.interface';
+import { SocialInterface } from '@/shared/interfaces/social.interface';
+import { CreateSocialInterface } from '@/shared/interfaces/create-social.interface';
 
 export const socialsApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({

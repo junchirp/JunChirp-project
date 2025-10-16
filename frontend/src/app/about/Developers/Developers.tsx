@@ -2,7 +2,7 @@
 
 import { ReactElement, useEffect, useState } from 'react';
 import styles from './Developers.module.scss';
-import { developers } from '../../../shared/constants/developers';
+import { developers } from '@/shared/constants/developers';
 import Link from 'next/link';
 import Image from 'next/image';
 

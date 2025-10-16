@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { blackListPasswords } from '../../constants/black-list-passwords';
+import { blackListPasswords } from '@/shared/constants/black-list-passwords';
 
 interface PasswordCheckData {
   password: string;

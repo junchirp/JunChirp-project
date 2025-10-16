@@ -1,10 +1,10 @@
 'use client';
 
 import { ReactElement, useState } from 'react';
-import { UserInterface } from '../../../../shared/interfaces/user.interface';
+import { UserInterface } from '@/shared/interfaces/user.interface';
 import styles from './CallToAction.module.scss';
 import Image from 'next/image';
-import Button from '../../../../shared/components/Button/Button';
+import Button from '@/shared/components/Button/Button';
 import { useRouter } from 'next/navigation';
 import SocialInvitePopup from './SocialInvitePopup/SocialInvitePopup';
 

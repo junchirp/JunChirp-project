@@ -9,4 +9,9 @@
     gap: 32px;
     align-items: end;
   }
+
+  &__fieldset {
+    width: 100%;
+    min-width: 0;
+  }
 }

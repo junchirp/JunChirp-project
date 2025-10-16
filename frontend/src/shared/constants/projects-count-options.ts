@@ -1,4 +1,4 @@
-import { SelectOptionsInterface } from '../interfaces/select-options.interface';
+import { SelectOptionsInterface } from '@/shared/interfaces/select-options.interface';
 
 export const projectsCountOptions: SelectOptionsInterface[] = [
   {

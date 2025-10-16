@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { nonEmptyValidator } from '../validators/nonEmptyValidator';
+import { nonEmptyValidator } from '@/shared/forms/validators/nonEmptyValidator';
 
 export const requestSchema = z.object({
   projectId: nonEmptyValidator,

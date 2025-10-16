@@ -8,11 +8,11 @@ import UsersFilters from './UsersFilters/UsersFilters';
 import UsersList from './UsersList/UsersList';
 import { useUsersFilters } from '@/hooks/useUsersFilters';
 import { useGetMyProjectsQuery, useGetUsersQuery } from '@/api/usersApi';
-import ListSkeleton from '../../shared/components/ListSkeleton/ListSkeleton';
+import ListSkeleton from '@/shared/components/ListSkeleton/ListSkeleton';
 import { useToast } from '@/hooks/useToast';
 import Pagination from '@/shared/components/Pagination/Pagination';
-import { useAppSelector } from '../../hooks/reduxHooks';
-import authSelector from '../../redux/auth/authSelector';
+import { useAppSelector } from '@/hooks/reduxHooks';
+import authSelector from '@/redux/auth/authSelector';
 
 export default function Users(): ReactElement {
   const { filters, updateFilters } = useUsersFilters();

@@ -3,16 +3,13 @@
 import { ReactElement, useEffect } from 'react';
 import styles from './page.module.scss';
 import { useParams, usePathname, useRouter } from 'next/navigation';
-import Page404 from '../../../shared/components/Page404/Page404';
-import AuthGuard from '../../../shared/components/AuthGuard/AuthGuard';
-import { useAppSelector } from '../../../hooks/reduxHooks';
-import authSelector from '../../../redux/auth/authSelector';
-import { useGetProjectCardByIdQuery } from '../../../api/projectsApi';
-import {
-  useGetMyInvitesQuery,
-  useGetMyRequestsQuery,
-} from '../../../api/usersApi';
-import ProjectCard from '../../../shared/components/ProjectCard/ProjectCard';
+import Page404 from '@/shared/components/Page404/Page404';
+import AuthGuard from '@/shared/components/AuthGuard/AuthGuard';
+import { useAppSelector } from '@/hooks/reduxHooks';
+import authSelector from '@/redux/auth/authSelector';
+import { useGetProjectCardByIdQuery } from '@/api/projectsApi';
+import { useGetMyInvitesQuery, useGetMyRequestsQuery } from '@/api/usersApi';
+import ProjectCard from '@/shared/components/ProjectCard/ProjectCard';
 
 export default function Project(): ReactElement | null {
   const user = useAppSelector(authSelector.selectUser);

@@ -6,7 +6,7 @@ import Menu from '@/assets/icons/menu.svg';
 import Close from '@/assets/icons/close.svg';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useLogout } from '../../../../hooks/useLogout';
+import { useLogout } from '@/hooks/useLogout';
 
 export default function BurgerMenu(): ReactElement {
   const router = useRouter();

@@ -2,7 +2,7 @@ import { RoleInterface } from './role.interface';
 import { SoftSkillInterface } from './soft-skill.interface';
 import { HardSkillInterface } from './hard-skill.interface';
 import { SocialInterface } from './social.interface';
-import { UserCardInterface } from '@/shared/interfaces/user-card.interface';
+import { UserCardInterface } from './user-card.interface';
 
 export interface UserInterface extends UserCardInterface {
   googleId: string | null;

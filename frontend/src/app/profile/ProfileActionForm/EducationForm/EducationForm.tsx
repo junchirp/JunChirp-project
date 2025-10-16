@@ -9,13 +9,14 @@ import { Controller, useForm } from 'react-hook-form';
 import Button from '@/shared/components/Button/Button';
 import { zodResolver } from '@hookform/resolvers/zod';
 import EducationAutocomplete from '@/shared/components/EducationAutocomplete/EducationAutocomplete';
-import EducationDropdown from '@/shared/components/EducationDropdown/EducationDropdown';
 import {
   useAddEducationMutation,
   useUpdateEducationMutation,
 } from '@/api/educationsApi';
 import { useAppSelector } from '@/hooks/reduxHooks';
-import { educationSchema } from '../../../../shared/forms/schemas/educationSchema';
+import { educationSchema } from '@/shared/forms/schemas/educationSchema';
+import Dropdown from '@/shared/components/Dropdown/Dropdown';
+import { ProjectRoleTypeInterface } from '@/shared/interfaces/project-role-type.interface';
 
 type FormData = z.infer<typeof educationSchema>;
 
@@ -97,11 +98,13 @@ export default function EducationForm(props: EducationFormProps): ReactElement {
           name="specializationId"
           control={control}
           render={({ field }) => (
-            <EducationDropdown
+            <Dropdown<ProjectRoleTypeInterface>
               {...field}
               options={specializationList}
               label="Спеціальність"
               placeholder="Спеціальність (бажана роль на проєкті)"
+              getOptionLabel={(o) => o.roleName}
+              getOptionValue={(o) => o.id}
             />
           )}
         />

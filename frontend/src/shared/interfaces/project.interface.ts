@@ -1,6 +1,6 @@
-import { ProjectCardInterface } from '@/shared/interfaces/project-card.interface';
-import { DocumentInterface } from '@/shared/interfaces/ducument.interface';
-import { BoardInterface } from '@/shared/interfaces/board.interface';
+import { ProjectCardInterface } from './project-card.interface';
+import { DocumentInterface } from './ducument.interface';
+import { BoardInterface } from './board.interface';
 
 export interface ProjectInterface extends ProjectCardInterface {
   discordUrl: string;

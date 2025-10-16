@@ -2,10 +2,10 @@
 
 import { ReactElement } from 'react';
 import styles from './RejectInvitePopup.module.scss';
-import Button from '../Button/Button';
-import { useRejectInviteMutation } from '../../../api/participationsApi';
-import { useToast } from '../../../hooks/useToast';
-import { UserInterface } from '../../interfaces/user.interface';
+import Button from '@/shared/components/Button/Button';
+import { useRejectInviteMutation } from '@/api/participationsApi';
+import { useToast } from '@/hooks/useToast';
+import { UserInterface } from '@/shared/interfaces/user.interface';
 
 interface RejectInvitePopupProps {
   projectName: string;

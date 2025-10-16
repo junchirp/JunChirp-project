@@ -1,5 +1,5 @@
 import mainApi from './mainApi';
-import { ProjectRoleTypeInterface } from '../shared/interfaces/project-role-type.interface';
+import { ProjectRoleTypeInterface } from '@/shared/interfaces/project-role-type.interface';
 
 export const projectRolesApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({

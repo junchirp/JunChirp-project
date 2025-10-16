@@ -1,4 +1,4 @@
-import { WhatWeNeedType } from '../interfaces/what-we-need.interface';
+import { WhatWeNeedType } from '@/shared/interfaces/what-we-need.interface';
 
 const emptyBlock: WhatWeNeedType = {
   title: null,

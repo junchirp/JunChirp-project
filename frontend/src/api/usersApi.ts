@@ -1,10 +1,10 @@
 import mainApi from './mainApi';
-import { UsersListInterface } from '../shared/interfaces/users-list.interface';
-import { UsersFiltersInterface } from '../shared/interfaces/users-filters.interface';
-import { ProjectsListInterface } from '../shared/interfaces/projects-list.interface';
-import { UserInterface } from '../shared/interfaces/user.interface';
-import { ProjectsFiltersInterface } from '../shared/interfaces/projects-filters.interface';
-import { ProjectParticipationInterface } from '../shared/interfaces/project-participation.interface';
+import { UsersListInterface } from '@/shared/interfaces/users-list.interface';
+import { UsersFiltersInterface } from '@/shared/interfaces/users-filters.interface';
+import { ProjectsListInterface } from '@/shared/interfaces/projects-list.interface';
+import { UserInterface } from '@/shared/interfaces/user.interface';
+import { ProjectsFiltersInterface } from '@/shared/interfaces/projects-filters.interface';
+import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
 
 export const usersApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({

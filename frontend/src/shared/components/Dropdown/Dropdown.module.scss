@@ -1,7 +1,8 @@
 @use '@/assets/styles/variables';
 
-.project-participants-dropdown {
+.dropdown {
   position: relative;
+  min-width: 0;
 
   &__label {
     display: block;
@@ -13,7 +14,9 @@
   }
 
   &__button {
+    display: flex;
     justify-content: space-between;
+    align-items: center;
     background-color: variables.$white-2;
     border: 1px solid variables.$gray-8;
     padding: 0 16px;
@@ -24,6 +27,7 @@
     height: 42px;
     box-sizing: border-box;
     cursor: default;
+    width: 100%;
 
     &:focus {
       border-color: variables.$green-6;
@@ -31,8 +35,31 @@
     }
   }
 
+  &__placeholder {
+    color: variables.$gray-4;
+    flex: 1 1 0;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    text-align: start;
+  }
+
   &__selected {
     color: variables.$black-2;
+    flex: 1 1 0;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    text-align: start;
+  }
+
+  &__icon {
+    width: 20px;
+    height: 20px;
   }
 
   &__item {
@@ -53,6 +80,14 @@
 
     &:hover {
       background-color: variables.$gray-5;
+    }
+
+    &--disabled {
+      color: variables.$gray-3;
+
+      &:hover {
+        background-color: variables.$white-2;
+      }
     }
   }
 

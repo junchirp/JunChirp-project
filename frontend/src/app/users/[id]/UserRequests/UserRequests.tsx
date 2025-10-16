@@ -1,14 +1,14 @@
 'use client';
 
 import { ReactElement, useState } from 'react';
-import { ProjectParticipationInterface } from '../../../../shared/interfaces/project-participation.interface';
+import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
 import styles from './UserRequests.module.scss';
 import Link from 'next/link';
-import Button from '../../../../shared/components/Button/Button';
-import { datePipe } from '../../../../shared/utils/datePipe';
-import RejectRequestPopup from '../../../../shared/components/RejectRequestPopup/RejectRequestPopup';
-import { UserInterface } from '../../../../shared/interfaces/user.interface';
-import { useAcceptRequestMutation } from '../../../../api/participationsApi';
+import Button from '@/shared/components/Button/Button';
+import { datePipe } from '@/shared/utils/datePipe';
+import RejectRequestPopup from '@/shared/components/RejectRequestPopup/RejectRequestPopup';
+import { UserInterface } from '@/shared/interfaces/user.interface';
+import { useAcceptRequestMutation } from '@/api/participationsApi';
 
 interface UserRequestsProps {
   requests: ProjectParticipationInterface[];
