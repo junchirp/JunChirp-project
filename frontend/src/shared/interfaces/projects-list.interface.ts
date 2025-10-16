@@ -1,4 +1,4 @@
-import { ProjectCardInterface } from './interfaces/project-card.interface';
+import { ProjectCardInterface } from './project-card.interface';
 
 export interface ProjectsListInterface {
   total: number;
