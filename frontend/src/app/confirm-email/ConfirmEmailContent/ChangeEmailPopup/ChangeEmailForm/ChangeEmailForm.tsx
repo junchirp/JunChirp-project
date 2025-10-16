@@ -7,7 +7,7 @@ import { useToast } from '@/hooks/useToast';
 import { useUpdateUserMutation } from '@/api/authApi';
 import styles from './ChangeEmailForm.module.scss';
 import Button from '@/shared/components/Button/Button';
-import { availableEmailSchema } from '../../../../../shared/forms/schemas/availableEmailSchema';
+import { availableEmailSchema } from '@/shared/forms/schemas/availableEmailSchema';
 
 type FormData = z.infer<typeof availableEmailSchema>;
 

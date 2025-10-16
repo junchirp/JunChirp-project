@@ -1,14 +1,17 @@
+'use client';
+
 import { ReactElement, useEffect } from 'react';
 import styles from './ProjectsFiltersForm.module.scss';
 import { Controller, useForm } from 'react-hook-form';
-import Button from '../../../../shared/components/Button/Button';
-import { useProjectsFilters } from '../../../../hooks/useProjectsFilters';
-import { useGetCategoriesQuery } from '../../../../api/projectsApi';
-import CategoryDropdown from '../../../../shared/components/CategoryDropdown/CategoryDropdown';
-import ProjectsStatusDropdown from '../../../../shared/components/ProjectStatusDropdown/ProjectStatusDropdown';
-import { projectStatusOptions } from '../../../../shared/constants/project-status-options';
-import { projectParticipantsOptions } from '../../../../shared/constants/project-participants-options';
-import ProjectParticipantsDropdown from '../../../../shared/components/ProjectParticipantsDropdown/ProjectParticipantsDropdown';
+import Button from '@/shared/components/Button/Button';
+import { useProjectsFilters } from '@/hooks/useProjectsFilters';
+import { useGetCategoriesQuery } from '@/api/projectsApi';
+import { projectStatusOptions } from '@/shared/constants/project-status-options';
+import { projectParticipantsOptions } from '@/shared/constants/project-participants-options';
+import Dropdown from '@/shared/components/Dropdown/Dropdown';
+import { ProjectCategoryInterface } from '@/shared/interfaces/project-category.interface';
+import { ParticipantsOptionsInterface } from '@/shared/interfaces/participants-options.interface';
+import { SelectOptionsInterface } from '@/shared/interfaces/select-options.interface';
 
 interface FormData {
   status: 'active' | 'done' | null;
@@ -66,42 +69,70 @@ export default function ProjectsFiltersForm(): ReactElement {
         className={styles['projects-filters-form__form']}
         onSubmit={form.handleSubmit(onSubmit)}
       >
-        <Controller
-          name="categoryId"
-          control={form.control}
-          render={({ field }) => (
-            <CategoryDropdown
-              {...field}
-              options={categories}
-              label="Категорія проєкту:"
-              placeholder="Всі"
-            />
-          )}
-        />
-        <Controller
-          name="status"
-          control={form.control}
-          render={({ field }) => (
-            <ProjectsStatusDropdown
-              {...field}
-              options={projectStatusOptions}
-              label="Статус проєкту:"
-              placeholder="Всі"
-            />
-          )}
-        />
-        <Controller
-          name="participantsRange"
-          control={form.control}
-          render={({ field }) => (
-            <ProjectParticipantsDropdown
-              {...field}
-              options={projectParticipantsOptions}
-              label="Кількість учасників:"
-              placeholder="Всі"
-            />
-          )}
-        />
+        <fieldset className={styles['projects-filters-form__fieldset']}>
+          <Controller
+            name="categoryId"
+            control={form.control}
+            render={({ field }) => (
+              <Dropdown<ProjectCategoryInterface>
+                {...field}
+                options={categories}
+                label="Категорія проєкту:"
+                placeholder="Всі"
+                getOptionLabel={(o) => o.categoryName}
+                getOptionValue={(o) => o.id}
+              />
+            )}
+          />
+        </fieldset>
+        <fieldset className={styles['projects-filters-form__fieldset']}>
+          <Controller
+            name="status"
+            control={form.control}
+            render={({ field }) => (
+              <Dropdown<SelectOptionsInterface>
+                {...field}
+                options={projectStatusOptions}
+                label="Статус проєкту:"
+                placeholder="Всі"
+                getOptionLabel={(o) => o.label}
+                getOptionValue={(o) => o.value}
+              />
+            )}
+          />
+        </fieldset>
+        <fieldset className={styles['projects-filters-form__fieldset']}>
+          <Controller
+            name="participantsRange"
+            control={form.control}
+            render={({ field }) => (
+              <Dropdown<ParticipantsOptionsInterface>
+                {...field}
+                options={projectParticipantsOptions}
+                label="Кількість учасників:"
+                placeholder="Всі"
+                value={
+                  field.value
+                    ? `${field.value.minParticipants}-${field.value.maxParticipants}`
+                    : null
+                }
+                getOptionLabel={(o) => o.label}
+                getOptionValue={(o) => `${o.min}-${o.max}`}
+                onChange={(val) => {
+                  if (!val) {
+                    field.onChange({ minParticipants: 0, maxParticipants: 0 });
+                    return;
+                  }
+                  const [min, max] = val.split('-').map(Number);
+                  field.onChange({
+                    minParticipants: min,
+                    maxParticipants: max,
+                  });
+                }}
+              />
+            )}
+          />
+        </fieldset>
         <Button color="green" type="submit" disabled={!isFiltersChanged}>
           Застосувати фільтр
         </Button>

@@ -1,4 +1,4 @@
-import { UserCardInterface } from '@/shared/interfaces/user-card.interface';
+import { UserCardInterface } from './user-card.interface';
 
 export interface UsersListInterface {
   total: number;

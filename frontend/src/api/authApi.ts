@@ -3,15 +3,15 @@ import { SoftSkillInterface } from '@/shared/interfaces/soft-skill.interface';
 import { HardSkillInterface } from '@/shared/interfaces/hard-skill.interface';
 import { EducationInterface } from '@/shared/interfaces/education.interface';
 import { SocialInterface } from '@/shared/interfaces/social.interface';
-import { RegistrationInterface } from '../shared/interfaces/registration.interface';
-import { UserInterface } from '../shared/interfaces/user.interface';
-import { LoginInterface } from '../shared/interfaces/login.interface';
-import { MessageInterface } from '../shared/interfaces/message.interface';
-import { EmailInterface } from '../shared/interfaces/email.interface';
-import { ConfirmEmailInterface } from '../shared/interfaces/confirm-email.interface';
-import { TokenValidationInterface } from '../shared/interfaces/token-validation.interface';
-import { ResetPasswordInterface } from '../shared/interfaces/reset-password.interface';
-import { UpdateUserType } from '../shared/types/update-user.type';
+import { RegistrationInterface } from '@/shared/interfaces/registration.interface';
+import { UserInterface } from '@/shared/interfaces/user.interface';
+import { LoginInterface } from '@/shared/interfaces/login.interface';
+import { MessageInterface } from '@/shared/interfaces/message.interface';
+import { EmailInterface } from '@/shared/interfaces/email.interface';
+import { ConfirmEmailInterface } from '@/shared/interfaces/confirm-email.interface';
+import { TokenValidationInterface } from '@/shared/interfaces/token-validation.interface';
+import { ResetPasswordInterface } from '@/shared/interfaces/reset-password.interface';
+import { UpdateUserType } from '@/shared/types/update-user.type';
 
 export const authApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({

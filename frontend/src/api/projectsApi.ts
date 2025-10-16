@@ -1,8 +1,8 @@
 import mainApi from './mainApi';
-import { ProjectCategoryInterface } from '../shared/interfaces/project-category.interface';
-import { ProjectsListInterface } from '../shared/interfaces/projects-list.interface';
-import { ProjectsFiltersInterface } from '../shared/interfaces/projects-filters.interface';
-import { ProjectInterface } from '../shared/interfaces/project.interface';
+import { ProjectCategoryInterface } from '@/shared/interfaces/project-category.interface';
+import { ProjectsListInterface } from '@/shared/interfaces/projects-list.interface';
+import { ProjectsFiltersInterface } from '@/shared/interfaces/projects-filters.interface';
+import { ProjectInterface } from '@/shared/interfaces/project.interface';
 
 export const projectsApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({

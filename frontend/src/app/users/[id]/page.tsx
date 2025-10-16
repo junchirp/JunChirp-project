@@ -15,14 +15,14 @@ import {
 } from '@/api/usersApi';
 import UserDetails from '@/app/users/[id]/UserDetails/UserDetails';
 import UserSkeleton from '@/app/users/[id]/UserSkeleton/UserSkeleton';
-import Page404 from '../../../shared/components/Page404/Page404';
+import Page404 from '@/shared/components/Page404/Page404';
 import ProjectsCount from './ProjectsCount/ProjectsCount';
 import UserProjectsList from './UserProjectsList/UserProjectsList';
-import InvitePopup from '../../../shared/components/InvitePopup/InvitePopup';
-import { useAppDispatch, useAppSelector } from '../../../hooks/reduxHooks';
-import authSelector from '../../../redux/auth/authSelector';
+import InvitePopup from '@/shared/components/InvitePopup/InvitePopup';
+import { useAppDispatch, useAppSelector } from '@/hooks/reduxHooks';
+import authSelector from '@/redux/auth/authSelector';
 import UserRequests from './UserRequests/UserRequests';
-import { setUserPageId } from '../../../redux/ui/uiSlice';
+import { setUserPageId } from '@/redux/ui/uiSlice';
 
 export default function User(): ReactElement | null {
   const params = useParams();

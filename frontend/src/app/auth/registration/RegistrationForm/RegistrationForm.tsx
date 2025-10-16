@@ -18,8 +18,8 @@ import Checkbox from '@/assets/icons/checkbox-empty.svg';
 import CheckboxChecked from '@/assets/icons/checkbox-checked.svg';
 import PasswordStrengthIndicator from '@/shared/components/PasswordStrengthIndicator/PasswordStrengthIndicator';
 import { getPasswordStrength } from '@/shared/utils/getPasswordStrength';
-import { registrationSchema } from '../../../../shared/forms/schemas/registrationSchema';
-import { normalizeApostrophes } from '../../../../shared/utils/normalizeApostrophes';
+import { registrationSchema } from '@/shared/forms/schemas/registrationSchema';
+import { normalizeApostrophes } from '@/shared/utils/normalizeApostrophes';
 
 type FormData = z.infer<typeof registrationSchema>;
 

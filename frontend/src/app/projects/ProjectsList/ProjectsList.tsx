@@ -1,9 +1,9 @@
 import { ReactElement } from 'react';
 import styles from './ProjectsList.module.scss';
-import { ProjectCardInterface } from '../../../shared/interfaces/project-card.interface';
-import ProjectCard from '../../../shared/components/ProjectCard/ProjectCard';
-import { ProjectParticipationInterface } from '../../../shared/interfaces/project-participation.interface';
-import { UserInterface } from '../../../shared/interfaces/user.interface';
+import { ProjectCardInterface } from '@/shared/interfaces/project-card.interface';
+import ProjectCard from '@/shared/components/ProjectCard/ProjectCard';
+import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
+import { UserInterface } from '@/shared/interfaces/user.interface';
 
 interface ProjectsListProps {
   projects: ProjectCardInterface[];

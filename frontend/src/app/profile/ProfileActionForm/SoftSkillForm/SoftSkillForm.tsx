@@ -11,7 +11,7 @@ import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
 import { useToast } from '@/hooks/useToast';
 import { useAddSoftSkillMutation } from '@/api/softSkillsApi';
-import { softSkillSchema } from '../../../../shared/forms/schemas/softSkillSchema';
+import { softSkillSchema } from '@/shared/forms/schemas/softSkillSchema';
 
 type FormData = z.infer<typeof softSkillSchema>;
 

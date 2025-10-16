@@ -1,4 +1,4 @@
-import { DeveloperInterface } from '../interfaces/developer.interface';
+import { DeveloperInterface } from '@/shared/interfaces/developer.interface';
 
 export const developers: DeveloperInterface[] = [
   {

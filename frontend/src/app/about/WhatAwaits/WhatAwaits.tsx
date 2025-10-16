@@ -3,8 +3,8 @@
 import React, { ReactElement } from 'react';
 import styles from './WhatAwaits.module.scss';
 import Image from 'next/image';
-import Button from '../../../shared/components/Button/Button';
-import Linkedin from '../../../assets/icons/linkedin.svg';
+import Button from '@/shared/components/Button/Button';
+import Linkedin from '@/assets/icons/linkedin.svg';
 
 export default function WhatAwaits(): ReactElement {
   const goLinkedin = (): void => {

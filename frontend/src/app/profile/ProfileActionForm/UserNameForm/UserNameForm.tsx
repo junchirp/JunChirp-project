@@ -9,9 +9,9 @@ import Button from '@/shared/components/Button/Button';
 import styles from './UserNameForm.module.scss';
 import { useUpdateUserMutation } from '@/api/authApi';
 import { UserInterface } from '@/shared/interfaces/user.interface';
-import { useToast } from '../../../../hooks/useToast';
-import { userNameSchema } from '../../../../shared/forms/schemas/userNameSchema';
-import { normalizeApostrophes } from '../../../../shared/utils/normalizeApostrophes';
+import { useToast } from '@/hooks/useToast';
+import { userNameSchema } from '@/shared/forms/schemas/userNameSchema';
+import { normalizeApostrophes } from '@/shared/utils/normalizeApostrophes';
 
 type FormData = z.infer<typeof userNameSchema>;
 

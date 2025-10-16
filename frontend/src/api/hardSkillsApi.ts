@@ -1,6 +1,6 @@
 import mainApi from './mainApi';
-import { HardSkillInterface } from '../shared/interfaces/hard-skill.interface';
-import { CreateHardSkillInterface } from '../shared/interfaces/create-hard-skill.interface';
+import { HardSkillInterface } from '@/shared/interfaces/hard-skill.interface';
+import { CreateHardSkillInterface } from '@/shared/interfaces/create-hard-skill.interface';
 
 export const hardSkillsApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({

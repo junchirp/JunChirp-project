@@ -2,10 +2,10 @@
 
 import { ReactElement } from 'react';
 import styles from './Page404.module.scss';
-import Button from '../Button/Button';
+import Button from '@/shared/components/Button/Button';
 import ArrowUpRight from '@/assets/icons/arrow-up-right.svg';
 import { useRouter } from 'next/navigation';
-import { useSupport } from '../../../hooks/useSupport';
+import { useSupport } from '@/hooks/useSupport';
 
 export default function Page404(): ReactElement {
   const router = useRouter();

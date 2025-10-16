@@ -1,12 +1,12 @@
 import { ReactElement, useEffect, useState } from 'react';
-import { ProjectCardInterface } from '../../../../shared/interfaces/project-card.interface';
-import { useGetUserProjectsQuery } from '../../../../api/usersApi';
+import { ProjectCardInterface } from '@/shared/interfaces/project-card.interface';
+import { useGetUserProjectsQuery } from '@/api/usersApi';
 import styles from './UserProjectsList.module.scss';
-import UserProjectCard from '../../../../shared/components/UserProjectCard/UserProjectCard';
-import Button from '../../../../shared/components/Button/Button';
+import UserProjectCard from '@/shared/components/UserProjectCard/UserProjectCard';
+import Button from '@/shared/components/Button/Button';
 import Image from 'next/image';
-import { useAppSelector } from '../../../../hooks/reduxHooks';
-import uiSelector from '../../../../redux/ui/uiSelector';
+import { useAppSelector } from '@/hooks/reduxHooks';
+import uiSelector from '@/redux/ui/uiSelector';
 
 interface UserProjectsListProps {
   userId: string;

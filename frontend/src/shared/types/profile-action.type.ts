@@ -1,5 +1,5 @@
-import { SocialInterface } from '../interfaces/social.interface';
-import { EducationInterface } from '../interfaces/education.interface';
+import { SocialInterface } from '@/shared/interfaces/social.interface';
+import { EducationInterface } from '@/shared/interfaces/education.interface';
 
 export type ProfileActionType =
   | { type: 'edit-name'; description: 'Редагувати особисту інформацію' }

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { socialNetworks } from '../../constants/social-networks';
+import { socialNetworks } from '@/shared/constants/social-networks';
 
 interface SocialCheckData {
   network: string;

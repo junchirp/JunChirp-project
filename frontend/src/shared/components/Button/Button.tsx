@@ -9,7 +9,7 @@ import {
   ReactNode,
   SVGProps,
 } from 'react';
-import Spinner from '../Spinner/Spinner';
+import Spinner from '@/shared/components/Spinner/Spinner';
 
 type ButtonSize = 'ssm' | 'sm' | 'md' | 'lg' | 'lg-md';
 type Variant =

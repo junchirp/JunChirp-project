@@ -2,30 +2,30 @@
 
 import { Fragment, ReactElement, useState } from 'react';
 import styles from './ProjectCard.module.scss';
-import { ProjectCardInterface } from '../../interfaces/project-card.interface';
-import Button from '../Button/Button';
+import { ProjectCardInterface } from '@/shared/interfaces/project-card.interface';
+import Button from '@/shared/components/Button/Button';
 import Image from 'next/image';
-import { membersPipe } from '../../utils/membersPipe';
-import { datePipe } from '../../utils/datePipe';
+import { membersPipe } from '@/shared/utils/membersPipe';
+import { datePipe } from '@/shared/utils/datePipe';
 import { useRouter } from 'next/navigation';
-import RejectInvitePopup from '../RejectInvitePopup/RejectInvitePopup';
-import { ProjectParticipationInterface } from '../../interfaces/project-participation.interface';
+import RejectInvitePopup from '@/shared/components/RejectInvitePopup/RejectInvitePopup';
+import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
 import {
   useAcceptInviteMutation,
   useCreateRequestMutation,
-} from '../../../api/participationsApi';
-import DiscordBanner from '../DiscordBanner/DiscordBanner';
+} from '@/api/participationsApi';
+import DiscordBanner from '@/shared/components/DiscordBanner/DiscordBanner';
 import Link from 'next/link';
-import { UserInterface } from '../../interfaces/user.interface';
-import { ProjectRoleInterface } from '../../interfaces/project-role.interface';
-import RadioGroup from '../RadioGroup/RadioGroup';
+import { UserInterface } from '@/shared/interfaces/user.interface';
+import { ProjectRoleInterface } from '@/shared/interfaces/project-role.interface';
+import RadioGroup from '@/shared/components/RadioGroup/RadioGroup';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { requestSchema } from '../../forms/schemas/requestSchema';
-import { useToast } from '../../../hooks/useToast';
-import { useAppSelector } from '../../../hooks/reduxHooks';
-import { selectAllEducations } from '../../../redux/educations/educationsSlice';
+import { requestSchema } from '@/shared/forms/schemas/requestSchema';
+import { useToast } from '@/hooks/useToast';
+import { useAppSelector } from '@/hooks/reduxHooks';
+import { selectAllEducations } from '@/redux/educations/educationsSlice';
 
 interface ProjectCardProps {
   project: ProjectCardInterface;

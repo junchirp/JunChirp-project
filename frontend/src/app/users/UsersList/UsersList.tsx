@@ -6,7 +6,7 @@ import UserItem from './UserItem/UserItem';
 import { useAppSelector } from '@/hooks/reduxHooks';
 import authSelector from '@/redux/auth/authSelector';
 import { UserCardInterface } from '@/shared/interfaces/user-card.interface';
-import { ProjectCardInterface } from '../../../shared/interfaces/project-card.interface';
+import { ProjectCardInterface } from '@/shared/interfaces/project-card.interface';
 
 interface UsersListProps {
   users: UserCardInterface[];

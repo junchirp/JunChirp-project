@@ -5,7 +5,7 @@ import { ButtonHTMLAttributes, ReactElement, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useToast } from '@/hooks/useToast';
-import { ToastMessageWithKey } from '../../../providers/MessageProvider';
+import { ToastMessageWithKey } from '@/providers/MessageProvider';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   iconOnly?: boolean;

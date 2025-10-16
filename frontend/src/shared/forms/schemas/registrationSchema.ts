@@ -1,8 +1,8 @@
-import { agreementValidator } from '../validators/agreementValidator';
+import { agreementValidator } from '@/shared/forms/validators/agreementValidator';
 import { userNameSchema } from './userNameSchema';
 import { availableEmailSchema } from './availableEmailSchema';
 import { passwordSchema } from './passwordSchema';
-import { passwordRefinement } from '../refinements/passwordRefinement';
+import { passwordRefinement } from '@/shared/forms/refinements/passwordRefinement';
 
 export const registrationSchema = userNameSchema
   .extend(availableEmailSchema.shape)

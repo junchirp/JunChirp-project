@@ -20,7 +20,7 @@ import {
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
 import { useToast } from '@/hooks/useToast';
-import { socialSchema } from '../../../../shared/forms/schemas/socialSchema';
+import { socialSchema } from '@/shared/forms/schemas/socialSchema';
 
 type FormData = z.infer<typeof socialSchema>;
 

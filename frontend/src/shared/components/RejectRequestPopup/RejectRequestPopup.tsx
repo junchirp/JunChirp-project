@@ -2,10 +2,10 @@
 
 import { ReactElement } from 'react';
 import styles from './RejectRequestPopup.module.scss';
-import Button from '../Button/Button';
-import { useRejectRequestMutation } from '../../../api/participationsApi';
-import { useToast } from '../../../hooks/useToast';
-import { UserInterface } from '../../interfaces/user.interface';
+import Button from '@/shared/components/Button/Button';
+import { useRejectRequestMutation } from '@/api/participationsApi';
+import { useToast } from '@/hooks/useToast';
+import { UserInterface } from '@/shared/interfaces/user.interface';
 
 interface RejectRequestPopupProps {
   requestId: string;

@@ -17,8 +17,8 @@ import {
 } from '@/api/authApi';
 import { useToast } from '@/hooks/useToast';
 import CancelPasswordPopup from './CancelPasswordPopup/CancelPasswordPopup';
-import { passwordSchema } from '../../../../shared/forms/schemas/passwordSchema';
-import { resetPasswordSchema } from '../../../../shared/forms/schemas/resetPasswordSchema';
+import { passwordSchema } from '@/shared/forms/schemas/passwordSchema';
+import { resetPasswordSchema } from '@/shared/forms/schemas/resetPasswordSchema';
 
 type FormData = z.infer<typeof passwordSchema>;
 

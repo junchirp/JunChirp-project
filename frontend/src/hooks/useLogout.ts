@@ -3,10 +3,10 @@
 import { useLogoutMutation } from '@/api/authApi';
 import { useAppDispatch } from './reduxHooks';
 import mainApi from '@/api/mainApi';
-import { setEducations } from '../redux/educations/educationsSlice';
-import { setSoftSkills } from '../redux/softSkills/softSkillsSlice';
-import { setHardSkills } from '../redux/hardSkills/hardSkillsSlice';
-import { setSocials } from '../redux/socials/socialsSlice';
+import { setEducations } from '@/redux/educations/educationsSlice';
+import { setSoftSkills } from '@/redux/softSkills/softSkillsSlice';
+import { setHardSkills } from '@/redux/hardSkills/hardSkillsSlice';
+import { setSocials } from '@/redux/socials/socialsSlice';
 
 export function useLogout(): { logout: () => void } {
   const dispatch = useAppDispatch();

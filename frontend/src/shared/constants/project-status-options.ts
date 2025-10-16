@@ -1,4 +1,4 @@
-import { SelectOptionsInterface } from '../interfaces/select-options.interface';
+import { SelectOptionsInterface } from '@/shared/interfaces/select-options.interface';
 
 export const projectStatusOptions: SelectOptionsInterface[] = [
   { id: '1', value: null, label: 'Всі' },

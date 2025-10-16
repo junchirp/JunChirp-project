@@ -6,12 +6,13 @@ import EducationMultiSelect from '@/shared/components/EducationMultiSelect/Educa
 import { selectAllProjectRolesList } from '@/redux/projectRolesList/projectRolesListSlice';
 import Button from '@/shared/components/Button/Button';
 import styles from './UsersFiltersForm.module.scss';
-import ProjectsCountDropdown from '../../../../shared/components/ProjectsCountDropdown/ProjectsCountDropdown';
 import { projectsCountOptions } from '@/shared/constants/projects-count-options';
 import { useUsersFilters } from '@/hooks/useUsersFilters';
 import { arraysEqualUnordered } from '@/shared/utils/arrayEqualUnordered';
 import ActiveUsersFilters from './ActiveUsersFilters/ActiveUsersFilters';
 import { useAppSelector } from '@/hooks/reduxHooks';
+import { SelectOptionsInterface } from '../../../../shared/interfaces/select-options.interface';
+import Dropdown from '../../../../shared/components/Dropdown/Dropdown';
 
 interface FormData {
   specializationIds: string[];
@@ -75,10 +76,13 @@ export default function UsersFiltersForm(): ReactElement {
           name="activeProjectsCount"
           control={form.control}
           render={({ field }) => (
-            <ProjectsCountDropdown
+            <Dropdown<SelectOptionsInterface>
               {...field}
               options={projectsCountOptions}
               label="Кількість активних проєктів:"
+              placeholder="Всі"
+              getOptionLabel={(o) => o.label}
+              getOptionValue={(o) => o.value}
             />
           )}
         />

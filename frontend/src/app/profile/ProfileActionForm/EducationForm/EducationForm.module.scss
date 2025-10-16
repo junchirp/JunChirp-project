@@ -4,12 +4,14 @@
   flex-direction: column;
   justify-content: stretch;
   gap: 40px;
+  min-width: 0;
 
   &__fieldset {
     display: flex;
     flex-direction: column;
     justify-content: stretch;
     gap: 20px;
+    min-width: 0;
   }
 
   &__actions {

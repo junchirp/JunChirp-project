@@ -11,7 +11,7 @@ import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
 import { useToast } from '@/hooks/useToast';
 import { useAddHardSkillMutation } from '@/api/hardSkillsApi';
-import { hardSkillSchema } from '../../../../shared/forms/schemas/hardSkillSchema';
+import { hardSkillSchema } from '@/shared/forms/schemas/hardSkillSchema';
 
 type FormData = z.infer<typeof hardSkillSchema>;
 

@@ -2,17 +2,17 @@
 
 import { ReactElement } from 'react';
 import styles from './InviteForm.module.scss';
-import ProjectDropdown from '@/shared/components/ProjectDropdown/ProjectDropdown';
 import { UserCardInterface } from '@/shared/interfaces/user-card.interface';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import ProjectRoleDropdown from '@/shared/components/ProjectRoleDropdown/ProjectRoleDropdown';
 import Button from '@/shared/components/Button/Button';
 import { z } from 'zod';
 import { useInviteUserMutation } from '@/api/participationsApi';
 import { useToast } from '@/hooks/useToast';
-import { ProjectCardInterface } from '../../../interfaces/project-card.interface';
-import { inviteSchema } from '../../../forms/schemas/inviteSchema';
+import { ProjectCardInterface } from '@/shared/interfaces/project-card.interface';
+import { inviteSchema } from '@/shared/forms/schemas/inviteSchema';
+import Dropdown from '@/shared/components/Dropdown/Dropdown';
+import { RoleWithUserInterface } from '../../../interfaces/role-with-user.interface';
 
 type FormData = z.infer<typeof inviteSchema>;
 
@@ -86,7 +86,7 @@ export default function InviteForm(props: InviteFormProps): ReactElement {
           name="projectId"
           control={control}
           render={({ field }) => (
-            <ProjectDropdown
+            <Dropdown<ProjectCardInterface>
               {...field}
               options={myProjects}
               label="Проєкт"
@@ -95,6 +95,8 @@ export default function InviteForm(props: InviteFormProps): ReactElement {
                 field.onChange(value);
                 setValue('projectRoleId', '');
               }}
+              getOptionLabel={(o) => o.projectName}
+              getOptionValue={(o) => o.id}
             />
           )}
         />
@@ -102,7 +104,7 @@ export default function InviteForm(props: InviteFormProps): ReactElement {
           name="projectRoleId"
           control={control}
           render={({ field }) => (
-            <ProjectRoleDropdown
+            <Dropdown<RoleWithUserInterface>
               {...field}
               options={roleOptions}
               label="Роль"
@@ -110,7 +112,11 @@ export default function InviteForm(props: InviteFormProps): ReactElement {
                 selectedProject ? 'Обери роль' : 'Спочатку обери проєкт'
               }
               disabled={!selectedProject}
-              allowedRoleTypeIds={allowedRoleTypeIds}
+              getOptionLabel={(o) => o.roleType.roleName}
+              getOptionValue={(o) => o.id}
+              isOptionDisabled={(o) =>
+                !allowedRoleTypeIds.includes(o.roleType.id)
+              }
             />
           )}
         />

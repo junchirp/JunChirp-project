@@ -2,7 +2,7 @@
 
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useMemo } from 'react';
-import { ProjectsFiltersInterface } from '../shared/interfaces/projects-filters.interface';
+import { ProjectsFiltersInterface } from '@/shared/interfaces/projects-filters.interface';
 
 interface ProjectsFiltersResultInterface {
   filters: ProjectsFiltersInterface;

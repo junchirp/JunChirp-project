@@ -1,4 +1,4 @@
-import { RootState } from '../store';
+import { RootState } from '@/redux/store';
 
 const selectCsrfToken = (state: RootState): string => state.csrf.token;
 

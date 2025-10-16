@@ -1,4 +1,4 @@
-import { EducationInterface } from '@/shared/interfaces/education.interface';
+import { EducationInterface } from './education.interface';
 
 export interface UserCardInterface {
   id: string;

@@ -2,17 +2,17 @@
 
 import React, { ReactElement, useEffect, useRef, useState } from 'react';
 import styles from './SocialInvitePopup.module.scss';
-import X from '../../../../../assets/icons/x.svg';
-import Button from '../../../../../shared/components/Button/Button';
-import Input from '../../../../../shared/components/Input/Input';
-import Linkedin from '../../../../../assets/icons/linkedin.svg';
-import XTwitter from '../../../../../assets/icons/x-twitter.svg';
-import Facebook from '../../../../../assets/icons/facebook.svg';
-import Instagram from '../../../../../assets/icons/instagram.svg';
-import Telegram from '../../../../../assets/icons/telegram.svg';
-import Discord from '../../../../../assets/icons/discord.svg';
-import { PlatformType } from '../../../../../shared/types/platform.type';
-import { useToast } from '../../../../../hooks/useToast';
+import X from '@/assets/icons/x.svg';
+import Button from '@/shared/components/Button/Button';
+import Input from '@/shared/components/Input/Input';
+import Linkedin from '@/assets/icons/linkedin.svg';
+import XTwitter from '@/assets/icons/x-twitter.svg';
+import Facebook from '@/assets/icons/facebook.svg';
+import Instagram from '@/assets/icons/instagram.svg';
+import Telegram from '@/assets/icons/telegram.svg';
+import Discord from '@/assets/icons/discord.svg';
+import { PlatformType } from '@/shared/types/platform.type';
+import { useToast } from '@/hooks/useToast';
 
 interface SocialInvitePopupProps {
   onClose: () => void;

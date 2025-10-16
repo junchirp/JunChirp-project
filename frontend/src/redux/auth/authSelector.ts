@@ -1,4 +1,4 @@
-import { RootState } from '../store';
+import { RootState } from '@/redux/store';
 import { UserInterface } from '@/shared/interfaces/user.interface';
 
 const selectUser = (state: RootState): UserInterface | null => state.auth.user;

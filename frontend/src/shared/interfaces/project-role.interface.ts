@@ -1,4 +1,4 @@
-import { ProjectRoleTypeInterface } from '@/shared/interfaces/project-role-type.interface';
+import { ProjectRoleTypeInterface } from './project-role-type.interface';
 
 export interface ProjectRoleInterface {
   id: string;

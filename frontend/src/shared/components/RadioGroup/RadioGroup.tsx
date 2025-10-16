@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import styles from './RadioGroup.module.scss';
-import { ProjectRoleInterface } from '../../interfaces/project-role.interface';
+import { ProjectRoleInterface } from '@/shared/interfaces/project-role.interface';
 import Radio from '@/assets/icons/radio.svg';
 
 interface RadioGroupProps {

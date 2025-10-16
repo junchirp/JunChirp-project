@@ -14,13 +14,13 @@ import { useToast } from '@/hooks/useToast';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
 import { useLazyGetProjectRolesListQuery } from '@/api/projectRolesApi';
-import { useSupport } from '../../../../hooks/useSupport';
+import { useSupport } from '@/hooks/useSupport';
 import { useAppDispatch } from '@/hooks/reduxHooks';
 import { setEducations } from '@/redux/educations/educationsSlice';
 import { setHardSkills } from '@/redux/hardSkills/hardSkillsSlice';
 import { setSocials } from '@/redux/socials/socialsSlice';
 import { setSoftSkills } from '@/redux/softSkills/softSkillsSlice';
-import { loginSchema } from '../../../../shared/forms/schemas/loginShema';
+import { loginSchema } from '@/shared/forms/schemas/loginShema';
 
 type FormData = z.infer<typeof loginSchema>;
 

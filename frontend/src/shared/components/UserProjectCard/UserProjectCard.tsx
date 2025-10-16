@@ -1,11 +1,11 @@
 'use client';
 
 import { ReactElement } from 'react';
-import { ProjectCardInterface } from '../../interfaces/project-card.interface';
+import { ProjectCardInterface } from '@/shared/interfaces/project-card.interface';
 import styles from './UserProjectCard.module.scss';
-import Button from '../Button/Button';
-import { useAppSelector } from '../../../hooks/reduxHooks';
-import authSelector from '../../../redux/auth/authSelector';
+import Button from '@/shared/components/Button/Button';
+import { useAppSelector } from '@/hooks/reduxHooks';
+import authSelector from '@/redux/auth/authSelector';
 import { useRouter } from 'next/navigation';
 
 interface UserProjectCardProps {
