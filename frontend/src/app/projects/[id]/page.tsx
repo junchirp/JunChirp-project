@@ -40,7 +40,7 @@ export default function Project(): ReactElement | null {
       );
 
       if (isParticipant) {
-        router.replace(`/projects/${projectId}/cab`);
+        router.push(`/projects/${projectId}/cab`);
       }
     }
   }, [isLoading, project, user, router, projectId]);

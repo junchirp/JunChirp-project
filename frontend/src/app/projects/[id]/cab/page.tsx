@@ -1,5 +1,15 @@
-import { ReactElement } from 'react';
+'use client';
 
-export default function Cab(): ReactElement {
-  return <div>Project cabinet page</div>;
+import { useEffect } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+
+export default function Cab(): null {
+  const router = useRouter();
+  const { id } = useParams<{ id: string }>();
+
+  useEffect(() => {
+    router.push(`/projects/${id}/cab/info`);
+  }, [router]);
+
+  return null;
 }

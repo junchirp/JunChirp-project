@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import { ReactElement, ReactNode } from 'react';
 import styles from './layout.module.scss';
 import Image from 'next/image';
 import TabMenuWrapper from '@/app/auth/TabMenuWrapper/TabMenuWrapper';
@@ -6,7 +6,7 @@ import TabMenuWrapper from '@/app/auth/TabMenuWrapper/TabMenuWrapper';
 export default function AuthLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
 }): ReactElement {
   return (
     <div className={styles['auth-layout']}>
