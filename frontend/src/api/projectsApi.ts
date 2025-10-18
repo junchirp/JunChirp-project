@@ -43,6 +43,17 @@ export const projectsApi = mainApi.injectEndpoints({
       },
       providesTags: ['projects'],
     }),
+    getProjectById: builder.query<
+      ProjectInterface,
+      { id: string; userId: string }
+    >({
+      query: ({ id }) => {
+        return {
+          url: `/projects/${id}`,
+        };
+      },
+      providesTags: ['projects'],
+    }),
   }),
 });
 
@@ -50,4 +61,5 @@ export const {
   useGetProjectsQuery,
   useGetCategoriesQuery,
   useGetProjectCardByIdQuery,
+  useGetProjectByIdQuery,
 } = projectsApi;
