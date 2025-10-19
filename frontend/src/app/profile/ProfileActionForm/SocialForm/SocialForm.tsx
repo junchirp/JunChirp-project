@@ -43,6 +43,7 @@ export default function SocialForm(props: SocialFormProps): ReactElement {
     reset,
     watch,
     trigger,
+    setFocus,
     formState: { errors, isValid },
   } = useForm<FormData>({
     resolver: zodResolver(socialSchema),
@@ -52,6 +53,10 @@ export default function SocialForm(props: SocialFormProps): ReactElement {
       url: '',
     },
   });
+
+  useEffect(() => {
+    setFocus('network');
+  }, [setFocus]);
 
   useEffect(() => {
     if (initialValues) {

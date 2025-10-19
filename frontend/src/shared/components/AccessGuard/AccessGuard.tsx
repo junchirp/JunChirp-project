@@ -12,7 +12,7 @@ interface AccessGuardProps {
   checkDataAccess?: () =>
     | {
         error?: FetchBaseQueryError | SerializedError | undefined;
-        isFetching?: boolean;
+        isLoading?: boolean;
       }
     | undefined;
   loadingFallback?: ReactNode;
@@ -29,10 +29,10 @@ export default function AccessGuard({
   const { id } = useParams<{ id: string }>();
 
   const accessCheck = checkDataAccess?.();
-  const isFetching = accessCheck?.isFetching ?? false;
+  const isDataLoading = accessCheck?.isLoading ?? false;
   const accessError = accessCheck?.error;
 
-  const isLoading = status !== 'loaded' || isFetching;
+  const isLoading = status !== 'loaded' || isDataLoading;
 
   const shouldRedirect = !user?.isVerified || !user || accessError;
 
