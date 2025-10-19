@@ -32,27 +32,21 @@ export const projectsApi = mainApi.injectEndpoints({
         };
       },
     }),
-    getProjectCardById: builder.query<
-      ProjectInterface,
-      { id: string; userId: string }
-    >({
-      query: ({ id }) => {
+    getProjectCardById: builder.query<ProjectInterface, string>({
+      query: (id) => {
         return {
           url: `/projects/${id}/card`,
         };
       },
-      providesTags: ['projects'],
+      providesTags: (result, error, id) => [{ type: 'projects', id }],
     }),
-    getProjectById: builder.query<
-      ProjectInterface,
-      { id: string; userId: string }
-    >({
-      query: ({ id }) => {
+    getProjectById: builder.query<ProjectInterface, string>({
+      query: (id) => {
         return {
           url: `/projects/${id}`,
         };
       },
-      providesTags: ['projects'],
+      providesTags: (result, error, id) => [{ type: 'projects', id }],
     }),
   }),
 });

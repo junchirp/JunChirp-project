@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactElement, useEffect } from 'react';
+import { ReactElement, useEffect, useRef } from 'react';
 import { z } from 'zod';
 import { EducationInterface } from '@/shared/interfaces/education.interface';
 import { selectAllProjectRolesList } from '@/redux/projectRolesList/projectRolesListSlice';
@@ -36,6 +36,7 @@ export default function EducationForm(props: EducationFormProps): ReactElement {
     handleSubmit,
     control,
     reset,
+    setFocus,
     formState: { errors, isValid },
   } = useForm<FormData>({
     resolver: zodResolver(educationSchema),
@@ -45,6 +46,10 @@ export default function EducationForm(props: EducationFormProps): ReactElement {
       specializationId: '',
     },
   });
+
+  useEffect(() => {
+    setFocus('institution');
+  }, [setFocus]);
 
   useEffect(() => {
     if (initialValues) {

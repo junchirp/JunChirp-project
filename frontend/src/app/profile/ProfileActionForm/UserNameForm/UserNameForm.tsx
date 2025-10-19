@@ -1,6 +1,6 @@
 'use client';
 
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -26,6 +26,7 @@ export default function UserNameForm(props: UserNameFormProps): ReactElement {
   const {
     control,
     handleSubmit,
+    setFocus,
     formState: { errors, isValid },
   } = useForm<FormData>({
     resolver: zodResolver(userNameSchema),
@@ -36,6 +37,10 @@ export default function UserNameForm(props: UserNameFormProps): ReactElement {
     },
   });
   const { showToast, isActive } = useToast();
+
+  useEffect(() => {
+    setFocus('firstName');
+  }, [setFocus]);
 
   const onSubmit = async (data: FormData): Promise<void> => {
     if (isActive('user name')) {

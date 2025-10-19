@@ -17,10 +17,7 @@ export default function Project(): ReactElement | null {
   const router = useRouter();
   const projectId = params.id as string;
   const { data: project, isLoading: projectLoading } =
-    useGetProjectCardByIdQuery(
-      { id: projectId, userId: user?.id as string },
-      { skip: !user },
-    );
+    useGetProjectCardByIdQuery(projectId, { skip: !user });
 
   const { data: requests = [], isLoading: requestsLoading } =
     useGetMyRequestsQuery(user ? { userId: user.id } : undefined, {
@@ -58,8 +55,8 @@ export default function Project(): ReactElement | null {
       redirectTo={`/auth/login?next=${encodeURIComponent(pathname)}`}
     >
       {isLoading ? (
-        <div className={styles['project']}>
-          <div className={styles['project__skeleton']} />
+        <div className={styles.project}>
+          <div className={styles.project__skeleton} />
         </div>
       ) : project ? (
         <div className={styles['project']}>

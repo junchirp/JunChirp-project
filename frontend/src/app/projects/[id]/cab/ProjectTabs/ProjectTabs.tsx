@@ -16,19 +16,19 @@ export default function ProjectTabs(): ReactElement {
   const items = [
     {
       label: 'Загальна інформація',
-      // command: (): void => router.push(`${basePath}/info`),
+      command: (): void => router.push(`${basePath}/info`),
     },
     {
       label: 'Документація',
-      // command: (): void => router.push(`${basePath}/docs`),
+      command: (): void => router.push(`${basePath}/docs`),
     },
     {
       label: 'Список учасників',
-      // command: (): void => router.push(`${basePath}/members`),
+      command: (): void => router.push(`${basePath}/members`),
     },
     {
       label: 'Дошка завдань',
-      // command: (): void => router.push(`${basePath}/boards`),
+      command: (): void => router.push(`${basePath}/boards`),
     },
   ];
 
@@ -43,67 +43,15 @@ export default function ProjectTabs(): ReactElement {
           : 0;
 
   return (
-    <>
-      <div className={styles['project-tabs']}>
-        <TabMenu
-          className={'project-tabs__menu-1'}
-          model={items}
-          activeIndex={activeIndex}
-        />
-        <Button color="green" size="md" iconPosition="right" icon={<Arrow/>}>
-          Чат
-        </Button>
-      </div>
-      <div className={styles['project-tabs']}>
-        <TabMenu
-          className={'project-tabs__menu-2'}
-          model={items}
-          activeIndex={activeIndex}
-        />
-        <Button color="green" size="md" iconPosition="right" icon={<Arrow/>}>
-          Чат
-        </Button>
-      </div>
-      <div className={styles['project-tabs']}>
-        <TabMenu
-          className={'project-tabs__menu-3'}
-          model={items}
-          activeIndex={activeIndex}
-        />
-        <Button color="green" size="md" iconPosition="right" icon={<Arrow/>}>
-          Чат
-        </Button>
-      </div>
-      <div className={styles['project-tabs']}>
-        <TabMenu
-          className={'project-tabs__menu-4'}
-          model={items}
-          activeIndex={activeIndex}
-        />
-        <Button color="green" size="md" iconPosition="right" icon={<Arrow/>}>
-          Чат
-        </Button>
-      </div>
-      <div className={styles['project-tabs']}>
-        <TabMenu
-          className={'project-tabs__menu-5'}
-          model={items}
-          activeIndex={activeIndex}
-        />
-        <Button color="green" size="md" iconPosition="right" icon={<Arrow/>}>
-          Чат
-        </Button>
-      </div>
-      <div className={styles['project-tabs']}>
-        <TabMenu
-          className={'project-tabs__menu-6'}
-          model={items}
-          activeIndex={activeIndex}
-        />
-        <Button color="green" size="md" iconPosition="right" icon={<Arrow/>}>
-          Чат
-        </Button>
-      </div>
-    </>
+    <div className={styles['project-tabs']}>
+      <TabMenu
+        className={'project-tabs__menu'}
+        model={items}
+        activeIndex={activeIndex}
+      />
+      <Button color="green" size="md" iconPosition="right" icon={<Arrow />}>
+        Чат
+      </Button>
+    </div>
   );
 }

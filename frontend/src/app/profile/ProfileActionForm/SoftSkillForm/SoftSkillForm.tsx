@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactElement } from 'react';
+import { ReactElement, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -26,11 +26,16 @@ export default function SoftSkillForm(props: SoftSkillFormProps): ReactElement {
   const {
     register,
     handleSubmit,
+    setFocus,
     formState: { errors, isValid },
   } = useForm<FormData>({
     resolver: zodResolver(softSkillSchema),
     mode: 'onChange',
   });
+
+  useEffect(() => {
+    setFocus('softSkillName');
+  }, [setFocus]);
 
   const onSubmit = async (data: FormData): Promise<void> => {
     if (isActive('soft skill')) {
