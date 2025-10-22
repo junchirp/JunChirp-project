@@ -78,6 +78,10 @@ export default function ProjectsFiltersForm(): ReactElement {
                 {...field}
                 options={categories}
                 label="Категорія проєкту:"
+                labelSize={20}
+                labelHeight={1.4}
+                labelWeight={600}
+                labelMargin={12}
                 placeholder="Всі"
                 getOptionLabel={(o) => o.categoryName}
                 getOptionValue={(o) => o.id}
@@ -94,6 +98,10 @@ export default function ProjectsFiltersForm(): ReactElement {
                 {...field}
                 options={projectStatusOptions}
                 label="Статус проєкту:"
+                labelSize={20}
+                labelHeight={1.4}
+                labelWeight={600}
+                labelMargin={12}
                 placeholder="Всі"
                 getOptionLabel={(o) => o.label}
                 getOptionValue={(o) => o.value}
@@ -110,6 +118,10 @@ export default function ProjectsFiltersForm(): ReactElement {
                 {...field}
                 options={projectParticipantsOptions}
                 label="Кількість учасників:"
+                labelSize={20}
+                labelHeight={1.4}
+                labelWeight={600}
+                labelMargin={12}
                 placeholder="Всі"
                 value={
                   field.value

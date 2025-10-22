@@ -45,9 +45,7 @@ export default function ProjectMenu({
       ) : (
         <button className={styles['project-menu__item']}>
           <Image src="/images/trash.svg" alt="trash" width={48} height={48} />
-          <span className={styles['project-menu__text']}>
-            Вийти з проєкту
-          </span>
+          <span className={styles['project-menu__text']}>Вийти з проєкту</span>
         </button>
       )}
     </nav>

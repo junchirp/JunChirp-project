@@ -1,0 +1,93 @@
+@use '@/assets/styles/variables';
+
+.create-project-form {
+  max-width: 790px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 80px;
+
+  &__fields {
+    background-color: variables.$gray-1;
+    border-radius: 32px;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+  }
+
+  &__checkbox {
+    display: none;
+  }
+
+  &__icon {
+    border-radius: 5px;
+    height: 20px;
+    width: 20px;
+    color: variables.$gray-8;
+
+    &:hover {
+      color: variables.$green-2;
+    }
+
+    &:active {
+      box-shadow: 0 0 0 4px variables.$green-4;
+      color: variables.$green-2;
+    }
+  }
+
+  &__label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    user-select: none;
+    padding: 11px 0;
+    width: fit-content;
+
+    &:hover {
+      & .create-project-form__icon {
+        color: variables.$green-2;
+      }
+    }
+
+    &:active {
+      & .create-project-form__icon {
+        box-shadow: 0 0 0 4px variables.$green-4;
+        color: variables.$green-2;
+      }
+    }
+  }
+
+  &__label-text {
+    font-size: 16px;
+    line-height: 1.4;
+  }
+
+  &__list-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  &__list-label {
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 1.4;
+    color: variables.$gray-10;
+  }
+
+  &__list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 20px;
+  }
+}

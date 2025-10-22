@@ -3,6 +3,7 @@ import { ProjectCategoryInterface } from '@/shared/interfaces/project-category.i
 import { ProjectsListInterface } from '@/shared/interfaces/projects-list.interface';
 import { ProjectsFiltersInterface } from '@/shared/interfaces/projects-filters.interface';
 import { ProjectInterface } from '@/shared/interfaces/project.interface';
+import { CreateProjectInterface } from '../shared/interfaces/create-project.interface';
 
 export const projectsApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -22,7 +23,7 @@ export const projectsApi = mainApi.injectEndpoints({
             url: `/projects?${query.toString()}`,
           };
         },
-        providesTags: ['projects'],
+        providesTags: [{ type: 'projects', id: 'LIST' }],
       },
     ),
     getCategories: builder.query<ProjectCategoryInterface[], undefined>({
@@ -31,6 +32,7 @@ export const projectsApi = mainApi.injectEndpoints({
           url: '/projects/categories',
         };
       },
+      keepUnusedDataFor: 3600 * 24,
     }),
     getProjectCardById: builder.query<ProjectInterface, string>({
       query: (id) => {
@@ -48,12 +50,22 @@ export const projectsApi = mainApi.injectEndpoints({
       },
       providesTags: (result, error, id) => [{ type: 'projects', id }],
     }),
+    createProject: builder.mutation<ProjectInterface, CreateProjectInterface>({
+      query: (data) => ({
+        url: 'projects',
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: [{ type: 'projects', id: 'LIST' }],
+    }),
   }),
 });
 
 export const {
   useGetProjectsQuery,
   useGetCategoriesQuery,
+  useLazyGetCategoriesQuery,
   useGetProjectCardByIdQuery,
   useGetProjectByIdQuery,
+  useCreateProjectMutation,
 } = projectsApi;

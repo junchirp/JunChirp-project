@@ -1,9 +1,8 @@
 'use client';
 
-import { ReactElement, useEffect, useRef } from 'react';
+import { ReactElement, useEffect } from 'react';
 import { z } from 'zod';
 import { EducationInterface } from '@/shared/interfaces/education.interface';
-import { selectAllProjectRolesList } from '@/redux/projectRolesList/projectRolesListSlice';
 import styles from './EducationForm.module.scss';
 import { Controller, useForm } from 'react-hook-form';
 import Button from '@/shared/components/Button/Button';
@@ -13,10 +12,10 @@ import {
   useAddEducationMutation,
   useUpdateEducationMutation,
 } from '@/api/educationsApi';
-import { useAppSelector } from '@/hooks/reduxHooks';
 import { educationSchema } from '@/shared/forms/schemas/educationSchema';
 import Dropdown from '@/shared/components/Dropdown/Dropdown';
 import { ProjectRoleTypeInterface } from '@/shared/interfaces/project-role-type.interface';
+import { useGetProjectRolesListQuery } from '../../../../api/projectRolesApi';
 
 type FormData = z.infer<typeof educationSchema>;
 
@@ -26,7 +25,8 @@ interface EducationFormProps {
 }
 
 export default function EducationForm(props: EducationFormProps): ReactElement {
-  const specializationList = useAppSelector(selectAllProjectRolesList);
+  const { data: specializationsList = [] } =
+    useGetProjectRolesListQuery(undefined);
   const [updateEducation, { isLoading: updateEducationLoading }] =
     useUpdateEducationMutation();
   const [addEducation, { isLoading: addEducationLoading }] =
@@ -105,7 +105,7 @@ export default function EducationForm(props: EducationFormProps): ReactElement {
           render={({ field }) => (
             <Dropdown<ProjectRoleTypeInterface>
               {...field}
-              options={specializationList}
+              options={specializationsList}
               label="Спеціальність"
               placeholder="Спеціальність (бажана роль на проєкті)"
               getOptionLabel={(o) => o.roleName}

@@ -5,6 +5,7 @@ import { useAppSelector } from '@/hooks/reduxHooks';
 import authSelector from '@/redux/auth/authSelector';
 import { useLazyGetProjectRolesListQuery } from '@/api/projectRolesApi';
 import { useEffect } from 'react';
+import { useLazyGetCategoriesQuery } from '../../../api/projectsApi';
 
 export default function DataLoader(): null {
   const loadingStatus = useAppSelector(authSelector.selectLoadingStatus);
@@ -19,10 +20,12 @@ export default function DataLoader(): null {
 
   const user = useAppSelector(authSelector.selectUser);
   const [loadRoles] = useLazyGetProjectRolesListQuery();
+  const [loadCategories] = useLazyGetCategoriesQuery();
 
   useEffect(() => {
     if (user?.isVerified) {
       loadRoles(undefined);
+      loadCategories(undefined);
     }
   }, [user, loadRoles]);
 

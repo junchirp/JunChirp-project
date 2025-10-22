@@ -7,9 +7,10 @@ export const projectRolesApi = mainApi.injectEndpoints({
       query: () => ({
         url: 'project-roles/list',
       }),
-      providesTags: ['project-roles-list'],
+      keepUnusedDataFor: 3600 * 24,
     }),
   }),
 });
 
-export const { useLazyGetProjectRolesListQuery } = projectRolesApi;
+export const { useLazyGetProjectRolesListQuery, useGetProjectRolesListQuery } =
+  projectRolesApi;

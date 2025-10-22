@@ -26,13 +26,18 @@ export default function Info(): ReactElement {
     <>
       {project && (
         <div className={styles.info}>
-          <div className={styles['info__image-wrapper']}>
+          <div
+            className={`
+              ${styles['info__image-wrapper']} 
+              ${!project.logoUrl ? styles['info__image-wrapper--empty'] : ''}
+            `}
+          >
             {project.logoUrl ? (
               <Image
                 className={styles.info__image}
                 src={project.logoUrl}
                 alt="logo"
-                width={180}
+                width={276}
                 height={0}
               />
             ) : (
@@ -44,48 +49,48 @@ export default function Info(): ReactElement {
               />
             )}
           </div>
-          <div className={styles.info__header}>
-            <div className={styles['info__status-wrapper']}>
-              <p
-                className={`
-                  ${styles.info__status} 
-                  ${project.status === 'active' ? styles['info__status--active'] : styles['info__status--done']}
-              `}
-              >
-                {project.status === 'active' ? 'Активний' : 'Завершений'}
-              </p>
-              <Button
-                className={styles.info__button}
-                variant="secondary-frame"
-                color="green"
-                icon={<Settings />}
-                onClick={toggleMenu}
-              />
-            </div>
-            <h2 className={styles.info__title}>{project.projectName}</h2>
-          </div>
           <div className={styles.info__details}>
-            <div className={styles.info__info}>
-              <p className={styles.info__description}>{project.description}</p>
-              <p className={styles.info__category}>
-                {project.category.categoryName}
-              </p>
-              <div className={styles.info__team}>
-                <div className={styles.info__members}>
-                  <Image
-                    src="/images/users-2.svg"
-                    alt="users"
-                    width={24}
-                    height={24}
+            <div className={styles.info__header}>
+              <div className={styles['info__status-wrapper']}>
+                <p
+                  className={`
+                    ${styles.info__status} 
+                    ${project.status === 'active' ? styles['info__status--active'] : styles['info__status--done']}
+                `}
+                >
+                  {project.status === 'active' ? 'Активний' : 'Завершений'}
+                </p>
+                {project.status === 'active' && (
+                  <Button
+                    className={styles.info__button}
+                    variant="secondary-frame"
+                    color="green"
+                    icon={<Settings />}
+                    onClick={toggleMenu}
                   />
-                  <span className={styles['info__team-text']}>
-                    {membersPipe(project.participantsCount)}
-                  </span>
-                </div>
+                )}
+              </div>
+              <h2 className={styles.info__title}>{project.projectName}</h2>
+            </div>
+            <p className={styles.info__description}>{project.description}</p>
+            <p className={styles.info__category}>
+              {project.category.categoryName}
+            </p>
+            <div className={styles.info__team}>
+              <div className={styles.info__members}>
+                <Image
+                  src="/images/users-2.svg"
+                  alt="users"
+                  width={24}
+                  height={24}
+                />
                 <span className={styles['info__team-text']}>
-                  {datePipe(project.createdAt.toString(), 'DD/MM/YYYY')}
+                  {membersPipe(project.participantsCount)}
                 </span>
               </div>
+              <span className={styles['info__team-text']}>
+                {datePipe(project.createdAt.toString(), 'DD/MM/YYYY')}
+              </span>
             </div>
           </div>
           {isOpen && <ProjectMenu projectId={project.id} isOwner={isOwner} />}

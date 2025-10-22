@@ -3,11 +3,8 @@
 .textarea {
   &__label {
     display: block;
-    font-size: 14px;
-    line-height: 1;
-    font-weight: 500;
-    margin-bottom: 4px;
     color: variables.$gray-10;
+    user-select: none;
   }
 
   &__textarea {
