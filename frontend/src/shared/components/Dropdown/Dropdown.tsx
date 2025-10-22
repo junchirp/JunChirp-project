@@ -5,19 +5,30 @@ import { ControllerRenderProps } from 'react-hook-form';
 import Up from '@/assets/icons/chevron-up.svg';
 import Down from '@/assets/icons/chevron-down.svg';
 import styles from './Dropdown.module.scss';
+import Image from 'next/image';
 
 interface DropdownProps<T> extends Partial<ControllerRenderProps> {
   label?: string;
+  labelSize?: number;
+  labelHeight?: number;
+  labelWeight?: number;
+  labelMargin?: number;
   options: T[];
   placeholder?: string;
   getOptionLabel?: (option: T) => string;
   getOptionValue?: (option: T) => string | number | null;
   isOptionDisabled?: (option: T) => boolean;
+  withError?: boolean;
+  errorMessages?: string[] | string;
 }
 
 export default function Dropdown<T>(props: DropdownProps<T>): ReactElement {
   const {
     label,
+    labelSize = 14,
+    labelHeight = 1,
+    labelWeight = 500,
+    labelMargin = 4,
     options,
     value,
     onChange,
@@ -26,6 +37,8 @@ export default function Dropdown<T>(props: DropdownProps<T>): ReactElement {
     getOptionLabel,
     getOptionValue,
     isOptionDisabled,
+    withError,
+    errorMessages,
   } = props;
 
   const [isOpen, setIsOpen] = useState(false);
@@ -62,17 +75,35 @@ export default function Dropdown<T>(props: DropdownProps<T>): ReactElement {
     setIsOpen(false);
   };
 
+  const dropdownClassNames = [
+    styles.dropdown__button,
+    errorMessages?.length && styles['dropdown__button--invalid'],
+  ]
+    .filter(Boolean)
+    .join(' ');
+
+  const labelStyle = {
+    fontSize: `${labelSize}px`,
+    lineHeight: labelHeight,
+    fontWeight: labelWeight,
+    marginBottom: `${labelMargin}px`,
+  };
+
   return (
     <div className={styles.dropdown} ref={ref}>
       <div className={styles.dropdown__field}>
         {label && (
-          <label className={styles.dropdown__label} htmlFor={id}>
+          <label
+            className={styles.dropdown__label}
+            style={labelStyle}
+            htmlFor={id}
+          >
             {label}
           </label>
         )}
         <button
           id={id}
-          className={styles.dropdown__button}
+          className={dropdownClassNames}
           type="button"
           onClick={() => setIsOpen((prev) => !prev)}
           onBlur={onBlur}
@@ -89,8 +120,28 @@ export default function Dropdown<T>(props: DropdownProps<T>): ReactElement {
           )}
         </button>
       </div>
+      {withError ? (
+        errorMessages?.length ? (
+          <p className={styles.dropdown__error}>
+            <Image
+              src="/images/alert-circle.svg"
+              alt={'alert'}
+              width={16}
+              height={16}
+            />
+            {errorMessages[0]}
+          </p>
+        ) : (
+          <p className={styles.dropdown__error}></p>
+        )
+      ) : null}
       {isOpen && (
-        <ul className={styles.dropdown__list}>
+        <ul
+          className={styles.dropdown__list}
+          style={{
+            top: `${withError ? 'calc(100% - 17px)' : 'calc(100% + 4px)'}`,
+          }}
+        >
           {options.map((option) => {
             const optionLabel = labelFn(option);
             const optionValue = valueFn(option);

@@ -6,11 +6,8 @@
 
   &__label {
     display: block;
-    font-size: 14px;
-    line-height: 1;
-    font-weight: 500;
-    margin-bottom: 4px;
     color: variables.$gray-10;
+    user-select: none;
   }
 
   &__button {
@@ -48,7 +45,7 @@
   &__list {
     position: absolute;
     background-color: variables.$white-2;
-    top: 64px;
+    top: calc(100% + 4px);
     left: 0;
     width: 100%;
     border-radius: 8px;

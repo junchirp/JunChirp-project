@@ -14,6 +14,10 @@ import Image from 'next/image';
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
+  labelSize?: number;
+  labelHeight?: number;
+  labelWeight?: number;
+  labelMargin?: number;
   placeholder?: string;
   errorMessages?: string[] | string;
   className?: string;
@@ -26,6 +30,10 @@ function InputComponent(
 ): ReactElement {
   const {
     label,
+    labelSize = 14,
+    labelHeight = 1,
+    labelWeight = 500,
+    labelMargin = 4,
     placeholder,
     errorMessages,
     value,
@@ -49,17 +57,24 @@ function InputComponent(
   };
 
   const inputClassNames = [
-    styles['input__input'],
+    styles.input__input,
     errorMessages?.length && styles['input__input--invalid'],
     isPasswordField && styles['input__input--password'],
   ]
     .filter(Boolean)
     .join(' ');
 
+  const labelStyle = {
+    fontSize: `${labelSize}px`,
+    lineHeight: labelHeight,
+    fontWeight: labelWeight,
+    marginBottom: `${labelMargin}px`,
+  };
+
   return (
     <div className={`${styles.input} ${className ?? ''}`}>
       {label && (
-        <label className={styles.input__label} htmlFor={id}>
+        <label className={styles.input__label} style={labelStyle} htmlFor={id}>
           {label}
         </label>
       )}

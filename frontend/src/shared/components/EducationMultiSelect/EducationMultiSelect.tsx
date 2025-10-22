@@ -12,12 +12,20 @@ import Checkbox from '@/assets/icons/checkbox-empty.svg';
 
 interface EducationMultiSelectProps extends Partial<ControllerRenderProps> {
   label?: string;
+  labelSize?: number;
+  labelHeight?: number;
+  labelWeight?: number;
+  labelMargin?: number;
   options: ProjectRoleTypeInterface[];
   placeholder?: string;
 }
 
 export default function EducationMultiSelect({
   label,
+  labelSize = 14,
+  labelHeight = 1,
+  labelWeight = 500,
+  labelMargin = 4,
   options,
   value = [],
   onChange,
@@ -53,12 +61,20 @@ export default function EducationMultiSelect({
     onChange?.(newSelected);
   };
 
+  const labelStyle = {
+    fontSize: `${labelSize}px`,
+    lineHeight: labelHeight,
+    fontWeight: labelWeight,
+    marginBottom: `${labelMargin}px`,
+  };
+
   return (
     <div className={styles['education-multi-select']} ref={ref}>
       <div className={styles['education-multi-select__field']}>
         {label && (
           <label
             className={styles['education-multi-select__label']}
+            style={labelStyle}
             htmlFor={id}
           >
             {label}

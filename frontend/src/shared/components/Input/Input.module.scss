@@ -2,12 +2,9 @@
 
 .input {
   &__label {
-    display: block;
-    font-size: 14px;
-    line-height: 1;
-    font-weight: 500;
-    margin-bottom: 4px;
+    display: block;;
     color: variables.$gray-10;
+    user-select: none;
   }
 
   &__input {
@@ -31,18 +28,11 @@
       padding-right: 42px;
     }
 
-    &--password {
-      &.input__input--invalid {
-        padding-right: 72px;
-      }
-    }
-
     &::placeholder {
       color: variables.$gray-4;
     }
 
     &--invalid {
-      padding-right: 42px;
       border: 1px solid variables.$red-8;
 
       &:focus {

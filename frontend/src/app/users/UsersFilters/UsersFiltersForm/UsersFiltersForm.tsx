@@ -3,16 +3,15 @@
 import { ReactElement, useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import EducationMultiSelect from '@/shared/components/EducationMultiSelect/EducationMultiSelect';
-import { selectAllProjectRolesList } from '@/redux/projectRolesList/projectRolesListSlice';
 import Button from '@/shared/components/Button/Button';
 import styles from './UsersFiltersForm.module.scss';
 import { projectsCountOptions } from '@/shared/constants/projects-count-options';
 import { useUsersFilters } from '@/hooks/useUsersFilters';
 import { arraysEqualUnordered } from '@/shared/utils/arrayEqualUnordered';
 import ActiveUsersFilters from './ActiveUsersFilters/ActiveUsersFilters';
-import { useAppSelector } from '@/hooks/reduxHooks';
-import { SelectOptionsInterface } from '../../../../shared/interfaces/select-options.interface';
-import Dropdown from '../../../../shared/components/Dropdown/Dropdown';
+import { SelectOptionsInterface } from '@/shared/interfaces/select-options.interface';
+import Dropdown from '@/shared/components/Dropdown/Dropdown';
+import { useGetProjectRolesListQuery } from '@/api/projectRolesApi';
 
 interface FormData {
   specializationIds: string[];
@@ -20,7 +19,8 @@ interface FormData {
 }
 
 export default function UsersFiltersForm(): ReactElement {
-  const specializationsList = useAppSelector(selectAllProjectRolesList);
+  const { data: specializationsList = [] } =
+    useGetProjectRolesListQuery(undefined);
   const { filters, updateFilters } = useUsersFilters();
 
   const form = useForm<FormData>({
@@ -68,6 +68,10 @@ export default function UsersFiltersForm(): ReactElement {
               {...field}
               options={specializationsList}
               label="Список спеціалізацій:"
+              labelSize={20}
+              labelHeight={1.4}
+              labelWeight={600}
+              labelMargin={12}
               placeholder="Всі"
             />
           )}
@@ -80,6 +84,10 @@ export default function UsersFiltersForm(): ReactElement {
               {...field}
               options={projectsCountOptions}
               label="Кількість активних проєктів:"
+              labelSize={20}
+              labelHeight={1.4}
+              labelWeight={600}
+              labelMargin={12}
               placeholder="Всі"
               getOptionLabel={(o) => o.label}
               getOptionValue={(o) => o.value}

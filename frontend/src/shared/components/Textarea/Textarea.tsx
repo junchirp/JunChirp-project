@@ -13,6 +13,10 @@ import Image from 'next/image';
 
 interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string;
+  labelSize?: number;
+  labelHeight?: number;
+  labelWeight?: number;
+  labelMargin?: number;
   placeholder?: string;
   errorMessages?: string[] | string;
   className?: string;
@@ -25,6 +29,10 @@ function TextareaComponent(
 ): ReactElement {
   const {
     label,
+    labelSize = 14,
+    labelHeight = 1,
+    labelWeight = 500,
+    labelMargin = 4,
     placeholder,
     errorMessages,
     value,
@@ -45,10 +53,21 @@ function TextareaComponent(
     .filter(Boolean)
     .join(' ');
 
+  const labelStyle = {
+    fontSize: `${labelSize}px`,
+    lineHeight: labelHeight,
+    fontWeight: labelWeight,
+    marginBottom: `${labelMargin}px`,
+  };
+
   return (
     <div className={`${styles.textarea} ${className ?? ''}`}>
       {label && (
-        <label className={styles.textarea__label} htmlFor={id}>
+        <label
+          className={styles.textarea__label}
+          style={labelStyle}
+          htmlFor={id}
+        >
           {label}
         </label>
       )}

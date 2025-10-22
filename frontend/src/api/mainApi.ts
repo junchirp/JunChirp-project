@@ -137,7 +137,6 @@ const mainApi = createApi({
     'hard-skills',
     'educations',
     'socials',
-    'project-roles-list',
     'users',
     'my-projects',
     'invites-me-in-projects',
