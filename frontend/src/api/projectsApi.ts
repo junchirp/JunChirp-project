@@ -4,6 +4,7 @@ import { ProjectsListInterface } from '@/shared/interfaces/projects-list.interfa
 import { ProjectsFiltersInterface } from '@/shared/interfaces/projects-filters.interface';
 import { ProjectInterface } from '@/shared/interfaces/project.interface';
 import { CreateProjectInterface } from '../shared/interfaces/create-project.interface';
+import { UpdateProjectInterface } from '../shared/interfaces/update-project.interface';
 
 export const projectsApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -56,7 +57,22 @@ export const projectsApi = mainApi.injectEndpoints({
         method: 'POST',
         body: data,
       }),
-      invalidatesTags: [{ type: 'projects', id: 'LIST' }],
+      invalidatesTags: [{ type: 'projects', id: 'LIST' }, 'my-projects'],
+    }),
+    updateProject: builder.mutation<
+      ProjectInterface,
+      { id: string; data: UpdateProjectInterface }
+    >({
+      query: ({ id, data }) => ({
+        url: `projects/${id}`,
+        method: 'PUT',
+        body: data,
+      }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'projects', id: 'LIST' },
+        { type: 'projects', id },
+        'my-projects',
+      ],
     }),
   }),
 });

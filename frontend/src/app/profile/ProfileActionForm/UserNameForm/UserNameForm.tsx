@@ -127,7 +127,12 @@ export default function UserNameForm(props: UserNameFormProps): ReactElement {
         >
           Скасувати
         </Button>
-        <Button type="submit" color="green" disabled={!isValid}>
+        <Button
+          type="submit"
+          color="green"
+          disabled={!isValid}
+          loading={isLoading}
+        >
           Зберегти
         </Button>
       </div>

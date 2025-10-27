@@ -58,7 +58,7 @@ export default function ProjectCard({
     },
   });
   const router = useRouter();
-  const [createRequest] = useCreateRequestMutation();
+  const [createRequest, { isLoading: requestLoading }] = useCreateRequestMutation();
   const { showToast, isActive } = useToast();
   const educations = useAppSelector(selectAllEducations);
   const currentInvite = invites.find(
@@ -77,7 +77,7 @@ export default function ProjectCard({
     .filter((member) => member !== null);
   const isMyProject = members.some((member) => member.id === user?.id);
   const [isInvitePopupOpen, setInvitePopupOpen] = useState(false);
-  const [acceptInvite] = useAcceptInviteMutation();
+  const [acceptInvite, { isLoading: inviteLoading }] = useAcceptInviteMutation();
   const [isInviteBanner, setInviteBanner] = useState(false);
   const [isRequestBanner, setRequestBanner] = useState(false);
   const roleTypeIds = educations.map((edu) => edu.specialization.id) ?? [];
@@ -417,7 +417,11 @@ export default function ProjectCard({
                         >
                           Відхилити
                         </Button>
-                        <Button color="green" onClick={handleAccept}>
+                        <Button
+                          color="green"
+                          onClick={handleAccept}
+                          loading={inviteLoading}
+                        >
                           Прийняти
                         </Button>
                       </div>
@@ -457,7 +461,12 @@ export default function ProjectCard({
                           ${size === 'small' ? styles['project-card__actions--small'] : styles['project-card__actions--large']}
                         `}
                       >
-                        <Button color="green" type="submit" disabled={!isValid}>
+                        <Button
+                          color="green"
+                          type="submit"
+                          disabled={!isValid}
+                          loading={requestLoading}
+                        >
                           Подати заявку
                         </Button>
                       </div>

@@ -267,7 +267,18 @@ export class ProjectsService {
     try {
       const updatedProject = await this.prisma.project.update({
         where: { id },
-        data: dto,
+        data: {
+          projectName: dto.projectName,
+          description: dto.description,
+          categoryId: dto.categoryId,
+          roles: {
+            create: dto.rolesIds.map((roleTypeId) => ({
+              roleType: {
+                connect: { id: roleTypeId },
+              },
+            })),
+          },
+        },
         include: {
           category: true,
           roles: {

@@ -1,32 +1,32 @@
 'use client';
 
 import React, { ReactElement, useState } from 'react';
-import styles from './CreateProjectForm.module.scss';
+import styles from './ProjectForm.module.scss';
 import Button from '@/shared/components/Button/Button';
 import Input from '@/shared/components/Input/Input';
 import Textarea from '@/shared/components/Textarea/Textarea';
 import {
   useCreateProjectMutation,
   useGetCategoriesQuery,
-} from '../../../api/projectsApi';
-import { ProjectCategoryInterface } from '../../../shared/interfaces/project-category.interface';
-import Dropdown from '../../../shared/components/Dropdown/Dropdown';
+} from '@/api/projectsApi';
+import { ProjectCategoryInterface } from '@/shared/interfaces/project-category.interface';
+import Dropdown from '@/shared/components/Dropdown/Dropdown';
 import { z } from 'zod';
-import { projectSchema } from '../../../shared/forms/schemas/projectSchema';
+import { projectSchema } from '@/shared/forms/schemas/projectSchema';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useGetProjectRolesListQuery } from '../../../api/projectRolesApi';
-import CheckboxChecked from '../../../assets/icons/checkbox-checked.svg';
-import Checkbox from '../../../assets/icons/checkbox-empty.svg';
-import { useToast } from '../../../hooks/useToast';
+import { useGetProjectRolesListQuery } from '@/api/projectRolesApi';
+import CheckboxChecked from '@/assets/icons/checkbox-checked.svg';
+import Checkbox from '@/assets/icons/checkbox-empty.svg';
+import { useToast } from '@/hooks/useToast';
 import { useRouter } from 'next/navigation';
-import { useAppSelector } from '../../../hooks/reduxHooks';
-import authSelector from '../../../redux/auth/authSelector';
-import DiscordBanner from '../../../shared/components/DiscordBanner/DiscordBanner';
+import { useAppSelector } from '@/hooks/reduxHooks';
+import authSelector from '@/redux/auth/authSelector';
+import DiscordBanner from '@/shared/components/DiscordBanner/DiscordBanner';
 
 type FormData = z.infer<typeof projectSchema>;
 
-export default function CreateProjectForm(): ReactElement {
+export default function ProjectForm(): ReactElement {
   const { data: categories = [] } = useGetCategoriesQuery(undefined);
   const { data: roles = [] } = useGetProjectRolesListQuery(undefined);
   const {
@@ -94,11 +94,11 @@ export default function CreateProjectForm(): ReactElement {
   return (
     <>
       <form
-        className={styles['create-project-form']}
+        className={styles['project-form']}
         onSubmit={handleSubmit(onSubmit)}
       >
         <fieldset
-          className={styles['create-project-form__fields']}
+          className={styles['project-form__fields']}
           disabled={isLoading}
         >
           <Input
@@ -153,45 +153,39 @@ export default function CreateProjectForm(): ReactElement {
             name="rolesIds"
             control={control}
             render={({ field }) => (
-              <div className={styles['create-project-form__list-wrapper']}>
-                <p className={styles['create-project-form__list-label']}>
+              <div className={styles['project-form__list-wrapper']}>
+                <p className={styles['project-form__list-label']}>
                   Обери необхідні ролі для проєкту
                 </p>
-                <div className={styles['create-project-form__list']}>
+                <div className={styles['project-form__list']}>
                   {roles.map((option) => {
                     const checked = field.value.includes(option.id);
                     return (
                       <div
-                        className={
-                          styles['create-project-form__checkbox-wrapper']
-                        }
+                        className={styles['project-form__checkbox-wrapper']}
                         key={option.id}
                       >
                         <label
                           htmlFor={option.id}
-                          className={styles['create-project-form__label']}
+                          className={styles['project-form__label']}
                         >
                           {checked ? (
                             <CheckboxChecked
-                              className={styles['create-project-form__icon']}
+                              className={styles['project-form__icon']}
                             />
                           ) : (
                             <Checkbox
-                              className={styles['create-project-form__icon']}
+                              className={styles['project-form__icon']}
                             />
                           )}
-                          <p
-                            className={
-                              styles['create-project-form__label-text']
-                            }
-                          >
+                          <p className={styles['project-form__label-text']}>
                             {option.roleName}
                           </p>
                         </label>
                         <input
                           type="checkbox"
                           id={option.id}
-                          className={styles['create-project-form__checkbox']}
+                          className={styles['project-form__checkbox']}
                           value={option.id}
                           checked={checked}
                           onChange={(e) => {
@@ -209,11 +203,11 @@ export default function CreateProjectForm(): ReactElement {
             )}
           />
         </fieldset>
-        <div className={styles['create-project-form__actions']}>
+        <div className={styles['project-form__actions']}>
           <Button variant="secondary-frame" color="green" onClick={closeForm}>
             Скасувати
           </Button>
-          <Button color="green" type="submit">
+          <Button color="green" type="submit" loading={isLoading}>
             Зберегти
           </Button>
         </div>

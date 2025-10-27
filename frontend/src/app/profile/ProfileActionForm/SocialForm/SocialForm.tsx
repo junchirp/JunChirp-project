@@ -189,7 +189,13 @@ export default function SocialForm(props: SocialFormProps): ReactElement {
           </Button>
         </div>
       ) : (
-        <Button type="submit" fullWidth color="green" disabled={!isValid}>
+        <Button
+          type="submit"
+          fullWidth
+          color="green"
+          disabled={!isValid}
+          loading={updateSocialLoading || addSocialLoading}
+        >
           Зберегти
         </Button>
       )}

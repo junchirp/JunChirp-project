@@ -21,7 +21,7 @@ export default function UserRequests({
 }: UserRequestsProps): ReactElement {
   const [isModalOpen, setModalOpen] = useState(false);
   const [requestId, setRequestId] = useState<string | null>(null);
-  const [acceptRequest] = useAcceptRequestMutation();
+  const [acceptRequest, { isLoading }] = useAcceptRequestMutation();
 
   const openModal = (id: string): void => {
     setModalOpen(true);
@@ -127,6 +127,7 @@ export default function UserRequests({
                       variant="link"
                       size="ssm"
                       color="green"
+                      loading={isLoading}
                       onClick={() => handleAcceptRequest(request.id)}
                     >
                       Прийняти

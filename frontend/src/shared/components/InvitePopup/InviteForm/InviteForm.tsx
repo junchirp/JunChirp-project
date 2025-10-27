@@ -24,7 +24,7 @@ interface InviteFormProps {
 
 export default function InviteForm(props: InviteFormProps): ReactElement {
   const { user, onClose, myProjects } = props;
-  const [inviteUser] = useInviteUserMutation();
+  const [inviteUser, { isLoading }] = useInviteUserMutation();
   const { showToast, isActive } = useToast();
 
   const {
@@ -125,7 +125,7 @@ export default function InviteForm(props: InviteFormProps): ReactElement {
         <Button color="green" variant="secondary-frame" onClick={onClose}>
           Скасувати
         </Button>
-        <Button type="submit" color="green" disabled={!isValid}>
+        <Button type="submit" color="green" disabled={!isValid} loading={isLoading}>
           Запросити
         </Button>
       </div>

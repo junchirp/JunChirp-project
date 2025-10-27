@@ -130,7 +130,13 @@ export default function EducationForm(props: EducationFormProps): ReactElement {
           </Button>
         </div>
       ) : (
-        <Button type="submit" fullWidth color="green" disabled={!isValid}>
+        <Button
+          type="submit"
+          fullWidth
+          color="green"
+          disabled={!isValid}
+          loading={addEducationLoading || updateEducationLoading}
+        >
           Зберегти
         </Button>
       )}

@@ -32,6 +32,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   disabled?: boolean;
   fullWidth?: boolean;
   loading?: boolean;
+  isLoader?: boolean;
   className?: string;
   type?: 'button' | 'submit' | 'reset';
 }
@@ -47,6 +48,7 @@ export default function Button({
   disabled,
   fullWidth = false,
   loading = false,
+  isLoader = false,
   className,
   type = 'button',
 }: ButtonProps): ReactElement {
@@ -82,7 +84,7 @@ export default function Button({
       })
     : null;
 
-  const RenderSpinner = loading
+  const RenderSpinner = isLoader
     ? cloneElement(<Spinner />, {
         width: iconSize,
         height: iconSize,

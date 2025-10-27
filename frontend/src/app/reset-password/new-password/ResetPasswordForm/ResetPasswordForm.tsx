@@ -160,10 +160,15 @@ export default function ResetPasswordForm(): ReactElement {
             color="green"
             variant="secondary-frame"
             onClick={openModal}
+            loading={isResetLoading || isCancelLoading}
           >
             Скасувати
           </Button>
-          <Button type="submit" color="green">
+          <Button
+            type="submit"
+            color="green"
+            loading={isResetLoading || isCancelLoading}
+          >
             Зберегти пароль
           </Button>
         </div>

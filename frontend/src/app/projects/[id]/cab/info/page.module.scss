@@ -4,7 +4,6 @@
   display: flex;
   min-width: 0;
   gap: 20px;
-  position: relative;
 
   &__image-wrapper {
     position: relative;
@@ -102,10 +101,5 @@
     font-size: 14px;
     line-height: 1.2;
     color: variables.$gray-6;
-  }
-
-  &__button {
-    position: relative;
-    z-index: 2;
   }
 }
