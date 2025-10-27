@@ -17,7 +17,7 @@ export default function ConfirmEmailContent(): ReactElement {
   const searchParams = useSearchParams();
   const authType = searchParams.get('type');
   const { showToast, isActive } = useToast();
-  const [sendEmail] = useSendConfirmationEmailMutation();
+  const [sendEmail, { isLoading }] = useSendConfirmationEmailMutation();
   const [isModalOpen, setModalOpen] = useState(false);
 
   const sendConfirmationRequest = async (): Promise<void> => {
@@ -95,6 +95,7 @@ export default function ConfirmEmailContent(): ReactElement {
                   variant="link"
                   color="green"
                   onClick={sendConfirmationRequest}
+                  loading={isLoading}
                 >
                   Натисни тут
                 </Button>
@@ -120,6 +121,7 @@ export default function ConfirmEmailContent(): ReactElement {
                 variant="link"
                 color="green"
                 onClick={sendConfirmationRequest}
+                loading={isLoading}
               >
                 Надішли запит
               </Button>

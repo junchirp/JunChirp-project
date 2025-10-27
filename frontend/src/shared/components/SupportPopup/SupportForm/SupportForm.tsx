@@ -73,7 +73,7 @@ export default function SupportForm(props: SupportFormProps): ReactElement {
   }, [user, reset]);
 
   const onSubmit = async (data: FormData): Promise<void> => {
-    if (isLoading || isActive('support')) {
+    if (isActive('support')) {
       return;
     }
 
@@ -131,7 +131,7 @@ export default function SupportForm(props: SupportFormProps): ReactElement {
             />
           </fieldset>
         )}
-        <Button type="submit" color="green">
+        <Button type="submit" color="green" loading={isLoading}>
           Надіслати
         </Button>
       </div>

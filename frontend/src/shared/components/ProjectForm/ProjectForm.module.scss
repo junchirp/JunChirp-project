@@ -1,6 +1,6 @@
 @use '@/assets/styles/variables';
 
-.create-project-form {
+.project-form {
   max-width: 790px;
   width: 100%;
   display: flex;
@@ -53,13 +53,13 @@
     width: fit-content;
 
     &:hover {
-      & .create-project-form__icon {
+      & .project-form__icon {
         color: variables.$green-2;
       }
     }
 
     &:active {
-      & .create-project-form__icon {
+      & .project-form__icon {
         box-shadow: 0 0 0 4px variables.$green-4;
         color: variables.$green-2;
       }

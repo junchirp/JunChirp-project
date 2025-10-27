@@ -201,6 +201,7 @@ export default function LoginForm(): ReactElement {
           color="green"
           fullWidth={true}
           loading={isLoading}
+          isLoader
         >
           Увійти
         </Button>

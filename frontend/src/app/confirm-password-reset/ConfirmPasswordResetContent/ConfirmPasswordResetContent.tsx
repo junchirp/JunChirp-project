@@ -12,7 +12,7 @@ import { useToast } from '@/hooks/useToast';
 export default function ConfirmPasswordResetContent(): ReactElement {
   const searchParams = useSearchParams();
   const email = searchParams.get('email') ?? '';
-  const [reqResetPassword] = useRequestPasswordResetMutation();
+  const [reqResetPassword, { isLoading }] = useRequestPasswordResetMutation();
   const { showToast, isActive } = useToast();
   const router = useRouter();
 
@@ -81,6 +81,7 @@ export default function ConfirmPasswordResetContent(): ReactElement {
             variant="link"
             color="green"
             onClick={handleClick}
+            loading={isLoading}
           >
             Надішли запит ще раз.
           </Button>

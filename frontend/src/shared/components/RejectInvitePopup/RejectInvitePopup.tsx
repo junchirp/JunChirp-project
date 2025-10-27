@@ -18,7 +18,7 @@ export default function RejectInvitePopup(
   props: RejectInvitePopupProps,
 ): ReactElement {
   const { projectName, inviteId, onClose, user } = props;
-  const [rejectInvite] = useRejectInviteMutation();
+  const [rejectInvite, { isLoading }] = useRejectInviteMutation();
   const { showToast, isActive } = useToast();
 
   const onSubmit = async (): Promise<void> => {
@@ -62,7 +62,12 @@ export default function RejectInvitePopup(
           <Button color="green" variant="secondary-frame" onClick={onClose}>
             Скасувати
           </Button>
-          <Button color="green" onClick={onSubmit}>
+          <Button
+            color="green"
+            type="submit"
+            onClick={onSubmit}
+            loading={isLoading}
+          >
             Відхилити
           </Button>
         </div>

@@ -11,13 +11,15 @@ interface DeleteItemPopupProps<T> {
   maxSize: number;
   count: number;
   onCancel: () => void;
+  loading: boolean;
   onConfirm: (item: T) => void;
 }
 
 export default function DeleteItemPopup<T>(
   props: DeleteItemPopupProps<T>,
 ): ReactElement {
-  const { item, title, message, maxSize, count, onCancel, onConfirm } = props;
+  const { item, title, message, maxSize, count, onCancel, onConfirm, loading } =
+    props;
 
   return (
     <div className={styles['delete-item-popup__wrapper']}>
@@ -36,7 +38,11 @@ export default function DeleteItemPopup<T>(
           <Button color="green" variant="secondary-frame" onClick={onCancel}>
             Скасувати
           </Button>
-          <Button color="green" onClick={() => onConfirm(item)}>
+          <Button
+            color="green"
+            loading={loading}
+            onClick={() => onConfirm(item)}
+          >
             Видалити
           </Button>
         </div>

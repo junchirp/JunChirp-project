@@ -1,8 +1,10 @@
+'use client';
+
 import { ReactElement } from 'react';
 import styles from './page.module.scss';
 import Image from 'next/image';
 import AuthGuard from '@/shared/components/AuthGuard/AuthGuard';
-import CreateProjectForm from './CreateProjectForm/CreateProjectForm';
+import ProjectForm from '../../shared/components/ProjectForm/ProjectForm';
 
 export default function NewProject(): ReactElement {
   return (
@@ -29,7 +31,7 @@ export default function NewProject(): ReactElement {
             height={35}
           />
         </div>
-        <CreateProjectForm />
+        <ProjectForm />
       </div>
     </AuthGuard>
   );

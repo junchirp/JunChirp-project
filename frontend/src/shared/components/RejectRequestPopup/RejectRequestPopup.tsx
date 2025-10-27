@@ -17,7 +17,7 @@ export default function RejectRequestPopup(
   props: RejectRequestPopupProps,
 ): ReactElement {
   const { requestId, onClose, user } = props;
-  const [rejectRequest] = useRejectRequestMutation();
+  const [rejectRequest, { isLoading }] = useRejectRequestMutation();
   const { showToast, isActive } = useToast();
 
   const onSubmit = async (): Promise<void> => {
@@ -61,7 +61,12 @@ export default function RejectRequestPopup(
           <Button color="green" variant="secondary-frame" onClick={onClose}>
             Скасувати
           </Button>
-          <Button color="green" onClick={onSubmit}>
+          <Button
+            color="green"
+            type="submit"
+            onClick={onSubmit}
+            loading={isLoading}
+          >
             Відхилити
           </Button>
         </div>

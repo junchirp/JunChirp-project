@@ -84,7 +84,13 @@ export default function HardSkillForm(props: SoftSkillFormProps): ReactElement {
           }
         />
       </fieldset>
-      <Button type="submit" fullWidth color="green" disabled={!isValid}>
+      <Button
+        type="submit"
+        fullWidth
+        color="green"
+        disabled={!isValid}
+        loading={isLoading}
+      >
         Зберегти
       </Button>
     </form>

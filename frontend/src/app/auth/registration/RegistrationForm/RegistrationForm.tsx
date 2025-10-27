@@ -241,6 +241,7 @@ export default function RegistrationForm(): ReactElement {
         color="green"
         fullWidth={true}
         loading={isLoading}
+        isLoader
       >
         Зареєструватися
       </Button>

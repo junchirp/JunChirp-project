@@ -45,7 +45,7 @@ export const authBlocks: WhatWeNeedType[] = [
     title: '2. Є крута ідея?',
     text: 'Запусти власний проєкт і створи команду мрії!',
     buttonText: 'Створити свій проєкт',
-    buttonRoute: '/projects/new-project',
+    buttonRoute: '/new-project',
   },
   {
     title: '3. Потрібно більше \n нетворкінгу?',

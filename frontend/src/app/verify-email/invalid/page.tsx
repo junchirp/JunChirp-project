@@ -12,7 +12,7 @@ import { SerializedError } from '@reduxjs/toolkit';
 export default function Invalid(): ReactElement {
   const { showToast, isActive } = useToast();
   const searchParams = useSearchParams();
-  const [sendEmail] = useSendConfirmationEmailMutation();
+  const [sendEmail, { isLoading }] = useSendConfirmationEmailMutation();
   const email = searchParams.get('email') ?? '';
 
   const onSubmit = async (): Promise<void> => {
@@ -76,7 +76,12 @@ export default function Invalid(): ReactElement {
         <div>
           <p>
             Це посилання більше не дійсне. Будь ласка,{' '}
-            <Button variant="link" color="green" onClick={onSubmit}>
+            <Button
+              variant="link"
+              color="green"
+              onClick={onSubmit}
+              loading={isLoading}
+            >
               Надішли запит ще раз
             </Button>{' '}
             на нове посилання для підтвердження електронної пошти.

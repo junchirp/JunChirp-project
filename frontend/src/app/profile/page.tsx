@@ -41,10 +41,14 @@ export default function Profile(): ReactElement | null {
     | SoftSkillInterface
     | HardSkillInterface
   > | null>(null);
-  const [deleteSocial] = useDeleteSocialMutation();
-  const [deleteEducation] = useDeleteEducationMutation();
-  const [deleteSoftSkill] = useDeleteSoftSkillMutation();
-  const [deleteHardSkill] = useDeleteHardSkillMutation();
+  const [deleteSocial, { isLoading: isSocialLoading }] =
+    useDeleteSocialMutation();
+  const [deleteEducation, { isLoading: isEducationLoading }] =
+    useDeleteEducationMutation();
+  const [deleteSoftSkill, { isLoading: isSoftSkillLoading }] =
+    useDeleteSoftSkillMutation();
+  const [deleteHardSkill, { isLoading: isHardSkillLoading }] =
+    useDeleteHardSkillMutation();
   const { showToast } = useToast();
   const [isModalOpen, setModalOpen] = useState(false);
   const formRef = useRef<HTMLDivElement | null>(null);
@@ -260,6 +264,7 @@ export default function Profile(): ReactElement | null {
           count={socials.length}
           title={deletedItem.title}
           message={deletedItem.message}
+          loading={isSocialLoading}
         />
       )}
       {isModalOpen && isEducation(deletedItem?.item) && (
@@ -271,6 +276,7 @@ export default function Profile(): ReactElement | null {
           count={educations.length}
           title={deletedItem.title}
           message={deletedItem.message}
+          loading={isEducationLoading}
         />
       )}
       {isModalOpen && isSoftSkill(deletedItem?.item) && (
@@ -282,6 +288,7 @@ export default function Profile(): ReactElement | null {
           count={softSkills.length}
           title={deletedItem.title}
           message={deletedItem.message}
+          loading={isSoftSkillLoading}
         />
       )}
       {isModalOpen && isHardSkill(deletedItem?.item) && (
@@ -293,6 +300,7 @@ export default function Profile(): ReactElement | null {
           count={hardSkills.length}
           title={deletedItem.title}
           message={deletedItem.message}
+          loading={isHardSkillLoading}
         />
       )}
       <Suspense fallback={null}>

@@ -1,14 +1,12 @@
 'use client';
 
-import { ReactElement, useState } from 'react';
+import { ReactElement } from 'react';
 import styles from './page.module.scss';
 import Image from 'next/image';
 import { membersPipe } from '@/shared/utils/membersPipe';
 import { datePipe } from '@/shared/utils/datePipe';
 import { useParams } from 'next/navigation';
 import { useGetProjectByIdQuery } from '@/api/projectsApi';
-import Button from '@/shared/components/Button/Button';
-import Settings from '@/assets/icons/settings.svg';
 import { useAppSelector } from '@/hooks/reduxHooks';
 import authSelector from '@/redux/auth/authSelector';
 import ProjectMenu from './ProjectMenu/ProjectMenu';
@@ -18,9 +16,6 @@ export default function Info(): ReactElement {
   const { data: project } = useGetProjectByIdQuery(id);
   const user = useAppSelector(authSelector.selectUser);
   const isOwner = !!project && !!user && project.ownerId === user.id;
-  const [isOpen, setIsOpen] = useState(false);
-
-  const toggleMenu = (): void => setIsOpen((prev) => !prev);
 
   return (
     <>
@@ -61,13 +56,7 @@ export default function Info(): ReactElement {
                   {project.status === 'active' ? 'Активний' : 'Завершений'}
                 </p>
                 {project.status === 'active' && (
-                  <Button
-                    className={styles.info__button}
-                    variant="secondary-frame"
-                    color="green"
-                    icon={<Settings />}
-                    onClick={toggleMenu}
-                  />
+                  <ProjectMenu projectId={project.id} isOwner={isOwner} />
                 )}
               </div>
               <h2 className={styles.info__title}>{project.projectName}</h2>
@@ -93,7 +82,6 @@ export default function Info(): ReactElement {
               </span>
             </div>
           </div>
-          {isOpen && <ProjectMenu projectId={project.id} isOwner={isOwner} />}
         </div>
       )}
     </>

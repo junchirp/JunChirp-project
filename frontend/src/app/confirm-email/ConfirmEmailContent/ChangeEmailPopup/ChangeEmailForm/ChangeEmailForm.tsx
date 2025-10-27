@@ -84,7 +84,7 @@ export default function ChangeEmailForm({ onClose }: FormProps): ReactElement {
         >
           Назад
         </Button>
-        <Button color="green" type="submit" fullWidth>
+        <Button color="green" type="submit" fullWidth loading={isLoading}>
           Змінити e-mail
         </Button>
       </div>
