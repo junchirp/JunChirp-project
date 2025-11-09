@@ -1,7 +1,6 @@
 'use client';
 
 import { ReactElement, useEffect } from 'react';
-import { UserInterface } from '@/shared/interfaces/user.interface';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -12,6 +11,7 @@ import Button from '@/shared/components/Button/Button';
 import { useSupportMutation } from '@/api/supportApi';
 import { useToast } from '@/hooks/useToast';
 import { isEmail } from 'validator';
+import { AuthInterface } from '../../../interfaces/auth.interface';
 
 const schema = z.object({
   email: z
@@ -41,7 +41,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 interface SupportFormProps {
-  user?: UserInterface | null;
+  user?: AuthInterface | null;
   onClose: () => void;
 }
 

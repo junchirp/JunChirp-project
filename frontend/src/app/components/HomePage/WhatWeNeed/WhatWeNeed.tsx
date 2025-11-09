@@ -11,14 +11,14 @@ import styles from './WhatWeNeed.module.scss';
 import Circle from '@/assets/icons/circle.svg';
 import Button from '@/shared/components/Button/Button';
 import { useRouter } from 'next/navigation';
-import { UserInterface } from '@/shared/interfaces/user.interface';
 import { authBlocks, noAuthBlocks } from '@/shared/constants/what-we-need';
+import { AuthInterface } from '../../../../shared/interfaces/auth.interface';
 
 const CENTER_GAP = 264;
 const FIXED_INDEXES = [2, 3, 4];
 
 interface WhatWeNeedProps {
-  user: UserInterface | null;
+  user: AuthInterface | null;
 }
 
 export default function WhatWeNeed({ user }: WhatWeNeedProps): ReactElement {
