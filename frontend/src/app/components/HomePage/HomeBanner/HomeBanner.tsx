@@ -5,11 +5,11 @@ import styles from './HomeBanner.module.scss';
 import Button from '@/shared/components/Button/Button';
 import Image from 'next/image';
 import ArrowUpRight from '@/assets/icons/arrow-up-right.svg';
-import { UserInterface } from '@/shared/interfaces/user.interface';
 import { useRouter } from 'next/navigation';
+import { AuthInterface } from '../../../../shared/interfaces/auth.interface';
 
 interface HomeBannerProps {
-  user: UserInterface | null;
+  user: AuthInterface | null;
 }
 
 export default function HomeBanner({ user }: HomeBannerProps): ReactElement {

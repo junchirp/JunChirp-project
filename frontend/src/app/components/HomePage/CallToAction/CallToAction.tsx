@@ -1,15 +1,15 @@
 'use client';
 
 import { ReactElement, useState } from 'react';
-import { UserInterface } from '@/shared/interfaces/user.interface';
 import styles from './CallToAction.module.scss';
 import Image from 'next/image';
 import Button from '@/shared/components/Button/Button';
 import { useRouter } from 'next/navigation';
 import SocialInvitePopup from './SocialInvitePopup/SocialInvitePopup';
+import { AuthInterface } from '../../../../shared/interfaces/auth.interface';
 
 interface CallToActionProps {
-  user: UserInterface | null;
+  user: AuthInterface | null;
 }
 
 export default function CallToAction({
