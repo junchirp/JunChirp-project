@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const institutionValidator = z
+export const educationValidator = z
   .string()
   .trim()
   .nonempty('Поле не може бути порожнім')

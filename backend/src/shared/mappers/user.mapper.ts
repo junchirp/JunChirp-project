@@ -14,15 +14,17 @@ import { SoftSkillMapper } from './soft-skill.mapper';
 import { HardSkillMapper } from './hard-skill.mapper';
 import { UserWithPasswordResponseDto } from '../../users/dto/user-with-password.response-dto';
 import { UserCardResponseDto } from '../../users/dto/user-card.response-dto';
+import { AuthResponseDto } from '../../users/dto/auth.response-dto';
 
 export class UserMapper {
   public static toFullResponse(
     user: User & {
       role: Role;
-      educations: (Education & { specialization: ProjectRoleType })[];
+      educations: Education[];
       socials: Social[];
       softSkills: UserSoftSkill[];
       hardSkills: UserHardSkill[];
+      desiredRoles: ProjectRoleType[];
     },
     withPassword: boolean,
   ): UserResponseDto | UserWithPasswordResponseDto {
@@ -48,6 +50,7 @@ export class UserMapper {
       hardSkills: user.hardSkills.map((skill) =>
         HardSkillMapper.toResponse(skill),
       ),
+      desiredRoles: user.desiredRoles,
     };
 
     return withPassword
@@ -60,7 +63,7 @@ export class UserMapper {
 
   public static toCardResponse(
     user: User & {
-      educations: (Education & { specialization: ProjectRoleType })[];
+      desiredRoles: ProjectRoleType[];
     },
   ): UserCardResponseDto {
     return {
@@ -68,11 +71,31 @@ export class UserMapper {
       firstName: user.firstName,
       lastName: user.lastName,
       avatarUrl: user.avatarUrl,
-      educations: user.educations.map((education) =>
-        EducationMapper.toResponse(education),
-      ),
+      desiredRoles: user.desiredRoles,
       activeProjectsCount: user.activeProjectsCount,
       doneProjectsCount: user.doneProjectsCount,
+    };
+  }
+
+  public static toAuthResponse(
+    user: User & {
+      role: Role;
+      desiredRoles: ProjectRoleType[];
+    },
+  ): AuthResponseDto {
+    return {
+      id: user.id,
+      googleId: user.googleId,
+      discordId: user.discordId,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      avatarUrl: user.avatarUrl,
+      isVerified: user.isVerified,
+      role: user.role,
+      activeProjectsCount: user.activeProjectsCount,
+      doneProjectsCount: user.doneProjectsCount,
+      desiredRoles: user.desiredRoles,
     };
   }
 }

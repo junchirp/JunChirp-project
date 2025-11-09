@@ -3,6 +3,7 @@ import { SoftSkillInterface } from './soft-skill.interface';
 import { HardSkillInterface } from './hard-skill.interface';
 import { SocialInterface } from './social.interface';
 import { UserCardInterface } from './user-card.interface';
+import { EducationInterface } from './education.interface';
 
 export interface UserInterface extends UserCardInterface {
   googleId: string | null;
@@ -13,4 +14,5 @@ export interface UserInterface extends UserCardInterface {
   softSkills: SoftSkillInterface[];
   hardSkills: HardSkillInterface[];
   socials: SocialInterface[];
+  educations: EducationInterface[];
 }

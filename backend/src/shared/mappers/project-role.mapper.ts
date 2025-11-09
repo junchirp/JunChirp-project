@@ -1,5 +1,4 @@
 import {
-  Education,
   Project,
   ProjectCategory,
   ProjectRole,
@@ -31,7 +30,7 @@ export class ProjectRoleMapper {
           roleType: ProjectRoleType;
           user:
             | (User & {
-                educations: (Education & { specialization: ProjectRoleType })[];
+                desiredRoles: ProjectRoleType[];
               })
             | null;
         })[];
@@ -50,7 +49,7 @@ export class ProjectRoleMapper {
       roleType: ProjectRoleType;
       user:
         | (User & {
-            educations: (Education & { specialization: ProjectRoleType })[];
+            desiredRoles: ProjectRoleType[];
           })
         | null;
     },

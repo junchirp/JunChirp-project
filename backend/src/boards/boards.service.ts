@@ -49,9 +49,7 @@ export class BoardsService {
                 include: {
                   assignee: {
                     include: {
-                      educations: {
-                        include: { specialization: true },
-                      },
+                      desiredRoles: true,
                     },
                   },
                 },
@@ -81,9 +79,7 @@ export class BoardsService {
                 include: {
                   assignee: {
                     include: {
-                      educations: {
-                        include: { specialization: true },
-                      },
+                      desiredRoles: true,
                     },
                   },
                 },
@@ -117,9 +113,7 @@ export class BoardsService {
                 include: {
                   assignee: {
                     include: {
-                      educations: {
-                        include: { specialization: true },
-                      },
+                      desiredRoles: true,
                     },
                   },
                 },
@@ -218,11 +212,7 @@ export class BoardsService {
               include: {
                 assignee: {
                   include: {
-                    educations: {
-                      include: {
-                        specialization: true,
-                      },
-                    },
+                    desiredRoles: true,
                   },
                 },
               },

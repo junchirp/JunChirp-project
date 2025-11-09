@@ -16,7 +16,7 @@ import {
 } from '@/api/participationsApi';
 import DiscordBanner from '@/shared/components/DiscordBanner/DiscordBanner';
 import Link from 'next/link';
-import { UserInterface } from '@/shared/interfaces/user.interface';
+import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import { ProjectRoleInterface } from '@/shared/interfaces/project-role.interface';
 import RadioGroup from '@/shared/components/RadioGroup/RadioGroup';
 import { Controller, useForm } from 'react-hook-form';
@@ -24,14 +24,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { requestSchema } from '@/shared/forms/schemas/requestSchema';
 import { useToast } from '@/hooks/useToast';
-import { useAppSelector } from '@/hooks/reduxHooks';
-import { selectAllEducations } from '@/redux/educations/educationsSlice';
 
 interface ProjectCardProps {
   project: ProjectCardInterface;
   invites: ProjectParticipationInterface[];
   requests: ProjectParticipationInterface[];
-  user: UserInterface | null;
+  user: AuthInterface | null;
   size?: 'small' | 'large';
 }
 
@@ -58,9 +56,9 @@ export default function ProjectCard({
     },
   });
   const router = useRouter();
-  const [createRequest, { isLoading: requestLoading }] = useCreateRequestMutation();
+  const [createRequest, { isLoading: requestLoading }] =
+    useCreateRequestMutation();
   const { showToast, isActive } = useToast();
-  const educations = useAppSelector(selectAllEducations);
   const currentInvite = invites.find(
     (invite) => invite.projectRole.project.id === project.id,
   );
@@ -77,10 +75,11 @@ export default function ProjectCard({
     .filter((member) => member !== null);
   const isMyProject = members.some((member) => member.id === user?.id);
   const [isInvitePopupOpen, setInvitePopupOpen] = useState(false);
-  const [acceptInvite, { isLoading: inviteLoading }] = useAcceptInviteMutation();
+  const [acceptInvite, { isLoading: inviteLoading }] =
+    useAcceptInviteMutation();
   const [isInviteBanner, setInviteBanner] = useState(false);
   const [isRequestBanner, setRequestBanner] = useState(false);
-  const roleTypeIds = educations.map((edu) => edu.specialization.id) ?? [];
+  const roleTypeIds = user?.desiredRoles.map((role) => role.id) ?? [];
 
   const goProject = (): void => {
     if (isMyProject) {
@@ -479,8 +478,7 @@ export default function ProjectCard({
           {isInvitePopupOpen && currentInvite && user && (
             <RejectInvitePopup
               onClose={closeInvitePopup}
-              projectName={project.projectName}
-              inviteId={currentInvite.id}
+              invite={currentInvite}
               user={user}
             />
           )}

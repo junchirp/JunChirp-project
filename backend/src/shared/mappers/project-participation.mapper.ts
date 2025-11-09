@@ -1,6 +1,5 @@
 import { Participation } from '../types/participation.type';
 import {
-  Education,
   Project,
   ProjectCategory,
   ProjectRole,
@@ -21,9 +20,7 @@ export class ProjectParticipationMapper {
             roleType: ProjectRoleType;
             user:
               | (User & {
-                  educations: (Education & {
-                    specialization: ProjectRoleType;
-                  })[];
+                  desiredRoles: ProjectRoleType[];
                 })
               | null;
           })[];

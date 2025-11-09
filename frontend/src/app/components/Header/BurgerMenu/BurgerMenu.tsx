@@ -3,17 +3,17 @@
 import { ReactElement, useEffect, useRef, useState } from 'react';
 import styles from './BurgerMenu.module.scss';
 import Menu from '@/assets/icons/menu.svg';
-import Close from '@/assets/icons/close.svg';
+import X from '@/assets/icons/x.svg';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useLogout } from '@/hooks/useLogout';
+import { useLogoutMutation } from '@/api/authApi';
 
 export default function BurgerMenu(): ReactElement {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLElement>(null);
-  const { logout } = useLogout();
+  const [logoutMutation] = useLogoutMutation();
 
   const toggleMenu = (): void => setIsOpen((prev) => !prev);
   const closeMenu = (): void => setIsOpen(false);
@@ -47,7 +47,7 @@ export default function BurgerMenu(): ReactElement {
   };
 
   const handleLogout = (): void => {
-    logout();
+    logoutMutation(undefined);
     closeMenu();
   };
 
@@ -59,7 +59,7 @@ export default function BurgerMenu(): ReactElement {
         ref={buttonRef}
       >
         {isOpen ? (
-          <Close className={styles['burger-menu__icon']} />
+          <X className={styles['burger-menu__icon']} />
         ) : (
           <Menu className={styles['burger-menu__icon']} />
         )}

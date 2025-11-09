@@ -18,10 +18,7 @@ export const socialRefinement = (
     return;
   }
 
-  if (
-    !url.startsWith(match.url) ||
-    (match.urlRegex && !match.urlRegex.test(url))
-  ) {
+  if (!match.urlRegex.test(url)) {
     ctx.addIssue({
       code: 'custom',
       message: 'Некоректне посилання',

@@ -34,7 +34,10 @@ export class ParticipationsService {
   public async createInvite(
     createInviteDto: CreateInviteDto,
   ): Promise<UserParticipationResponseDto> {
-    const user = await this.usersService.getUserById(createInviteDto.userId);
+    const user = await this.usersService.getUserById(
+      createInviteDto.userId,
+      'edit',
+    );
 
     if (user.activeProjectsCount === 2) {
       throw new BadRequestException(
@@ -77,7 +80,7 @@ export class ParticipationsService {
           include: {
             user: {
               include: {
-                educations: { include: { specialization: true } },
+                desiredRoles: true,
               },
             },
             projectRole: {
@@ -118,7 +121,7 @@ export class ParticipationsService {
     createRequestDto: CreateRequestDto,
     userId: string,
   ): Promise<ProjectParticipationResponseDto> {
-    const user = await this.usersService.getUserById(userId);
+    const user = await this.usersService.getUserById(userId, 'edit');
 
     if (user.activeProjectsCount === 2) {
       throw new BadRequestException(
@@ -172,9 +175,7 @@ export class ParticipationsService {
                         roleType: true,
                         user: {
                           include: {
-                            educations: {
-                              include: { specialization: true },
-                            },
+                            desiredRoles: true,
                           },
                         },
                       },
@@ -268,11 +269,7 @@ export class ParticipationsService {
             },
           },
           include: {
-            educations: {
-              include: {
-                specialization: true,
-              },
-            },
+            desiredRoles: true,
           },
         });
 
@@ -297,7 +294,7 @@ export class ParticipationsService {
     });
   }
 
-  public async rejectInvite(id: string, userId: string): Promise<void> {
+  public async declineInvite(id: string, userId: string): Promise<void> {
     try {
       await this.prisma.participationInvite.delete({
         where: { id, userId },
@@ -383,7 +380,7 @@ export class ParticipationsService {
     });
   }
 
-  public async rejectRequest(id: string): Promise<void> {
+  public async declineRequest(id: string): Promise<void> {
     try {
       await this.prisma.participationRequest.delete({
         where: { id },
@@ -439,9 +436,7 @@ export class ParticipationsService {
                     roleType: true,
                     user: {
                       include: {
-                        educations: {
-                          include: { specialization: true },
-                        },
+                        desiredRoles: true,
                       },
                     },
                   },
@@ -485,9 +480,7 @@ export class ParticipationsService {
                     roleType: true,
                     user: {
                       include: {
-                        educations: {
-                          include: { specialization: true },
-                        },
+                        desiredRoles: true,
                       },
                     },
                   },
@@ -512,11 +505,7 @@ export class ParticipationsService {
       include: {
         user: {
           include: {
-            educations: {
-              include: {
-                specialization: true,
-              },
-            },
+            desiredRoles: true,
           },
         },
         projectRole: {
@@ -538,11 +527,7 @@ export class ParticipationsService {
       include: {
         user: {
           include: {
-            educations: {
-              include: {
-                specialization: true,
-              },
-            },
+            desiredRoles: true,
           },
         },
         projectRole: {

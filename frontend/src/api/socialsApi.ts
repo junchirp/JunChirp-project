@@ -4,13 +4,19 @@ import { CreateSocialInterface } from '@/shared/interfaces/create-social.interfa
 
 export const socialsApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({
+    getSocials: builder.query<SocialInterface[], undefined>({
+      query: () => ({
+        url: 'socials',
+      }),
+      providesTags: ['socials'],
+    }),
     addSocial: builder.mutation<SocialInterface, CreateSocialInterface>({
       query: (data) => ({
         url: 'socials',
         method: 'POST',
         body: data,
       }),
-      invalidatesTags: [{ type: 'socials', id: 'LIST' }],
+      invalidatesTags: ['socials'],
     }),
     updateSocial: builder.mutation<
       SocialInterface,
@@ -21,9 +27,7 @@ export const socialsApi = mainApi.injectEndpoints({
         method: 'PUT',
         body: data,
       }),
-      invalidatesTags: (_result, _error, args) => [
-        { type: 'socials', id: args.id },
-      ],
+      invalidatesTags: ['socials'],
     }),
     deleteSocial: builder.mutation<string, string>({
       query: (id) => ({
@@ -31,7 +35,7 @@ export const socialsApi = mainApi.injectEndpoints({
         method: 'DELETE',
         responseHandler: (response): Promise<string> => response.text(),
       }),
-      invalidatesTags: [{ type: 'socials', id: 'LIST' }],
+      invalidatesTags: ['socials'],
     }),
   }),
 });
@@ -40,4 +44,5 @@ export const {
   useAddSocialMutation,
   useDeleteSocialMutation,
   useUpdateSocialMutation,
+  useGetSocialsQuery,
 } = socialsApi;

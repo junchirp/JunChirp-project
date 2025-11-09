@@ -3,9 +3,9 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { UsersService } from 'src/users/users.service';
-import { UserResponseDto } from '../../users/dto/user.response-dto';
 import { RedisService } from '../../redis/redis.service';
 import { Request } from 'express';
+import { AuthResponseDto } from '../../users/dto/auth.response-dto';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -26,13 +26,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   public async validate(
     req: Request,
     { id }: { id: string },
-  ): Promise<UserResponseDto> {
+  ): Promise<AuthResponseDto> {
     const accessToken = req.cookies?.['accessToken'];
     const isBlacklisted = await this.redisService.isBlacklisted(accessToken);
     if (isBlacklisted) {
       throw new UnauthorizedException('Token is invalid');
     }
 
-    return await this.userService.getUserById(id);
+    return await this.userService.getUserById(id, 'edit');
   }
 }

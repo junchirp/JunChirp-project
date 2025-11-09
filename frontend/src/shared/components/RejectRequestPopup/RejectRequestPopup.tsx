@@ -6,9 +6,10 @@ import Button from '@/shared/components/Button/Button';
 import { useRejectRequestMutation } from '@/api/participationsApi';
 import { useToast } from '@/hooks/useToast';
 import { UserInterface } from '@/shared/interfaces/user.interface';
+import { ProjectParticipationInterface } from '../../interfaces/project-participation.interface';
 
 interface RejectRequestPopupProps {
-  requestId: string;
+  request: ProjectParticipationInterface;
   onClose: () => void;
   user: UserInterface;
 }
@@ -16,7 +17,7 @@ interface RejectRequestPopupProps {
 export default function RejectRequestPopup(
   props: RejectRequestPopupProps,
 ): ReactElement {
-  const { requestId, onClose, user } = props;
+  const { request, onClose, user } = props;
   const [rejectRequest, { isLoading }] = useRejectRequestMutation();
   const { showToast, isActive } = useToast();
 
@@ -25,7 +26,7 @@ export default function RejectRequestPopup(
       return;
     }
 
-    const result = await rejectRequest({ id: requestId, userId: user.id });
+    const result = await rejectRequest({ id: request.id, userId: user.id });
     onClose();
 
     if ('data' in result) {

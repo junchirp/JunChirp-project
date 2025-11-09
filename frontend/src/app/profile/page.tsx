@@ -6,10 +6,6 @@ import styles from './page.module.scss';
 import ProfileBaseInfo from './ProfileBaseInfo/ProfileBaseInfo';
 import authSelector from '@/redux/auth/authSelector';
 import ProfileDetails from './ProfileDetails/ProfileDetails';
-import { selectAllSocials } from '@/redux/socials/socialsSlice';
-import { selectAllEducations } from '@/redux/educations/educationsSlice';
-import { selectAllSoftSkills } from '@/redux/softSkills/softSkillsSlice';
-import { selectAllHardSkills } from '@/redux/hardSkills/hardSkillsSlice';
 import { SocialInterface } from '@/shared/interfaces/social.interface';
 import { EducationInterface } from '@/shared/interfaces/education.interface';
 import { HardSkillInterface } from '@/shared/interfaces/hard-skill.interface';
@@ -17,7 +13,7 @@ import { SoftSkillInterface } from '@/shared/interfaces/soft-skill.interface';
 import ProfileAction from './ProfileAction/ProfileAction';
 import { ProfileActionType } from '@/shared/types/profile-action.type';
 import ProfileActionForm from './ProfileActionForm/ProfileActionForm';
-import { useDeleteSocialMutation } from '@/api/socialsApi';
+import { useDeleteSocialMutation, useGetSocialsQuery } from '@/api/socialsApi';
 import DeleteItemPopup from './DeleteItemPopup/DeleteItemPopup';
 import {
   isEducation,
@@ -27,13 +23,31 @@ import {
 } from '@/shared/utils/typeGuards';
 import { DeletedItemInterface } from '@/shared/interfaces/deleted-item.interface';
 import { useToast } from '@/hooks/useToast';
-import { useDeleteEducationMutation } from '@/api/educationsApi';
-import { useDeleteSoftSkillMutation } from '@/api/softSkillsApi';
-import { useDeleteHardSkillMutation } from '@/api/hardSkillsApi';
+import {
+  useDeleteEducationMutation,
+  useGetEducationsQuery,
+} from '@/api/educationsApi';
+import {
+  useDeleteSoftSkillMutation,
+  useGetSoftSkillsQuery,
+} from '@/api/softSkillsApi';
+import {
+  useDeleteHardSkillMutation,
+  useGetHardSkillsQuery,
+} from '@/api/hardSkillsApi';
 import { useAppSelector } from '@/hooks/reduxHooks';
 import DiscordBanner from '../../shared/components/DiscordBanner/DiscordBanner';
+import {
+  useGetMyInvitesQuery,
+  useGetMyRequestsQuery,
+} from '../../api/usersApi';
+import MyRequests from './MyRequests/MyRequests';
+import MyInvites from './MyInvites/MyInvites';
+import Button from '../../shared/components/Button/Button';
+import { useRouter } from 'next/navigation';
 
 export default function Profile(): ReactElement | null {
+  const router = useRouter();
   const [action, setAction] = useState<ProfileActionType>(null);
   const [deletedItem, setDeletedItem] = useState<DeletedItemInterface<
     | SocialInterface
@@ -53,19 +67,47 @@ export default function Profile(): ReactElement | null {
   const [isModalOpen, setModalOpen] = useState(false);
   const formRef = useRef<HTMLDivElement | null>(null);
   const user = useAppSelector(authSelector.selectUser);
-  const socials = useAppSelector(selectAllSocials);
-  const educations = useAppSelector(selectAllEducations);
-  const softSkills = useAppSelector(selectAllSoftSkills);
-  const hardSkills = useAppSelector(selectAllHardSkills);
-  const [isBanner, setBanner] = useState(false);
-
-  const allFilled = [socials, educations, softSkills, hardSkills].every(
-    (arr) => arr.length > 0,
+  const { data: requests = [], isLoading: requestsLoading } =
+    useGetMyRequestsQuery(undefined);
+  const { data: invites = [], isLoading: invitesLoading } =
+    useGetMyInvitesQuery(undefined);
+  const { data: socials = [], isLoading: socialsLoading } = useGetSocialsQuery(
+    undefined,
+    { skip: !user },
   );
+  const { data: educations = [], isLoading: educationsLoading } =
+    useGetEducationsQuery(undefined, {
+      skip: !user,
+    });
+  const { data: softSkills = [], isLoading: softSkillsLoading } =
+    useGetSoftSkillsQuery(undefined, {
+      skip: !user,
+    });
+  const { data: hardSkills = [], isLoading: hardSkillsLoading } =
+    useGetHardSkillsQuery(undefined, {
+      skip: !user,
+    });
+  const [isBanner, setBanner] = useState(false);
+  const desiredRoles = user?.desiredRoles ?? [];
+  const isLoading =
+    socialsLoading ||
+    softSkillsLoading ||
+    hardSkillsLoading ||
+    educationsLoading ||
+    requestsLoading ||
+    invitesLoading;
+
+  const allFilled = [
+    socials,
+    educations,
+    softSkills,
+    hardSkills,
+    desiredRoles,
+  ].every((arr) => arr.length > 0);
 
   useEffect(() => {
     if (action && formRef.current) {
-      formRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      formRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   }, [action]);
 
@@ -117,24 +159,60 @@ export default function Profile(): ReactElement | null {
       setDeletedItem({
         item,
         title: 'Видалити соцмережу?',
-        message:
-          'Ти дійсно хочеш видалити цю соцмережу? Дію неможливо скасувати.',
+        message: (
+          <p className={styles.profile__message}>
+            Ти дійсно хочеш видалити соцмережу{' '}
+            <span className={styles['profile__message--green']}>
+              [{item.network}]
+            </span>
+            ? Дію неможливо скасувати.
+          </p>
+        ),
       });
     }
     if (isEducation(item)) {
       setDeletedItem({
         item,
         title: 'Видалити запис про освіту?',
-        message:
-          'Ти дійсно хочеш видалити цей запис про освіту? Дію неможливо скасувати.',
+        message: (
+          <p className={styles.profile__message}>
+            Ти дійсно хочеш видалити запис про освіту{' '}
+            <span className={styles['profile__message--green']}>
+              [{item.institution} | {item.specialization}]
+            </span>
+            ? Дію неможливо скасувати.
+          </p>
+        ),
       });
     }
-    if (isSoftSkill(item) || isHardSkill(item)) {
+    if (isHardSkill(item)) {
       setDeletedItem({
         item,
         title: 'Видалити навичку?',
-        message:
-          'Ти дійсно хочеш видалити цю навичку? Дію неможливо скасувати.',
+        message: (
+          <p className={styles.profile__message}>
+            Ти дійсно хочеш видалити хард скіл{' '}
+            <span className={styles['profile__message--green']}>
+              [{item.hardSkillName}]
+            </span>
+            ? Дію неможливо скасувати.
+          </p>
+        ),
+      });
+    }
+    if (isSoftSkill(item)) {
+      setDeletedItem({
+        item,
+        title: 'Видалити навичку?',
+        message: (
+          <p className={styles.profile__message}>
+            Ти дійсно хочеш видалити софт скіл{' '}
+            <span className={styles['profile__message--green']}>
+              [{item.softSkillName}]
+            </span>
+            ? Дію неможливо скасувати.
+          </p>
+        ),
       });
     }
   };
@@ -147,6 +225,15 @@ export default function Profile(): ReactElement | null {
       showToast({
         severity: 'success',
         summary: 'Соцмережу видалено.',
+        life: 3000,
+        actionKey: 'delete social',
+      });
+    }
+
+    if ('error' in result) {
+      showToast({
+        severity: 'error',
+        summary: 'Не вдалося видалити соцмережу. Спробуй пізніше.',
         life: 3000,
         actionKey: 'delete social',
       });
@@ -167,6 +254,15 @@ export default function Profile(): ReactElement | null {
         actionKey: 'delete education',
       });
     }
+
+    if ('error' in result) {
+      showToast({
+        severity: 'error',
+        summary: 'Не вдалося видалити запис про освіту. Спробуй пізніше.',
+        life: 3000,
+        actionKey: 'delete education',
+      });
+    }
   };
 
   const handleDeleteSoftSkill = async (
@@ -178,7 +274,16 @@ export default function Profile(): ReactElement | null {
     if ('data' in result) {
       showToast({
         severity: 'success',
-        summary: 'Soft Skill видалено.',
+        summary: 'Софт скіл видалено.',
+        life: 3000,
+        actionKey: 'delete soft skill',
+      });
+    }
+
+    if ('error' in result) {
+      showToast({
+        severity: 'error',
+        summary: 'Не вдалося видалити софт скіл. Спробуй пізніше.',
         life: 3000,
         actionKey: 'delete soft skill',
       });
@@ -194,7 +299,16 @@ export default function Profile(): ReactElement | null {
     if ('data' in result) {
       showToast({
         severity: 'success',
-        summary: 'Hard Skill видалено.',
+        summary: 'Хард скіл видалено.',
+        life: 3000,
+        actionKey: 'delete hard skill',
+      });
+    }
+
+    if ('error' in result) {
+      showToast({
+        severity: 'error',
+        summary: 'Не вдалося видалити хард скіл. Спробуй пізніше.',
         life: 3000,
         actionKey: 'delete hard skill',
       });
@@ -205,11 +319,29 @@ export default function Profile(): ReactElement | null {
     setBanner(false);
   };
 
+  const handleRedirect = (): void => {
+    if (action) {
+      showToast({
+        severity: 'error',
+        summary: 'Збережи зміни перед переглядом.',
+        life: 3000,
+        actionKey: 'view profile',
+      });
+    } else {
+      router.push(`/users/${user?.id}`);
+    }
+  };
+
   return (
     <AuthGuard requireVerified>
-      {user && (
+      {user && !isLoading && (
         <div className={styles.profile}>
           <div className={styles.profile__details}>
+            <div className={styles.profile__view}>
+              <Button color="green" onClick={handleRedirect}>
+                Переглянути профіль
+              </Button>
+            </div>
             <ProfileBaseInfo user={user} handleEditName={handleEditName} />
             <ProfileDetails<SocialInterface>
               title="Соцмережі"
@@ -253,6 +385,10 @@ export default function Profile(): ReactElement | null {
               onCancel={handleCancel}
             />
           </div>
+          {!!requests.length && user && (
+            <MyRequests requests={requests} user={user} />
+          )}
+          {!!invites.length && <MyInvites invites={invites} user={user} />}
         </div>
       )}
       {isModalOpen && deletedItem && isSocial(deletedItem.item) && (
@@ -260,8 +396,6 @@ export default function Profile(): ReactElement | null {
           item={deletedItem.item}
           onCancel={closeModal}
           onConfirm={handleDeleteSocial}
-          maxSize={5}
-          count={socials.length}
           title={deletedItem.title}
           message={deletedItem.message}
           loading={isSocialLoading}
@@ -272,8 +406,6 @@ export default function Profile(): ReactElement | null {
           item={deletedItem.item}
           onCancel={closeModal}
           onConfirm={handleDeleteEducation}
-          maxSize={5}
-          count={educations.length}
           title={deletedItem.title}
           message={deletedItem.message}
           loading={isEducationLoading}
@@ -284,8 +416,6 @@ export default function Profile(): ReactElement | null {
           item={deletedItem.item}
           onCancel={closeModal}
           onConfirm={handleDeleteSoftSkill}
-          maxSize={20}
-          count={softSkills.length}
           title={deletedItem.title}
           message={deletedItem.message}
           loading={isSoftSkillLoading}
@@ -296,8 +426,6 @@ export default function Profile(): ReactElement | null {
           item={deletedItem.item}
           onCancel={closeModal}
           onConfirm={handleDeleteHardSkill}
-          maxSize={20}
-          count={hardSkills.length}
           title={deletedItem.title}
           message={deletedItem.message}
           loading={isHardSkillLoading}

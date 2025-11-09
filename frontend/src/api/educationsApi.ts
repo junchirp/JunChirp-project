@@ -4,9 +4,20 @@ import { CreateEducationInterface } from '@/shared/interfaces/create-education.i
 
 export const educationsApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({
-    getEducationsAutocomplete: builder.query<string[], string>({
+    getEducations: builder.query<EducationInterface[], undefined>({
+      query: () => ({
+        url: 'educations',
+      }),
+      providesTags: ['educations'],
+    }),
+    getInstitutions: builder.query<string[], string>({
       query: (fragment) => ({
-        url: `educations/autocomplete?institution=${encodeURIComponent(fragment)}`,
+        url: `educations/institutions?institution=${encodeURIComponent(fragment)}`,
+      }),
+    }),
+    getSpecializations: builder.query<string[], string>({
+      query: (fragment) => ({
+        url: `educations/specializations?specialization=${encodeURIComponent(fragment)}`,
       }),
     }),
     addEducation: builder.mutation<
@@ -18,7 +29,7 @@ export const educationsApi = mainApi.injectEndpoints({
         method: 'POST',
         body: data,
       }),
-      invalidatesTags: [{ type: 'educations', id: 'LIST' }, 'users'],
+      invalidatesTags: ['educations'],
     }),
     updateEducation: builder.mutation<
       EducationInterface,
@@ -29,10 +40,7 @@ export const educationsApi = mainApi.injectEndpoints({
         method: 'PUT',
         body: data,
       }),
-      invalidatesTags: (_result, _error, args) => [
-        { type: 'educations', id: args.id },
-        'users',
-      ],
+      invalidatesTags: ['educations'],
     }),
     deleteEducation: builder.mutation<string, string>({
       query: (id) => ({
@@ -40,7 +48,7 @@ export const educationsApi = mainApi.injectEndpoints({
         method: 'DELETE',
         responseHandler: (response): Promise<string> => response.text(),
       }),
-      invalidatesTags: [{ type: 'educations', id: 'LIST' }, 'users'],
+      invalidatesTags: ['educations'],
     }),
   }),
 });
@@ -49,5 +57,7 @@ export const {
   useAddEducationMutation,
   useDeleteEducationMutation,
   useUpdateEducationMutation,
-  useLazyGetEducationsAutocompleteQuery,
+  useLazyGetInstitutionsQuery,
+  useLazyGetSpecializationsQuery,
+  useGetEducationsQuery,
 } = educationsApi;

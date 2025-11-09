@@ -7,6 +7,7 @@ import {
   UsePipes,
   Req,
   Put,
+  Get,
 } from '@nestjs/common';
 import { HardSkillsService } from './hard-skills.service';
 import { CreateHardSkillDto } from './dto/create-hard-skill.dto';
@@ -31,17 +32,31 @@ import { User } from '../auth/decorators/user.decorator';
 
 @User()
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-@ApiForbiddenResponse({
-  description: 'Access denied: email not confirmed / Invalid CSRF token',
-})
 @Controller('hard-skills')
 export class HardSkillsController {
   public constructor(private hardSkillsService: HardSkillsService) {}
+
+  @ApiOperation({ summary: 'Get list of hard skills' })
+  @ApiOkResponse({ type: [HardSkillResponseDto] })
+  @ApiForbiddenResponse({
+    description: 'Access denied: email not confirmed',
+  })
+  @Get('')
+  public async getHardSkills(
+    @Req() req: Request,
+  ): Promise<HardSkillResponseDto[]> {
+    const user: UserWithPasswordResponseDto =
+      req.user as UserWithPasswordResponseDto;
+    return this.hardSkillsService.getHardSkills(user.id);
+  }
 
   @ApiOperation({ summary: 'Add hard skill' })
   @ApiCreatedResponse({ type: HardSkillResponseDto })
   @ApiBadRequestResponse({
     description: 'You can only add up to 20 hard skills',
+  })
+  @ApiForbiddenResponse({
+    description: 'Access denied: email not confirmed / Invalid CSRF token',
   })
   @ApiConflictResponse({ description: 'Hard skill is already in list' })
   @ApiHeader({
@@ -63,6 +78,9 @@ export class HardSkillsController {
   @ApiOperation({ summary: 'Update hard skill' })
   @ApiOkResponse({ type: HardSkillResponseDto })
   @ApiNotFoundResponse({ description: 'Hard skill not found' })
+  @ApiForbiddenResponse({
+    description: 'Access denied: email not confirmed / Invalid CSRF token',
+  })
   @ApiConflictResponse({ description: 'Hard skill is already in list' })
   @ApiHeader({
     name: 'x-csrf-token',
@@ -80,6 +98,9 @@ export class HardSkillsController {
   @ApiOperation({ summary: 'Delete hard skill' })
   @ApiOkResponse({ type: String })
   @ApiNotFoundResponse({ description: 'Hard skill not found' })
+  @ApiForbiddenResponse({
+    description: 'Access denied: email not confirmed / Invalid CSRF token',
+  })
   @ApiHeader({
     name: 'x-csrf-token',
     description: 'CSRF token for the request',

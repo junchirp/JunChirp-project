@@ -8,29 +8,29 @@ import styles from './ActiveUsersFilters.module.scss';
 import X from '@/assets/icons/x.svg';
 
 interface FormData {
-  specializationIds: string[];
+  desiredRolesIds: string[];
   activeProjectsCount: number | null;
 }
 
 interface ActiveUsersFiltersProps {
   form: UseFormReturn<FormData, unknown, FormData>;
-  specializationsList: ProjectRoleTypeInterface[];
+  rolesList: ProjectRoleTypeInterface[];
 }
 
 export default function ActiveUsersFilters({
   form,
-  specializationsList,
+  rolesList,
 }: ActiveUsersFiltersProps): ReactElement {
   const values = form.watch();
 
-  const selectedSpecializations = values.specializationIds.map((id) =>
-    specializationsList.find((item) => item.id === id),
+  const selectedRoles = values.desiredRolesIds.map((id) =>
+    rolesList.find((item) => item.id === id),
   );
 
-  const removeSpecialization = (idToRemove: string): void => {
-    const current = form.getValues('specializationIds');
+  const removeRole = (idToRemove: string): void => {
+    const current = form.getValues('desiredRolesIds');
     const updated = current.filter((id) => id !== idToRemove);
-    form.setValue('specializationIds', updated);
+    form.setValue('desiredRolesIds', updated);
   };
 
   return (
@@ -40,24 +40,24 @@ export default function ActiveUsersFilters({
         variant="link"
         onClick={() =>
           form.reset({
-            specializationIds: [],
+            desiredRolesIds: [],
             activeProjectsCount: null,
           })
         }
       >
         Очистити всі фільтри
       </Button>
-      {selectedSpecializations.map((spec) =>
-        spec ? (
-          <div className={styles['active-users-filters__item']} key={spec.id}>
+      {selectedRoles.map((role) =>
+        role ? (
+          <div className={styles['active-users-filters__item']} key={role.id}>
             <Button
               color="gray"
               variant="link"
               size="md"
-              onClick={() => removeSpecialization(spec.id)}
+              onClick={() => removeRole(role.id)}
               icon={<X />}
             />
-            {spec.roleName}
+            {role.roleName}
           </div>
         ) : null,
       )}

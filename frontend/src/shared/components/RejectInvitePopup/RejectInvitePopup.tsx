@@ -5,19 +5,19 @@ import styles from './RejectInvitePopup.module.scss';
 import Button from '@/shared/components/Button/Button';
 import { useRejectInviteMutation } from '@/api/participationsApi';
 import { useToast } from '@/hooks/useToast';
-import { UserInterface } from '@/shared/interfaces/user.interface';
+import { AuthInterface } from '@/shared/interfaces/auth.interface';
+import { ProjectParticipationInterface } from '../../interfaces/project-participation.interface';
 
 interface RejectInvitePopupProps {
-  projectName: string;
-  inviteId: string;
+  invite: ProjectParticipationInterface;
   onClose: () => void;
-  user: UserInterface;
+  user: AuthInterface;
 }
 
 export default function RejectInvitePopup(
   props: RejectInvitePopupProps,
 ): ReactElement {
-  const { projectName, inviteId, onClose, user } = props;
+  const { invite, onClose, user } = props;
   const [rejectInvite, { isLoading }] = useRejectInviteMutation();
   const { showToast, isActive } = useToast();
 
@@ -26,13 +26,13 @@ export default function RejectInvitePopup(
       return;
     }
 
-    const result = await rejectInvite({ id: inviteId, userId: user.id });
+    const result = await rejectInvite({ id: invite.id, userId: user.id });
     onClose();
 
     if ('data' in result) {
       showToast({
         severity: 'success',
-        summary: `Запрошення до проєкту [${projectName}] відхилено.`,
+        summary: `Запрошення до проєкту [${invite.projectRole.project.projectName}] відхилено.`,
         life: 3000,
         actionKey: 'invite',
       });
@@ -54,8 +54,11 @@ export default function RejectInvitePopup(
             Відхилити запрошення в проєкт?
           </h3>
           <p className={styles['reject-invite-popup__text']}>
-            Ти дійсно хочеш відмовитись від участі в проєкті? Дію неможливо
-            скасувати.
+            Ти дійсно хочеш відхилити запрошення до проєкту{' '}
+            <span className={styles['reject-invite-popup__text--green']}>
+              [{invite.projectRole.project.projectName}]
+            </span>
+            ? Дію неможливо скасувати.
           </p>
         </div>
         <div className={styles['reject-invite-popup__actions']}>

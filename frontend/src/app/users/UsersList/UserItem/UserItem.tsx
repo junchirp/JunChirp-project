@@ -2,7 +2,7 @@
 
 import { ReactElement, useState } from 'react';
 import styles from './UserItem.module.scss';
-import { UserInterface } from '@/shared/interfaces/user.interface';
+import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import Button from '@/shared/components/Button/Button';
 import Image from 'next/image';
 import { ProjectCardInterface } from '@/shared/interfaces/project-card.interface';
@@ -12,7 +12,7 @@ import { useRouter } from 'next/navigation';
 
 interface UserItemProps {
   user: UserCardInterface;
-  currentUser: UserInterface;
+  currentUser: AuthInterface;
   myProjects: ProjectCardInterface[];
 }
 
@@ -47,9 +47,9 @@ export default function UserItem({
               {user.firstName} {user.lastName}
             </h3>
             <ul className={styles['user-item__edu-list']}>
-              {user.educations.map((edu) => (
-                <li className={styles['user-item__edu-item']} key={edu.id}>
-                  {edu.specialization.roleName}
+              {user.desiredRoles.map((role) => (
+                <li className={styles['user-item__edu-item']} key={role.id}>
+                  {role.roleName}
                 </li>
               ))}
             </ul>

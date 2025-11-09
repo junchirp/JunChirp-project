@@ -128,7 +128,7 @@ export class ParticipationsController {
     return this.participationsService.acceptInvite(id, user.id);
   }
 
-  @ApiOperation({ summary: 'Reject invite (user)' })
+  @ApiOperation({ summary: 'Decline invite (user)' })
   @ApiNoContentResponse()
   @ApiNotFoundResponse({ description: 'Invite not found' })
   @ApiForbiddenResponse({
@@ -140,14 +140,14 @@ export class ParticipationsController {
     required: true,
   })
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Delete('invite/:id/reject')
-  public async rejectInvite(
+  @Delete('invite/:id/decline')
+  public async declineInvite(
     @Req() req: Request,
     @Param('id', ParseUUIDv4Pipe) id: string,
   ): Promise<void> {
     const user: UserWithPasswordResponseDto =
       req.user as UserWithPasswordResponseDto;
-    return this.participationsService.rejectInvite(id, user.id);
+    return this.participationsService.declineInvite(id, user.id);
   }
 
   @Owner('params', 'id', 'participationRequest')
@@ -178,7 +178,7 @@ export class ParticipationsController {
   }
 
   @Owner('params', 'id', 'participationRequest')
-  @ApiOperation({ summary: 'Reject request (owner)' })
+  @ApiOperation({ summary: 'Decline request (owner)' })
   @ApiNoContentResponse()
   @ApiNotFoundResponse({ description: 'Request not found' })
   @ApiForbiddenResponse({
@@ -191,11 +191,11 @@ export class ParticipationsController {
     required: true,
   })
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Delete('request/:id/reject')
-  public async rejectRequest(
+  @Delete('request/:id/decline')
+  public async declineRequest(
     @Param('id', ParseUUIDv4Pipe) id: string,
   ): Promise<void> {
-    return this.participationsService.rejectRequest(id);
+    return this.participationsService.declineRequest(id);
   }
 
   @ApiOperation({ summary: 'Cancel request (user)' })

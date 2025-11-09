@@ -6,7 +6,7 @@ import styles from './page.module.scss';
 import Button from '@/shared/components/Button/Button';
 import ArrowUpRight from '@/assets/icons/arrow-up-right.svg';
 import UserBaseInfo from './UserBaseInfo/UserBaseInfo';
-import { useParams, usePathname, useRouter } from 'next/navigation';
+import { useParams, usePathname } from 'next/navigation';
 import {
   useGetMyProjectsQuery,
   useGetRequestsInMyProjectsQuery,
@@ -23,28 +23,19 @@ import { useAppDispatch, useAppSelector } from '@/hooks/reduxHooks';
 import authSelector from '@/redux/auth/authSelector';
 import UserRequests from './UserRequests/UserRequests';
 import { setUserPageId } from '@/redux/ui/uiSlice';
+import DataContainer from '../../../shared/components/DataContainer/DataContainer';
 
 export default function User(): ReactElement | null {
   const params = useParams();
   const pathname = usePathname();
-  const router = useRouter();
   const userId = params.id as string;
   const authUser = useAppSelector(authSelector.selectUser);
+  const isAuthUser = userId === authUser?.id;
   const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    if (authUser?.id && authUser.id === userId) {
-      router.replace('/profile');
-    }
-  }, [authUser?.id, userId, router]);
 
   useEffect(() => {
     dispatch(setUserPageId(userId));
   }, [userId, dispatch]);
-
-  if (authUser?.id === userId) {
-    return null;
-  }
 
   const [isModalOpen, setModalOpen] = useState(false);
   const { data: user, isLoading: userLoading } = useGetUserByIdQuery(userId);
@@ -113,11 +104,7 @@ export default function User(): ReactElement | null {
                 <UserDetails title="Soft Skills" items={user.softSkills} />
               </div>
               <div className={styles.user__projects}>
-                <UserDetails
-                  title="Проєкти користувача"
-                  items={[]}
-                  columnsCount={1}
-                />
+                <DataContainer title="Проєкти користувача" />
                 <ProjectsCount
                   status="active"
                   count={user.activeProjectsCount}
@@ -126,10 +113,10 @@ export default function User(): ReactElement | null {
                 <UserProjectsList userId={user.id} />
               </div>
             </div>
-            {requests.length !== 0 && (
+            {!isAuthUser && requests.length !== 0 && (
               <UserRequests requests={requests} user={user} />
             )}
-            {isButtonVisible && (
+            {!isAuthUser && isButtonVisible && (
               <div className={styles.user__actions}>
                 <Button
                   size="lg"
@@ -143,7 +130,7 @@ export default function User(): ReactElement | null {
               </div>
             )}
           </div>
-          {isModalOpen && (
+          {!isAuthUser && isModalOpen && (
             <InvitePopup
               onClose={closeModal}
               user={user}

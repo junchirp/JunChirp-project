@@ -4,6 +4,7 @@ import { SocialResponseDto } from '../../socials/dto/social.response-dto';
 import { SoftSkillResponseDto } from '../../soft-skills/dto/soft-skill.response-dto';
 import { HardSkillResponseDto } from '../../hard-skills/dto/hard-skill.response-dto';
 import { UserCardResponseDto } from './user-card.response-dto';
+import { EducationResponseDto } from '../../educations/dto/education.response-dto';
 
 export class UserResponseDto extends UserCardResponseDto {
   @ApiProperty({
@@ -37,4 +38,7 @@ export class UserResponseDto extends UserCardResponseDto {
 
   @ApiProperty({ type: () => [HardSkillResponseDto] })
   public readonly hardSkills: HardSkillResponseDto[];
+
+  @ApiProperty({ type: () => [EducationResponseDto] })
+  public readonly educations: EducationResponseDto[];
 }

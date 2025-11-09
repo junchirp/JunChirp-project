@@ -8,7 +8,7 @@ export class UserParticipationMapper {
   public static toResponse(
     participation: Participation & {
       user: User & {
-        educations: (Education & { specialization: ProjectRoleType })[];
+        desiredRoles: ProjectRoleType[];
       };
       projectRole: ProjectRole & { roleType: ProjectRoleType };
     },

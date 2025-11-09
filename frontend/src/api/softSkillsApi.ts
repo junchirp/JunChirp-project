@@ -4,6 +4,12 @@ import { CreateSoftSkillInterface } from '@/shared/interfaces/create-soft-skill.
 
 export const softSkillsApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({
+    getSoftSkills: builder.query<SoftSkillInterface[], undefined>({
+      query: () => ({
+        url: 'soft-skills',
+      }),
+      providesTags: ['soft-skills'],
+    }),
     addSoftSkill: builder.mutation<
       SoftSkillInterface,
       CreateSoftSkillInterface
@@ -13,7 +19,7 @@ export const softSkillsApi = mainApi.injectEndpoints({
         method: 'POST',
         body: data,
       }),
-      invalidatesTags: [{ type: 'soft-skills', id: 'LIST' }],
+      invalidatesTags: ['soft-skills'],
     }),
     deleteSoftSkill: builder.mutation<string, string>({
       query: (id) => ({
@@ -21,10 +27,13 @@ export const softSkillsApi = mainApi.injectEndpoints({
         method: 'DELETE',
         responseHandler: (response): Promise<string> => response.text(),
       }),
-      invalidatesTags: [{ type: 'soft-skills', id: 'LIST' }],
+      invalidatesTags: ['soft-skills'],
     }),
   }),
 });
 
-export const { useAddSoftSkillMutation, useDeleteSoftSkillMutation } =
-  softSkillsApi;
+export const {
+  useAddSoftSkillMutation,
+  useDeleteSoftSkillMutation,
+  useGetSoftSkillsQuery,
+} = softSkillsApi;

@@ -7,6 +7,7 @@ import {
   UsePipes,
   Req,
   Put,
+  Get,
 } from '@nestjs/common';
 import { SoftSkillsService } from './soft-skills.service';
 import { CreateSoftSkillDto } from './dto/create-soft-skill.dto';
@@ -31,17 +32,31 @@ import { User } from '../auth/decorators/user.decorator';
 
 @User()
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-@ApiForbiddenResponse({
-  description: 'Access denied: email not confirmed / Invalid CSRF token',
-})
 @Controller('soft-skills')
 export class SoftSkillsController {
   public constructor(private softSkillsService: SoftSkillsService) {}
+
+  @ApiOperation({ summary: 'Get list of soft skills' })
+  @ApiOkResponse({ type: [SoftSkillResponseDto] })
+  @ApiForbiddenResponse({
+    description: 'Access denied: email not confirmed',
+  })
+  @Get('')
+  public async getSoftSkills(
+    @Req() req: Request,
+  ): Promise<SoftSkillResponseDto[]> {
+    const user: UserWithPasswordResponseDto =
+      req.user as UserWithPasswordResponseDto;
+    return this.softSkillsService.getSoftSkills(user.id);
+  }
 
   @ApiOperation({ summary: 'Add soft skill' })
   @ApiCreatedResponse({ type: SoftSkillResponseDto })
   @ApiBadRequestResponse({
     description: 'You can only add up to 20 soft skills',
+  })
+  @ApiForbiddenResponse({
+    description: 'Access denied: email not confirmed / Invalid CSRF token',
   })
   @ApiConflictResponse({ description: 'Soft skill is already in list' })
   @ApiHeader({
@@ -63,6 +78,9 @@ export class SoftSkillsController {
   @ApiOperation({ summary: 'Update soft skill' })
   @ApiOkResponse({ type: SoftSkillResponseDto })
   @ApiNotFoundResponse({ description: 'Soft skill not found' })
+  @ApiForbiddenResponse({
+    description: 'Access denied: email not confirmed / Invalid CSRF token',
+  })
   @ApiConflictResponse({ description: 'Soft skill is already in list' })
   @ApiHeader({
     name: 'x-csrf-token',
@@ -79,6 +97,9 @@ export class SoftSkillsController {
 
   @ApiOperation({ summary: 'Delete soft skill' })
   @ApiOkResponse({ type: String })
+  @ApiForbiddenResponse({
+    description: 'Access denied: email not confirmed / Invalid CSRF token',
+  })
   @ApiNotFoundResponse({ description: 'Soft skill not found' })
   @ApiHeader({
     name: 'x-csrf-token',

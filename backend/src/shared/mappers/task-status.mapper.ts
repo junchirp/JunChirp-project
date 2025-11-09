@@ -1,10 +1,4 @@
-import {
-  Education,
-  ProjectRoleType,
-  Task,
-  TaskStatus,
-  User,
-} from '@prisma/client';
+import { ProjectRoleType, Task, TaskStatus, User } from '@prisma/client';
 import { TaskStatusResponseDto } from '../../task-statuses/dto/task-status.response-dto';
 import { TaskMapper } from './task.mapper';
 import { TaskStatusWithTasksResponseDto } from '../../task-statuses/dto/task-status-with-tasks.response-dto';
@@ -24,7 +18,7 @@ export class TaskStatusMapper {
       tasks: (Task & {
         assignee:
           | (User & {
-              educations: (Education & { specialization: ProjectRoleType })[];
+              desiredRoles: ProjectRoleType[];
             })
           | null;
       })[];

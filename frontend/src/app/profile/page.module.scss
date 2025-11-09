@@ -1,3 +1,5 @@
+@use '@/assets/styles/variables';
+
 .profile {
   padding: 40px 40px 80px;
   display: flex;
@@ -8,8 +10,15 @@
   &__details {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(2, auto);
+    grid-template-rows: repeat(3, auto);
     gap: 40px 32px;
+  }
+
+  &__view {
+    display: flex;
+    justify-content: flex-end;
+    grid-row: 1;
+    grid-column: span 3;
   }
 
   &__actions {
@@ -17,5 +26,16 @@
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: repeat(1, auto);
     gap: 40px 32px;
+  }
+
+  &__message {
+    text-align: center;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.4;
+
+    &--green {
+      color: variables.$green-2;
+    }
   }
 }

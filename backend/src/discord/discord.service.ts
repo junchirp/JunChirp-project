@@ -36,7 +36,7 @@ export class DiscordService implements OnModuleInit {
 
     await this.client.login(this.botToken);
 
-    this.client.once('ready', async () => {
+    this.client.once('clientReady', async () => {
       this.guild = await this.client.guilds.fetch(this.guildId);
       await this.guild.roles.fetch();
       await this.guild.channels.fetch();

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsUUID, Length, Matches } from 'class-validator';
+import { IsNotEmpty, IsString, Length, Matches } from 'class-validator';
 
 export class CreateEducationDto {
   @ApiProperty({
@@ -15,10 +15,14 @@ export class CreateEducationDto {
   public readonly institution: string;
 
   @ApiProperty({
-    example: 'e960a0fb-891a-4f02-9f39-39ac3bb08621',
-    description: 'Specialization ID',
+    example: 'Mathematics',
+    description: 'Name of the specialization',
   })
-  @IsUUID(4, { message: 'Must be a string in UUIDv4 format' })
-  @IsNotEmpty({ message: 'Specialization ID is required' })
-  public readonly specializationId: string;
+  @IsString({ message: 'Must be a string' })
+  @Length(2, 100, { message: 'Must be between 2 and 100 characters' })
+  @Matches(/^[A-Za-zА-Яа-яІіЇїЄєҐґ0-9 .'’,"-]{2,100}$/, {
+    message: 'Specialization name is incorrect',
+  })
+  @IsNotEmpty({ message: 'Specialization name is required' })
+  public readonly specialization: string;
 }

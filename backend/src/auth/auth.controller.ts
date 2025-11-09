@@ -36,7 +36,7 @@ import { Auth } from './decorators/auth.decorator';
 import { MessageResponseDto } from '../users/dto/message.response-dto';
 import { GoogleAuthGuard } from './guards/google-auth/google-auth.guard';
 import { Discord } from './decorators/discord.decorator';
-import { UserResponseDto } from '../users/dto/user.response-dto';
+import { AuthResponseDto } from '../users/dto/auth.response-dto';
 
 @ApiTags('Authorization')
 @Controller('auth')
@@ -44,7 +44,7 @@ export class AuthController {
   public constructor(private authService: AuthService) {}
 
   @ApiOperation({ summary: 'Login' })
-  @ApiOkResponse({ type: UserResponseDto })
+  @ApiOkResponse({ type: AuthResponseDto })
   @ApiUnauthorizedResponse({ description: 'Email or password is incorrect' })
   @ApiTooManyRequestsResponse({
     description: 'Too many failed attempts. Please try again later',
@@ -63,12 +63,12 @@ export class AuthController {
     @Ip() ip: string,
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
-  ): Promise<UserResponseDto> {
+  ): Promise<AuthResponseDto> {
     return this.authService.login(ip, req, res);
   }
 
   @ApiOperation({ summary: 'Registration' })
-  @ApiCreatedResponse({ type: UserResponseDto })
+  @ApiCreatedResponse({ type: AuthResponseDto })
   @ApiConflictResponse({ description: 'User with this email already exists' })
   @ApiForbiddenResponse({ description: 'Invalid CSRF token' })
   @ApiHeader({
@@ -82,7 +82,7 @@ export class AuthController {
     @Body() createUserDto: CreateUserDto,
     @Ip() ip: string,
     @Res({ passthrough: true }) res: Response,
-  ): Promise<UserResponseDto> {
+  ): Promise<AuthResponseDto> {
     return this.authService.registration(createUserDto, ip, res);
   }
 

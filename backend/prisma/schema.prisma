@@ -37,6 +37,7 @@ model User {
   softSkills            UserSoftSkill[]
   participationInvites  ParticipationInvite[]
   participationRequests ParticipationRequest[]
+  desiredRoles          ProjectRoleType[]
 
   @@index([activeProjectsCount])
   @@map("users")
@@ -145,10 +146,10 @@ model ProjectRole {
 }
 
 model ProjectRoleType {
-  id         String        @id @default(dbgenerated("gen_random_uuid()"))
-  roleName   String        @unique @map("role_name")
-  roles      ProjectRole[]
-  educations Education[]
+  id       String        @id @default(dbgenerated("gen_random_uuid()"))
+  roleName String        @unique @map("role_name")
+  roles    ProjectRole[]
+  users    User[]
 
   @@map("project_role_types")
 }
@@ -218,14 +219,13 @@ model LogEvent {
 }
 
 model Education {
-  id               String          @id @default(dbgenerated("gen_random_uuid()"))
-  userId           String          @map("user_id")
-  specializationId String          @map("specialization_id")
-  institution      String
-  specialization   ProjectRoleType @relation(fields: [specializationId], references: [id], onDelete: Cascade)
-  user             User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id             String @id @default(dbgenerated("gen_random_uuid()"))
+  userId         String @map("user_id")
+  institution    String
+  specialization String
+  user           User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, institution, specializationId])
+  @@unique([userId, institution, specialization])
   @@map("educations")
 }
 
@@ -272,9 +272,16 @@ model UserSoftSkill {
 
 model Institution {
   id              String @id @default(dbgenerated("gen_random_uuid()"))
-  institutionName String @map("institution_name")
+  institutionName String @unique @map("institution_name")
 
   @@map("institutions")
+}
+
+model Specialization {
+  id                 String @id @default(dbgenerated("gen_random_uuid()"))
+  specializationName String @unique @map("specialization_name")
+
+  @@map("specializations")
 }
 
 model ParticipationInvite {

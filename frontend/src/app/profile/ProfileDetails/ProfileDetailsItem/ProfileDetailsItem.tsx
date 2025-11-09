@@ -35,7 +35,7 @@ export default function ProfileDetailsItem<T>(
 
     content = (
       <div className={styles['profile-details-item__social']}>
-        {matchedNetwork ? (
+        {matchedNetwork && (
           <Image
             src={matchedNetwork.icon}
             alt={item.network}
@@ -43,8 +43,6 @@ export default function ProfileDetailsItem<T>(
             width={20}
             height={20}
           />
-        ) : (
-          <div className={styles['profile-details-item__no-icon']}></div>
         )}
         <Link
           className={styles['profile-details-item__link']}
@@ -66,7 +64,7 @@ export default function ProfileDetailsItem<T>(
         <p
           className={`${styles['profile-details-item__text']} ${styles['profile-details-item__text--gray']}`}
         >
-          {item.specialization.roleName}
+          {item.specialization}
         </p>
       </div>
     );

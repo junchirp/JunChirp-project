@@ -31,6 +31,33 @@ export class EducationsService {
     return results.map((institution) => institution.institutionName);
   }
 
+  public async getSpecializationsAutocomplete(
+    query: string,
+  ): Promise<string[]> {
+    const results = await this.prisma.specialization.findMany({
+      where: {
+        specializationName: {
+          contains: query,
+          mode: 'insensitive',
+        },
+      },
+      select: {
+        specializationName: true,
+      },
+      take: 10,
+    });
+
+    return results.map((specialization) => specialization.specializationName);
+  }
+
+  public async getEducations(userId: string): Promise<EducationResponseDto[]> {
+    const educations = await this.prisma.education.findMany({
+      where: { userId },
+    });
+
+    return educations.map((edu) => EducationMapper.toResponse(edu));
+  }
+
   public async addEducation(
     userId: string,
     createEducationDto: CreateEducationDto,
@@ -50,16 +77,15 @@ export class EducationsService {
             ...createEducationDto,
             userId,
           },
-          include: { specialization: true },
         });
 
-        const record = await prisma.institution.findFirst({
+        const recordInstitution = await prisma.institution.findFirst({
           where: {
             institutionName: createEducationDto.institution,
           },
         });
 
-        if (!record) {
+        if (!recordInstitution) {
           await prisma.institution.create({
             data: {
               institutionName: createEducationDto.institution,
@@ -67,16 +93,26 @@ export class EducationsService {
           });
         }
 
+        const recordSpecialization = await prisma.specialization.findFirst({
+          where: {
+            specializationName: createEducationDto.specialization,
+          },
+        });
+
+        if (!recordSpecialization) {
+          await prisma.specialization.create({
+            data: {
+              specializationName: createEducationDto.specialization,
+            },
+          });
+        }
+
         return EducationMapper.toResponse(education);
       } catch (error) {
-        switch (error.code) {
-          case 'P2003':
-            throw new BadRequestException('Specialization not found');
-          case 'P2002':
-            throw new ConflictException('Education is already in list');
-          default:
-            throw error;
+        if (error.code === 'P2002') {
+          throw new ConflictException('Education is already in list');
         }
+        throw error;
       }
     });
   }
@@ -87,16 +123,30 @@ export class EducationsService {
   ): Promise<EducationResponseDto> {
     return this.prisma.$transaction(async (prisma) => {
       try {
-        const record = await prisma.institution.findFirst({
+        const recordInstitution = await prisma.institution.findFirst({
           where: {
             institutionName: updateEducationDto.institution,
           },
         });
 
-        if (!record) {
+        if (!recordInstitution) {
           await prisma.institution.create({
             data: {
               institutionName: updateEducationDto.institution,
+            },
+          });
+        }
+
+        const recordSpecialization = await prisma.specialization.findFirst({
+          where: {
+            specializationName: updateEducationDto.specialization,
+          },
+        });
+
+        if (!recordSpecialization) {
+          await prisma.specialization.create({
+            data: {
+              specializationName: updateEducationDto.specialization,
             },
           });
         }
@@ -106,7 +156,6 @@ export class EducationsService {
           data: {
             ...updateEducationDto,
           },
-          include: { specialization: true },
         });
 
         return EducationMapper.toResponse(education);
@@ -116,8 +165,6 @@ export class EducationsService {
             throw new NotFoundException('Education not found');
           case 'P2002':
             throw new ConflictException('Education is already in list');
-          case 'P2003':
-            throw new BadRequestException('Specialization not found');
           default:
             throw error;
         }

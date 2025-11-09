@@ -84,12 +84,10 @@ export default function Button({
       })
     : null;
 
-  const RenderSpinner = isLoader
-    ? cloneElement(<Spinner />, {
-        width: iconSize,
-        height: iconSize,
-      })
-    : null;
+  const RenderSpinner =
+    isLoader && loading
+      ? cloneElement(<Spinner />, { width: iconSize, height: iconSize })
+      : null;
 
   return (
     <button

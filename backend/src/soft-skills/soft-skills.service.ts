@@ -2,7 +2,7 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
-  NotFoundException,
+  NotFoundException, Req,
 } from '@nestjs/common';
 import { CreateSoftSkillDto } from './dto/create-soft-skill.dto';
 import { UpdateSoftSkillDto } from './dto/update-soft-skill.dto';
@@ -13,6 +13,13 @@ import { SoftSkillMapper } from '../shared/mappers/soft-skill.mapper';
 @Injectable()
 export class SoftSkillsService {
   public constructor(private prisma: PrismaService) {}
+
+  public async getSoftSkills(userId: string): Promise<SoftSkillResponseDto[]> {
+    const skills = await this.prisma.userSoftSkill.findMany({
+      where: { userId },
+    });
+    return skills.map((skill) => SoftSkillMapper.toResponse(skill));
+  }
 
   public async addSoftSkill(
     userId: string,

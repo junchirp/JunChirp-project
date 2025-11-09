@@ -3,13 +3,13 @@ import styles from './ProjectsList.module.scss';
 import { ProjectCardInterface } from '@/shared/interfaces/project-card.interface';
 import ProjectCard from '@/shared/components/ProjectCard/ProjectCard';
 import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
-import { UserInterface } from '@/shared/interfaces/user.interface';
+import { AuthInterface } from '../../../shared/interfaces/auth.interface';
 
 interface ProjectsListProps {
   projects: ProjectCardInterface[];
   invites: ProjectParticipationInterface[];
   requests: ProjectParticipationInterface[];
-  user: UserInterface | null;
+  user: AuthInterface | null;
 }
 
 export default function ProjectsList({

@@ -171,9 +171,7 @@ export class ProjectRolesService {
             roleType: true,
             user: {
               include: {
-                educations: {
-                  include: { specialization: true },
-                },
+                desiredRoles: true,
               },
             },
           },

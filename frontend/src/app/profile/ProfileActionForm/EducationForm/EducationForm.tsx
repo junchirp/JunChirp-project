@@ -7,15 +7,14 @@ import styles from './EducationForm.module.scss';
 import { Controller, useForm } from 'react-hook-form';
 import Button from '@/shared/components/Button/Button';
 import { zodResolver } from '@hookform/resolvers/zod';
-import EducationAutocomplete from '@/shared/components/EducationAutocomplete/EducationAutocomplete';
 import {
   useAddEducationMutation,
+  useLazyGetInstitutionsQuery,
+  useLazyGetSpecializationsQuery,
   useUpdateEducationMutation,
 } from '@/api/educationsApi';
 import { educationSchema } from '@/shared/forms/schemas/educationSchema';
-import Dropdown from '@/shared/components/Dropdown/Dropdown';
-import { ProjectRoleTypeInterface } from '@/shared/interfaces/project-role-type.interface';
-import { useGetProjectRolesListQuery } from '../../../../api/projectRolesApi';
+import Autocomplete from '@/shared/components/Autocomplete/Autocomplete';
 
 type FormData = z.infer<typeof educationSchema>;
 
@@ -25,8 +24,8 @@ interface EducationFormProps {
 }
 
 export default function EducationForm(props: EducationFormProps): ReactElement {
-  const { data: specializationsList = [] } =
-    useGetProjectRolesListQuery(undefined);
+  const [getInstitutions] = useLazyGetInstitutionsQuery();
+  const [getSpecializations] = useLazyGetSpecializationsQuery();
   const [updateEducation, { isLoading: updateEducationLoading }] =
     useUpdateEducationMutation();
   const [addEducation, { isLoading: addEducationLoading }] =
@@ -37,13 +36,13 @@ export default function EducationForm(props: EducationFormProps): ReactElement {
     control,
     reset,
     setFocus,
-    formState: { errors, isValid },
+    formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(educationSchema),
     mode: 'onChange',
     defaultValues: {
       institution: '',
-      specializationId: '',
+      specialization: '',
     },
   });
 
@@ -55,12 +54,12 @@ export default function EducationForm(props: EducationFormProps): ReactElement {
     if (initialValues) {
       reset({
         institution: initialValues.institution,
-        specializationId: initialValues.specialization.id,
+        specialization: initialValues.specialization,
       });
     } else {
       reset({
         institution: '',
-        specializationId: '',
+        specialization: '',
       });
     }
   }, [initialValues, reset]);
@@ -87,11 +86,12 @@ export default function EducationForm(props: EducationFormProps): ReactElement {
           name="institution"
           control={control}
           render={({ field }) => (
-            <EducationAutocomplete
+            <Autocomplete
               {...field}
               label="Освітній заклад"
               placeholder="Освітній заклад"
-              onSelectEducation={() => {}}
+              fetcher={(query) => getInstitutions(query)}
+              onSelectOption={() => {}}
               errorMessages={
                 errors.institution?.message && [errors.institution.message]
               }
@@ -100,46 +100,38 @@ export default function EducationForm(props: EducationFormProps): ReactElement {
           )}
         />
         <Controller
-          name="specializationId"
+          name="specialization"
           control={control}
           render={({ field }) => (
-            <Dropdown<ProjectRoleTypeInterface>
+            <Autocomplete
               {...field}
-              options={specializationsList}
               label="Спеціальність"
-              placeholder="Спеціальність (бажана роль на проєкті)"
-              getOptionLabel={(o) => o.roleName}
-              getOptionValue={(o) => o.id}
+              placeholder="Front-end Development, QA Engineering, UX/UI Design..."
+              fetcher={(query) => getSpecializations(query)}
+              onSelectOption={() => {}}
+              errorMessages={
+                errors.specialization?.message && [
+                  errors.specialization.message,
+                ]
+              }
+              withError
             />
           )}
         />
       </fieldset>
-
-      {initialValues ? (
-        <div className={styles['education-form__actions']}>
-          <Button
-            type="button"
-            variant="secondary-frame"
-            color="green"
-            onClick={onCancel}
-          >
-            Скасувати
-          </Button>
-          <Button type="submit" color="green" disabled={!isValid}>
-            Зберегти
-          </Button>
-        </div>
-      ) : (
+      <div className={styles['education-form__actions']}>
         <Button
-          type="submit"
-          fullWidth
+          type="button"
+          variant="secondary-frame"
           color="green"
-          disabled={!isValid}
-          loading={addEducationLoading || updateEducationLoading}
+          onClick={onCancel}
         >
+          Скасувати
+        </Button>
+        <Button type="submit" color="green">
           Зберегти
         </Button>
-      )}
+      </div>
     </form>
   );
 }

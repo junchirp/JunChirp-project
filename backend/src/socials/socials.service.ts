@@ -14,6 +14,11 @@ import { SocialMapper } from '../shared/mappers/social.mapper';
 export class SocialsService {
   public constructor(private prisma: PrismaService) {}
 
+  public async getSocialNetworks(userId: string): Promise<SocialResponseDto[]> {
+    const skills = await this.prisma.social.findMany({ where: { userId } });
+    return skills.map((social) => SocialMapper.toResponse(social));
+  }
+
   public async addSocialNetwork(
     userId: string,
     createSocialDto: CreateSocialDto,

@@ -1,11 +1,4 @@
-import {
-  Board,
-  Education,
-  ProjectRoleType,
-  Task,
-  TaskStatus,
-  User,
-} from '@prisma/client';
+import { Board, ProjectRoleType, Task, TaskStatus, User } from '@prisma/client';
 import { BoardResponseDto } from '../../boards/dto/board.response-dto';
 import { TaskStatusMapper } from './task-status.mapper';
 import { BoardWithColumnsResponseDto } from '../../boards/dto/board-with-columns.response-dto';
@@ -25,7 +18,7 @@ export class BoardMapper {
         tasks: (Task & {
           assignee:
             | (User & {
-                educations: (Education & { specialization: ProjectRoleType })[];
+                desiredRoles: ProjectRoleType[];
               })
             | null;
         })[];

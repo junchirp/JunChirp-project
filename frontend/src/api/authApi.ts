@@ -1,92 +1,57 @@
 import mainApi from './mainApi';
-import { SoftSkillInterface } from '@/shared/interfaces/soft-skill.interface';
-import { HardSkillInterface } from '@/shared/interfaces/hard-skill.interface';
-import { EducationInterface } from '@/shared/interfaces/education.interface';
-import { SocialInterface } from '@/shared/interfaces/social.interface';
 import { RegistrationInterface } from '@/shared/interfaces/registration.interface';
-import { UserInterface } from '@/shared/interfaces/user.interface';
 import { LoginInterface } from '@/shared/interfaces/login.interface';
 import { MessageInterface } from '@/shared/interfaces/message.interface';
 import { EmailInterface } from '@/shared/interfaces/email.interface';
 import { ConfirmEmailInterface } from '@/shared/interfaces/confirm-email.interface';
 import { TokenValidationInterface } from '@/shared/interfaces/token-validation.interface';
 import { ResetPasswordInterface } from '@/shared/interfaces/reset-password.interface';
-import { UpdateUserType } from '@/shared/types/update-user.type';
+import { AuthInterface } from '@/shared/interfaces/auth.interface';
+import { UpdateUserInterface } from '../shared/interfaces/update-user.interface';
+
+const USER_RELATED_TAGS = [
+  'auth',
+  'soft-skills',
+  'hard-skills',
+  'educations',
+  'socials',
+  'my-projects',
+  'invites-me-in-projects',
+  'invites-in-my-projects',
+  'my-requests-in-projects',
+  'requests-in-my-projects',
+] as const;
 
 export const authApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({
-    register: builder.mutation<UserInterface, RegistrationInterface>({
+    register: builder.mutation<AuthInterface, RegistrationInterface>({
       query: (userData) => ({
         url: 'auth/register',
         method: 'POST',
         body: userData,
       }),
-      invalidatesTags: ['auth'],
+      invalidatesTags: USER_RELATED_TAGS,
     }),
-    getMe: builder.query<UserInterface, undefined>({
+    getMe: builder.query<AuthInterface, undefined>({
       query: () => ({
         url: 'users/me',
       }),
-      providesTags: (result) =>
-        result
-          ? [
-              'auth',
-              { type: 'soft-skills', id: 'LIST' },
-              ...result.softSkills.map((skill: SoftSkillInterface) => ({
-                type: 'soft-skills' as const,
-                id: skill.id,
-              })),
-              { type: 'hard-skills', id: 'LIST' },
-              ...result.hardSkills.map((skill: HardSkillInterface) => ({
-                type: 'hard-skills' as const,
-                id: skill.id,
-              })),
-              { type: 'educations', id: 'LIST' },
-              ...result.educations.map((edu: EducationInterface) => ({
-                type: 'educations' as const,
-                id: edu.id,
-              })),
-              { type: 'socials', id: 'LIST' },
-              ...result.socials.map((social: SocialInterface) => ({
-                type: 'socials' as const,
-                id: social.id,
-              })),
-            ]
-          : ([
-              'auth',
-              { type: 'soft-skills', id: 'LIST' },
-              { type: 'hard-skills', id: 'LIST' },
-              { type: 'educations', id: 'LIST' },
-              { type: 'socials', id: 'LIST' },
-            ] as const),
+      providesTags: ['auth'],
     }),
-    login: builder.mutation<UserInterface, LoginInterface>({
+    login: builder.mutation<AuthInterface, LoginInterface>({
       query: (credentials) => ({
         url: 'auth/login',
         method: 'POST',
         body: credentials,
       }),
-      invalidatesTags: [
-        'auth',
-        { type: 'soft-skills', id: 'LIST' },
-        { type: 'hard-skills', id: 'LIST' },
-        { type: 'educations', id: 'LIST' },
-        { type: 'socials', id: 'LIST' },
-      ],
+      invalidatesTags: USER_RELATED_TAGS,
     }),
     logout: builder.mutation<MessageInterface, undefined>({
       query: () => ({
         url: 'auth/logout',
         method: 'POST',
       }),
-      invalidatesTags: [
-        'auth',
-        'my-projects',
-        { type: 'soft-skills', id: 'LIST' },
-        { type: 'hard-skills', id: 'LIST' },
-        { type: 'educations', id: 'LIST' },
-        { type: 'socials', id: 'LIST' },
-      ],
+      invalidatesTags: ['auth'],
     }),
     sendConfirmationEmail: builder.mutation<MessageInterface, EmailInterface>({
       query: (data) => ({
@@ -112,13 +77,21 @@ export const authApi = mainApi.injectEndpoints({
       }),
       invalidatesTags: ['auth'],
     }),
-    updateUser: builder.mutation<UserInterface, UpdateUserType>({
+    updateUser: builder.mutation<AuthInterface, UpdateUserInterface>({
       query: (data) => ({
         url: 'users/me',
         method: 'PATCH',
         body: data,
       }),
       invalidatesTags: ['auth', 'users'],
+    }),
+    updateEmail: builder.mutation<AuthInterface, EmailInterface>({
+      query: (data) => ({
+        url: 'users/me/email',
+        method: 'PATCH',
+        body: data,
+      }),
+      invalidatesTags: ['auth'],
     }),
     validateToken: builder.query<TokenValidationInterface, string>({
       query: (token) => ({
@@ -148,6 +121,7 @@ export const {
   useGetMeQuery,
   useSendConfirmationEmailMutation,
   useUpdateUserMutation,
+  useUpdateEmailMutation,
   useConfirmEmailMutation,
   useRequestPasswordResetMutation,
   useValidateTokenQuery,

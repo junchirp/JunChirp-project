@@ -1,12 +1,11 @@
 'use client';
 
-import { useEffect, ReactElement, useState } from 'react';
+import { useEffect, ReactElement } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Input from '@/shared/components/Input/Input';
 import Button from '@/shared/components/Button/Button';
-import SocialAutocomplete from '@/shared/components/SocialAutocomplete/SocialAutocomplete';
 import styles from './SocialForm.module.scss';
 import { socialNetworks } from '@/shared/constants/social-networks';
 import {
@@ -21,6 +20,7 @@ import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
 import { useToast } from '@/hooks/useToast';
 import { socialSchema } from '@/shared/forms/schemas/socialSchema';
+import Dropdown from '@/shared/components/Dropdown/Dropdown';
 
 type FormData = z.infer<typeof socialSchema>;
 
@@ -35,7 +35,6 @@ export default function SocialForm(props: SocialFormProps): ReactElement {
   const [addSocial, { isLoading: addSocialLoading }] = useAddSocialMutation();
   const { showToast, isActive } = useToast();
   const { initialValues, onCancel } = props;
-  const [urlPlaceholder, setUrlPlaceholder] = useState('Посилання');
   const {
     register,
     handleSubmit,
@@ -43,8 +42,7 @@ export default function SocialForm(props: SocialFormProps): ReactElement {
     reset,
     watch,
     trigger,
-    setFocus,
-    formState: { errors, isValid },
+    formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(socialSchema),
     mode: 'onChange',
@@ -53,10 +51,6 @@ export default function SocialForm(props: SocialFormProps): ReactElement {
       url: '',
     },
   });
-
-  useEffect(() => {
-    setFocus('network');
-  }, [setFocus]);
 
   useEffect(() => {
     if (initialValues) {
@@ -86,8 +80,17 @@ export default function SocialForm(props: SocialFormProps): ReactElement {
       return;
     }
 
+    let url = data.url.trim();
+    if (!/^https?:\/\//i.test(url)) {
+      url = `https://${url}`;
+    }
+    const preparedData = { ...data, url };
+
     if (initialValues) {
-      const result = await updateSocial({ id: initialValues.id, data });
+      const result = await updateSocial({
+        id: initialValues.id,
+        data: preparedData,
+      });
 
       if ('error' in result) {
         const errorData = result.error as
@@ -109,7 +112,7 @@ export default function SocialForm(props: SocialFormProps): ReactElement {
         return;
       }
     } else {
-      const result = await addSocial(data);
+      const result = await addSocial(preparedData);
 
       if ('error' in result) {
         const errorData = result.error as
@@ -134,14 +137,6 @@ export default function SocialForm(props: SocialFormProps): ReactElement {
     onCancel();
   };
 
-  const handleSelectSocial = (match: ClientSocialInterface | null): void => {
-    if (match) {
-      setUrlPlaceholder(match.url);
-    } else {
-      setUrlPlaceholder('Посилання');
-    }
-  };
-
   return (
     <form className={styles['social-form']} onSubmit={handleSubmit(onSubmit)}>
       <fieldset
@@ -152,53 +147,42 @@ export default function SocialForm(props: SocialFormProps): ReactElement {
           name="network"
           control={control}
           render={({ field }) => (
-            <SocialAutocomplete
+            <Dropdown<ClientSocialInterface>
               {...field}
+              options={socialNetworks}
               label="Назва соцмережі"
-              placeholder="Вкажи назву соцмережі"
-              suggestions={socialNetworks}
-              onSelectSocial={handleSelectSocial}
+              placeholder="Назва соцмережі"
+              getOptionLabel={(o) => o.network}
+              getOptionValue={(o) => o.network}
+              withError
               errorMessages={
                 errors.network?.message && [errors.network.message]
               }
-              withError
+              autoFocus
             />
           )}
         />
         <Input
           {...register('url')}
           label="Посилання"
-          placeholder={urlPlaceholder}
+          placeholder="Посилання"
           withError
           errorMessages={errors.url?.message && [errors.url.message]}
         />
       </fieldset>
-
-      {initialValues ? (
-        <div className={styles['social-form__actions']}>
-          <Button
-            type="button"
-            variant="secondary-frame"
-            color="green"
-            onClick={onCancel}
-          >
-            Скасувати
-          </Button>
-          <Button type="submit" color="green" disabled={!isValid}>
-            Зберегти
-          </Button>
-        </div>
-      ) : (
+      <div className={styles['social-form__actions']}>
         <Button
-          type="submit"
-          fullWidth
+          type="button"
+          variant="secondary-frame"
           color="green"
-          disabled={!isValid}
-          loading={updateSocialLoading || addSocialLoading}
+          onClick={onCancel}
         >
+          Скасувати
+        </Button>
+        <Button type="submit" color="green">
           Зберегти
         </Button>
-      )}
+      </div>
     </form>
   );
 }

@@ -2,7 +2,7 @@
 
 import { ReactElement, useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import EducationMultiSelect from '@/shared/components/EducationMultiSelect/EducationMultiSelect';
+import MultiSelect from '../../../../shared/components/MultiSelect/MultiSelect';
 import Button from '@/shared/components/Button/Button';
 import styles from './UsersFiltersForm.module.scss';
 import { projectsCountOptions } from '@/shared/constants/projects-count-options';
@@ -14,19 +14,18 @@ import Dropdown from '@/shared/components/Dropdown/Dropdown';
 import { useGetProjectRolesListQuery } from '@/api/projectRolesApi';
 
 interface FormData {
-  specializationIds: string[];
+  desiredRolesIds: string[];
   activeProjectsCount: number | null;
 }
 
 export default function UsersFiltersForm(): ReactElement {
-  const { data: specializationsList = [] } =
-    useGetProjectRolesListQuery(undefined);
+  const { data: rolesList = [] } = useGetProjectRolesListQuery(undefined);
   const { filters, updateFilters } = useUsersFilters();
 
   const form = useForm<FormData>({
     mode: 'onChange',
     defaultValues: {
-      specializationIds: [],
+      desiredRolesIds: [],
       activeProjectsCount: null,
     },
   });
@@ -34,21 +33,21 @@ export default function UsersFiltersForm(): ReactElement {
 
   const isFiltersChanged =
     !arraysEqualUnordered(
-      watchedValues.specializationIds ?? [],
-      filters.specializationIds ?? [],
+      watchedValues.desiredRolesIds ?? [],
+      filters.desiredRolesIds ?? [],
     ) ||
     watchedValues.activeProjectsCount !== (filters.activeProjectsCount ?? null);
 
   useEffect(() => {
     form.reset({
-      specializationIds: filters.specializationIds ?? [],
+      desiredRolesIds: filters.desiredRolesIds ?? [],
       activeProjectsCount: filters.activeProjectsCount ?? null,
     });
   }, [filters, form.reset]);
 
   const onSubmit = (data: FormData): void => {
     updateFilters({
-      specializationIds: data.specializationIds,
+      desiredRolesIds: data.desiredRolesIds,
       activeProjectsCount: data.activeProjectsCount,
       page: 1,
     });
@@ -61,18 +60,21 @@ export default function UsersFiltersForm(): ReactElement {
         onSubmit={form.handleSubmit(onSubmit)}
       >
         <Controller
-          name="specializationIds"
+          name="desiredRolesIds"
           control={form.control}
           render={({ field }) => (
-            <EducationMultiSelect
+            <MultiSelect
               {...field}
-              options={specializationsList}
+              options={rolesList}
               label="Список спеціалізацій:"
               labelSize={20}
               labelHeight={1.4}
               labelWeight={600}
               labelMargin={12}
               placeholder="Всі"
+              placeholderColor="black"
+              getOptionLabel={(o) => o.roleName}
+              getOptionValue={(o) => o.id}
             />
           )}
         />
@@ -88,7 +90,6 @@ export default function UsersFiltersForm(): ReactElement {
               labelHeight={1.4}
               labelWeight={600}
               labelMargin={12}
-              placeholder="Всі"
               getOptionLabel={(o) => o.label}
               getOptionValue={(o) => o.value}
             />
@@ -99,11 +100,8 @@ export default function UsersFiltersForm(): ReactElement {
         </Button>
       </form>
       {(watchedValues.activeProjectsCount !== null ||
-        !!watchedValues.specializationIds.length) && (
-        <ActiveUsersFilters
-          form={form}
-          specializationsList={specializationsList}
-        />
+        !!watchedValues.desiredRolesIds.length) && (
+        <ActiveUsersFilters form={form} rolesList={rolesList} />
       )}
     </div>
   );

@@ -95,9 +95,7 @@ export class ProjectsService {
               roleType: true,
               user: {
                 include: {
-                  educations: {
-                    include: { specialization: true },
-                  },
+                  desiredRoles: true,
                 },
               },
             },
@@ -120,7 +118,7 @@ export class ProjectsService {
     userId: string,
     createProjectDto: CreateProjectDto,
   ): Promise<ProjectResponseDto> {
-    const user = await this.usersService.getUserById(userId);
+    const user = await this.usersService.getUserById(userId, 'edit');
 
     if (user.activeProjectsCount >= 2) {
       throw new BadRequestException(
@@ -159,9 +157,7 @@ export class ProjectsService {
                 roleType: true,
                 user: {
                   include: {
-                    educations: {
-                      include: { specialization: true },
-                    },
+                    desiredRoles: true,
                   },
                 },
               },
@@ -236,9 +232,7 @@ export class ProjectsService {
               roleType: true,
               user: {
                 include: {
-                  educations: {
-                    include: { specialization: true },
-                  },
+                  desiredRoles: true,
                 },
               },
             },
@@ -286,9 +280,7 @@ export class ProjectsService {
               roleType: true,
               user: {
                 include: {
-                  educations: {
-                    include: { specialization: true },
-                  },
+                  desiredRoles: true,
                 },
               },
             },
@@ -332,9 +324,7 @@ export class ProjectsService {
                 roleType: true,
                 user: {
                   include: {
-                    educations: {
-                      include: { specialization: true },
-                    },
+                    desiredRoles: true,
                   },
                 },
               },
@@ -441,9 +431,7 @@ export class ProjectsService {
               roleType: true,
               user: {
                 include: {
-                  educations: {
-                    include: { specialization: true },
-                  },
+                  desiredRoles: true,
                 },
               },
             },
@@ -475,9 +463,7 @@ export class ProjectsService {
               roleType: true,
               user: {
                 include: {
-                  educations: {
-                    include: { specialization: true },
-                  },
+                  desiredRoles: true,
                 },
               },
             },

@@ -4,7 +4,8 @@ export interface SocialInterface extends CreateSocialInterface {
   id: string;
 }
 
-export interface ClientSocialInterface extends CreateSocialInterface {
+export interface ClientSocialInterface
+  extends Omit<CreateSocialInterface, 'url'> {
   icon: string;
   urlRegex: RegExp;
 }

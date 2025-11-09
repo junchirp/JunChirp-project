@@ -6,7 +6,6 @@ import { CsrfService } from './csrf/csrf.service';
 import * as express from 'express';
 import * as cookieParser from 'cookie-parser';
 import * as path from 'path';
-import Redis from 'ioredis';
 import helmet from 'helmet';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 import nextModule = require('next');
@@ -26,11 +25,6 @@ async function bootstrap(): Promise<void> {
   const nextApp = next({ dev, dir: frontendDir });
   await nextApp.prepare();
   const handle = nextApp.getRequestHandler();
-
-  const redis = new Redis(
-    `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
-  );
-  redis.on('error', (err) => console.error('Redis Error:', err));
 
   server.use((req, res, nextMiddleware) => {
     if (req.url.startsWith('/api') || req.url.startsWith('/swagger')) {

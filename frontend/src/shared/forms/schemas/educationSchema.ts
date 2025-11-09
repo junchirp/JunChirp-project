@@ -1,8 +1,7 @@
 import { z } from 'zod';
-import { institutionValidator } from '@/shared/forms/validators/institutionValidator';
-import { nonEmptyValidator } from '@/shared/forms/validators/nonEmptyValidator';
+import { educationValidator } from '../validators/educationValidator';
 
 export const educationSchema = z.object({
-  institution: institutionValidator,
-  specializationId: nonEmptyValidator,
+  institution: educationValidator,
+  specialization: educationValidator,
 });

@@ -15,11 +15,11 @@ import { hardSkillSchema } from '@/shared/forms/schemas/hardSkillSchema';
 
 type FormData = z.infer<typeof hardSkillSchema>;
 
-interface SoftSkillFormProps {
+interface HardSkillFormProps {
   onCancel: () => void;
 }
 
-export default function HardSkillForm(props: SoftSkillFormProps): ReactElement {
+export default function HardSkillForm(props: HardSkillFormProps): ReactElement {
   const [addHardSkill, { isLoading }] = useAddHardSkillMutation();
   const { showToast, isActive } = useToast();
   const { onCancel } = props;
@@ -27,7 +27,7 @@ export default function HardSkillForm(props: SoftSkillFormProps): ReactElement {
     register,
     handleSubmit,
     setFocus,
-    formState: { errors, isValid },
+    formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(hardSkillSchema),
     mode: 'onChange',
@@ -42,7 +42,8 @@ export default function HardSkillForm(props: SoftSkillFormProps): ReactElement {
       return;
     }
 
-    const result = await addHardSkill(data);
+    const trimmedData = { hardSkillName: data.hardSkillName.trim() };
+    const result = await addHardSkill(trimmedData);
     if ('error' in result) {
       const errorData = result.error as
         | ((FetchBaseQueryError | SerializedError) & {
@@ -84,15 +85,19 @@ export default function HardSkillForm(props: SoftSkillFormProps): ReactElement {
           }
         />
       </fieldset>
-      <Button
-        type="submit"
-        fullWidth
-        color="green"
-        disabled={!isValid}
-        loading={isLoading}
-      >
-        Зберегти
-      </Button>
+      <div className={styles['hard-skill-form__actions']}>
+        <Button
+          type="button"
+          variant="secondary-frame"
+          color="green"
+          onClick={onCancel}
+        >
+          Скасувати
+        </Button>
+        <Button type="submit" color="green">
+          Зберегти
+        </Button>
+      </div>
     </form>
   );
 }
