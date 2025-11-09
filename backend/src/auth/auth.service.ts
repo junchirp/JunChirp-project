@@ -20,6 +20,7 @@ import { RedisService } from '../redis/redis.service';
 import { MessageResponseDto } from '../users/dto/message.response-dto';
 import { LoggerService } from '../logger/logger.service';
 import { DiscordService } from '../discord/discord.service';
+import { AuthResponseDto } from '../users/dto/auth.response-dto';
 
 @Injectable()
 export class AuthService {
@@ -44,7 +45,7 @@ export class AuthService {
   public async validateUser(
     req: Request,
     loginDto: LoginDto,
-  ): Promise<UserResponseDto> {
+  ): Promise<AuthResponseDto> {
     const user = (await this.usersService.getUserByEmail(
       loginDto.email,
       true,
@@ -94,8 +95,15 @@ export class AuthService {
           where: { userId: user.id },
         });
       }
-      const { password, ...userWithoutPassword } = user;
-      return userWithoutPassword;
+      const {
+        password,
+        educations,
+        socials,
+        hardSkills,
+        softSkills,
+        ...baseUserInfo
+      } = user;
+      return baseUserInfo;
     } else {
       if (loginAttempt) {
         const updateData: {
@@ -169,13 +177,20 @@ export class AuthService {
     ip: string,
     req: Request,
     res: Response,
-  ): Promise<UserResponseDto> {
+  ): Promise<AuthResponseDto> {
     const user: UserWithPasswordResponseDto =
       req.user as UserWithPasswordResponseDto;
     const { accessToken, refreshToken } = this.createTokens(user.id);
     this.addRefreshTokenToResponse(res, refreshToken);
     this.addAccessTokenToResponse(res, accessToken);
-    const { password, ...userWithoutPassword } = user;
+    const {
+      password,
+      educations,
+      socials,
+      hardSkills,
+      softSkills,
+      ...baseUserInfo
+    } = user;
 
     await this.loggerService.log(
       ip,
@@ -184,14 +199,14 @@ export class AuthService {
       'User login successfully',
     );
 
-    return userWithoutPassword;
+    return baseUserInfo;
   }
 
   public async registration(
     createUserDto: CreateUserDto,
     ip: string,
     res: Response,
-  ): Promise<UserResponseDto> {
+  ): Promise<AuthResponseDto> {
     const hashPassword = await bcrypt.hash(createUserDto.password, 10);
     const user = await this.usersService.createUser(
       {
@@ -227,7 +242,10 @@ export class AuthService {
         console.error('Error sending verification url:', err);
       });
 
-    return user;
+    const { educations, socials, hardSkills, softSkills, ...baseUserInfo } =
+      user;
+
+    return baseUserInfo;
   }
 
   public createAccessToken(userId: string): string {
@@ -386,7 +404,7 @@ export class AuthService {
     ip: string,
     req: Request,
     res: Response,
-  ): Promise<UserResponseDto> {
+  ): Promise<AuthResponseDto> {
     if (!req.user) {
       await this.loggerService.log(
         ip,
@@ -419,7 +437,10 @@ export class AuthService {
       'Google authentication successfully',
     );
 
-    return user;
+    const { educations, socials, hardSkills, softSkills, ...baseUserInfo } =
+      user;
+
+    return baseUserInfo;
   }
 
   public async handleDiscordCallback(

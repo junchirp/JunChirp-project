@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { MailerService } from '@nestjs-modules/mailer';
 import {
-  Education,
   Project,
   ProjectRole,
   ProjectRoleType,
@@ -45,7 +44,7 @@ export class MailService {
     url: string,
     invite: Participation & {
       user: User & {
-        educations: (Education & { specialization: ProjectRoleType })[];
+        desiredRoles: ProjectRoleType[];
         activeProjectsCount: number;
       };
       projectRole: ProjectRole & {

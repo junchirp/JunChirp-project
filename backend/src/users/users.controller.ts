@@ -46,6 +46,7 @@ import { ProjectParticipationResponseDto } from '../participations/dto/project-p
 import { User } from '../auth/decorators/user.decorator';
 import { EmailValidationResponseDto } from './dto/email-validation.response-dto';
 import { TokenValidationResponseDto } from './dto/token-validation.response-dto';
+import { AuthResponseDto } from './dto/auth.response-dto';
 
 @Controller('users')
 export class UsersController {
@@ -100,15 +101,15 @@ export class UsersController {
   }
 
   @Auth()
-  @ApiOperation({ summary: 'Get current user' })
-  @ApiOkResponse({ type: UserResponseDto })
+  @ApiOperation({ summary: 'Get current user (base info in edit mode)' })
+  @ApiOkResponse({ type: AuthResponseDto })
   @ApiNotFoundResponse({ description: 'User not found' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Get('me')
-  public async getCurrentUser(@Req() req: Request): Promise<UserResponseDto> {
+  public async getCurrentUser(@Req() req: Request): Promise<AuthResponseDto> {
     const user: UserWithPasswordResponseDto =
       req.user as UserWithPasswordResponseDto;
-    return this.usersService.getUserById(user.id);
+    return this.usersService.getUserById(user.id, 'edit');
   }
 
   @ApiOperation({ summary: 'Check email' })
@@ -174,11 +175,36 @@ export class UsersController {
 
   @Auth()
   @ApiOperation({
-    summary: 'Update current user (first name, last name, email)',
+    summary: 'Update current user email',
   })
-  @ApiOkResponse({ type: UserResponseDto })
+  @ApiOkResponse({ type: AuthResponseDto })
   @ApiNotFoundResponse({ description: 'User not found' })
   @ApiConflictResponse({ description: 'Email is already in use' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiForbiddenResponse({ description: 'Invalid CSRF token' })
+  @ApiHeader({
+    name: 'x-csrf-token',
+    description: 'CSRF token for the request',
+    required: true,
+  })
+  @UsePipes(ValidationPipe)
+  @Patch('me/email')
+  public async updateEmail(
+    @Req() req: Request,
+    @Ip() ip: string,
+    @Body() emailDto: EmailDto,
+  ): Promise<AuthResponseDto> {
+    const user: UserWithPasswordResponseDto =
+      req.user as UserWithPasswordResponseDto;
+    return this.usersService.updateEmail(user.id, ip, emailDto);
+  }
+
+  @User()
+  @ApiOperation({
+    summary: 'Update current user (first name, last name, desired roles)',
+  })
+  @ApiOkResponse({ type: AuthResponseDto })
+  @ApiNotFoundResponse({ description: 'User not found' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiForbiddenResponse({ description: 'Invalid CSRF token' })
   @ApiHeader({
@@ -190,12 +216,11 @@ export class UsersController {
   @Patch('me')
   public async updateUser(
     @Req() req: Request,
-    @Ip() ip: string,
     @Body() updateUserDto: UpdateUserDto,
-  ): Promise<UserResponseDto> {
+  ): Promise<AuthResponseDto> {
     const user: UserWithPasswordResponseDto =
       req.user as UserWithPasswordResponseDto;
-    return this.usersService.updateUser(user.id, ip, updateUserDto);
+    return this.usersService.updateUser(user.id, updateUserDto);
   }
 
   @User()
@@ -251,7 +276,7 @@ export class UsersController {
   public async getUserById(
     @Param('id', ParseUUIDv4Pipe) id: string,
   ): Promise<UserResponseDto> {
-    return this.usersService.getUserById(id);
+    return this.usersService.getUserById(id, 'view');
   }
 
   @User()

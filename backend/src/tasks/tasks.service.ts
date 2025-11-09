@@ -23,11 +23,7 @@ export class TasksService {
           taskStatus: true,
           assignee: {
             include: {
-              educations: {
-                include: {
-                  specialization: true,
-                },
-              },
+              desiredRoles: true,
             },
           },
         },
@@ -50,11 +46,7 @@ export class TasksService {
           taskStatus: true,
           assignee: {
             include: {
-              educations: {
-                include: {
-                  specialization: true,
-                },
-              },
+              desiredRoles: true,
             },
           },
         },
@@ -81,11 +73,7 @@ export class TasksService {
           taskStatus: true,
           assignee: {
             include: {
-              educations: {
-                include: {
-                  specialization: true,
-                },
-              },
+              desiredRoles: true,
             },
           },
         },
@@ -129,11 +117,7 @@ export class TasksService {
           taskStatus: true,
           assignee: {
             include: {
-              educations: {
-                include: {
-                  specialization: true,
-                },
-              },
+              desiredRoles: true,
             },
           },
         },

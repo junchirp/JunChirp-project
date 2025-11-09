@@ -13,4 +13,12 @@
     font-size: 28px;
     line-height: 1.4;
   }
+
+  &__link {
+    color: variables.$green-1;
+
+    &:hover {
+      color: variables.$green-2;
+    }
+  }
 }

@@ -1,4 +1,4 @@
-import { EducationInterface } from './education.interface';
+import { ProjectRoleTypeInterface } from './project-role-type.interface';
 
 export interface UserCardInterface {
   id: string;
@@ -7,5 +7,5 @@ export interface UserCardInterface {
   avatarUrl: string;
   activeProjectsCount: number;
   doneProjectsCount: number;
-  educations: EducationInterface[];
+  desiredRoles: ProjectRoleTypeInterface[];
 }

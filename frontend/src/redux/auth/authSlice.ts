@@ -1,9 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { authApi } from '@/api/authApi';
-import { UserInterface } from '@/shared/interfaces/user.interface';
+import { AuthInterface } from '@/shared/interfaces/auth.interface';
 
 interface AuthState {
-  user: UserInterface | null;
+  user: AuthInterface | null;
   loadingStatus: 'loading' | 'loaded' | 'idle';
 }
 
@@ -17,12 +17,20 @@ export const authSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
+    builder.addMatcher(authApi.endpoints.register.matchPending, (state) => {
+      state.loadingStatus = 'loading';
+    });
     builder.addMatcher(
       authApi.endpoints.register.matchFulfilled,
       (state, action) => {
         state.user = action.payload;
+        state.loadingStatus = 'loaded';
       },
     );
+    builder.addMatcher(authApi.endpoints.register.matchRejected, (state) => {
+      state.user = null;
+      state.loadingStatus = 'loaded';
+    });
     builder.addMatcher(authApi.endpoints.login.matchPending, (state) => {
       state.loadingStatus = 'loading';
     });
@@ -62,6 +70,13 @@ export const authSlice = createSlice({
     );
     builder.addMatcher(
       authApi.endpoints.updateUser.matchFulfilled,
+      (state, action) => {
+        state.user = action.payload;
+        state.loadingStatus = 'loaded';
+      },
+    );
+    builder.addMatcher(
+      authApi.endpoints.updateEmail.matchFulfilled,
       (state, action) => {
         state.user = action.payload;
         state.loadingStatus = 'loaded';

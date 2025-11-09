@@ -17,7 +17,7 @@ export const participationsApi = mainApi.injectEndpoints({
         method: 'POST',
         body: data,
       }),
-      invalidatesTags: [{ type: 'invites-in-my-projects', id: 'LIST' }],
+      invalidatesTags: ['invites-in-my-projects'],
     }),
     createRequest: builder.mutation<
       ProjectParticipationInterface,
@@ -45,7 +45,7 @@ export const participationsApi = mainApi.injectEndpoints({
           return;
         }
       },
-      invalidatesTags: [{ type: 'my-requests-in-projects', id: 'LIST' }],
+      invalidatesTags: ['my-requests-in-projects'],
     }),
     rejectInvite: builder.mutation<void, { id: string; userId: string }>({
       query: ({ id }) => ({
@@ -76,7 +76,7 @@ export const participationsApi = mainApi.injectEndpoints({
           return;
         }
       },
-      invalidatesTags: [{ type: 'invites-me-in-projects', id: 'LIST' }],
+      invalidatesTags: ['invites-me-in-projects'],
     }),
     acceptInvite: builder.mutation<void, string>({
       query: (id) => ({
@@ -84,7 +84,7 @@ export const participationsApi = mainApi.injectEndpoints({
         method: 'PUT',
       }),
       invalidatesTags: [
-        { type: 'invites-me-in-projects', id: 'LIST' },
+        'invites-me-in-projects',
         { type: 'my-projects', id: 'LIST' },
       ],
     }),
@@ -119,7 +119,7 @@ export const participationsApi = mainApi.injectEndpoints({
         }
       },
       invalidatesTags: [
-        { type: 'requests-in-my-projects', id: 'LIST' },
+        'requests-in-my-projects',
         'user',
         { type: 'user-projects', id: 'LIST' },
       ],
@@ -153,7 +153,38 @@ export const participationsApi = mainApi.injectEndpoints({
           return;
         }
       },
-      invalidatesTags: [{ type: 'requests-in-my-projects', id: 'LIST' }],
+      invalidatesTags: ['requests-in-my-projects'],
+    }),
+    cancelRequest: builder.mutation<void, { id: string; userId: string }>({
+      query: ({ id }) => ({
+        url: `participations/request/${id}/cancel`,
+        method: 'DELETE',
+      }),
+      async onQueryStarted(
+        { id: requestId, userId },
+        { dispatch, queryFulfilled },
+      ) {
+        try {
+          await queryFulfilled;
+          dispatch(
+            usersApi.util.updateQueryData(
+              'getMyRequests',
+              { userId },
+              (draft: ProjectParticipationInterface[]) => {
+                const index = draft.findIndex(
+                  (request) => request.id === requestId,
+                );
+                if (index !== -1) {
+                  draft.splice(index, 1);
+                }
+              },
+            ),
+          );
+        } catch {
+          return;
+        }
+      },
+      invalidatesTags: ['my-requests-in-projects'],
     }),
   }),
 });
@@ -165,4 +196,5 @@ export const {
   useCreateRequestMutation,
   useRejectRequestMutation,
   useAcceptRequestMutation,
+  useCancelRequestMutation,
 } = participationsApi;

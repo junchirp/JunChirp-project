@@ -22,19 +22,23 @@ interface SocialNetworkInterface {
 }
 
 const socialNetworks: SocialNetworkInterface = {
-  facebook: /^https:\/\/(www\.)?facebook\.com\/[a-zA-Z0-9(.?)]+$/i,
-  'x twitter': /^https:\/\/(www\.)?twitter\.com\/[a-zA-Z0-9_]+$/i,
-  instagram: /^https:\/\/(www\.)?instagram\.com\/[a-zA-Z0-9_]+$/i,
-  linkedin: /^https:\/\/(www\.)?linkedin\.com\/in\/[a-zA-Z0-9-]+$/i,
+  facebook:
+    /^(https?:\/\/)?(www\.)?facebook\.com\/((profile\.php\?id=\d+)|[A-Za-z0-9._-]+)\/?$/i,
+  'x twitter':
+    /^(https?:\/\/)?(www\.)?(twitter|x)\.com\/[A-Za-z0-9_]{1,15}\/?$/i,
+  instagram: /^(https?:\/\/)?(www\.)?instagram\.com\/[A-Za-z0-9_.]+\/?$/i,
+  linkedin:
+    /^(https?:\/\/)?(www\.)?linkedin\.com\/(in|company)\/[A-Za-z0-9_-]+\/?$/i,
   youtube:
     /^https:\/\/(www\.)?youtube\.com\/(@[\w.-]+|c\/[\w-]+|channel\/UC[a-zA-Z0-9_-]{21,})\/?$/i,
   // tiktok: /^https:\/\/(www\.)?tiktok\.com\/@[a-zA-Z0-9_]+$/,
   // pinterest: /^https:\/\/(www\.)?pinterest\.com\/[a-zA-Z0-9_]+$/,
   // reddit: /^https:\/\/(www\.)?reddit\.com\/u\/[a-zA-Z0-9_]+$/,
-  discord: /^https:\/\/(www\.)?discord\.com\/users\/\d+\/?$/i,
-  telegram: /^https:\/\/t\.me\/[a-zA-Z0-9_]+\/?$/i,
-  github: /^https:\/\/(www\.)?github\.com\/[a-zA-Z0-9-]+\/?$/i,
-  gitlab: /^https:\/\/(www\.)?gitlab\.com\/[a-zA-Z0-9_-]+\/?$/i,
+  discord:
+    /^(https?:\/\/)?(www\.)?discord(\.gg|app\.com\/users)\/[A-Za-z0-9]+\/?$/i,
+  telegram: /^(https?:\/\/)?(t\.me|telegram\.me)\/[A-Za-z0-9_]+\/?$/i,
+  github: /^(https?:\/\/)?(www\.)?github\.com\/[A-Za-z0-9_.-]+\/?$/i,
+  gitlab: /^(https?:\/\/)?(www\.)?gitlab\.com\/[A-Za-z0-9_.-]+\/?$/i,
 };
 
 @ValidatorConstraint({ name: 'isValidSocialNetworkUrl', async: false })

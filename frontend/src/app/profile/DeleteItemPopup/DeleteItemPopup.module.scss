@@ -37,22 +37,6 @@
     line-height: 1.2;
   }
 
-  &__text {
-    text-align: center;
-    font-size: 20px;
-    font-weight: 600;
-    line-height: 1.4;
-  }
-
-  &__counter {
-    font-size: 16px;
-    line-height: 1.4;
-
-    &--gray {
-      color: variables.$gray-6;
-    }
-  }
-
   &__actions {
     display: grid;
     grid-template-columns: 1fr 1fr;

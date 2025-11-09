@@ -14,6 +14,13 @@ import { HardSkillMapper } from '../shared/mappers/hard-skill.mapper';
 export class HardSkillsService {
   public constructor(private prisma: PrismaService) {}
 
+  public async getHardSkills(userId: string): Promise<HardSkillResponseDto[]> {
+    const skills = await this.prisma.userHardSkill.findMany({
+      where: { userId },
+    });
+    return skills.map((skill) => HardSkillMapper.toResponse(skill));
+  }
+
   public async addHardSkill(
     userId: string,
     createHardSkillDto: CreateHardSkillDto,

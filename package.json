@@ -38,11 +38,12 @@
     "neon:migrate:dev": "cross-env DATABASE_URL=\"postgresql://neondb_owner:npg_Tdopnfh4C5aV@ep-aged-band-a91361as-pooler.gwc.azure.neon.tech/neondb?sslmode=require&channel_binding=require\" npx prisma migrate dev --name --schema backend/prisma/schema.prisma",
     "neon:migrate:deploy": "cross-env DATABASE_URL=\"postgresql://neondb_owner:npg_Tdopnfh4C5aV@ep-aged-band-a91361as-pooler.gwc.azure.neon.tech/neondb?sslmode=require&channel_binding=require\" npx prisma migrate deploy --schema backend/prisma/schema.prisma",
     "neon:db:push": "cross-env DATABASE_URL=\"postgresql://neondb_owner:npg_Tdopnfh4C5aV@ep-aged-band-a91361as-pooler.gwc.azure.neon.tech/neondb?sslmode=require&channel_binding=require\" npx prisma db push --schema backend/prisma/schema.prisma",
-    "neon:db:pull": "cross-env DATABASE_URL=\"postgresql://neondb_owner:npg_Tdopnfh4C5aV@ep-aged-band-a91361as-pooler.gwc.azure.neon.tech/neondb?sslmode=require&channel_binding=require\" npx prisma db pull --schema backend/prisma/schema.prisma"
+    "neon:db:pull": "cross-env DATABASE_URL=\"postgresql://neondb_owner:npg_Tdopnfh4C5aV@ep-aged-band-a91361as-pooler.gwc.azure.neon.tech/neondb?sslmode=require&channel_binding=require\" npx prisma db pull --schema backend/prisma/schema.prisma",
+    "neon:generate:local": "cross-env DATABASE_URL=\"postgresql://postgres:postgres@localhost:5432/JunChirp\" npx prisma generate --schema backend/prisma/schema.prisma",
+    "neon:db:push:local": "cross-env DATABASE_URL=\"postgresql://postgres:postgres@localhost:5432/JunChirp\" npx prisma db push --schema backend/prisma/schema.prisma"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",
-    "@nestjs-modules/ioredis": "^2.0.2",
     "@nestjs-modules/mailer": "^2.0.2",
     "@nestjs/axios": "^4.0.0",
     "@nestjs/common": "^11.1.6",
@@ -68,9 +69,10 @@
     "dotenv": "^17.2.1",
     "handlebars": "^4.7.8",
     "helmet": "^8.1.0",
-    "ioredis": "^5.6.0",
+    "ioredis": "^5.8.2",
     "multer": "^2.0.2",
-    "next": "^15.4.6",
+    "next": "^15.5.6",
+    "next-intl": "^4.4.0",
     "nodemailer": "^7.0.5",
     "passport": "^0.7.0",
     "passport-discord": "^0.1.4",

@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useToast } from '@/hooks/useToast';
-import { useUpdateUserMutation } from '@/api/authApi';
+import { useUpdateEmailMutation } from '@/api/authApi';
 import styles from './ChangeEmailForm.module.scss';
 import Button from '@/shared/components/Button/Button';
 import { availableEmailSchema } from '@/shared/forms/schemas/availableEmailSchema';
@@ -25,7 +25,7 @@ export default function ChangeEmailForm({ onClose }: FormProps): ReactElement {
     mode: 'onChange',
   });
 
-  const [updateUser, { isLoading }] = useUpdateUserMutation();
+  const [updateEmail, { isLoading }] = useUpdateEmailMutation();
   const { showToast, isActive } = useToast();
 
   const onSubmit = async (data: FormData): Promise<void> => {
@@ -35,7 +35,7 @@ export default function ChangeEmailForm({ onClose }: FormProps): ReactElement {
     const trimmedData = {
       email: data.email.trim(),
     };
-    const result = await updateUser(trimmedData);
+    const result = await updateEmail(trimmedData);
 
     if ('data' in result) {
       showToast({

@@ -7,13 +7,14 @@ import SocialForm from './SocialForm/SocialForm';
 import EducationForm from './EducationForm/EducationForm';
 import SoftSkillForm from './SoftSkillForm/SoftSkillForm';
 import HardSkillForm from './HardSkillForm/HardSkillForm';
-import { UserInterface } from '@/shared/interfaces/user.interface';
+import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import UserNameForm from './UserNameForm/UserNameForm';
+import Link from 'next/link';
 
 interface ProfileActionFormProps {
   action: ProfileActionType;
   allField: boolean;
-  user: UserInterface;
+  user: AuthInterface;
   onCancel: () => void;
 }
 
@@ -56,7 +57,21 @@ export default function ProfileActionForm(
     default: {
       content = allField ? (
         <p className={styles['profile-action-form__text']}>
-          Профіль готовий — обирай проєкт або створи власний!
+          Профіль готовий —{' '}
+          <Link
+            className={styles['profile-action-form__link']}
+            href={'/projects'}
+          >
+            обирай проєкт
+          </Link>{' '}
+          або{' '}
+          <Link
+            className={styles['profile-action-form__link']}
+            href={'/new-project'}
+          >
+            створи власний
+          </Link>
+          !
         </p>
       ) : (
         <p className={styles['profile-action-form__text']}>

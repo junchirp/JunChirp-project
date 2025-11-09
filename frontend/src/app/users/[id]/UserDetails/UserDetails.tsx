@@ -14,6 +14,7 @@ import { SocialInterface } from '@/shared/interfaces/social.interface';
 import UserDetailsItem from '@/app/users/[id]/UserDetails/UserDetailsItem/UserDetailsItem';
 import { EmailWithIdInterface } from '@/shared/interfaces/email-with-id.interface';
 import { isEducation } from '../../../../shared/utils/typeGuards';
+import DataContainer from '../../../../shared/components/DataContainer/DataContainer';
 
 interface UserDetailsProps<
   T extends WithIdInterface =
@@ -43,9 +44,6 @@ export default function UserDetails<T extends WithIdInterface>({
     columns === 1
       ? styles['user-details']
       : `${styles['user-details']} ${styles['user-details--two-columns']}`;
-  const classNameEmptyContainer = !items.length
-    ? `${styles['user-details--no-gap']}`
-    : '';
 
   const collapseLimit = items.length
     ? isEducation(items[0])
@@ -61,26 +59,34 @@ export default function UserDetails<T extends WithIdInterface>({
   const toggleList = (): void => setIsCollapsed(!isCollapsed);
 
   return (
-    <div className={`${classNameContainer} ${classNameEmptyContainer}`}>
-      <div className={styles['user-details__header']}>
-        <p className={styles['user-details__title']}>{title}</p>
-        <div className={styles['user-details__border']}></div>
-      </div>
-      <ul className={classNameList}>
-        {visibleItems.map((item) => (
-          <UserDetailsItem<T> item={item} key={item.id} />
-        ))}
-      </ul>
-      {items.length > collapseLimit ? (
-        <Button
-          className={styles['user-details__toggle']}
-          size="md"
-          variant="link"
-          color="black"
-          icon={isCollapsed ? <Down /> : <Up />}
-          onClick={toggleList}
-        />
-      ) : null}
-    </div>
+    <>
+      {items.length ? (
+        <div className={classNameContainer}>
+          <DataContainer title={title}>
+            <>
+              <ul className={classNameList}>
+                {visibleItems.map((item) => (
+                  <UserDetailsItem<T> item={item} key={item.id} />
+                ))}
+              </ul>
+              {items.length > collapseLimit ? (
+                <Button
+                  className={styles['user-details__toggle']}
+                  size="md"
+                  variant="link"
+                  color="black"
+                  icon={isCollapsed ? <Down /> : <Up />}
+                  onClick={toggleList}
+                />
+              ) : null}
+            </>
+          </DataContainer>
+        </div>
+      ) : (
+        <div className={classNameContainer}>
+          <DataContainer title={title} />
+        </div>
+      )}
+    </>
   );
 }

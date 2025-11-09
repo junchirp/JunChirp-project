@@ -11,4 +11,10 @@
     justify-content: stretch;
     gap: 20px;
   }
+
+  &__actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
 }

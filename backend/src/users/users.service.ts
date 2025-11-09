@@ -37,10 +37,12 @@ import { Request, Response } from 'express';
 import { AuthService } from '../auth/auth.service';
 import { EmailValidationResponseDto } from './dto/email-validation.response-dto';
 import { TokenValidationResponseDto } from './dto/token-validation.response-dto';
+import { AuthResponseDto } from './dto/auth.response-dto';
+import { EmailDto } from './dto/email.dto';
 
 interface GetUsersOptionsInterface {
   activeProjectsCount: number;
-  specializationIds: string[];
+  desiredRolesIds: string[];
   page: number;
   limit: number;
 }
@@ -81,14 +83,11 @@ export class UsersService {
           },
           include: {
             role: true,
-            educations: {
-              include: {
-                specialization: true,
-              },
-            },
+            educations: true,
             socials: true,
             softSkills: true,
             hardSkills: true,
+            desiredRoles: true,
           },
         });
 
@@ -124,38 +123,41 @@ export class UsersService {
       where: { email },
       include: {
         role: true,
-        educations: {
-          include: {
-            specialization: true,
-          },
-        },
+        educations: true,
         socials: true,
         softSkills: true,
         hardSkills: true,
+        desiredRoles: true,
       },
     });
 
     return user ? UserMapper.toFullResponse(user, withPassword) : null;
   }
 
-  public async getUserById(id: string): Promise<UserResponseDto> {
+  public async getUserById(id: string, mode: 'edit'): Promise<AuthResponseDto>;
+
+  public async getUserById(id: string, mode: 'view'): Promise<UserResponseDto>;
+
+  public async getUserById(
+    id: string,
+    mode: 'edit' | 'view',
+  ): Promise<UserResponseDto | AuthResponseDto> {
     try {
       const user = await this.prisma.user.findUniqueOrThrow({
         where: { id },
         include: {
           role: true,
-          educations: {
-            include: {
-              specialization: true,
-            },
-          },
+          educations: true,
           socials: true,
           softSkills: true,
           hardSkills: true,
+          desiredRoles: true,
         },
       });
 
-      return UserMapper.toFullResponse(user, false);
+      return mode === 'edit'
+        ? UserMapper.toAuthResponse(user)
+        : UserMapper.toFullResponse(user, false);
     } catch (error) {
       if (error.code === 'P2025') {
         throw new NotFoundException('User not found');
@@ -275,7 +277,9 @@ export class UsersService {
       } | null;
 
       if (decoded?.id) {
-        const user = await this.getUserById(decoded.id).catch(() => null);
+        const user = await this.getUserById(decoded.id, 'view').catch(
+          () => null,
+        );
         if (!user) {
           await this.loggerService.log(
             ip,
@@ -326,7 +330,9 @@ export class UsersService {
           );
         }
 
-        const user = await this.getUserById(decoded.id).catch(() => null);
+        const user = await this.getUserById(decoded.id, 'view').catch(
+          () => null,
+        );
         if (!user) {
           await this.loggerService.log(
             ip,
@@ -571,14 +577,11 @@ export class UsersService {
         },
         include: {
           role: true,
-          educations: {
-            include: {
-              specialization: true,
-            },
-          },
+          educations: true,
           socials: true,
           softSkills: true,
           hardSkills: true,
+          desiredRoles: true,
         },
       });
       updatedUser = UserMapper.toFullResponse(userFromDB, false);
@@ -588,14 +591,11 @@ export class UsersService {
         data: { googleId: createGoogleUserDto.googleId },
         include: {
           role: true,
-          educations: {
-            include: {
-              specialization: true,
-            },
-          },
+          educations: true,
           socials: true,
           softSkills: true,
           hardSkills: true,
+          desiredRoles: true,
         },
       });
       updatedUser = UserMapper.toFullResponse(userFromDB, false);
@@ -623,24 +623,48 @@ export class UsersService {
 
   public async updateUser(
     id: string,
-    ip: string,
     updateUserDto: UpdateUserDto,
-  ): Promise<UserResponseDto> {
+  ): Promise<AuthResponseDto> {
     try {
-      const user = await this.getUserById(id);
       const updatedUser = await this.prisma.user.update({
         where: { id },
-        data: updateUserDto,
+        data: {
+          firstName: updateUserDto.firstName,
+          lastName: updateUserDto.lastName,
+          desiredRoles: {
+            set: updateUserDto.desiredRolesIds.map((roleId) => ({
+              id: roleId,
+            })),
+          },
+        },
         include: {
           role: true,
-          educations: {
-            include: {
-              specialization: true,
-            },
-          },
-          socials: true,
-          softSkills: true,
-          hardSkills: true,
+          desiredRoles: true,
+        },
+      });
+
+      return UserMapper.toAuthResponse(updatedUser);
+    } catch (error) {
+      if (error.code === 'P2025') {
+        throw new NotFoundException('User not found');
+      }
+      throw error;
+    }
+  }
+
+  public async updateEmail(
+    id: string,
+    ip: string,
+    emailDto: EmailDto,
+  ): Promise<AuthResponseDto> {
+    try {
+      const user = await this.getUserById(id, 'edit');
+      const updatedUser = await this.prisma.user.update({
+        where: { id },
+        data: emailDto,
+        include: {
+          role: true,
+          desiredRoles: true,
         },
       });
 
@@ -659,7 +683,7 @@ export class UsersService {
           });
       }
 
-      return UserMapper.toFullResponse(updatedUser, false);
+      return UserMapper.toAuthResponse(updatedUser);
     } catch (error) {
       switch (error.code) {
         case 'P2025':
@@ -686,7 +710,7 @@ export class UsersService {
   ): Promise<UsersListResponseDto> {
     const {
       activeProjectsCount,
-      specializationIds,
+      desiredRolesIds,
       page = 1,
       limit = 20,
     } = options;
@@ -695,11 +719,11 @@ export class UsersService {
 
     const where: Prisma.UserWhereInput = {
       isVerified: true,
-      ...(specializationIds?.length
+      ...(desiredRolesIds?.length
         ? {
-            educations: {
+            desiredRoles: {
               some: {
-                specializationId: { in: specializationIds },
+                id: { in: desiredRolesIds },
               },
             },
           }
@@ -715,11 +739,7 @@ export class UsersService {
       this.prisma.user.findMany({
         where,
         include: {
-          educations: {
-            include: {
-              specialization: true,
-            },
-          },
+          desiredRoles: true,
         },
         skip,
         take: limit,
@@ -754,14 +774,11 @@ export class UsersService {
         data: { discordId },
         include: {
           role: true,
-          educations: {
-            include: {
-              specialization: true,
-            },
-          },
+          educations: true,
           socials: true,
           softSkills: true,
           hardSkills: true,
+          desiredRoles: true,
         },
       });
     } catch (error) {

@@ -14,6 +14,9 @@ export class EducationResponseDto {
   })
   public readonly institution: string;
 
-  @ApiProperty({ type: () => ProjectRoleTypeResponseDto })
-  public readonly specialization: ProjectRoleTypeResponseDto;
+  @ApiProperty({
+    example: 'Mathematics',
+    description: 'Name of the specialization',
+  })
+  public readonly specialization: string;
 }

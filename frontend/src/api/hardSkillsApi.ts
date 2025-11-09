@@ -4,6 +4,12 @@ import { CreateHardSkillInterface } from '@/shared/interfaces/create-hard-skill.
 
 export const hardSkillsApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({
+    getHardSkills: builder.query<HardSkillInterface[], undefined>({
+      query: () => ({
+        url: 'hard-skills',
+      }),
+      providesTags: ['hard-skills'],
+    }),
     addHardSkill: builder.mutation<
       HardSkillInterface,
       CreateHardSkillInterface
@@ -13,7 +19,7 @@ export const hardSkillsApi = mainApi.injectEndpoints({
         method: 'POST',
         body: data,
       }),
-      invalidatesTags: [{ type: 'hard-skills', id: 'LIST' }],
+      invalidatesTags: ['hard-skills'],
     }),
     deleteHardSkill: builder.mutation<string, string>({
       query: (id) => ({
@@ -21,10 +27,13 @@ export const hardSkillsApi = mainApi.injectEndpoints({
         method: 'DELETE',
         responseHandler: (response): Promise<string> => response.text(),
       }),
-      invalidatesTags: [{ type: 'hard-skills', id: 'LIST' }],
+      invalidatesTags: ['hard-skills'],
     }),
   }),
 });
 
-export const { useAddHardSkillMutation, useDeleteHardSkillMutation } =
-  hardSkillsApi;
+export const {
+  useAddHardSkillMutation,
+  useDeleteHardSkillMutation,
+  useGetHardSkillsQuery,
+} = hardSkillsApi;

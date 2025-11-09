@@ -79,7 +79,7 @@ export default function UserDetailsItem<T>({
         <p
           className={`${styles['user-details-item__text']} ${styles['user-details-item__text--gray']}`}
         >
-          {item.specialization.roleName}
+          {item.specialization}
         </p>
       </div>
     );

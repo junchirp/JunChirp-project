@@ -20,6 +20,7 @@ interface DropdownProps<T> extends Partial<ControllerRenderProps> {
   isOptionDisabled?: (option: T) => boolean;
   withError?: boolean;
   errorMessages?: string[] | string;
+  autoFocus?: boolean;
 }
 
 export default function Dropdown<T>(props: DropdownProps<T>): ReactElement {
@@ -39,15 +40,23 @@ export default function Dropdown<T>(props: DropdownProps<T>): ReactElement {
     isOptionDisabled,
     withError,
     errorMessages,
+    autoFocus = false,
   } = props;
 
   const [isOpen, setIsOpen] = useState(false);
   const [selectedLabel, setSelectedLabel] = useState<string | null>(null);
   const id = useId();
   const ref = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const labelFn = getOptionLabel ?? ((opt: unknown): string => String(opt));
   const valueFn = getOptionValue ?? ((opt: unknown): string => String(opt));
+
+  useEffect(() => {
+    if (autoFocus) {
+      buttonRef.current?.focus();
+    }
+  }, [autoFocus]);
 
   useEffect(() => {
     if (!options.length) {
@@ -107,6 +116,7 @@ export default function Dropdown<T>(props: DropdownProps<T>): ReactElement {
           type="button"
           onClick={() => setIsOpen((prev) => !prev)}
           onBlur={onBlur}
+          ref={buttonRef}
         >
           {selectedLabel ? (
             <span className={styles.dropdown__selected}>{selectedLabel}</span>

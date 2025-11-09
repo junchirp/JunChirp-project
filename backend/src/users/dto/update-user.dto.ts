@@ -1,10 +1,17 @@
-import { PartialType, PickType } from '@nestjs/swagger';
+import { ApiProperty, PickType } from '@nestjs/swagger';
 import { CreateUserDto } from './create-user.dto';
-import { AtLeastOneField } from '../../shared/validators/at-least-one-field.validator';
+import { IsArray, IsNotEmpty, IsUUID } from 'class-validator';
 
-export class UpdateUserDto extends PartialType(
-  PickType(CreateUserDto, ['firstName', 'lastName', 'email']),
-) {
-  @AtLeastOneField(['firstName', 'lastName', 'email'])
-  public readonly atLeastOneFieldValidator?: unknown;
+export class UpdateUserDto extends PickType(CreateUserDto, [
+  'firstName',
+  'lastName',
+]) {
+  @ApiProperty({
+    example: ['e960a0fb-891a-4f02-9f39-39ac3bb08621'],
+    description: 'Role types IDs',
+  })
+  @IsArray({ message: 'Must be an array of IDs' })
+  @IsUUID(4, { message: 'Must be a string in UUIDv4 format', each: true })
+  @IsNotEmpty({ message: 'Role type ID is required', each: true })
+  public readonly desiredRolesIds: string[];
 }

@@ -42,11 +42,37 @@ export class EducationsController {
   @ApiForbiddenResponse({
     description: 'Access denied: email not confirmed',
   })
-  @Get('autocomplete')
+  @Get('institutions')
   public async getInstitutionsAutocomplete(
     @Query('institution') query: string,
   ): Promise<string[]> {
     return this.educationsService.getInstitutionsAutocomplete(query);
+  }
+
+  @ApiOperation({ summary: 'Get list of specialization names' })
+  @ApiOkResponse({ type: [String] })
+  @ApiForbiddenResponse({
+    description: 'Access denied: email not confirmed',
+  })
+  @Get('specializations')
+  public async getSpecializationsAutocomplete(
+    @Query('specialization') query: string,
+  ): Promise<string[]> {
+    return this.educationsService.getSpecializationsAutocomplete(query);
+  }
+
+  @ApiOperation({ summary: 'Get list of educations' })
+  @ApiOkResponse({ type: [EducationResponseDto] })
+  @ApiForbiddenResponse({
+    description: 'Access denied: email not confirmed',
+  })
+  @Get('')
+  public async getEducations(
+    @Req() req: Request,
+  ): Promise<EducationResponseDto[]> {
+    const user: UserWithPasswordResponseDto =
+      req.user as UserWithPasswordResponseDto;
+    return this.educationsService.getEducations(user.id);
   }
 
   @ApiOperation({ summary: 'Add education' })

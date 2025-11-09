@@ -1,6 +1,5 @@
 import {
   Board,
-  Education,
   Project,
   ProjectCategory,
   ProjectRole,
@@ -21,7 +20,7 @@ export class ProjectMapper {
         roleType: ProjectRoleType;
         user:
           | (User & {
-              educations: (Education & { specialization: ProjectRoleType })[];
+              desiredRoles: ProjectRoleType[];
             })
           | null;
       })[];
@@ -50,7 +49,7 @@ export class ProjectMapper {
         roleType: ProjectRoleType;
         user:
           | (User & {
-              educations: (Education & { specialization: ProjectRoleType })[];
+              desiredRoles: ProjectRoleType[];
             })
           | null;
       })[];

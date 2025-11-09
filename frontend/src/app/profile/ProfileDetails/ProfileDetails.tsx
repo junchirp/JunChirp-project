@@ -12,6 +12,7 @@ import ProfileDetailsItem from './ProfileDetailsItem/ProfileDetailsItem';
 import Up from '@/assets/icons/chevron-up.svg';
 import Down from '@/assets/icons/chevron-down.svg';
 import { WithIdInterface } from '@/shared/interfaces/with-id.interface';
+import DataContainer from '../../../shared/components/DataContainer/DataContainer';
 
 interface ProfileDetailsProps<
   T extends WithIdInterface =
@@ -51,58 +52,49 @@ export default function ProfileDetails<T extends WithIdInterface>(
   return (
     <div className={styles['profile-details']}>
       {items.length ? (
-        <div
-          className={`${styles['profile-details__inner']} ${styles['profile-details__inner--full']}`}
+        <DataContainer
+          title={title}
+          counterMaxSize={maxSize}
+          counterSize={items.length}
+          verticalGap={20}
         >
-          <div className={styles['profile-details__content']}>
-            <div className={styles['profile-details__header']}>
-              <div className={styles['profile-details__title-wrapper']}>
-                <div className={styles['profile-details__title']}>{title}</div>
-                <div className={styles['profile-details__counter']}>
-                  {items.length}{' '}
-                  <span className={styles['profile-details__total']}>
-                    / {maxSize}
-                  </span>
-                </div>
-              </div>
-              <div className={styles['profile-details__divider']}></div>
-            </div>
-            <ul className={styles['profile-details__list']}>
-              {visibleItems.map((item) => (
-                <ProfileDetailsItem<T>
-                  item={item}
-                  isEditable={isEditable}
-                  key={item.id}
-                  handleEditItem={handleEditItem}
-                  handleDeleteItem={handleDeleteItem}
+          <>
+            <div className={styles['profile-details__content']}>
+              <ul className={styles['profile-details__list']}>
+                {visibleItems.map((item) => (
+                  <ProfileDetailsItem<T>
+                    item={item}
+                    isEditable={isEditable}
+                    key={item.id}
+                    handleEditItem={handleEditItem}
+                    handleDeleteItem={handleDeleteItem}
+                  />
+                ))}
+              </ul>
+              {items.length > COLLAPSE_LIMIT ? (
+                <Button
+                  className={styles['profile-details__toggle']}
+                  size="md"
+                  variant="link"
+                  color="black"
+                  icon={isCollapsed ? <Down /> : <Up />}
+                  onClick={toggleList}
                 />
-              ))}
-            </ul>
-            {items.length > COLLAPSE_LIMIT ? (
-              <Button
-                className={styles['profile-details__toggle']}
-                size="md"
-                variant="link"
-                color="black"
-                icon={isCollapsed ? <Down /> : <Up />}
-                onClick={toggleList}
-              />
-            ) : null}
-          </div>
-          <Button
-            color="green"
-            fullWidth
-            icon={<Plus />}
-            disabled={items.length === maxSize}
-            onClick={handleAddItem}
-          >
-            Додати
-          </Button>
-        </div>
+              ) : null}
+            </div>
+            <Button
+              color="green"
+              fullWidth
+              icon={<Plus />}
+              disabled={items.length === maxSize}
+              onClick={handleAddItem}
+            >
+              Додати
+            </Button>
+          </>
+        </DataContainer>
       ) : (
-        <div
-          className={`${styles['profile-details__inner']} ${styles['profile-details__inner--empty']}`}
-        >
+        <div className={styles['profile-details__empty']}>
           <div className={styles['profile-details__title']}>{title}</div>
           <Button
             color="green"

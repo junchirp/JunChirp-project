@@ -5,18 +5,13 @@ import { useAppSelector } from '@/hooks/reduxHooks';
 import authSelector from '@/redux/auth/authSelector';
 import { useLazyGetProjectRolesListQuery } from '@/api/projectRolesApi';
 import { useEffect } from 'react';
-import { useLazyGetCategoriesQuery } from '../../../api/projectsApi';
+import { useLazyGetCategoriesQuery } from '@/api/projectsApi';
 
 export default function DataLoader(): null {
   const loadingStatus = useAppSelector(authSelector.selectLoadingStatus);
   const skip = loadingStatus !== 'idle';
 
-  useGetMeQuery(undefined, {
-    skip,
-    refetchOnFocus: false,
-    refetchOnReconnect: false,
-    refetchOnMountOrArgChange: false,
-  });
+  useGetMeQuery(undefined, { skip });
 
   const user = useAppSelector(authSelector.selectUser);
   const [loadRoles] = useLazyGetProjectRolesListQuery();
@@ -27,7 +22,7 @@ export default function DataLoader(): null {
       loadRoles(undefined);
       loadCategories(undefined);
     }
-  }, [user, loadRoles]);
+  }, [user, loadRoles, loadCategories]);
 
   return null;
 }

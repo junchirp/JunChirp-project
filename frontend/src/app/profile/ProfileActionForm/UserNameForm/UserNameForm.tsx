@@ -8,32 +8,36 @@ import Input from '@/shared/components/Input/Input';
 import Button from '@/shared/components/Button/Button';
 import styles from './UserNameForm.module.scss';
 import { useUpdateUserMutation } from '@/api/authApi';
-import { UserInterface } from '@/shared/interfaces/user.interface';
+import { AuthInterface } from '../../../../shared/interfaces/auth.interface';
 import { useToast } from '@/hooks/useToast';
 import { userNameSchema } from '@/shared/forms/schemas/userNameSchema';
 import { normalizeApostrophes } from '@/shared/utils/normalizeApostrophes';
+import { useGetProjectRolesListQuery } from '../../../../api/projectRolesApi';
+import MultiSelectWithChips from '@/shared/components/MultiSelectWithChips/MultiSelectWithChips';
 
 type FormData = z.infer<typeof userNameSchema>;
 
 interface UserNameFormProps {
   onCancel: () => void;
-  initialValues: UserInterface;
+  initialValues: AuthInterface;
 }
 
 export default function UserNameForm(props: UserNameFormProps): ReactElement {
+  const { data: rolesList = [] } = useGetProjectRolesListQuery(undefined);
   const [updateUser, { isLoading }] = useUpdateUserMutation();
   const { onCancel, initialValues } = props;
   const {
     control,
     handleSubmit,
     setFocus,
-    formState: { errors, isValid },
+    formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(userNameSchema),
     mode: 'onChange',
     defaultValues: {
       firstName: initialValues.firstName,
       lastName: initialValues.lastName,
+      desiredRolesIds: initialValues.desiredRoles.map((role) => role.id),
     },
   });
   const { showToast, isActive } = useToast();
@@ -117,6 +121,26 @@ export default function UserNameForm(props: UserNameFormProps): ReactElement {
             />
           )}
         />
+        <Controller
+          name="desiredRolesIds"
+          control={control}
+          render={({ field }) => (
+            <MultiSelectWithChips
+              {...field}
+              label="Бажана роль у проєкті"
+              placeholder="Обери роль"
+              options={rolesList}
+              getOptionLabel={(o) => o.roleName}
+              getOptionValue={(o) => o.id}
+              withError
+              errorMessages={
+                errors.desiredRolesIds?.message && [
+                  errors.desiredRolesIds.message,
+                ]
+              }
+            />
+          )}
+        />
       </fieldset>
       <div className={styles['user-name-form__actions']}>
         <Button
@@ -127,12 +151,7 @@ export default function UserNameForm(props: UserNameFormProps): ReactElement {
         >
           Скасувати
         </Button>
-        <Button
-          type="submit"
-          color="green"
-          disabled={!isValid}
-          loading={isLoading}
-        >
+        <Button type="submit" color="green" loading={isLoading}>
           Зберегти
         </Button>
       </div>

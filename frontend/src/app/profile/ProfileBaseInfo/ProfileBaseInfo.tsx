@@ -1,14 +1,14 @@
 'use client';
 
-import { ReactElement } from 'react';
+import { Fragment, ReactElement } from 'react';
 import styles from './ProfileBaseInfo.module.scss';
 import Image from 'next/image';
-import { UserInterface } from '@/shared/interfaces/user.interface';
+import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import Button from '@/shared/components/Button/Button';
 import Edit from '@/assets/icons/edit.svg';
 
 interface ProfileBaseInfoProps {
-  user: UserInterface;
+  user: AuthInterface;
   handleEditName: () => void;
 }
 
@@ -40,6 +40,18 @@ export default function ProfileBaseInfo(
             />
           </div>
           <p className={styles['profile-base-info__email']}>{user.email}</p>
+          <p>
+            {user.desiredRoles.map((role, index) => (
+              <Fragment key={index}>
+                {index !== 0 && (
+                  <span className={styles['profile-base-info__role']}> / </span>
+                )}
+                <span className={styles['profile-base-info__role']}>
+                  {role.roleName}
+                </span>
+              </Fragment>
+            ))}
+          </p>
         </div>
       </div>
     </div>

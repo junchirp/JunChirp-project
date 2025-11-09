@@ -1,7 +1,7 @@
 import { RootState } from '@/redux/store';
-import { UserInterface } from '@/shared/interfaces/user.interface';
+import { AuthInterface } from '@/shared/interfaces/auth.interface';
 
-const selectUser = (state: RootState): UserInterface | null => state.auth.user;
+const selectUser = (state: RootState): AuthInterface | null => state.auth.user;
 const selectLoadingStatus = (state: RootState): 'loading' | 'loaded' | 'idle' =>
   state.auth.loadingStatus;
 

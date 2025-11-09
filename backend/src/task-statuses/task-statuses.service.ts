@@ -45,11 +45,7 @@ export class TaskStatusesService {
             include: {
               assignee: {
                 include: {
-                  educations: {
-                    include: {
-                      specialization: true,
-                    },
-                  },
+                  desiredRoles: true,
                 },
               },
             },

@@ -15,11 +15,6 @@ import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
 import { useLazyGetProjectRolesListQuery } from '@/api/projectRolesApi';
 import { useSupport } from '@/hooks/useSupport';
-import { useAppDispatch } from '@/hooks/reduxHooks';
-import { setEducations } from '@/redux/educations/educationsSlice';
-import { setHardSkills } from '@/redux/hardSkills/hardSkillsSlice';
-import { setSocials } from '@/redux/socials/socialsSlice';
-import { setSoftSkills } from '@/redux/softSkills/softSkillsSlice';
 import { loginSchema } from '@/shared/forms/schemas/loginShema';
 
 type FormData = z.infer<typeof loginSchema>;
@@ -39,7 +34,6 @@ export default function LoginForm(): ReactElement {
   const { showToast, isActive } = useToast();
   const [loadRoles] = useLazyGetProjectRolesListQuery();
   const support = useSupport();
-  const dispatch = useAppDispatch();
   const searchParams = useSearchParams();
 
   const onSubmit = async (data: FormData): Promise<void> => {
@@ -53,11 +47,6 @@ export default function LoginForm(): ReactElement {
       const user = result.data;
 
       if (user) {
-        dispatch(setEducations(user.educations));
-        dispatch(setSoftSkills(user.softSkills));
-        dispatch(setHardSkills(user.hardSkills));
-        dispatch(setSocials(user.socials));
-
         const next = searchParams.get('next');
         const isSafeNext =
           next && next.startsWith('/') && !next.startsWith('//');

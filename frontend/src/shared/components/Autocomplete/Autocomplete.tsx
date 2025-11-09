@@ -12,52 +12,92 @@ import {
   ForwardedRef,
 } from 'react';
 import Input from '@/shared/components/Input/Input';
-import styles from './EducationAutocomplete.module.scss';
-import { useLazyGetEducationsAutocompleteQuery } from '@/api/educationsApi';
+import styles from './Autocomplete.module.scss';
 
-interface EducationAutocompleteProps
-  extends InputHTMLAttributes<HTMLInputElement> {
+interface AutocompleteProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
+  labelSize?: number;
+  labelHeight?: number;
+  labelWeight?: number;
+  labelMargin?: number;
   errorMessages?: string[] | string;
   withError?: boolean;
-  onSelectEducation?: (edu: string | null) => void;
   placeholder?: string;
+  onSelectOption?: (value: string | null) => void;
+  options?: string[];
+  fetcher?: (
+    query: string,
+  ) => Promise<{ data?: string[] } | string[] | undefined>;
+  minLength?: number;
+  debounce?: number;
 }
 
-function EducationAutocompleteComponent(
+function AutocompleteComponent(
   {
     label,
+    labelSize = 14,
+    labelHeight = 1,
+    labelWeight = 500,
+    labelMargin = 4,
     errorMessages,
     withError,
-    onSelectEducation,
-    value,
     placeholder,
+    onSelectOption,
+    options,
+    fetcher,
+    minLength = 2,
+    debounce = 500,
+    value,
     onChange,
     onBlur,
     ...rest
-  }: EducationAutocompleteProps,
+  }: AutocompleteProps,
   ref: ForwardedRef<HTMLInputElement>,
 ): ReactElement {
   const id = useId();
   const containerRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState(value?.toString() ?? '');
-  const [getInstitutions, { data = [] }] =
-    useLazyGetEducationsAutocompleteQuery();
+  const [filtered, setFiltered] = useState<string[]>([]);
 
   useEffect(() => {
     setInputValue(value?.toString() ?? '');
   }, [value]);
 
   useEffect(() => {
-    const delay = setTimeout(() => {
-      if (inputValue.trim().length >= 2) {
-        getInstitutions(inputValue.trim());
+    const delay = setTimeout(async () => {
+      const query = inputValue.trim();
+      if (query.length < minLength) {
+        setFiltered([]);
+        return;
       }
-    }, 500);
+
+      if (options) {
+        const res = options.filter((item) =>
+          item.toLowerCase().includes(query.toLowerCase()),
+        );
+        setFiltered(res);
+        return;
+      }
+
+      if (fetcher) {
+        try {
+          const result = await fetcher(query);
+          if (Array.isArray(result)) {
+            setFiltered(result);
+          } else if (result && typeof result === 'object' && 'data' in result) {
+            setFiltered((result as { data?: string[] }).data ?? []);
+          } else {
+            setFiltered([]);
+          }
+        } catch {
+          setFiltered([]);
+        }
+      }
+    }, debounce);
 
     return (): void => clearTimeout(delay);
-  }, [inputValue, getInstitutions]);
+  }, [inputValue, options, fetcher, minLength, debounce]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent): void => {
@@ -68,7 +108,6 @@ function EducationAutocompleteComponent(
         setIsOpen(false);
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
     return (): void =>
       document.removeEventListener('mousedown', handleClickOutside);
@@ -79,7 +118,7 @@ function EducationAutocompleteComponent(
     setInputValue(val);
     setIsOpen(true);
     onChange?.(e);
-    onSelectEducation?.(null);
+    onSelectOption?.(null);
   };
 
   const handleSelect = (item: string): void => {
@@ -88,32 +127,34 @@ function EducationAutocompleteComponent(
       target: { value: item },
     } as ChangeEvent<HTMLInputElement>;
     onChange?.(syntheticEvent);
-    onSelectEducation?.(item);
+    onSelectOption?.(item);
     setIsOpen(false);
   };
 
   return (
-    <div className={styles['education-autocomplete']} ref={containerRef}>
+    <div className={styles.autocomplete} ref={containerRef}>
       <Input
         label={label}
+        labelSize={labelSize}
+        labelHeight={labelHeight}
+        labelWeight={labelWeight}
+        labelMargin={labelMargin}
         placeholder={placeholder}
         {...rest}
         ref={ref}
         id={id}
         value={inputValue}
         onChange={handleChange}
-        onFocus={() => setIsOpen(true)}
         onBlur={onBlur}
-        autoComplete="off"
         withError={withError}
         errorMessages={errorMessages}
       />
-      {isOpen && data.length > 0 && (
-        <ul className={styles['education-autocomplete__list']}>
-          {data.map((item: string) => (
+      {isOpen && filtered.length > 0 && (
+        <ul className={styles.autocomplete__list}>
+          {filtered.map((item: string) => (
             <li
               key={item}
-              className={styles['education-autocomplete__item']}
+              className={styles.autocomplete__item}
               onMouseDown={() => handleSelect(item)}
             >
               {item}
@@ -125,6 +166,5 @@ function EducationAutocompleteComponent(
   );
 }
 
-const EducationAutocomplete = forwardRef(EducationAutocompleteComponent);
-
-export default EducationAutocomplete;
+const Autocomplete = forwardRef(AutocompleteComponent);
+export default Autocomplete;

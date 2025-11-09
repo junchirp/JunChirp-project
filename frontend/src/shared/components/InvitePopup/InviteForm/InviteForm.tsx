@@ -50,9 +50,7 @@ export default function InviteForm(props: InviteFormProps): ReactElement {
     (item) => item.id === selectedProjectId,
   );
   const roleOptions = selectedProject?.roles.filter((role) => !role.user) ?? [];
-  const allowedRoleTypeIds = user.educations.map(
-    (edu) => edu.specialization.id,
-  );
+  const allowedRoleTypeIds = user.desiredRoles.map((role) => role.id);
 
   const onSubmit = async (data: FormData): Promise<void> => {
     if (isActive('invite user')) {
@@ -125,7 +123,12 @@ export default function InviteForm(props: InviteFormProps): ReactElement {
         <Button color="green" variant="secondary-frame" onClick={onClose}>
           Скасувати
         </Button>
-        <Button type="submit" color="green" disabled={!isValid} loading={isLoading}>
+        <Button
+          type="submit"
+          color="green"
+          disabled={!isValid}
+          loading={isLoading}
+        >
           Запросити
         </Button>
       </div>
