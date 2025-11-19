@@ -2,48 +2,43 @@ import { DeveloperInterface } from '@/shared/interfaces/developer.interface';
 
 export const developers: DeveloperInterface[] = [
   {
-    developerName: 'Гащук Тетяна',
+    developerName: 'firstDevName',
     linkedinUrl: 'https://www.linkedin.com/in/tetiana-hashchuk-7a4bb72ba/',
     platformUrl: '',
-    role: 'Founder / РО',
-    description:
-      'Тетяна - натхненний лідер і стратег, яка зібрала команду професіоналів, щоб створити платформу, яка допомагає junior IT спеціалістам реалізувати свої амбіції. Вона постійно шукає нові можливості для розвитку та росту проєкту, а також активно залучена у кожен етап — від ідеї до реалізації. Завдяки її візії платформа здатна забезпечити підтримку та мотивацію для всіх учасників.',
-    photoUrl: './images/photo_04.jpg',
+    role: 'Founder / Product Owner',
+    description: 'firstDevDescription',
+    photoUrl: '/images/photo_04.jpg',
   },
   {
-    developerName: 'Орєшкіна Тетяна',
+    developerName: 'secondDevName',
     linkedinUrl: 'https://www.linkedin.com/in/tetiana-orieshkina/',
     platformUrl: '',
-    role: 'Designer',
-    description:
-      'Тетяна - креативний і досвідчений фахівець, яка керує командою дизайнерів і розробляє візуальну концепцію платформи. Вона забезпечує, щоб кожен елемент інтерфейсу був інтуїтивно зрозумілим і естетично привабливим, враховуючи потреби користувачів і бізнес-цілі. Крім того, вона стежить за тим, щоб дизайн відображав нашу гейміфіковану і технічну атмосферу.',
-    photoUrl: './images/photo_02.jpg',
+    role: 'UI/UX Designer',
+    description: 'secondDevDescription',
+    photoUrl: '/images/photo_02.jpg',
   },
   {
-    developerName: 'Пасєка Людмила',
+    developerName: 'thirdDevName',
     linkedinUrl: 'https://www.linkedin.com/in/liudmyla-pasieka-112a6429b/',
     platformUrl: '',
     role: 'QA Team Lead',
-    description:
-      'Людмила - наш головний експерт у забезпеченні якості. Вона керує командою тестувальників, розробляє стратегії тестування і проводить ретельну перевірку продукту на всіх етапах його розробки. Завдяки її старанням наша платформа працює бездоганно і приносить користувачам лише найкращий досвід.',
-    photoUrl: './images/photo_03.jpg',
+    description: 'thirdDevDescription',
+    photoUrl: '/images/photo_03.jpg',
   },
   {
-    developerName: 'Приміська Анна',
+    developerName: 'fourthDevName',
     linkedinUrl: 'https://www.linkedin.com/in/anna-prymiska-6372102a6/',
     platformUrl: '',
-    role: 'QA',
-    description:
-      'Анна — це наш "детектив", яка ретельно перевіряє кожен аспект продукту на наявність помилок і недоліків. Вона не залишає без уваги жодної дрібниці, щоб забезпечити високий рівень якості та безперебійної роботи платформи. Її уважність, послідовність і відповідальність дозволяють виявляти навіть найдрібніші баги ще до того, як їх побачать користувачі.',
-    photoUrl: './images/photo_05.jpg',
+    role: 'QA Engineer',
+    description: 'fourthDevDescription',
+    photoUrl: '/images/photo_05.jpg',
   },
   {
-    developerName: 'Зеліско Михайло',
+    developerName: 'fifthDevName',
     linkedinUrl: 'https://www.linkedin.com/in/mykhaylo-zelisko-165b21177/',
     platformUrl: '',
-    role: 'Backend/Frontend Developer',
-    description:
-      'Михайло - творець основи платформи. Пише код для серверних процесів і взаємодії з базою даних. Крім цього, він реалізує дизайн і роботу інтерфейсу, забезпечує інтуїтивне користування, а також оптимізує продуктивність і швидкість платформи. Завдяки його зусиллям користувачі отримують швидкі, зручні та безпечні послуги.',
-    photoUrl: './images/photo_01.jpg',
+    role: 'Full-stack Developer',
+    description: 'fifthDevDescription',
+    photoUrl: '/images/photo_01.jpg',
   },
 ];

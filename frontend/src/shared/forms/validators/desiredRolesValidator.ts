@@ -1,6 +1,9 @@
-import { z } from 'zod';
+import { z, ZodArray, ZodString } from 'zod';
 
-export const desiredRolesValidator = z
-  .array(z.string())
-  .min(1, 'Поле не може бути порожнім')
-  .max(3, 'Можна обрати не більше трьох ролей');
+export const desiredRolesValidator = (
+  t: (key: string) => string,
+): ZodArray<ZodString> =>
+  z
+    .array(z.string())
+    .min(1, t('errors.nonEmpty'))
+    .max(3, t('errors.desiredRolesMax'));

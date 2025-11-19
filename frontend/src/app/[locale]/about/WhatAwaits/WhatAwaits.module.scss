@@ -1,0 +1,73 @@
+@use '@/assets/styles/variables';
+
+.what-awaits {
+  position: relative;
+  padding: 140px 40px;
+
+  &__star-top {
+    position: absolute;
+    top: 109px;
+    left: 25%;
+  }
+
+  &__star-bottom {
+    position: absolute;
+    bottom: 187px;
+    right: 14%;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 64px;
+  }
+
+  &__header {
+    font-family: variables.$montserrat;
+    font-weight: 600;
+    font-size: 40px;
+    line-height: 1.2;
+    text-align: center;
+  }
+
+  &__list {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 32px;
+  }
+
+  &__list-item {
+    position: relative;
+    padding-left: 44px;
+    font-weight: 500;
+    font-size: 28px;
+    line-height: 1.2;
+    min-width: 0;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 36px;
+      height: 36px;
+      background: url('../../../../../public/images/chevron-right.svg') no-repeat;
+    }
+  }
+
+  &__footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  &__footer-text {
+    max-width: 584px;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 1.4;
+    text-align: center;
+  }
+}

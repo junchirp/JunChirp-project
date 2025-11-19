@@ -7,6 +7,7 @@ import { useRejectInviteMutation } from '@/api/participationsApi';
 import { useToast } from '@/hooks/useToast';
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import { ProjectParticipationInterface } from '../../interfaces/project-participation.interface';
+import { useTranslations } from 'next-intl';
 
 interface RejectInvitePopupProps {
   invite: ProjectParticipationInterface;
@@ -20,6 +21,7 @@ export default function RejectInvitePopup(
   const { invite, onClose, user } = props;
   const [rejectInvite, { isLoading }] = useRejectInviteMutation();
   const { showToast, isActive } = useToast();
+  const t = useTranslations('rejectInvitePopup');
 
   const onSubmit = async (): Promise<void> => {
     if (isActive('invite')) {
@@ -32,14 +34,14 @@ export default function RejectInvitePopup(
     if ('data' in result) {
       showToast({
         severity: 'success',
-        summary: `Запрошення до проєкту [${invite.projectRole.project.projectName}] відхилено.`,
+        summary: `${t('success')}`,
         life: 3000,
         actionKey: 'invite',
       });
     } else {
       showToast({
         severity: 'error',
-        summary: 'Не вдалося відхилити запрошення.',
+        summary: `${t('error')}`,
         life: 3000,
         actionKey: 'invite',
       });
@@ -50,20 +52,18 @@ export default function RejectInvitePopup(
     <div className={styles['reject-invite-popup__wrapper']}>
       <div className={styles['reject-invite-popup']}>
         <div className={styles['reject-invite-popup__content']}>
-          <h3 className={styles['reject-invite-popup__title']}>
-            Відхилити запрошення в проєкт?
-          </h3>
+          <h3 className={styles['reject-invite-popup__title']}>{t('title')}</h3>
           <p className={styles['reject-invite-popup__text']}>
-            Ти дійсно хочеш відхилити запрошення до проєкту{' '}
+            {t('firstPart')}
             <span className={styles['reject-invite-popup__text--green']}>
               [{invite.projectRole.project.projectName}]
             </span>
-            ? Дію неможливо скасувати.
+            {t('secondPart')}
           </p>
         </div>
         <div className={styles['reject-invite-popup__actions']}>
           <Button color="green" variant="secondary-frame" onClick={onClose}>
-            Скасувати
+            {t('cancel')}
           </Button>
           <Button
             color="green"
@@ -71,7 +71,7 @@ export default function RejectInvitePopup(
             onClick={onSubmit}
             loading={isLoading}
           >
-            Відхилити
+            {t('decline')}
           </Button>
         </div>
       </div>

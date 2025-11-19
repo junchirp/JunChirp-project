@@ -7,6 +7,7 @@ import { useCancelRequestMutation } from '@/api/participationsApi';
 import { useToast } from '@/hooks/useToast';
 import { ProjectParticipationInterface } from '../../interfaces/project-participation.interface';
 import { AuthInterface } from '../../interfaces/auth.interface';
+import { useTranslations } from 'next-intl';
 
 interface CancelRequestPopupProps {
   request: ProjectParticipationInterface;
@@ -20,6 +21,7 @@ export default function CancelRequestPopup(
   const { request, onClose, user } = props;
   const [cancelRequest, { isLoading }] = useCancelRequestMutation();
   const { showToast, isActive } = useToast();
+  const t = useTranslations('cancelRequestPopup');
 
   const onSubmit = async (): Promise<void> => {
     if (isActive('request')) {
@@ -32,14 +34,14 @@ export default function CancelRequestPopup(
     if ('data' in result) {
       showToast({
         severity: 'success',
-        summary: 'Заявку скасовано.',
+        summary: `${t('success')}`,
         life: 3000,
         actionKey: 'request',
       });
     } else {
       showToast({
         severity: 'error',
-        summary: 'Не вдалося скасувати заявку. Спробуй пізніше.',
+        summary: `${t('error')}`,
         life: 3000,
         actionKey: 'request',
       });
@@ -51,19 +53,19 @@ export default function CancelRequestPopup(
       <div className={styles['cancel-request-popup']}>
         <div className={styles['cancel-request-popup__content']}>
           <h3 className={styles['cancel-request-popup__title']}>
-            Скасувати заявку?
+            {t('title')}
           </h3>
           <p className={styles['cancel-request-popup__text']}>
-            Ти дійсно хочеш скасувати заявку на проєкт{' '}
+            {t('firstPart')}
             <span className={styles['cancel-request-popup__text--green']}>
               [{request.projectRole.project.projectName}]
             </span>
-            ? Дію неможливо скасувати.
+            {t('secondPart')}
           </p>
         </div>
         <div className={styles['cancel-request-popup__actions']}>
           <Button color="green" variant="secondary-frame" onClick={onClose}>
-            Відмінити
+            {t('cancel')}
           </Button>
           <Button
             color="green"
@@ -71,7 +73,7 @@ export default function CancelRequestPopup(
             onClick={onSubmit}
             loading={isLoading}
           >
-            Скасувати заявку
+            {t('delete')}
           </Button>
         </div>
       </div>

@@ -2,19 +2,13 @@ import { SocialInterface } from '@/shared/interfaces/social.interface';
 import { EducationInterface } from '@/shared/interfaces/education.interface';
 
 export type ProfileActionType =
-  | { type: 'edit-name'; description: 'Редагувати особисту інформацію' }
-  | { type: 'add-social'; description: 'Додати соцмережу' }
-  | {
-      type: 'edit-social';
-      item: SocialInterface;
-      description: 'Редагувати соцмережу';
-    }
-  | { type: 'add-education'; description: 'Додати освіту' }
-  | {
-      type: 'edit-education';
-      item: EducationInterface;
-      description: 'Редагувати освіту';
-    }
-  | { type: 'add-soft-skill'; description: 'Додати софт скіл' }
-  | { type: 'add-hard-skill'; description: 'Додати хард скіл' }
+  | ((
+      | { type: 'edit-name' }
+      | { type: 'add-social' }
+      | { type: 'edit-social'; item: SocialInterface }
+      | { type: 'add-education' }
+      | { type: 'edit-education'; item: EducationInterface }
+      | { type: 'add-soft-skill' }
+      | { type: 'add-hard-skill' }
+    ) & { key: string })
   | null;

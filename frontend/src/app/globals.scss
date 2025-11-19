@@ -13,14 +13,14 @@
 }
 
 @layer override {
-  @include meta.load-css('@/app/profile/ProfileDetails/ProfileDetails.module');
-  @include meta.load-css('@/app/confirm-email/ConfirmEmailContent/ConfirmEmailContent.module');
-  @include meta.load-css('@/app/confirm-password-reset/ConfirmPasswordResetContent/ConfirmPasswordResetContent.module');
-  @include meta.load-css('@/shared/components/DiscordBanner/DiscordBanner.module');
-  @include meta.load-css('@/shared/components/Pagination/Pagination.module');
-  @include meta.load-css('@/shared/components/SupportPopup/SupportPopup.module');
-  @include meta.load-css('@/shared/components/Page404/Page404.module');
-  @include meta.load-css('@/app/components/HomePage/CallToAction/SocialInvitePopup/SocialInvitePopup.module');
+  //@include meta.load-css('@/app/profile/ProfileDetails/ProfileDetails.module');
+  //@include meta.load-css('@/app/confirm-email/ConfirmEmailContent/ConfirmEmailContent.module');
+  //@include meta.load-css('@/app/confirm-password-reset/ConfirmPasswordResetContent/ConfirmPasswordResetContent.module');
+  //@include meta.load-css('@/shared/components/DiscordBanner/DiscordBanner.module');
+  //@include meta.load-css('@/shared/components/Pagination/Pagination.module');
+  //@include meta.load-css('@/shared/components/SupportPopup/SupportPopup.module');
+  //@include meta.load-css('@/shared/components/Page404/Page404.module');
+  //@include meta.load-css('@/app/components/HomePage/CallToAction/SocialInvitePopup/SocialInvitePopup.module');
 }
 
 html,

@@ -1,9 +1,10 @@
 import { ReactElement } from 'react';
 import styles from './ParticipationsTable.module.scss';
-import Link from 'next/link';
+import { Link } from '@/i18n/routing';
 import { datePipe } from '../../utils/datePipe';
 import Button from '../Button/Button';
 import { ProjectParticipationInterface } from '../../interfaces/project-participation.interface';
+import { useTranslations } from 'next-intl';
 
 interface ParticipationsTableProps {
   items: ProjectParticipationInterface[];
@@ -17,6 +18,8 @@ export default function ParticipationsTable(
   props: ParticipationsTableProps,
 ): ReactElement {
   const { items, openModal, accept, isLoading, actionColumnWidth } = props;
+  const tTable = useTranslations('participationsTable');
+  const tButtons = useTranslations('buttons');
 
   return (
     <table className={styles['participations-table']}>
@@ -33,27 +36,27 @@ export default function ParticipationsTable(
             className={`${styles['participations-table__cell']} ${styles['participations-table__cell--header']}`}
             scope="col"
           >
-            №
+            {tTable('colFirst')}
           </th>
           <th
             className={`${styles['participations-table__cell']} ${styles['participations-table__cell--header']}`}
           >
-            Назва проєкту
+            {tTable('colProject')}
           </th>
           <th
             className={`${styles['participations-table__cell']} ${styles['participations-table__cell--header']}`}
           >
-            Роль
+            {tTable('colRole')}
           </th>
           <th
             className={`${styles['participations-table__cell']} ${styles['participations-table__cell--header']}`}
           >
-            Дата
+            {tTable('colDate')}
           </th>
           <th
             className={`${styles['participations-table__cell']} ${styles['participations-table__cell--header']}`}
           >
-            Дії
+            {tTable('colActions')}
           </th>
         </tr>
       </thead>
@@ -97,7 +100,7 @@ export default function ParticipationsTable(
                       color="gray-2"
                       onClick={() => openModal(item)}
                     >
-                      Відхилити
+                      {tButtons('decline')}
                     </Button>{' '}
                     /{' '}
                     <Button
@@ -107,7 +110,7 @@ export default function ParticipationsTable(
                       loading={isLoading}
                       onClick={() => accept(item.id)}
                     >
-                      Прийняти
+                      {tButtons('accept')}
                     </Button>
                   </>
                 ) : (
@@ -117,7 +120,7 @@ export default function ParticipationsTable(
                     color="gray-2"
                     onClick={() => openModal(item)}
                   >
-                    Скасувати
+                    {tButtons('cancel')}
                   </Button>
                 )}
               </div>

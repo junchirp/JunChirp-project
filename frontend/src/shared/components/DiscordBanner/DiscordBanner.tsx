@@ -7,6 +7,7 @@ import Button from '@/shared/components/Button/Button';
 import X from '@/assets/icons/x.svg';
 import { useSearchParams } from 'next/navigation';
 import { useToast } from '@/hooks/useToast';
+import { useTranslations } from 'next-intl';
 
 interface DiscordBannerProps {
   closeBanner: () => void;
@@ -45,6 +46,8 @@ export default function DiscordBanner(props: DiscordBannerProps): ReactElement {
     window.location.href = `${baseUrl}/auth/discord?returnUrl=${returnUrl}`;
   };
 
+  const t = useTranslations('buttons');
+
   const content = (
     <>
       <Image
@@ -58,11 +61,11 @@ export default function DiscordBanner(props: DiscordBannerProps): ReactElement {
       <div className={styles['discord-banner__actions']}>
         {isCancelButton && (
           <Button color="green" variant="secondary-frame" onClick={closeBanner}>
-            Скасувати
+            {t('cancel')}
           </Button>
         )}
         <Button color="green" onClick={handleDiscordLogin}>
-          Підключити
+          {isCancelButton ? `${t('connect')}` : `${t('connect')} Discord`}
         </Button>
       </div>
       <Button
