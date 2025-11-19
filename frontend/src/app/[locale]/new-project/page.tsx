@@ -4,7 +4,7 @@ import { ReactElement } from 'react';
 import styles from './page.module.scss';
 import Image from 'next/image';
 import AuthGuard from '@/shared/components/AuthGuard/AuthGuard';
-import ProjectForm from '../../shared/components/ProjectForm/ProjectForm';
+import ProjectForm from '@/shared/components/ProjectForm/ProjectForm';
 
 export default function NewProject(): ReactElement {
   return (

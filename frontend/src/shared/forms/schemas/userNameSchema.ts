@@ -2,9 +2,12 @@ import { z, ZodArray, ZodObject, ZodString } from 'zod';
 import { userNameValidator } from '@/shared/forms/validators/userNameValidator';
 import { desiredRolesValidator } from '../validators/desiredRolesValidator';
 
-export const userNameSchemaStatic = z.object({
+export const userNameSchemaBase = z.object({
   firstName: z.string(),
   lastName: z.string(),
+});
+
+export const userNameSchemaStatic = userNameSchemaBase.extend({
   desiredRolesIds: z.array(z.string()),
 });
 

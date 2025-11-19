@@ -2,7 +2,7 @@
 
 import { ReactElement, useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import MultiSelect from '../../../../shared/components/MultiSelect/MultiSelect';
+import MultiSelect from '@/shared/components/MultiSelect/MultiSelect';
 import Button from '@/shared/components/Button/Button';
 import styles from './UsersFiltersForm.module.scss';
 import { projectsCountOptions } from '@/shared/constants/projects-count-options';
