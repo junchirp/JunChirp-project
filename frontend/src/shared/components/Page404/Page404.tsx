@@ -6,10 +6,12 @@ import Button from '@/shared/components/Button/Button';
 import ArrowUpRight from '@/assets/icons/arrow-up-right.svg';
 import { useRouter } from 'next/navigation';
 import { useSupport } from '@/hooks/useSupport';
+import { useTranslations } from 'next-intl';
 
 export default function Page404(): ReactElement {
   const router = useRouter();
   const support = useSupport();
+  const t = useTranslations('page404');
 
   const goHome = (): void => {
     router.push('/');
@@ -19,19 +21,15 @@ export default function Page404(): ReactElement {
     <div className={styles['page-404']}>
       <div className={styles['page-404__inner']}>
         <div className={styles['page-404__content']}>
-          <h2 className={styles['page-404__header']}>Сторінку не знайдено</h2>
-          <p className={styles['page-404__text']}>
-            Ой, ти потрапив на таємну сторінку, якої не існує! Можливо, сторінка
-            була видалена або переміщена. Перейди на нашу головну сторінку, щоб
-            знайти потрібну інформацію.
-          </p>
+          <h2 className={styles['page-404__header']}>{t('title')}</h2>
+          <p className={styles['page-404__text']}>{t('description')}</p>
           <Button
             className={styles['page-404__support']}
             variant="link"
             color="green"
             onClick={support}
           >
-            Повідомити про проблему
+            {t('support')}
           </Button>
           <Button
             className={styles['page-404__home']}
@@ -40,7 +38,7 @@ export default function Page404(): ReactElement {
             icon={<ArrowUpRight />}
             onClick={goHome}
           >
-            На головну
+            {t('home')}
           </Button>
         </div>
       </div>

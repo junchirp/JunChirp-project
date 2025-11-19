@@ -15,7 +15,7 @@ import {
   useCreateRequestMutation,
 } from '@/api/participationsApi';
 import DiscordBanner from '@/shared/components/DiscordBanner/DiscordBanner';
-import Link from 'next/link';
+import { Link } from '@/i18n/routing';
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import { ProjectRoleInterface } from '@/shared/interfaces/project-role.interface';
 import RadioGroup from '@/shared/components/RadioGroup/RadioGroup';

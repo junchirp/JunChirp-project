@@ -1,8 +1,9 @@
 'use client';
 
 import { UsersFiltersInterface } from '@/shared/interfaces/users-filters.interface';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useMemo } from 'react';
+import { useRouter } from '../i18n/routing';
 
 interface UsersFiltersResultInterface {
   filters: UsersFiltersInterface;

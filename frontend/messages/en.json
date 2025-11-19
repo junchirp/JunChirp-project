@@ -1,0 +1,190 @@
+{
+  "buttons": {
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "save": "Save",
+    "connect": "Connect",
+    "accept": "Accept",
+    "decline": "Decline",
+    "login": "Login"
+  },
+  "profile": {
+    "discord": "Connect Discord to join projects and gain access to project chats.",
+    "viewProfileBtn": "View profile",
+    "addBtn": "Add",
+    "actions": {
+      "editName": "Edit personal information",
+      "editEducation": "Edit education",
+      "addEducation": "Add education",
+      "editSocial": "Edit social network",
+      "addSocial": "Add social network",
+      "addSoftSkill": "Add Soft Skill",
+      "addHardSkill": "Add Hard Skill",
+      "empty": "Complete your profile to showcase your strengths and unlock amazing opportunities!",
+      "full": {
+        "firstFragment": "Profile is ready — ",
+        "firstLink": "choose a project",
+        "secondFragment": " or ",
+        "secondLink": "create your own"
+      }
+    },
+    "socials": "Social media",
+    "educations": "Education",
+    "softSkills": "Soft Skills",
+    "hardSkills": "Hard Skills",
+    "deleteItem": {
+      "socials": {
+        "title": "Delete social network?",
+        "firstPart": "Are you sure you want to delete the social network ",
+        "success": "Social network deleted.",
+        "error": "Failed to delete social network. Please try again later."
+      },
+      "educations": {
+        "title": "Delete education record?",
+        "firstPart": "Are you sure you want to delete the education record ",
+        "success": "Education record deleted.",
+        "error": "Failed to delete education record. Please try again later."
+      },
+      "softSkills": {
+        "title": "Delete skill?",
+        "firstPart": "Are you sure you want to delete the soft skill ",
+        "success": "Soft skill deleted.",
+        "error": "Failed to delete soft skill. Please try again later."
+      },
+      "hardSkills": {
+        "title": "Delete skill?",
+        "firstPart": "Are you sure you want to delete the hard skill ",
+        "success": "Hard skill deleted.",
+        "error": "Failed to delete hard skill. Please try again later."
+      },
+      "secondPart": "? This action cannot be undone."
+    },
+    "saveChanges": "Save your changes before viewing."
+  },
+  "participationsTable": {
+    "myInvites": "Invitations",
+    "myRequests": "My Applications",
+    "colFirst": "No",
+    "colProject": "Project name",
+    "colRole": "Role",
+    "colDate": "Date",
+    "colActions": "Actions"
+  },
+  "rejectInvitePopup": {
+    "title": "Decline invitation?",
+    "firstPart": "Are you sure you want to decline the invitation to the project ",
+    "secondPart": "? This action cannot be undone.",
+    "cancel": "Cancel",
+    "decline": "Decline invitation",
+    "error": "Failed to decline invitation. Please try again later.",
+    "success": "Invitation declined."
+  },
+  "cancelRequestPopup": {
+    "title": "Cancel application?",
+    "firstPart": "Are you sure you want to cancel the application for the project ",
+    "secondPart": "? This action cannot be undone.",
+    "cancel": "Cancel",
+    "delete": "Cancel application",
+    "error": "Failed to cancel application. Please try again later.",
+    "success": "Application cancelled."
+  },
+  "forms": {
+    "errors": {
+      "nonEmpty": "The field cannot be empty",
+      "nameLength": "Enter between 2 and 50 letters",
+      "nameSymbols": "Only letters, spaces, apostrophes, and hyphens are allowed",
+      "desiredRolesMax": "You can select up to three roles",
+      "educationLength": "The name must be between 2 and 100 characters",
+      "educationSymbols": "Invalid characters in the name",
+      "urlLength": "Enter between 10 and 255 characters",
+      "urlInvalid": "Invalid link",
+      "skillLength": "The name must be between 2 and 50 characters",
+      "skillSymbols": "Invalid characters in the name"
+    },
+    "userNameForm": {
+      "firstName": "First name",
+      "lastName": "Last name",
+      "desiredRoles": "Desired role in the project",
+      "placeholders": {
+        "firstName": "Name",
+        "lastName": "Surname",
+        "desiredRoles": "Select role"
+      },
+      "error": "Error saving changes.",
+      "success": "Changes saved successfully."
+    },
+    "educationForm": {
+      "institution": "Educational institution",
+      "specialization": "Specialization",
+      "placeholders": {
+        "institution": "Educational institution",
+        "specialization": "Front-end Development, QA Engineering, UX/UI Design..."
+      },
+      "error": "Error saving changes.",
+      "success": "Changes saved successfully."
+    },
+    "socialForm": {
+      "network": "Social network name",
+      "url": "Link",
+      "placeholders": {
+        "network": "Social network name",
+        "url": "Link"
+      },
+      "error": "Error saving changes.",
+      "error409": "This social network has already been added.",
+      "success": "Changes saved successfully."
+    },
+    "hardSkillForm": {
+      "hardSkillName": "Hard Skill",
+      "placeholders": {
+        "hardSkillName": "JavaScript, Figma, SQL..."
+      },
+      "error": "Error saving changes.",
+      "error409": "This skill has already been added.",
+      "success": "Changes saved successfully."
+    },
+    "softSkillForm": {
+      "softSkillName": "Soft Skill",
+      "placeholders": {
+        "softSkillName": "Teamwork, Time management..."
+      },
+      "error": "Error saving changes.",
+      "error409": "This skill has already been added.",
+      "success": "Changes saved successfully."
+    }
+  },
+  "page404": {
+    "title": "Page not found",
+    "description": "Oops, you’ve reached a secret page that doesn’t exist! It might have been deleted or moved. Go to our homepage to find what you need.",
+    "support": "Report a Problem",
+    "home": "Go to homepage"
+  },
+  "about": {
+    "banner": {
+      "title": "Take your first step into your IT career with ",
+      "descriptionFirst": "Welcome to JunChirp — a platform where every junior developer gains real-world experience, hones skills, and builds a strong portfolio by working on projects and participating in challenges!",
+      "ourMission": "[OUR MISSION]",
+      "descriptionSecond": " — to help you become a confident professional through hands-on experience and teamwork. Every task here is a new step in your growth, and every achievement brings you closer to a career in IT."
+    },
+    "whatAwaits": {
+      "title": "What's waiting for you?",
+      "itemFirst": "Work on real projects you can showcase to employers.",
+      "itemSecond": "Develop your soft and hard skills in a friendly community.",
+      "itemThird": "Take on challenges that boost your skills and motivation.",
+      "follow": "Follow us on LinkedIn so you don’t miss important updates and events!"
+    },
+    "developers": {
+      "title": "Meet the people behind ",
+      "firstDevName": "Tetiana Hashchuk",
+      "secondDevName": "Tetiana Orieshkina",
+      "thirdDevName": "Liudmyla Pasieka",
+      "fourthDevName": "Anna Prymiska",
+      "fifthDevName": "Mykhailo Zelisko",
+      "firstDevDescription": "A strategist, product lead, and the main powerhouse of JunChirp. She launches ideas faster than a laptop can reboot. If the team is doing something — she's already planned it, aligned it, and motivated everyone. Coffee, Google Docs, and faith in juniors are her fuel.",
+      "secondDevDescription": "The designer who turns chaos into pixel-perfect beauty. If something looks great — that's her work. If it doesn't — it's still in progress. She speaks in colors, fonts, and jokes like \"just a little more shadow here.\"",
+      "thirdDevDescription": "The ultimate guardian of quality. If the product works — she's already tested it three times. Bugs fear her more than deadlines. Thanks to Liudmyla, the platform stays stable, and the team stays calm (well, almost).",
+      "fourthDevDescription": "The tester who finds bugs even where they don't exist. Her favorite phrase: \"we need to check it again\". No bug can slip past her — even if it's disguised as a feature. If something's broken, Anna already knows about it.",
+      "fifthDevDescription": "The developer who makes the platform tick like clockwork. Equally skilled in backend and frontend, he seems to find solutions faster than anyone can say \"bug\". Always finds a way to make things just a bit better than before."
+    }
+  }
+}
