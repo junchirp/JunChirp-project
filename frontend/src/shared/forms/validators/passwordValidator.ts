@@ -1,13 +1,14 @@
-import { z } from 'zod';
+import { z, ZodString } from 'zod';
 
-export const passwordValidator = z
-  .string()
-  .nonempty('Поле не може бути порожнім')
-  .min(8, 'Пароль має містити 8–20 символів')
-  .max(20, 'Пароль має містити 8–20 символів')
-  .refine(
-    (val) => /^[A-Za-z\d!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]+$/.test(val),
-    {
-      message: 'Використовуй лише латиницю, цифри та спецсимволи',
-    },
-  );
+export const passwordValidator = (t: (key: string) => string): ZodString =>
+  z
+    .string()
+    .nonempty(t('errors.nonEmpty'))
+    .min(8, t('errors.passwordLength'))
+    .max(20, t('errors.passwordLength'))
+    .refine(
+      (val) => /^[A-Za-z\d!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]+$/.test(val),
+      {
+        message: t('errors.passwordSymbols'),
+      },
+    );

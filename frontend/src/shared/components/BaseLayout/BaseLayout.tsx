@@ -11,7 +11,6 @@ import 'primeflex/primeflex.css';
 import { MessageProvider } from '@/providers/MessageProvider';
 import FooterWrapper from './FooterWrapper/FooterWrapper';
 import { SupportProvider } from '@/providers/SupportProvider';
-import { getMessages } from 'next-intl/server';
 import { NextIntlClientProvider } from 'next-intl';
 
 interface BaseLayoutProps {
@@ -19,16 +18,14 @@ interface BaseLayoutProps {
   locale: string;
 }
 
-export default async function BaseLayout({
+export default function BaseLayout({
   children,
   locale,
-}: BaseLayoutProps): Promise<ReactElement> {
-  const messages = await getMessages();
-
+}: BaseLayoutProps): ReactElement {
   return (
     <html lang={locale}>
       <body className={styles.body}>
-        <NextIntlClientProvider messages={messages}>
+        <NextIntlClientProvider>
           <ReduxProvider>
             <PrimeReactProvider>
               <MessageProvider>

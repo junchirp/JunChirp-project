@@ -22,8 +22,12 @@ import RadioGroup from '@/shared/components/RadioGroup/RadioGroup';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { requestSchema } from '@/shared/forms/schemas/requestSchema';
+import {
+  requestSchema,
+  requestSchemaStatic,
+} from '@/shared/forms/schemas/requestSchema';
 import { useToast } from '@/hooks/useToast';
+import { useTranslations } from 'next-intl';
 
 interface ProjectCardProps {
   project: ProjectCardInterface;
@@ -33,7 +37,7 @@ interface ProjectCardProps {
   size?: 'small' | 'large';
 }
 
-type FormData = z.infer<typeof requestSchema>;
+type FormData = z.infer<typeof requestSchemaStatic>;
 
 export default function ProjectCard({
   project,
@@ -42,12 +46,13 @@ export default function ProjectCard({
   user,
   size = 'small',
 }: ProjectCardProps): ReactElement {
+  const t = useTranslations('forms');
   const {
     control,
     handleSubmit,
     formState: { isValid },
   } = useForm<FormData>({
-    resolver: zodResolver(requestSchema),
+    resolver: zodResolver(requestSchema(t)),
     mode: 'onChange',
     defaultValues: {
       projectId: project.id,

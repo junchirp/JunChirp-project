@@ -1,8 +1,11 @@
-import { z } from 'zod';
+import { z, ZodString } from 'zod';
 
-export const projectDescriptionValidator = z
-  .string()
-  .trim()
-  .nonempty('Поле не може бути порожнім')
-  .min(2, 'Введи опис від 2 до 500 символів')
-  .max(500, 'Введи опис від 2 до 500 символів');
+export const projectDescriptionValidator = (
+  t: (key: string) => string,
+): ZodString =>
+  z
+    .string()
+    .trim()
+    .nonempty(t('errors.nonEmpty'))
+    .min(2, t('errors.projectDescriptionLength'))
+    .max(500, t('errors.projectDescriptionLength'));

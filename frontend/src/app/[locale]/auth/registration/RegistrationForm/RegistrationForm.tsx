@@ -18,12 +18,17 @@ import Checkbox from '@/assets/icons/checkbox-empty.svg';
 import CheckboxChecked from '@/assets/icons/checkbox-checked.svg';
 import PasswordStrengthIndicator from '@/shared/components/PasswordStrengthIndicator/PasswordStrengthIndicator';
 import { getPasswordStrength } from '@/shared/utils/getPasswordStrength';
-import { registrationSchema } from '@/shared/forms/schemas/registrationSchema';
+import {
+  registrationSchema,
+  registrationSchemaStatic,
+} from '@/shared/forms/schemas/registrationSchema';
 import { normalizeApostrophes } from '@/shared/utils/normalizeApostrophes';
+import { useTranslations } from 'next-intl';
 
-type FormData = z.infer<typeof registrationSchema>;
+type FormData = z.infer<typeof registrationSchemaStatic>;
 
 export default function RegistrationForm(): ReactElement {
+  const t = useTranslations('forms');
   const {
     register,
     trigger,
@@ -32,8 +37,16 @@ export default function RegistrationForm(): ReactElement {
     control,
     formState: { errors, dirtyFields, isSubmitted },
   } = useForm<FormData>({
-    resolver: zodResolver(registrationSchema),
+    resolver: zodResolver(registrationSchema(t)),
     mode: 'onChange',
+    defaultValues: {
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+      agreement: false,
+    },
   });
 
   const firstName = watch('firstName');
@@ -122,7 +135,6 @@ export default function RegistrationForm(): ReactElement {
               label="Ім'я"
               placeholder="Ім'я"
               {...field}
-              value={field.value ?? ''}
               onChange={(e) => {
                 const normalized = normalizeApostrophes(e.target.value);
                 field.onChange(normalized);
@@ -142,7 +154,6 @@ export default function RegistrationForm(): ReactElement {
               label="Прізвище"
               placeholder="Прізвище"
               {...field}
-              value={field.value ?? ''}
               onChange={(e) => {
                 const normalized = normalizeApostrophes(e.target.value);
                 field.onChange(normalized);

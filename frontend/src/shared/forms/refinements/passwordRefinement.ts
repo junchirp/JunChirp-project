@@ -8,44 +8,46 @@ interface PasswordCheckData {
   lastName?: string;
 }
 
-export const passwordRefinement = (
-  {
-    password,
-    firstName = '',
-    lastName = '',
-    confirmPassword,
-  }: PasswordCheckData,
-  ctx: z.RefinementCtx,
-): void => {
-  if (password.includes(firstName) && firstName.length) {
-    ctx.addIssue({
-      path: ['password'],
-      code: 'custom',
-      message: `Пароль не може містити твоє ім'я чи прізвище`,
-    });
-  }
+export const passwordRefinement =
+  (t: (key: string) => string) =>
+  (
+    {
+      password,
+      firstName = '',
+      lastName = '',
+      confirmPassword,
+    }: PasswordCheckData,
+    ctx: z.RefinementCtx,
+  ): void => {
+    if (password.includes(firstName) && firstName.length) {
+      ctx.addIssue({
+        path: ['password'],
+        code: 'custom',
+        message: t('errors.passwordIncludes'),
+      });
+    }
 
-  if (password.includes(lastName) && lastName.length) {
-    ctx.addIssue({
-      path: ['password'],
-      code: 'custom',
-      message: `Пароль не може містити твоє ім'я чи прізвище`,
-    });
-  }
+    if (password.includes(lastName) && lastName.length) {
+      ctx.addIssue({
+        path: ['password'],
+        code: 'custom',
+        message: t('errors.passwordIncludes'),
+      });
+    }
 
-  if (blackListPasswords.includes(password)) {
-    ctx.addIssue({
-      path: ['password'],
-      code: 'custom',
-      message: 'Уникай занадто простих або очевидних паролів',
-    });
-  }
+    if (blackListPasswords.includes(password)) {
+      ctx.addIssue({
+        path: ['password'],
+        code: 'custom',
+        message: t('errors.blackList'),
+      });
+    }
 
-  if (password !== confirmPassword) {
-    ctx.addIssue({
-      path: ['confirmPassword'],
-      code: 'custom',
-      message: 'Паролі не збігаються',
-    });
-  }
-};
+    if (password !== confirmPassword) {
+      ctx.addIssue({
+        path: ['confirmPassword'],
+        code: 'custom',
+        message: t('errors.confirmPassword'),
+      });
+    }
+  };
