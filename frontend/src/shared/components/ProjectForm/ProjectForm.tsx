@@ -12,7 +12,10 @@ import {
 import { ProjectCategoryInterface } from '@/shared/interfaces/project-category.interface';
 import Dropdown from '@/shared/components/Dropdown/Dropdown';
 import { z } from 'zod';
-import { projectSchema } from '@/shared/forms/schemas/projectSchema';
+import {
+  projectSchema,
+  projectSchemaStatic,
+} from '@/shared/forms/schemas/projectSchema';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useGetProjectRolesListQuery } from '@/api/projectRolesApi';
@@ -23,19 +26,21 @@ import { useRouter } from 'next/navigation';
 import { useAppSelector } from '@/hooks/reduxHooks';
 import authSelector from '@/redux/auth/authSelector';
 import DiscordBanner from '@/shared/components/DiscordBanner/DiscordBanner';
+import { useTranslations } from 'next-intl';
 
-type FormData = z.infer<typeof projectSchema>;
+type FormData = z.infer<typeof projectSchemaStatic>;
 
 export default function ProjectForm(): ReactElement {
   const { data: categories = [] } = useGetCategoriesQuery(undefined);
   const { data: roles = [] } = useGetProjectRolesListQuery(undefined);
+  const t = useTranslations('forms');
   const {
     register,
     handleSubmit,
     control,
     formState: { errors },
   } = useForm<FormData>({
-    resolver: zodResolver(projectSchema),
+    resolver: zodResolver(projectSchema(t)),
     mode: 'onChange',
     defaultValues: {
       categoryId: '',

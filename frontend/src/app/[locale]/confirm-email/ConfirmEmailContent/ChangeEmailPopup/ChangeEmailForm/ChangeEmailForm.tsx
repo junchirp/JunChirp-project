@@ -1,3 +1,5 @@
+'use client';
+
 import { ReactElement } from 'react';
 import Input from '@/shared/components/Input/Input';
 import { useForm } from 'react-hook-form';
@@ -7,21 +9,26 @@ import { useToast } from '@/hooks/useToast';
 import { useUpdateEmailMutation } from '@/api/authApi';
 import styles from './ChangeEmailForm.module.scss';
 import Button from '@/shared/components/Button/Button';
-import { availableEmailSchema } from '@/shared/forms/schemas/availableEmailSchema';
+import {
+  availableEmailSchema,
+  availableEmailSchemaStatic,
+} from '@/shared/forms/schemas/availableEmailSchema';
+import { useTranslations } from 'next-intl';
 
-type FormData = z.infer<typeof availableEmailSchema>;
+type FormData = z.infer<typeof availableEmailSchemaStatic>;
 
 interface FormProps {
   onClose: () => void;
 }
 
 export default function ChangeEmailForm({ onClose }: FormProps): ReactElement {
+  const t = useTranslations('forms');
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>({
-    resolver: zodResolver(availableEmailSchema),
+    resolver: zodResolver(availableEmailSchema(t)),
     mode: 'onChange',
   });
 

@@ -3,16 +3,17 @@ import { passwordSchema } from './passwordSchema';
 import { passwordRefinement } from '@/shared/forms/refinements/passwordRefinement';
 
 export const resetPasswordSchema = (
+  t: (key: string) => string,
   firstName: string,
   lastName: string,
 ): ZodObject<{ password: ZodString; confirmPassword: ZodString }> =>
-  passwordSchema.superRefine(({ password, confirmPassword }, ctx) =>
-    passwordRefinement(
+  passwordSchema(t).superRefine((data, ctx) =>
+    passwordRefinement(t)(
       {
-        password,
+        password: data.password,
+        confirmPassword: data.confirmPassword,
         firstName,
         lastName,
-        confirmPassword,
       },
       ctx,
     ),

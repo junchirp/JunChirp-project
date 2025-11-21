@@ -12,18 +12,23 @@ import { useRequestPasswordResetMutation } from '@/api/authApi';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
 import { useRouter } from 'next/navigation';
-import { usedEmailSchema } from '@/shared/forms/schemas/usedEmailSchema';
+import {
+  usedEmailSchema,
+  usedEmailSchemaStatic,
+} from '@/shared/forms/schemas/usedEmailSchema';
+import { useTranslations } from 'next-intl';
 
-type FormData = z.infer<typeof usedEmailSchema>;
+type FormData = z.infer<typeof usedEmailSchemaStatic>;
 
 export default function RequestPasswordResetForm(): ReactElement {
+  const t = useTranslations('forms');
   const {
     register,
     watch,
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>({
-    resolver: zodResolver(usedEmailSchema),
+    resolver: zodResolver(usedEmailSchema(t)),
     mode: 'onChange',
   });
   const email = watch('email');

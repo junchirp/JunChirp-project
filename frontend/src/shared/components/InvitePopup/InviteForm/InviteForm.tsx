@@ -10,11 +10,15 @@ import { z } from 'zod';
 import { useInviteUserMutation } from '@/api/participationsApi';
 import { useToast } from '@/hooks/useToast';
 import { ProjectCardInterface } from '@/shared/interfaces/project-card.interface';
-import { inviteSchema } from '@/shared/forms/schemas/inviteSchema';
+import {
+  inviteSchema,
+  inviteSchemaStatic,
+} from '@/shared/forms/schemas/inviteSchema';
 import Dropdown from '@/shared/components/Dropdown/Dropdown';
 import { RoleWithUserInterface } from '../../../interfaces/role-with-user.interface';
+import { useTranslations } from 'next-intl';
 
-type FormData = z.infer<typeof inviteSchema>;
+type FormData = z.infer<typeof inviteSchemaStatic>;
 
 interface InviteFormProps {
   user: UserCardInterface;
@@ -26,6 +30,7 @@ export default function InviteForm(props: InviteFormProps): ReactElement {
   const { user, onClose, myProjects } = props;
   const [inviteUser, { isLoading }] = useInviteUserMutation();
   const { showToast, isActive } = useToast();
+  const t = useTranslations('forms');
 
   const {
     control,
@@ -33,7 +38,7 @@ export default function InviteForm(props: InviteFormProps): ReactElement {
     setValue,
     formState: { isValid },
   } = useForm<FormData>({
-    resolver: zodResolver(inviteSchema),
+    resolver: zodResolver(inviteSchema(t)),
     mode: 'onChange',
     defaultValues: {
       projectId: '',

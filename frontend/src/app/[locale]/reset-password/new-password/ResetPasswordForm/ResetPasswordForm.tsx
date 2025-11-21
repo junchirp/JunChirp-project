@@ -17,10 +17,11 @@ import {
 } from '@/api/authApi';
 import { useToast } from '@/hooks/useToast';
 import CancelPasswordPopup from './CancelPasswordPopup/CancelPasswordPopup';
-import { passwordSchema } from '@/shared/forms/schemas/passwordSchema';
+import { passwordSchemaStatic } from '@/shared/forms/schemas/passwordSchema';
 import { resetPasswordSchema } from '@/shared/forms/schemas/resetPasswordSchema';
+import { useTranslations } from 'next-intl';
 
-type FormData = z.infer<typeof passwordSchema>;
+type FormData = z.infer<typeof passwordSchemaStatic>;
 
 export default function ResetPasswordForm(): ReactElement {
   const searchParams = useSearchParams();
@@ -34,9 +35,10 @@ export default function ResetPasswordForm(): ReactElement {
   const [cancelResetPassword, { isLoading: isCancelLoading }] =
     useCancelResetPasswordMutation();
   const [isModalOpen, setModalOpen] = useState(false);
+  const t = useTranslations('forms');
 
   const schema = useMemo(
-    () => resetPasswordSchema(firstName, lastName),
+    () => resetPasswordSchema(t, firstName, lastName),
     [firstName, lastName],
   );
 

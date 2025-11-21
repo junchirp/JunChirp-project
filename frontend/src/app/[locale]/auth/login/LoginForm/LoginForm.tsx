@@ -15,17 +15,22 @@ import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
 import { useLazyGetProjectRolesListQuery } from '@/api/projectRolesApi';
 import { useSupport } from '@/hooks/useSupport';
-import { loginSchema } from '@/shared/forms/schemas/loginShema';
+import {
+  loginSchema,
+  loginSchemaStatic,
+} from '@/shared/forms/schemas/loginShema';
+import { useTranslations } from 'next-intl';
 
-type FormData = z.infer<typeof loginSchema>;
+type FormData = z.infer<typeof loginSchemaStatic>;
 
 export default function LoginForm(): ReactElement {
+  const t = useTranslations('forms');
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>({
-    resolver: zodResolver(loginSchema),
+    resolver: zodResolver(loginSchema(t)),
     mode: 'onChange',
   });
 

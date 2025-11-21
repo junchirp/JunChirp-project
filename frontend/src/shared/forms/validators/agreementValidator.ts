@@ -1,5 +1,6 @@
-import { z } from 'zod';
+import { z, ZodBoolean } from 'zod';
 
-export const agreementValidator = z.boolean().refine((val) => val, {
-  message: 'Підтверди згоду з умовами та політикою конфіденційності',
-});
+export const agreementValidator = (t: (key: string) => string): ZodBoolean =>
+  z.boolean().refine((val) => val, {
+    message: t('errors.agreement'),
+  });
