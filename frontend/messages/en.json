@@ -99,7 +99,22 @@
       "urlLength": "Enter between 10 and 255 characters",
       "urlInvalid": "Invalid link",
       "skillLength": "The name must be between 2 and 50 characters",
-      "skillSymbols": "Invalid characters in the name"
+      "skillSymbols": "Invalid characters in the name",
+      "agreement": "Підтверди згоду з умовами та політикою конфіденційності",
+      "emailLength": "The email must contain between 7 and 254 characters.",
+      "emailFormat": "Invalid email format",
+      "emailDomain": "The '.ru' domain is not supported",
+      "emailTaken": "Цей e-mail вже використовується",
+      "emailNotFound": "Електронна пошта не знайдена",
+      "passwordIncludes": "Пароль не може містити твоє ім'я чи прізвище",
+      "blackList": "Уникай занадто простих або очевидних паролів",
+      "confirmPassword": "Паролі не збігаються",
+      "passwordLength": "Пароль має містити 8–20 символів",
+      "passwordSymbols": "Використовуй лише латиницю, цифри та спецсимволи",
+      "projectDescriptionLength": "Введи опис від 2 до 500 символів",
+      "projectNameLength": "Введи назву від 2 до 50 символів",
+      "requestLength": "Enter a description between 10 and 1000 characters.",
+      "requestSymbols": "Invalid characters in the description"
     },
     "userNameForm": {
       "firstName": "First name",
@@ -151,6 +166,17 @@
       "error": "Error saving changes.",
       "error409": "This skill has already been added.",
       "success": "Changes saved successfully."
+    },
+    "supportForm": {
+      "requestText": "Describe your request – the more details, the better!",
+      "placeholders": {
+        "requestText": "Describe your issue..."
+      },
+      "error": "Something went wrong.",
+      "errorDetails": "Please try sending your request later.",
+      "success": "Your request has been sent!",
+      "successDetails": "We’ll get back to you as soon as possible.",
+      "button": "Send Request"
     }
   },
   "page404": {
@@ -186,5 +212,9 @@
       "fourthDevDescription": "The tester who finds bugs even where they don't exist. Her favorite phrase: \"we need to check it again\". No bug can slip past her — even if it's disguised as a feature. If something's broken, Anna already knows about it.",
       "fifthDevDescription": "The developer who makes the platform tick like clockwork. Equally skilled in backend and frontend, he seems to find solutions faster than anyone can say \"bug\". Always finds a way to make things just a bit better than before."
     }
+  },
+  "support": {
+    "title": "Have a question? We’re here to help!",
+    "description": "Write to us – we’ll find a solution together!"
   }
 }

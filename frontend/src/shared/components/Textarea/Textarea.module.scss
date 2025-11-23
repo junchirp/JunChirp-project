@@ -30,7 +30,6 @@
     }
 
     &--invalid {
-      padding-right: 42px;
       border: 1px solid variables.$red-8;
 
       &:focus {
@@ -49,9 +48,5 @@
     display: flex;
     align-items: center;
     gap: 8px;
-  }
-
-  &__wrapper {
-    position: relative;
   }
 }

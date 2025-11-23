@@ -1,0 +1,36 @@
+@use '@/assets/styles/variables';
+
+.rich-editor {
+  &__editor {
+    background-color: variables.$white-2;
+    border-radius: 8px;
+    border: 1px solid variables.$gray-8;
+
+    &--invalid {
+      border: 1px solid variables.$red-8;
+    }
+  }
+
+  &__label {
+    display: block;
+    color: variables.$gray-10;
+    user-select: none;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  &__error {
+    height: 17px;
+    margin-top: 4px;
+    font-size: 14px;
+    line-height: 1.2;
+    color: variables.$red-2;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}

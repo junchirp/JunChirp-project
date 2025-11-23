@@ -71,17 +71,15 @@ function TextareaComponent(
           {label}
         </label>
       )}
-      <div className={styles.textarea__wrapper}>
-        <textarea
-          {...rest}
-          id={id}
-          ref={ref}
-          value={value}
-          onChange={handleChange}
-          className={textAreaClassNames}
-          placeholder={placeholder}
-        />
-      </div>
+      <textarea
+        {...rest}
+        id={id}
+        ref={ref}
+        value={value}
+        onChange={handleChange}
+        className={textAreaClassNames}
+        placeholder={placeholder}
+      />
       {withError ? (
         errorMessages?.length ? (
           <p className={styles.textarea__error}>

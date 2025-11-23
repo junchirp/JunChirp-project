@@ -2,43 +2,23 @@
 
 import { ReactElement, useEffect } from 'react';
 import { z } from 'zod';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import styles from './SupportForm.module.scss';
-import Textarea from '@/shared/components/Textarea/Textarea';
 import Input from '@/shared/components/Input/Input';
 import Button from '@/shared/components/Button/Button';
 import { useSupportMutation } from '@/api/supportApi';
 import { useToast } from '@/hooks/useToast';
-import { isEmail } from 'validator';
-import { AuthInterface } from '../../../interfaces/auth.interface';
+import { AuthInterface } from '@/shared/interfaces/auth.interface';
+import { RichEditor } from '@/shared/components/RichEditor/RichEditor';
+import {
+  supportSchema,
+  supportSchemaStatic,
+} from '@/shared/forms/schemas/supportSchema';
+import { useLocale, useTranslations } from 'next-intl';
+import { Locale } from '@/i18n/routing';
 
-const schema = z.object({
-  email: z
-    .string()
-    .trim()
-    .nonempty('Поле не може бути порожнім')
-    .min(7, 'E-mail має містити 7–254 символи')
-    .max(254, 'E-mail має містити 7–254 символи')
-    .refine((val) => isEmail(val), {
-      message: 'Невірний формат e-mail',
-    })
-    .regex(/^(?!.*[а-яА-ЯґҐіІєЄїЇ])/, 'Невірний формат e-mail')
-    .refine((val) => !val.endsWith('.ru'), {
-      message: `Домен '.ru' не підтримується`,
-    }),
-  request: z
-    .string()
-    .trim()
-    .min(10, 'Введи опис від 10 до 1000 символів')
-    .max(1000, 'Введи опис від 10 до 1000 символів')
-    .regex(
-      /^[0-9a-zA-Zа-яА-ЯґҐіІїЇєЄ'’ .,;:!?()\n\r-]+$/,
-      'Недопустимі символи в описі',
-    ),
-});
-
-type FormData = z.infer<typeof schema>;
+type FormData = z.infer<typeof supportSchemaStatic>;
 
 interface SupportFormProps {
   user?: AuthInterface | null;
@@ -49,17 +29,22 @@ export default function SupportForm(props: SupportFormProps): ReactElement {
   const [sendSupportRequest, { isLoading }] = useSupportMutation();
   const { showToast, isActive } = useToast();
   const { user, onClose } = props;
+  const t = useTranslations('forms');
+  const locale = useLocale();
   const {
+    control,
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<FormData>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(supportSchema(t)),
     mode: 'onChange',
     defaultValues: {
       email: '',
-      request: '',
+      requestText: '',
+      requestHtml: '',
     },
   });
 
@@ -67,7 +52,8 @@ export default function SupportForm(props: SupportFormProps): ReactElement {
     if (user) {
       reset({
         email: user.email,
-        request: '',
+        requestText: '',
+        requestHtml: '',
       });
     }
   }, [user, reset]);
@@ -77,14 +63,17 @@ export default function SupportForm(props: SupportFormProps): ReactElement {
       return;
     }
 
-    const result = await sendSupportRequest(data);
+    const result = await sendSupportRequest({
+      ...data,
+      locale: locale as Locale,
+    });
     onClose();
 
     if ('data' in result) {
       showToast({
         severity: 'success',
-        summary: 'Запит надіслано!',
-        detail: 'Ми відповімо тобі якнайшвидше.',
+        summary: t('supportForm.success'),
+        detail: t('supportForm.successDetails'),
         life: 3000,
         actionKey: 'support',
       });
@@ -92,9 +81,9 @@ export default function SupportForm(props: SupportFormProps): ReactElement {
 
     if ('error' in result) {
       showToast({
-        severity: 'success',
-        summary: 'Щось пішло не так.',
-        detail: 'Спробуй надіслати запит пізніше.',
+        severity: 'error',
+        summary: t('supportForm.error'),
+        detail: t('supportForm.errorDetails'),
         life: 3000,
         actionKey: 'support',
       });
@@ -107,12 +96,24 @@ export default function SupportForm(props: SupportFormProps): ReactElement {
         className={styles['support-form__fieldset']}
         disabled={isLoading}
       >
-        <Textarea
-          label="Опиши свій запит – чим детальніше, тим краще!"
-          placeholder="Опиши свій запит – чим детальніше, тим краще!"
-          {...register('request')}
-          withError
-          errorMessages={errors.request?.message && [errors.request.message]}
+        <Controller
+          name="requestText"
+          control={control}
+          render={({ field }) => (
+            <RichEditor
+              value={field.value ?? ''}
+              onChange={(html, text) => {
+                field.onChange(text);
+                setValue('requestHtml', html, { shouldValidate: true });
+              }}
+              label={t('supportForm.requestText')}
+              placeholder={t('supportForm.placeholders.requestText')}
+              withError
+              errorMessages={
+                errors.requestText?.message && [errors.requestText.message]
+              }
+            />
+          )}
         />
       </fieldset>
       <div className={styles['support-form__button-wrapper']}>
@@ -131,8 +132,13 @@ export default function SupportForm(props: SupportFormProps): ReactElement {
             />
           </fieldset>
         )}
-        <Button type="submit" color="green" loading={isLoading}>
-          Надіслати
+        <Button
+          className={styles['support-form__button']}
+          type="submit"
+          color="green"
+          loading={isLoading}
+        >
+          {t('supportForm.button')}
         </Button>
       </div>
     </form>

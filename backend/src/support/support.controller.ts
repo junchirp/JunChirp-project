@@ -9,6 +9,7 @@ import {
 import { SupportService } from './support.service';
 import { CreateSupportDto } from './dto/create-support.dto';
 import {
+  ApiBadRequestResponse,
   ApiForbiddenResponse,
   ApiHeader,
   ApiOkResponse,
@@ -24,6 +25,9 @@ export class SupportController {
   @ApiOperation({ summary: 'Create support request' })
   @ApiOkResponse({ type: MessageResponseDto })
   @ApiForbiddenResponse({ description: 'Invalid CSRF token' })
+  @ApiBadRequestResponse({
+    description: 'Request contains forbidden HTML tags or attributes',
+  })
   @ApiHeader({
     name: 'x-csrf-token',
     description: 'CSRF token for the request',

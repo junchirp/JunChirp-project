@@ -1,4 +1,4 @@
-import { Education, ProjectRole, ProjectRoleType, User } from '@prisma/client';
+import { ProjectRole, ProjectRoleType, User } from '@prisma/client';
 import { UserParticipationResponseDto } from '../../participations/dto/user-participation.response-dto';
 import { UserMapper } from './user.mapper';
 import { ProjectRoleMapper } from './project-role.mapper';

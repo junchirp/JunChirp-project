@@ -8,21 +8,6 @@
   @include meta.load-css('@/assets/styles/fonts');
 }
 
-@layer component {
-  @include meta.load-css('@/shared/components/Button/Button.module');
-}
-
-@layer override {
-  //@include meta.load-css('@/app/profile/ProfileDetails/ProfileDetails.module');
-  //@include meta.load-css('@/app/confirm-email/ConfirmEmailContent/ConfirmEmailContent.module');
-  //@include meta.load-css('@/app/confirm-password-reset/ConfirmPasswordResetContent/ConfirmPasswordResetContent.module');
-  //@include meta.load-css('@/shared/components/DiscordBanner/DiscordBanner.module');
-  //@include meta.load-css('@/shared/components/Pagination/Pagination.module');
-  //@include meta.load-css('@/shared/components/SupportPopup/SupportPopup.module');
-  //@include meta.load-css('@/shared/components/Page404/Page404.module');
-  //@include meta.load-css('@/app/components/HomePage/CallToAction/SocialInvitePopup/SocialInvitePopup.module');
-}
-
 html,
 body {
   height: 100%;
@@ -192,4 +177,60 @@ select {
     line-height: 1.4;
     color: variables.$black-2;
   }
+}
+
+.ql-editor {
+  font-family: variables.$inter;
+  font-size: 16px;
+  background-color: variables.$white-2;
+  border: 1px solid variables.$gray-8 !important;
+  border-radius: 4px !important;
+  padding: 8px 12px !important;
+  line-height: 1.4 !important;
+  height: 107px !important;
+  max-width: 576px !important;
+
+  & strong {
+    font-weight: bold !important;
+  }
+
+  & em {
+    font-style: italic !important;
+  }
+
+  &.ql-blank::before {
+    font-style: normal !important;
+    color: variables.$gray-4 !important;
+    opacity: 1;
+    font-size: 16px;
+  }
+}
+
+.ql-snow.ql-toolbar {
+  padding: 4px !important;
+  border-radius: 8px 8px 0 0 !important;
+  border: none !important;
+
+  & button {
+    width: 22px !important;
+    height: 22px !important;
+    background-color: variables.$gray-1 !important;
+    border-radius: 4px !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    padding: 4px !important;
+  }
+}
+
+.ql-formats {
+  margin: 0 !important;
+  display: flex !important;
+  gap: 4px !important;
+}
+
+.ql-container.ql-snow {
+  border-radius: 0 0 8px 8px !important;
+  border: none !important;
+  padding: 0 4px 4px !important;
 }

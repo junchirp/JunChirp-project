@@ -2,7 +2,7 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
-  NotFoundException, Req,
+  NotFoundException,
 } from '@nestjs/common';
 import { CreateSoftSkillDto } from './dto/create-soft-skill.dto';
 import { UpdateSoftSkillDto } from './dto/update-soft-skill.dto';

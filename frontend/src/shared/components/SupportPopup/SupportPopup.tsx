@@ -7,6 +7,7 @@ import Button from '@/shared/components/Button/Button';
 import X from '@/assets/icons/x.svg';
 import SupportForm from '@/shared/components/SupportPopup/SupportForm/SupportForm';
 import { useAppSelector } from '@/hooks/reduxHooks';
+import { useTranslations } from 'next-intl';
 
 interface SupportPopupProps {
   onClose: () => void;
@@ -15,6 +16,7 @@ interface SupportPopupProps {
 export default function SupportPopup(props: SupportPopupProps): ReactElement {
   const { onClose } = props;
   const user = useAppSelector(authSelector.selectUser);
+  const t = useTranslations('support');
 
   return (
     <div className={styles['support-popup__wrapper']}>
@@ -28,12 +30,8 @@ export default function SupportPopup(props: SupportPopupProps): ReactElement {
           onClick={onClose}
         />
         <div className={styles['support-popup__content']}>
-          <h3 className={styles['support-popup__title']}>
-            Маєш питання? Ми тут, щоб допомогти!
-          </h3>
-          <p className={styles['support-popup__text']}>
-            Напиши нам – і ми знайдемо рішення разом!
-          </p>
+          <h3 className={styles['support-popup__title']}>{t('title')}</h3>
+          <p className={styles['support-popup__text']}>{t('description')}</p>
         </div>
         <SupportForm user={user} onClose={onClose}></SupportForm>
       </div>

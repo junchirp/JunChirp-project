@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ProjectRoleTypeResponseDto } from '../../project-roles/dto/project-role-type.response-dto';
 
 export class EducationResponseDto {
   @ApiProperty({

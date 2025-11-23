@@ -1,8 +1,6 @@
 import { z, ZodString } from 'zod';
 
-export const projectNameValidator = (
-  t: (key: string) => string,
-): ZodString =>
+export const projectNameValidator = (t: (key: string) => string): ZodString =>
   z
     .string()
     .trim()
