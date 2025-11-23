@@ -23,7 +23,7 @@ export const useUsersFilters = (): UsersFiltersResultInterface => {
       activeProjectsCount: searchParams.get('activeProjectsCount')
         ? Number(searchParams.get('activeProjectsCount'))
         : undefined,
-      specializationIds: searchParams.getAll('specializationIds'),
+      desiredRolesIds: searchParams.getAll('desiredRolesIds'),
     };
   }, [searchParams]);
 
