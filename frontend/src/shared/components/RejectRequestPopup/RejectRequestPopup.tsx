@@ -51,7 +51,7 @@ export default function RejectRequestPopup(
       <div className={styles['reject-request-popup']}>
         <div className={styles['reject-request-popup__content']}>
           <h3 className={styles['reject-request-popup__title']}>
-            Відхилити запрошення в проєкт?
+            Відхилити запит на участь в проєкті?
           </h3>
           <p className={styles['reject-request-popup__text']}>
             Ти дійсно хочеш відхилити запит на участь в проєкті? Дію неможливо

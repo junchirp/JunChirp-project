@@ -49,7 +49,7 @@ export const participationsApi = mainApi.injectEndpoints({
     }),
     rejectInvite: builder.mutation<void, { id: string; userId: string }>({
       query: ({ id }) => ({
-        url: `participations/invite/${id}/reject`,
+        url: `participations/invite/${id}/decline`,
         method: 'DELETE',
       }),
       async onQueryStarted(
@@ -126,7 +126,7 @@ export const participationsApi = mainApi.injectEndpoints({
     }),
     rejectRequest: builder.mutation<void, { id: string; userId: string }>({
       query: ({ id }) => ({
-        url: `participations/request/${id}/reject`,
+        url: `participations/request/${id}/decline`,
         method: 'DELETE',
       }),
       async onQueryStarted(
