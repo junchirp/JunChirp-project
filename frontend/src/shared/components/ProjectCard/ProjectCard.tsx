@@ -362,7 +362,7 @@ export default function ProjectCard({
                         `}
                       >
                         <Button color="green" disabled>
-                          Заявка подана
+                          Заявку подано
                         </Button>
                       </div>
                     </>

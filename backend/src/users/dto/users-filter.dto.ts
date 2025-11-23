@@ -31,5 +31,5 @@ export class UsersFilterDto extends PaginationDto {
   @IsUUID(4, { message: 'Must be a string in UUIDv4 format', each: true })
   @IsArray({ message: 'Must be an array of string in UUIDv4 format' })
   @IsOptional()
-  public readonly specializationIds?: string[];
+  public readonly desiredRolesIds?: string[];
 }
