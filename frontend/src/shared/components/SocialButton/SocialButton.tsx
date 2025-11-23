@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useToast } from '@/hooks/useToast';
 import { ToastMessageWithKey } from '@/providers/MessageProvider';
+import { useLocale } from 'next-intl';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   iconOnly?: boolean;
@@ -56,10 +57,11 @@ export default function SocialButton({
   }, [searchParams, showToast, router]);
 
   const handleSocialLogin = (): void => {
+    const locale = useLocale();
     const currentPath = window.location.pathname;
     const returnUrl = encodeURIComponent(currentPath);
     const baseUrl = process.env.NEXT_PUBLIC_API_URL;
-    window.location.href = `${baseUrl}/auth/${social}?returnUrl=${returnUrl}`;
+    window.location.href = `${baseUrl}/auth/${social}?returnUrl=${returnUrl}&locale=${locale}`;
   };
 
   return (

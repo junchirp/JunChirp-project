@@ -4,7 +4,6 @@ import { ProjectsListInterface } from '@/shared/interfaces/projects-list.interfa
 import { ProjectsFiltersInterface } from '@/shared/interfaces/projects-filters.interface';
 import { ProjectInterface } from '@/shared/interfaces/project.interface';
 import { CreateProjectInterface } from '../shared/interfaces/create-project.interface';
-import { UpdateProjectInterface } from '../shared/interfaces/update-project.interface';
 
 export const projectsApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -61,7 +60,7 @@ export const projectsApi = mainApi.injectEndpoints({
     }),
     updateProject: builder.mutation<
       ProjectInterface,
-      { id: string; data: UpdateProjectInterface }
+      { id: string; data: CreateProjectInterface }
     >({
       query: ({ id, data }) => ({
         url: `projects/${id}`,

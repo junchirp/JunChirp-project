@@ -9,6 +9,7 @@ import {
   User,
 } from '@prisma/client';
 import { Participation } from '../shared/types/participation.type';
+import { LocaleType } from '../shared/types/locale.type';
 
 @Injectable()
 export class MailService {
@@ -80,12 +81,27 @@ export class MailService {
     });
   }
 
-  public async sendSupportRequest(request: SupportRequest): Promise<void> {
+  public async sendSupportRequest(
+    request: SupportRequest,
+    locale: LocaleType,
+  ): Promise<void> {
+    let subject: string;
+    switch (locale) {
+      case 'en':
+        subject = 'Your support request has been received';
+        break;
+      case 'ua':
+        subject = 'Твій запит на підтримку отримано';
+        break;
+      default:
+        subject = 'Твій запит на підтримку отримано';
+    }
+
     await this.mailerService.sendMail({
       to: request.email,
       from: `Support Team <${this.configService.get<string>('EMAIL_USER')}>`,
-      subject: 'Твій запит на підтримку отримано',
-      template: './support-request',
+      subject: subject,
+      template: `./support-request-${locale}`,
       context: { request },
     });
   }

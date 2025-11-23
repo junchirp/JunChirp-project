@@ -19,7 +19,7 @@ const slideWidth = 308;
 export default function Developers(): ReactElement {
   const [index, setIndex] = useState(CLONES);
   const [transition, setTransition] = useState(true);
-  const t = useTranslations('about.developers');
+  const tDev = useTranslations('about.developers');
 
   const handleTransitionEnd = (): void => {
     if (index >= developers.length + CLONES) {
@@ -59,7 +59,7 @@ export default function Developers(): ReactElement {
   return (
     <div className={styles.developers}>
       <h2 className={styles.developers__title}>
-        {t('title')}
+        {tDev('title')}
         <span className={styles['developers__green-text']}>[JunChirp]</span>
       </h2>
       <div className={styles['developers__carousel-wrapper']}>
@@ -121,7 +121,7 @@ export default function Developers(): ReactElement {
                         className={styles['developers__platform-link']}
                         href={item.platformUrl}
                       >
-                        {t(item.developerName)}
+                        {tDev(item.developerName)}
                       </Link>
                       <p className={styles.developers__role}>{item.role}</p>
                     </div>
@@ -142,7 +142,7 @@ export default function Developers(): ReactElement {
                     </div>
                   </div>
                   <div className={styles.developers__description}>
-                    {t(item.description)}
+                    {tDev(item.description)}
                   </div>
                 </div>
                 <div

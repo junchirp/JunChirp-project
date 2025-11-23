@@ -8,7 +8,7 @@ export class CreateEducationDto {
   })
   @IsString({ message: 'Must be a string' })
   @Length(2, 100, { message: 'Must be between 2 and 100 characters' })
-  @Matches(/^[A-Za-zА-Яа-яІіЇїЄєҐґ0-9 .'’,"-]{2,100}$/, {
+  @Matches(/^[A-Za-zА-Яа-яІіЇїЄєҐґ0-9 .'’,&:/“”"-]{2,100}$/, {
     message: 'Institution name is incorrect',
   })
   @IsNotEmpty({ message: 'Institution name is required' })
@@ -20,7 +20,7 @@ export class CreateEducationDto {
   })
   @IsString({ message: 'Must be a string' })
   @Length(2, 100, { message: 'Must be between 2 and 100 characters' })
-  @Matches(/^[A-Za-zА-Яа-яІіЇїЄєҐґ0-9 .'’,"-]{2,100}$/, {
+  @Matches(/^[A-Za-zА-Яа-яІіЇїЄєҐґ0-9 .'’,&:/“”"-]{2,100}$/, {
     message: 'Specialization name is incorrect',
   })
   @IsNotEmpty({ message: 'Specialization name is required' })

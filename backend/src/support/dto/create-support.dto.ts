@@ -1,11 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
+  IsIn,
   IsNotEmpty,
   IsString,
   Length,
   Matches,
 } from 'class-validator';
+import { localeArray, LocaleType } from '../../shared/types/locale.type';
 
 export class CreateSupportDto {
   @ApiProperty({ example: 'email@mail.com', description: 'Email' })
@@ -28,5 +30,19 @@ export class CreateSupportDto {
     message: 'Invalid text format',
   })
   @IsNotEmpty({ message: 'Request description is required' })
-  public readonly request: string;
+  public readonly requestText: string;
+
+  @ApiProperty({
+    example: '<p>Request template</p>',
+    description: 'Request template',
+  })
+  @IsString({ message: 'Must be a string' })
+  public readonly requestHtml: string;
+
+  @ApiProperty({
+    example: 'en',
+    description: 'Locale',
+  })
+  @IsIn(localeArray, { message: 'Must be a locale string' })
+  public readonly locale: LocaleType;
 }

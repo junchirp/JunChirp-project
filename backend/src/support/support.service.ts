@@ -1,8 +1,13 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { CreateSupportDto } from './dto/create-support.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { MailService } from '../mail/mail.service';
 import { MessageResponseDto } from '../users/dto/message.response-dto';
+import * as sanitizeHtml from 'sanitize-html';
 
 @Injectable()
 export class SupportService {
@@ -14,14 +19,31 @@ export class SupportService {
   public async createSupportRequest(
     createSupportDto: CreateSupportDto,
   ): Promise<MessageResponseDto> {
+    const sanitized = sanitizeHtml(createSupportDto.requestHtml, {
+      allowedTags: ['p', 'br', 'strong', 'em'],
+      allowedAttributes: {},
+      disallowedTagsMode: 'discard',
+    });
+
+    if (sanitized !== createSupportDto.requestHtml) {
+      throw new BadRequestException(
+        'Request contains forbidden HTML tags or attributes',
+      );
+    }
+
     try {
       const request = await this.prisma.supportRequest.create({
-        data: createSupportDto,
+        data: {
+          email: createSupportDto.email,
+          request: createSupportDto.requestHtml,
+        },
       });
 
-      this.mailService.sendSupportRequest(request).catch((err) => {
-        console.error('Error sending email:', err);
-      });
+      this.mailService
+        .sendSupportRequest(request, createSupportDto.locale)
+        .catch((err) => {
+          console.error('Error sending email:', err);
+        });
 
       return {
         message: 'Support request created successfully',
