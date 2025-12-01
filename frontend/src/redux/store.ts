@@ -3,7 +3,6 @@ import { authSlice } from './auth/authSlice';
 import mainApi from '@/api/mainApi';
 import { csrfSlice } from './csrf/csrfSlice';
 import { csrfApi } from '@/api/csrfApi';
-import { uiSlice } from './ui/uiSlice';
 
 export const makeStore = (): EnhancedStore => {
   return configureStore({
@@ -12,7 +11,6 @@ export const makeStore = (): EnhancedStore => {
       [csrfApi.reducerPath]: csrfApi.reducer,
       auth: authSlice.reducer,
       csrf: csrfSlice.reducer,
-      ui: uiSlice.reducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({

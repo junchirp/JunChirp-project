@@ -10,6 +10,8 @@
   align-items: center;
   justify-content: center;
   gap: 12px;
+  cursor: pointer;
+  user-select: none;
 
   &--active {
     background-color: variables.$green-5;
@@ -17,6 +19,10 @@
 
   &--done {
     background-color: variables.$gray-11;
+  }
+
+  &--selected {
+    box-shadow: 0 0 0 4px variables.$green-4;
   }
 
   &__title {

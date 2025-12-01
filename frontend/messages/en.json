@@ -6,7 +6,8 @@
     "connect": "Connect",
     "accept": "Accept",
     "decline": "Decline",
-    "login": "Login"
+    "login": "Login",
+    "invite": "Запросити"
   },
   "profile": {
     "discord": "Connect Discord to join projects and gain access to project chats.",
@@ -28,10 +29,17 @@
         "secondLink": "create your own"
       }
     },
+    "userName": "Name and surename",
     "socials": "Social media",
     "educations": "Education",
-    "softSkills": "Soft Skills",
-    "hardSkills": "Hard Skills",
+    "softSkills": "Soft skills",
+    "hardSkills": "Hard skills",
+    "contacts" : "Contact details",
+    "projects": "User projects",
+    "activeProjects": "Active projects",
+    "completedProjects": "Completed projects",
+    "showMore": "Show more",
+    "inviteBtn": "Invite to the project",
     "deleteItem": {
       "socials": {
         "title": "Delete social network?",
@@ -64,6 +72,8 @@
   "participationsTable": {
     "myInvites": "Invitations",
     "myRequests": "My Applications",
+    "userRequests": "Participation requests",
+    "userInvites": "Invitations",
     "colFirst": "No",
     "colProject": "Project name",
     "colRole": "Role",
@@ -79,6 +89,16 @@
     "error": "Failed to decline invitation. Please try again later.",
     "success": "Invitation declined."
   },
+  "rejectRequestPopup": {
+    "title": "Decline application?",
+    "firstPart": "Are you sure you want to decline the application of user ",
+    "secondPart": " for participation in the project ",
+    "thirdPart": "? This action cannot be undone.",
+    "cancel": "Cancel",
+    "decline": "Decline application",
+    "error": "Failed to decline application. Please try again later.",
+    "success": "Application declined."
+  },
   "cancelRequestPopup": {
     "title": "Cancel application?",
     "firstPart": "Are you sure you want to cancel the application for the project ",
@@ -87,6 +107,10 @@
     "delete": "Cancel application",
     "error": "Failed to cancel application. Please try again later.",
     "success": "Application cancelled."
+  },
+  "cancelInvite": {
+    "error": "Failed to cancel invitation. Please try again later.",
+    "success": "Invitation cancelled."
   },
   "forms": {
     "errors": {
@@ -177,6 +201,17 @@
       "success": "Your request has been sent!",
       "successDetails": "We’ll get back to you as soon as possible.",
       "button": "Send Request"
+    },
+    "inviteForm": {
+      "project": "Проєкт",
+      "role": "Роль",
+      "placeholders": {
+        "project": "Обери проєкт",
+        "role": "Обери роль",
+        "roleEmptyProject": "Спочатку обери проєкт"
+      },
+      "error": "Не вдалося надіслати запрошення.",
+      "success": "Запрошення надіслано."
     }
   },
   "page404": {
@@ -216,5 +251,18 @@
   "support": {
     "title": "Have a question? We’re here to help!",
     "description": "Write to us – we’ll find a solution together!"
+  },
+  "project": {
+    "status": {
+      "active": "Active",
+      "completed": "Completed"
+    },
+    "buttons": {
+      "viewDetails": "View details",
+      "goDashboard": "Go to project dashboard"
+    }
+  },
+  "invitePopup": {
+    "title": "Запросити в проєкт"
   }
 }

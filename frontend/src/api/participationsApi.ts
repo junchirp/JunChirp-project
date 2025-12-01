@@ -1,15 +1,13 @@
 import mainApi from './mainApi';
 import { usersApi } from './usersApi';
-import { UserParticipationInterface } from '@/shared/interfaces/user-participation.interface';
 import { CreateInviteInterface } from '@/shared/interfaces/create-invite.interface';
 import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
 import { CreateRequestInterface } from '@/shared/interfaces/create-request.interface';
-import { triggerResetUserProjects } from '@/redux/ui/uiSlice';
 
 export const participationsApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({
     inviteUser: builder.mutation<
-      UserParticipationInterface,
+      ProjectParticipationInterface,
       CreateInviteInterface
     >({
       query: (data) => ({
@@ -17,6 +15,22 @@ export const participationsApi = mainApi.injectEndpoints({
         method: 'POST',
         body: data,
       }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          const { data: newInvite } = await queryFulfilled;
+          dispatch(
+            usersApi.util.updateQueryData(
+              'getInvitesInMyProjects',
+              arg.userId,
+              (draft: ProjectParticipationInterface[]) => {
+                draft.push(newInvite);
+              },
+            ),
+          );
+        } catch {
+          return;
+        }
+      },
       invalidatesTags: ['invites-in-my-projects'],
     }),
     createRequest: builder.mutation<
@@ -31,7 +45,6 @@ export const participationsApi = mainApi.injectEndpoints({
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data: newRequest } = await queryFulfilled;
-
           dispatch(
             usersApi.util.updateQueryData(
               'getMyRequests',
@@ -113,7 +126,6 @@ export const participationsApi = mainApi.injectEndpoints({
               },
             ),
           );
-          dispatch(triggerResetUserProjects());
         } catch {
           return;
         }
@@ -186,6 +198,37 @@ export const participationsApi = mainApi.injectEndpoints({
       },
       invalidatesTags: ['my-requests-in-projects'],
     }),
+    cancelInvite: builder.mutation<void, { id: string; userId: string }>({
+      query: ({ id }) => ({
+        url: `participations/invite/${id}/cancel`,
+        method: 'DELETE',
+      }),
+      async onQueryStarted(
+        { id: inviteId, userId },
+        { dispatch, queryFulfilled },
+      ) {
+        try {
+          await queryFulfilled;
+          dispatch(
+            usersApi.util.updateQueryData(
+              'getInvitesInMyProjects',
+              userId,
+              (draft: ProjectParticipationInterface[]) => {
+                const index = draft.findIndex(
+                  (invite) => invite.id === inviteId,
+                );
+                if (index !== -1) {
+                  draft.splice(index, 1);
+                }
+              },
+            ),
+          );
+        } catch {
+          return;
+        }
+      },
+      invalidatesTags: ['invites-in-my-projects'],
+    }),
   }),
 });
 
@@ -197,4 +240,5 @@ export const {
   useRejectRequestMutation,
   useAcceptRequestMutation,
   useCancelRequestMutation,
+  useCancelInviteMutation,
 } = participationsApi;

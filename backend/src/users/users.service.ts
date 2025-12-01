@@ -756,8 +756,9 @@ export class UsersService {
 
   public async getInvites(
     userId: string,
+    ownerId?: string,
   ): Promise<ProjectParticipationResponseDto[]> {
-    return this.participationsService.getInvitesWithProjects(userId);
+    return this.participationsService.getInvitesWithProjects(userId, ownerId);
   }
 
   public async getRequests(

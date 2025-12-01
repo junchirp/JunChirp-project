@@ -2,14 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { MailerService } from '@nestjs-modules/mailer';
 import {
-  Project,
+  Project, ProjectCategory,
   ProjectRole,
   ProjectRoleType,
   SupportRequest,
   User,
 } from '@prisma/client';
 import { Participation } from '../shared/types/participation.type';
-import { LocaleType } from '../shared/types/locale.type';
+import {
+  LocaleEmailSubjectType,
+  LocaleType,
+} from '../shared/types/locale.type';
+import { AuthResponseDto } from '../users/dto/auth.response-dto';
 
 @Injectable()
 export class MailService {
@@ -44,21 +48,36 @@ export class MailService {
   public async sendParticipationInvite(
     url: string,
     invite: Participation & {
-      user: User & {
-        desiredRoles: ProjectRoleType[];
-        activeProjectsCount: number;
-      };
       projectRole: ProjectRole & {
         roleType: ProjectRoleType;
-        project: Project;
+        project: Project & {
+          category: ProjectCategory;
+          roles: (ProjectRole & {
+            roleType: ProjectRoleType;
+            user:
+              | (User & {
+                  desiredRoles: ProjectRoleType[];
+                })
+              | null;
+          })[];
+        };
       };
     },
+    user: AuthResponseDto,
+    locale: LocaleType,
   ): Promise<void> {
+    const subjects: LocaleEmailSubjectType = {
+      en: 'Запрошення в проєкт',
+      ua: 'Запрошення в проєкт',
+    };
+
+    const subject = subjects[locale] ?? subjects.ua;
+
     await this.mailerService.sendMail({
-      to: invite.user.email,
+      to: user.email,
       from: `Support Team <${this.configService.get<string>('EMAIL_USER')}>`,
-      subject: 'Запрошення в проєкт',
-      template: './participation-invite',
+      subject: subject,
+      template: `./participation-invite-${locale}`,
       context: { url, invite },
     });
   }
@@ -85,17 +104,12 @@ export class MailService {
     request: SupportRequest,
     locale: LocaleType,
   ): Promise<void> {
-    let subject: string;
-    switch (locale) {
-      case 'en':
-        subject = 'Your support request has been received';
-        break;
-      case 'ua':
-        subject = 'Твій запит на підтримку отримано';
-        break;
-      default:
-        subject = 'Твій запит на підтримку отримано';
-    }
+    const subjects: LocaleEmailSubjectType = {
+      en: 'Your support request has been received',
+      ua: 'Твій запит на підтримку отримано',
+    };
+
+    const subject = subjects[locale] ?? subjects.ua;
 
     await this.mailerService.sendMail({
       to: request.email,

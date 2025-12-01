@@ -7,14 +7,20 @@ import Button from '@/shared/components/Button/Button';
 import { useAppSelector } from '@/hooks/reduxHooks';
 import authSelector from '@/redux/auth/authSelector';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 interface UserProjectCardProps {
   project: ProjectCardInterface;
+  userId: string;
 }
 
 export default function UserProjectCard({
   project,
+  userId,
 }: UserProjectCardProps): ReactElement {
+  const userRoleName =
+    project.roles.find((role) => role.user?.id === userId)?.roleType.roleName ??
+    '';
   const router = useRouter();
   const cardClassName =
     project.status === 'active'
@@ -41,18 +47,23 @@ export default function UserProjectCard({
     }
   };
 
+  const t = useTranslations('project');
+
   return (
     <div className={cardClassName}>
       <div className={headerClassName} />
       <div className={styles['user-project-card__inner']}>
         <div className={styles['user-project-card__content']}>
           <div className={statusClassName}>
-            {project.status === 'active' ? 'Активний' : 'Завершений'}
+            {project.status === 'active'
+              ? t('status.active')
+              : t('status.completed')}
           </div>
           <div className={styles['user-project-card__text']}>
             <h3 className={styles['user-project-card__title']}>
               {project.projectName}
             </h3>
+            <p className={styles['user-project-card__role']}>{userRoleName}</p>
             <p className={styles['user-project-card__description']}>
               {project.description}
             </p>
@@ -63,7 +74,7 @@ export default function UserProjectCard({
           color="green"
           onClick={handleRedirect}
         >
-          {!isMember ? 'Переглянути деталі' : 'Перейти в кабінет проєкту'}
+          {!isMember ? t('buttons.viewDetails') : t('buttons.goDashboard')}
         </Button>
       </div>
     </div>

@@ -8,7 +8,7 @@ export default function Cab(): null {
   const { id } = useParams<{ id: string }>();
 
   useEffect(() => {
-    router.push(`/projects/${id}/cab/info`);
+    router.replace(`/projects/${id}/cab/info`);
   }, [router]);
 
   return null;

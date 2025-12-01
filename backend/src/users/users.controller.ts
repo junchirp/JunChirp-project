@@ -358,4 +358,86 @@ export class UsersController {
       req.user as UserWithPasswordResponseDto;
     return this.usersService.getRequests(id, owner.id);
   }
+
+  @User()
+  @ApiOperation({
+    summary: `Get invites by user id in current user's projects`,
+  })
+  @ApiOkResponse({ type: [ProjectParticipationResponseDto] })
+  @ApiForbiddenResponse({ description: 'Access denied: email not confirmed' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @Get(':id/invites')
+  public async getInvitesByUserId(
+    @Param('id', ParseUUIDv4Pipe) id: string,
+    @Req() req: Request,
+  ): Promise<ProjectParticipationResponseDto[]> {
+    const owner: UserWithPasswordResponseDto =
+      req.user as UserWithPasswordResponseDto;
+    return this.usersService.getInvites(id, owner.id);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
 }

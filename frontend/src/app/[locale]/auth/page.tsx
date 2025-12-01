@@ -7,7 +7,7 @@ export default function Auth(): null {
   const router = useRouter();
 
   useEffect(() => {
-    router.push('/auth/login');
+    router.replace('/auth/login');
   }, [router]);
 
   return null;
