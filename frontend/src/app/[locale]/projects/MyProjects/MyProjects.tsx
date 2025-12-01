@@ -48,10 +48,14 @@ export default function MyProjects({
           >
             Створити проєкт
           </Button>
-          {!!myProjects.length && (
+          {!!myProjects.length && user && (
             <div className={styles['my-projects__list']}>
               {myProjects.map((project) => (
-                <UserProjectCard key={project.id} project={project} />
+                <UserProjectCard
+                  key={project.id}
+                  project={project}
+                  userId={user.id}
+                />
               ))}
             </div>
           )}
