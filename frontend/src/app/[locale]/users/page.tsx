@@ -27,7 +27,9 @@ export default function Users(): ReactElement {
     data: usersList,
     isLoading: usersLoading,
     isError,
-  } = useGetUsersQuery(filters);
+  } = useGetUsersQuery(filters, {
+    refetchOnMountOrArgChange: true,
+  });
   const { data: myProjectsList, isLoading: myProjectsLoading } =
     useGetMyProjectsQuery(user ? { userId: user.id } : undefined, {
       skip: !user,

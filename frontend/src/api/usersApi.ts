@@ -101,6 +101,17 @@ export const usersApi = mainApi.injectEndpoints({
       },
       providesTags: ['requests-in-my-projects'],
     }),
+    getInvitesInMyProjects: builder.query<
+      ProjectParticipationInterface[],
+      string
+    >({
+      query: (id) => {
+        return {
+          url: `users/${id}/invites`,
+        };
+      },
+      providesTags: ['invites-in-my-projects'],
+    }),
   }),
 });
 
@@ -112,4 +123,5 @@ export const {
   useGetMyInvitesQuery,
   useGetMyRequestsQuery,
   useGetRequestsInMyProjectsQuery,
+  useGetInvitesInMyProjectsQuery,
 } = usersApi;

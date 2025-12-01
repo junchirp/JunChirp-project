@@ -33,7 +33,7 @@ export class ParticipationsService {
 
   public async createInvite(
     createInviteDto: CreateInviteDto,
-  ): Promise<UserParticipationResponseDto> {
+  ): Promise<ProjectParticipationResponseDto> {
     const user = await this.usersService.getUserById(
       createInviteDto.userId,
       'edit',
@@ -46,20 +46,27 @@ export class ParticipationsService {
     }
 
     return this.prisma.$transaction(async (prisma) => {
-      const [existingParticipation, existingRequest] = await Promise.all([
-        prisma.projectRole.findFirst({
-          where: {
-            projectId: createInviteDto.projectId,
-            userId: createInviteDto.userId,
-          },
-        }),
-        prisma.participationRequest.findFirst({
-          where: {
-            userId: createInviteDto.userId,
-            projectRole: { projectId: createInviteDto.projectId },
-          },
-        }),
-      ]);
+      const [existingParticipation, existingRequest, existingInvite] =
+        await Promise.all([
+          prisma.projectRole.findFirst({
+            where: {
+              projectId: createInviteDto.projectId,
+              userId: createInviteDto.userId,
+            },
+          }),
+          prisma.participationRequest.findFirst({
+            where: {
+              userId: createInviteDto.userId,
+              projectRole: { projectId: createInviteDto.projectId },
+            },
+          }),
+          prisma.participationInvite.findFirst({
+            where: {
+              userId: createInviteDto.userId,
+              projectRole: { projectId: createInviteDto.projectId },
+            },
+          }),
+        ]);
 
       if (existingParticipation) {
         throw new ConflictException('User is already in the project team');
@@ -71,6 +78,12 @@ export class ParticipationsService {
         );
       }
 
+      if (existingInvite) {
+        throw new ConflictException(
+          'User has already been invited to this project',
+        );
+      }
+
       try {
         const invite = await prisma.participationInvite.create({
           data: {
@@ -78,15 +91,25 @@ export class ParticipationsService {
             projectRoleId: createInviteDto.projectRoleId,
           },
           include: {
-            user: {
-              include: {
-                desiredRoles: true,
-              },
-            },
             projectRole: {
               include: {
                 roleType: true,
-                project: true,
+                project: {
+                  include: {
+                    category: true,
+                    roles: {
+                      include: {
+                        roleType: true,
+                        user: {
+                          include: {
+                            desiredRoles: true,
+                          },
+                        },
+                      },
+                    },
+                    owner: true,
+                  },
+                },
               },
             },
           },
@@ -96,12 +119,14 @@ export class ParticipationsService {
           .sendParticipationInvite(
             `${this.configService.get<string>('BASE_FRONTEND_URL')}/project/${invite.projectRole.projectId}`,
             invite,
+            user,
+            createInviteDto.locale,
           )
           .catch((err) => {
             console.error('Error sending email:', err);
           });
 
-        return UserParticipationMapper.toResponse(invite);
+        return ProjectParticipationMapper.toResponse(invite);
       } catch (error) {
         switch (error.code) {
           case 'P2003':
@@ -130,22 +155,31 @@ export class ParticipationsService {
     }
 
     return this.prisma.$transaction(async (prisma) => {
-      const [existingParticipation, existingInvite] = await Promise.all([
-        prisma.projectRole.findFirst({
-          where: {
-            projectId: createRequestDto.projectId,
-            userId,
-          },
-        }),
-        prisma.participationInvite.findFirst({
-          where: {
-            userId,
-            projectRole: {
+      const [existingParticipation, existingInvite, existingRequest] =
+        await Promise.all([
+          prisma.projectRole.findFirst({
+            where: {
               projectId: createRequestDto.projectId,
+              userId,
             },
-          },
-        }),
-      ]);
+          }),
+          prisma.participationInvite.findFirst({
+            where: {
+              userId,
+              projectRole: {
+                projectId: createRequestDto.projectId,
+              },
+            },
+          }),
+          prisma.participationRequest.findFirst({
+            where: {
+              userId,
+              projectRole: {
+                projectId: createRequestDto.projectId,
+              },
+            },
+          }),
+        ]);
 
       if (existingParticipation) {
         throw new ConflictException('You are already in the project team');
@@ -154,6 +188,12 @@ export class ParticipationsService {
       if (existingInvite) {
         throw new ConflictException(
           'You have already been invited to this project',
+        );
+      }
+
+      if (existingRequest) {
+        throw new ConflictException(
+          'You have already sent a request to this project',
         );
       }
 
@@ -204,7 +244,7 @@ export class ParticipationsService {
             throw new NotFoundException('Project role not found');
           case 'P2002':
             throw new ConflictException(
-              'You have already sent a request to this project',
+              'You have already sent a request to this role',
             );
           default:
             throw error;
@@ -421,9 +461,19 @@ export class ParticipationsService {
 
   public async getInvitesWithProjects(
     userId: string,
+    ownerId?: string,
   ): Promise<ProjectParticipationResponseDto[]> {
     const invites = await this.prisma.participationInvite.findMany({
-      where: { userId },
+      where: {
+        userId,
+        ...(ownerId && {
+          projectRole: {
+            project: {
+              ownerId,
+            },
+          },
+        }),
+      },
       include: {
         projectRole: {
           include: {

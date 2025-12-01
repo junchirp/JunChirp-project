@@ -8,6 +8,6 @@ export const educationValidator = (t: (key: string) => string): ZodString =>
     .min(2, t('errors.educationLength'))
     .max(100, t('errors.educationLength'))
     .regex(
-      /^[a-zA-Zа-яА-ЯґҐіІїЇєЄ.'’, &:/“”"-]+$/,
+      /^[a-zA-Zа-яА-ЯґҐіІїЇєЄ0-9.'’, &:/“”"-]+$/,
       t('errors.educationSymbols'),
     );

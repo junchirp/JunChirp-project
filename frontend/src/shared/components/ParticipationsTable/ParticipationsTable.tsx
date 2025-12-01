@@ -8,8 +8,9 @@ import { useTranslations } from 'next-intl';
 
 interface ParticipationsTableProps {
   items: ProjectParticipationInterface[];
-  openModal: (request: ProjectParticipationInterface) => void;
+  openModal?: (item: ProjectParticipationInterface) => void;
   accept?: (id: string) => void;
+  cancel?: (item: ProjectParticipationInterface) => void;
   isLoading: boolean;
   actionColumnWidth: number;
 }
@@ -17,9 +18,11 @@ interface ParticipationsTableProps {
 export default function ParticipationsTable(
   props: ParticipationsTableProps,
 ): ReactElement {
-  const { items, openModal, accept, isLoading, actionColumnWidth } = props;
+  const { items, openModal, accept, isLoading, actionColumnWidth, cancel } =
+    props;
   const tTable = useTranslations('participationsTable');
   const tButtons = useTranslations('buttons');
+  const cancelEvent = openModal ?? cancel;
 
   return (
     <table className={styles['participations-table']}>
@@ -98,7 +101,7 @@ export default function ParticipationsTable(
                       variant="link"
                       size="ssm"
                       color="gray-2"
-                      onClick={() => openModal(item)}
+                      onClick={() => cancelEvent?.(item)}
                     >
                       {tButtons('decline')}
                     </Button>{' '}
@@ -118,7 +121,7 @@ export default function ParticipationsTable(
                     variant="link"
                     size="ssm"
                     color="gray-2"
-                    onClick={() => openModal(item)}
+                    onClick={() => cancelEvent?.(item)}
                   >
                     {tButtons('cancel')}
                   </Button>

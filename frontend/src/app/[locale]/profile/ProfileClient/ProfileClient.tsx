@@ -45,7 +45,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { profileActionTranslationKeys } from '../../../../shared/constants/profileActionTranslationKeys';
 
-export default function ProfileClient(): ReactElement | null {
+export default function ProfileClient(): ReactElement {
   const router = useRouter();
   const [action, setAction] = useState<ProfileActionType>(null);
   const [deletedItem, setDeletedItem] = useState<DeletedItemInterface<

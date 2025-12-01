@@ -7,6 +7,7 @@ import { UserInterface } from '@/shared/interfaces/user.interface';
 import { useAcceptRequestMutation } from '@/api/participationsApi';
 import ParticipationsTable from '@/shared/components/ParticipationsTable/ParticipationsTable';
 import DataContainer from '@/shared/components/DataContainer/DataContainer';
+import { useTranslations } from 'next-intl';
 
 interface UserRequestsProps {
   requests: ProjectParticipationInterface[];
@@ -21,6 +22,7 @@ export default function UserRequests({
     null,
   );
   const [acceptRequest, { isLoading }] = useAcceptRequestMutation();
+  const t = useTranslations('participationsTable');
 
   const openModal = (req: ProjectParticipationInterface): void => {
     setRequest(req);
@@ -36,7 +38,7 @@ export default function UserRequests({
 
   return (
     <>
-      <DataContainer title="Заявки на участь">
+      <DataContainer title={t('userRequests')}>
         <ParticipationsTable
           items={requests}
           openModal={openModal}

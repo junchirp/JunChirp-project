@@ -25,7 +25,6 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { ValidationPipe } from '../shared/pipes/validation/validation.pipe';
-import { UserParticipationResponseDto } from './dto/user-participation.response-dto';
 import { ProjectParticipationResponseDto } from './dto/project-participation.response-dto';
 import { Request } from 'express';
 import { UserWithPasswordResponseDto } from '../users/dto/user-with-password.response-dto';
@@ -41,7 +40,7 @@ export class ParticipationsController {
 
   @Owner('body', 'projectId', 'project')
   @ApiOperation({ summary: 'Create invite (owner)' })
-  @ApiCreatedResponse({ type: UserParticipationResponseDto })
+  @ApiCreatedResponse({ type: ProjectParticipationResponseDto })
   @ApiNotFoundResponse({ description: 'User or project role not found' })
   @ApiConflictResponse({
     description:
@@ -63,7 +62,7 @@ export class ParticipationsController {
   @Post('invite')
   public async createInvite(
     @Body() createInviteDto: CreateInviteDto,
-  ): Promise<UserParticipationResponseDto> {
+  ): Promise<ProjectParticipationResponseDto> {
     return this.participationsService.createInvite(createInviteDto);
   }
 

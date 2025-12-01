@@ -15,8 +15,9 @@ import {
   inviteSchemaStatic,
 } from '@/shared/forms/schemas/inviteSchema';
 import Dropdown from '@/shared/components/Dropdown/Dropdown';
-import { RoleWithUserInterface } from '../../../interfaces/role-with-user.interface';
-import { useTranslations } from 'next-intl';
+import { RoleWithUserInterface } from '@/shared/interfaces/role-with-user.interface';
+import { useLocale, useTranslations } from 'next-intl';
+import { Locale } from '@/i18n/routing';
 
 type FormData = z.infer<typeof inviteSchemaStatic>;
 
@@ -30,7 +31,9 @@ export default function InviteForm(props: InviteFormProps): ReactElement {
   const { user, onClose, myProjects } = props;
   const [inviteUser, { isLoading }] = useInviteUserMutation();
   const { showToast, isActive } = useToast();
-  const t = useTranslations('forms');
+  const locale = useLocale();
+  const tForm = useTranslations('forms');
+  const tButtons = useTranslations('buttons');
 
   const {
     control,
@@ -38,7 +41,7 @@ export default function InviteForm(props: InviteFormProps): ReactElement {
     setValue,
     formState: { isValid },
   } = useForm<FormData>({
-    resolver: zodResolver(inviteSchema(t)),
+    resolver: zodResolver(inviteSchema(tForm)),
     mode: 'onChange',
     defaultValues: {
       projectId: '',
@@ -62,20 +65,20 @@ export default function InviteForm(props: InviteFormProps): ReactElement {
       return;
     }
 
-    const result = await inviteUser(data);
+    const result = await inviteUser({ ...data, locale: locale as Locale });
 
     if ('data' in result) {
       onClose();
       showToast({
         severity: 'success',
-        summary: 'Запрошення надіслано.',
+        summary: tForm('inviteForm.success'),
         life: 3000,
         actionKey: 'invite user',
       });
     } else if ('error' in result) {
       showToast({
         severity: 'error',
-        summary: 'Не вдалося надіслати запрошення.',
+        summary: tForm('inviteForm.error'),
         life: 3000,
         actionKey: 'invite user',
       });
@@ -92,8 +95,8 @@ export default function InviteForm(props: InviteFormProps): ReactElement {
             <Dropdown<ProjectCardInterface>
               {...field}
               options={myProjects}
-              label="Проєкт"
-              placeholder="Обери проєкт"
+              label={tForm('inviteForm.project')}
+              placeholder={tForm('inviteForm.placeholders.project')}
               onChange={(value) => {
                 field.onChange(value);
                 setValue('projectRoleId', '');
@@ -110,9 +113,11 @@ export default function InviteForm(props: InviteFormProps): ReactElement {
             <Dropdown<RoleWithUserInterface>
               {...field}
               options={roleOptions}
-              label="Роль"
+              label={tForm('inviteForm.role')}
               placeholder={
-                selectedProject ? 'Обери роль' : 'Спочатку обери проєкт'
+                selectedProject
+                  ? tForm('inviteForm.placeholders.role')
+                  : tForm('inviteForm.placeholders.roleEmptyProject')
               }
               disabled={!selectedProject}
               getOptionLabel={(o) => o.roleType.roleName}
@@ -126,7 +131,7 @@ export default function InviteForm(props: InviteFormProps): ReactElement {
       </fieldset>
       <div className={styles['invite-form__actions']}>
         <Button color="green" variant="secondary-frame" onClick={onClose}>
-          Скасувати
+          {tButtons('cancel')}
         </Button>
         <Button
           type="submit"
@@ -134,7 +139,7 @@ export default function InviteForm(props: InviteFormProps): ReactElement {
           disabled={!isValid}
           loading={isLoading}
         >
-          Запросити
+          {tButtons('invite')}
         </Button>
       </div>
     </form>
