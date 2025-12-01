@@ -244,7 +244,7 @@ export default function ProfileClient(): ReactElement {
     if ('data' in result) {
       showToast({
         severity: 'success',
-        summary: `${t('deleteItem.socials.success')}}`,
+        summary: `${t('deleteItem.socials.success')}`,
         life: 3000,
         actionKey: 'delete social',
       });
@@ -253,7 +253,7 @@ export default function ProfileClient(): ReactElement {
     if ('error' in result) {
       showToast({
         severity: 'error',
-        summary: `${t('deleteItem.socials.error')}}`,
+        summary: `${t('deleteItem.socials.error')}`,
         life: 3000,
         actionKey: 'delete social',
       });

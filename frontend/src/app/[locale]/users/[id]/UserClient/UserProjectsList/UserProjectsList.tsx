@@ -21,6 +21,7 @@ export default function UserProjectsList({
   const [page, setPage] = useState(1);
   const [allProjects, setAllProjects] = useState<ProjectCardInterface[]>([]);
   const t = useTranslations('profile');
+  const [listLoaded, setListLoaded] = useState(false);
 
   const queryArgs = useMemo(() => {
     return {
@@ -45,6 +46,7 @@ export default function UserProjectsList({
       return;
     }
 
+    setListLoaded(true);
     setAllProjects((prev) => {
       if (page === 1) {
         return list.projects;
@@ -57,6 +59,7 @@ export default function UserProjectsList({
   }, [list, page]);
 
   useEffect(() => {
+    setListLoaded(false);
     setAllProjects([]);
 
     if (page !== 1) {
@@ -96,7 +99,9 @@ export default function UserProjectsList({
     };
   }, [page, refetch]);
 
-  const hasMoreProjects = Boolean(list && allProjects.length < list.total);
+  const hasMoreProjects = Boolean(
+    listLoaded && list && allProjects.length < list.total,
+  );
 
   const loadMoreProjects = (): void => {
     if (isFetching || isLoading) {
@@ -110,7 +115,7 @@ export default function UserProjectsList({
       {allProjects.map((project) => (
         <UserProjectCard key={project.id} project={project} userId={userId} />
       ))}
-      {hasMoreProjects && !isLoading && (
+      {hasMoreProjects && (
         <div className={styles['user-projects-list__more']}>
           <Button
             color="black"

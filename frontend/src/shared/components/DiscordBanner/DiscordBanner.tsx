@@ -51,7 +51,7 @@ export default function DiscordBanner(props: DiscordBannerProps): ReactElement {
   const content = (
     <>
       <Image
-        src="./images/bird-2.svg"
+        src="/images/bird-2.svg"
         alt="bird"
         width={420}
         height={223}
