@@ -27,6 +27,7 @@ import { SupportModule } from './support/support.module';
 import { LoggerModule } from './logger/logger.module';
 import { DiscordModule } from './discord/discord.module';
 import { HttpModule } from '@nestjs/axios';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -79,5 +80,6 @@ import { HttpModule } from '@nestjs/axios';
       useClass: ThrottlerGuard,
     },
   ],
+  controllers: [AppController],
 })
 export class AppModule {}

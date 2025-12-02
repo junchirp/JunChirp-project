@@ -319,7 +319,7 @@ export default function ProfileClient(): ReactElement {
     if ('data' in result) {
       showToast({
         severity: 'success',
-        summary: `${t('deleteItem.hardSkills.success')}}`,
+        summary: `${t('deleteItem.hardSkills.success')}`,
         life: 3000,
         actionKey: 'delete hard skill',
       });
@@ -328,7 +328,7 @@ export default function ProfileClient(): ReactElement {
     if ('error' in result) {
       showToast({
         severity: 'error',
-        summary: `${t('deleteItem.hardSkills.error')}}`,
+        summary: `${t('deleteItem.hardSkills.error')}`,
         life: 3000,
         actionKey: 'delete hard skill',
       });

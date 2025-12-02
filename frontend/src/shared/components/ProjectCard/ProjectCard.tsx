@@ -437,14 +437,16 @@ export default function ProjectCard({
                       onSubmit={handleSubmit(sendRequest)}
                     >
                       <div className={styles['project-card__form-inner']}>
-                        <p
-                          className={`
+                        {vacantRoles.length ? (
+                          <p
+                            className={`
                             ${styles['project-card__label']}
                             ${size === 'small' ? styles['project-card__label--small'] : styles['project-card__label--large']}
                           `}
-                        >
-                          В пошуку:
-                        </p>
+                          >
+                            В пошуку:
+                          </p>
+                        ) : null}
                         <Controller
                           name="projectRoleId"
                           control={control}
@@ -468,7 +470,7 @@ export default function ProjectCard({
                         <Button
                           color="green"
                           type="submit"
-                          disabled={!isValid}
+                          disabled={false}
                           loading={requestLoading}
                         >
                           Подати заявку
