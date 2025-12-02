@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { MailerService } from '@nestjs-modules/mailer';
 import {
-  Project, ProjectCategory,
+  Project,
+  ProjectCategory,
   ProjectRole,
   ProjectRoleType,
   SupportRequest,
