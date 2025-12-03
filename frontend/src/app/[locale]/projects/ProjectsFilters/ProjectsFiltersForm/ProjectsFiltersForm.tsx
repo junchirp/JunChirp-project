@@ -53,22 +53,22 @@ export default function ProjectsFiltersForm(): ReactElement {
     });
   }, [filters, form.reset]);
 
-  const onSubmit = (formData: FormData): void => {
+  useEffect(() => {
+    if (!isFiltersChanged) {
+      return;
+    }
     updateFilters({
-      status: formData.status,
-      categoryId: formData.categoryId,
-      minParticipants: formData.participantsRange.minParticipants,
-      maxParticipants: formData.participantsRange.maxParticipants,
+      status: watchedValues.status,
+      categoryId: watchedValues.categoryId,
+      minParticipants: watchedValues.participantsRange.minParticipants,
+      maxParticipants: watchedValues.participantsRange.maxParticipants,
       page: 1,
     });
-  };
+  }, [watchedValues, isFiltersChanged, updateFilters]);
 
   return (
     <div className={styles['projects-filters-form']}>
-      <form
-        className={styles['projects-filters-form__form']}
-        onSubmit={form.handleSubmit(onSubmit)}
-      >
+      <form className={styles['projects-filters-form__form']}>
         <fieldset className={styles['projects-filters-form__fieldset']}>
           <Controller
             name="categoryId"
@@ -145,9 +145,6 @@ export default function ProjectsFiltersForm(): ReactElement {
             )}
           />
         </fieldset>
-        <Button color="green" type="submit" disabled={!isFiltersChanged}>
-          Застосувати фільтр
-        </Button>
       </form>
     </div>
   );

@@ -462,7 +462,7 @@ export default function ProjectCard({
                       </div>
                       <div
                         className={`
-                          ${styles['project-card__actions']} 
+                          ${styles['project-card__actions']}
                           ${!vacantRoles.length ? styles['project-card__actions--empty'] : ''}
                           ${size === 'small' ? styles['project-card__actions--small'] : styles['project-card__actions--large']}
                         `}
@@ -470,7 +470,7 @@ export default function ProjectCard({
                         <Button
                           color="green"
                           type="submit"
-                          disabled={false}
+                          disabled={!isValid || !vacantRoles.length}
                           loading={requestLoading}
                         >
                           Подати заявку
