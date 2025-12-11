@@ -199,12 +199,7 @@ export class MailService {
     templateName: string,
     context?: Record<string, unknown>,
   ): string {
-    const filePath = path.join(
-      __dirname,
-      '..',
-      'templates',
-      `${templateName}.hbs`,
-    );
+    const filePath = path.join(__dirname, 'templates', `${templateName}.hbs`);
     const template = fs.readFileSync(filePath, 'utf8');
     return handlebars.compile(template)(context);
   }
