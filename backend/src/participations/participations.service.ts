@@ -228,14 +228,10 @@ export class ParticipationsService {
           },
         });
 
-        this.mailService
-          .sendParticipationRequest(
-            `${this.configService.get<string>('BASE_FRONTEND_URL')}/users/${request.userId}`,
-            request,
-          )
-          .catch((err) => {
-            console.error('Error sending email:', err);
-          });
+        await this.mailService.sendParticipationRequest(
+          `${this.configService.get<string>('BASE_FRONTEND_URL')}/users/${request.userId}`,
+          request,
+        );
 
         return ProjectParticipationMapper.toResponse(request);
       } catch (error) {

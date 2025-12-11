@@ -39,11 +39,10 @@ export class SupportService {
         },
       });
 
-      this.mailService
-        .sendSupportRequest(request, createSupportDto.locale)
-        .catch((err) => {
-          console.error('Error sending email:', err);
-        });
+      await this.mailService.sendSupportRequest(
+        request,
+        createSupportDto.locale,
+      );
 
       return {
         message: 'Support request created successfully',
