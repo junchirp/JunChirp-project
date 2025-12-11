@@ -244,9 +244,7 @@ export class UsersService {
     });
     const url = `${this.configService.get('BASE_FRONTEND_URL')}/verify-email?${params.toString()}`;
 
-    this.mailService.sendVerificationMail(email, url).catch((err) => {
-      console.error('Error sending verification url:', err);
-    });
+    await this.mailService.sendVerificationMail(email, url);
 
     await this.loggerService.log(
       ip,
@@ -430,9 +428,7 @@ export class UsersService {
     });
     const url = `${this.configService.get('BASE_FRONTEND_URL')}/reset-password?${params.toString()}`;
 
-    this.mailService.sendResetPasswordMail(email, url).catch((err) => {
-      console.error('Error sending verification url:', err);
-    });
+    await this.mailService.sendResetPasswordMail(email, url);
 
     await this.loggerService.log(
       ip,
@@ -611,11 +607,7 @@ export class UsersService {
       });
       const url = `${this.configService.get('BASE_FRONTEND_URL')}/verify-email?${params.toString()}`;
 
-      this.mailService
-        .sendVerificationMail(updatedUser.email, url)
-        .catch((err) => {
-          console.error('Error sending verification url:', err);
-        });
+      await this.mailService.sendVerificationMail(updatedUser.email, url);
     }
 
     return updatedUser;
@@ -676,11 +668,7 @@ export class UsersService {
         });
         const url = `${this.configService.get('BASE_FRONTEND_URL')}/verify-email?${params.toString()}`;
 
-        this.mailService
-          .sendVerificationMail(updatedUser.email, url)
-          .catch((err) => {
-            console.error('Error sending verification url:', err);
-          });
+        await this.mailService.sendVerificationMail(updatedUser.email, url);
       }
 
       return UserMapper.toAuthResponse(updatedUser);

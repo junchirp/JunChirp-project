@@ -236,11 +236,7 @@ export class AuthService {
     });
     const url = `${this.configService.get('BASE_FRONTEND_URL')}/verify-email?${params.toString()}`;
 
-    this.mailService
-      .sendVerificationMail(createUserDto.email, url)
-      .catch((err) => {
-        console.error('Error sending verification url:', err);
-      });
+    await this.mailService.sendVerificationMail(createUserDto.email, url);
 
     const { educations, socials, hardSkills, softSkills, ...baseUserInfo } =
       user;

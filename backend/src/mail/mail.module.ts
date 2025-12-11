@@ -1,39 +1,26 @@
 import { Module } from '@nestjs/common';
-import { MailerModule } from '@nestjs-modules/mailer';
-import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
-import * as path from 'path';
 import { MailService } from './mail.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { BullModule } from '@nestjs/bull';
+import { RedisModule } from '../redis/redis.module';
+import { MailProcessor } from './processors/mail.processor';
 
 @Module({
   imports: [
-    MailerModule.forRootAsync({
+    RedisModule,
+    BullModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
-        transport: {
-          host: configService.get<string>('MAIL_HOST'),
-          port: Number(configService.get<number>('MAIL_PORT')),
-          secure: configService.get<number>('MAIL_PORT') === 465, // Якщо порт 465, то secure = true
-          auth: {
-            user: configService.get<string>('MAIL_USER'),
-            pass: configService.get<string>('MAIL_PASSWORD'),
-          },
-        },
-        defaults: {
-          from: `"No Reply" <${configService.get<string>('MAIL_USER')}>`,
-        },
-        template: {
-          dir: path.join(__dirname, 'templates'),
-          adapter: new HandlebarsAdapter(),
-          options: {
-            strict: true,
-          },
+      useFactory: (config: ConfigService) => ({
+        redis: {
+          host: config.get('REDIS_HOST'),
+          port: Number(config.get('REDIS_PORT')),
         },
       }),
     }),
+    BullModule.registerQueue({ name: 'mail' }),
   ],
   exports: [MailService],
-  providers: [MailService],
+  providers: [MailService, MailProcessor],
 })
 export class MailModule {}
