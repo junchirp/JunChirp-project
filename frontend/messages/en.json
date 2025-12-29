@@ -305,7 +305,8 @@
     "request": {
       "error": "Failed to apply.",
       "errorDetails": "Please try again.",
-      "error400": "Maximum number of active projects reached (2)."
+      "error400": "Maximum number of active projects reached (2).",
+      "success": "Application submitted successfully."
     },
     "members": "{count, plural, one {# member} other {# members}}"
   },
