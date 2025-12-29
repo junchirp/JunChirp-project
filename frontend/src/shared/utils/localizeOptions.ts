@@ -1,4 +1,4 @@
-import { LocalizedOption } from '../interfaces/localized-option.interface';
+import { LocalizedOption } from '@/shared/interfaces/localized-option.interface';
 
 export function localizeOptions<T extends LocalizedOption>(
   options: T[],

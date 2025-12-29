@@ -5,8 +5,8 @@ import styles from './CancelRequestPopup.module.scss';
 import Button from '@/shared/components/Button/Button';
 import { useCancelRequestMutation } from '@/api/participationsApi';
 import { useToast } from '@/hooks/useToast';
-import { ProjectParticipationInterface } from '../../interfaces/project-participation.interface';
-import { AuthInterface } from '../../interfaces/auth.interface';
+import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
+import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import { useTranslations } from 'next-intl';
 
 interface CancelRequestPopupProps {

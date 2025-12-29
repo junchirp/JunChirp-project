@@ -1,7 +1,7 @@
 import { z, ZodObject, ZodString } from 'zod';
 import { networkUrlValidator } from '@/shared/forms/validators/networkUrlValidator';
 import { socialRefinement } from '@/shared/forms/refinements/socialRefinement';
-import { nonEmptyValidator } from '../validators/nonEmptyValidator';
+import { nonEmptyValidator } from '@/shared/forms/validators/nonEmptyValidator';
 
 export const socialSchemaStatic = z.object({
   network: z.string(),

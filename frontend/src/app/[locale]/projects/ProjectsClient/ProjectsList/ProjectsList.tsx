@@ -2,10 +2,10 @@
 
 import { ReactElement } from 'react';
 import styles from './ProjectsList.module.scss';
-import { ProjectCardInterface } from '../../../../../shared/interfaces/project-card.interface';
-import ProjectCard from '../../../../../shared/components/ProjectCard/ProjectCard';
-import { ProjectParticipationInterface } from '../../../../../shared/interfaces/project-participation.interface';
-import { AuthInterface } from '../../../../../shared/interfaces/auth.interface';
+import { ProjectCardInterface } from '@/shared/interfaces/project-card.interface';
+import ProjectCard from '@/shared/components/ProjectCard/ProjectCard';
+import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
+import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import { useTranslations } from 'next-intl';
 
 interface ProjectsListProps {

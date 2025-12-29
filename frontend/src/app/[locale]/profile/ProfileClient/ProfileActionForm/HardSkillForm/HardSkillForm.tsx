@@ -18,7 +18,7 @@ import {
   hardSkillSchemaStatic,
 } from '@/shared/forms/schemas/hardSkillSchema';
 import { useTranslations } from 'next-intl';
-import Autocomplete from '../../../../../../shared/components/Autocomplete/Autocomplete';
+import Autocomplete from '@/shared/components/Autocomplete/Autocomplete';
 
 type FormData = z.infer<typeof hardSkillSchemaStatic>;
 

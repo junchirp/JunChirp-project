@@ -12,7 +12,7 @@ import Circle from '@/assets/icons/circle.svg';
 import Button from '@/shared/components/Button/Button';
 import { useRouter } from 'next/navigation';
 import { authBlocks, noAuthBlocks } from '@/shared/constants/what-we-need';
-import { AuthInterface } from '../../../../shared/interfaces/auth.interface';
+import { AuthInterface } from '@/shared/interfaces/auth.interface';
 
 const CENTER_GAP = 264;
 const FIXED_INDEXES = [2, 3, 4];

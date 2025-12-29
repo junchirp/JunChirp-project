@@ -1,6 +1,6 @@
 import { z, ZodObject, ZodString } from 'zod';
-import { forbiddenDomainValidator } from '../validators/emailValidator';
-import { supportRequestValidator } from '../validators/supportRequestValidator';
+import { forbiddenDomainValidator } from '@/shared/forms/validators/emailValidator';
+import { supportRequestValidator } from '@/shared/forms/validators/supportRequestValidator';
 
 export const supportSchemaStatic = z.object({
   email: z.string(),

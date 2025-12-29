@@ -1,9 +1,9 @@
 import { ReactElement } from 'react';
 import styles from './ParticipationsTable.module.scss';
 import { Link } from '@/i18n/routing';
-import { datePipe } from '../../utils/datePipe';
-import Button from '../Button/Button';
-import { ProjectParticipationInterface } from '../../interfaces/project-participation.interface';
+import { datePipe } from '@/shared/utils/datePipe';
+import Button from '@/shared/components/Button/Button';
+import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
 import { useTranslations } from 'next-intl';
 
 interface ParticipationsTableProps {

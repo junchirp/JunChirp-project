@@ -3,7 +3,7 @@ import { ProjectCategoryInterface } from '@/shared/interfaces/project-category.i
 import { ProjectsListInterface } from '@/shared/interfaces/projects-list.interface';
 import { ProjectsFiltersInterface } from '@/shared/interfaces/projects-filters.interface';
 import { ProjectInterface } from '@/shared/interfaces/project.interface';
-import { CreateProjectInterface } from '../shared/interfaces/create-project.interface';
+import { CreateProjectInterface } from '@/shared/interfaces/create-project.interface';
 
 export const projectsApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({

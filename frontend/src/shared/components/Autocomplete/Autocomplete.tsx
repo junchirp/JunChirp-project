@@ -13,7 +13,7 @@ import {
 } from 'react';
 import Input from '@/shared/components/Input/Input';
 import styles from './Autocomplete.module.scss';
-import { useDebouncedValue } from '../../../hooks/useDebouncedValue';
+import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 
 interface AutocompleteProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;

@@ -3,16 +3,16 @@
 import { ReactElement, useEffect } from 'react';
 import styles from './ProjectsFiltersForm.module.scss';
 import { Controller, useForm } from 'react-hook-form';
-import { useProjectsFilters } from '../../../../../../hooks/useProjectsFilters';
-import { useGetCategoriesQuery } from '../../../../../../api/projectsApi';
-import Dropdown from '../../../../../../shared/components/Dropdown/Dropdown';
-import { ProjectCategoryInterface } from '../../../../../../shared/interfaces/project-category.interface';
-import { ParticipantsOptionsInterface } from '../../../../../../shared/interfaces/participants-options.interface';
-import { SelectOptionsInterface } from '../../../../../../shared/interfaces/select-options.interface';
+import { useProjectsFilters } from '@/hooks/useProjectsFilters';
+import { useGetCategoriesQuery } from '@/api/projectsApi';
+import Dropdown from '@/shared/components/Dropdown/Dropdown';
+import { ProjectCategoryInterface } from '@/shared/interfaces/project-category.interface';
+import { ParticipantsOptionsInterface } from '@/shared/interfaces/participants-options.interface';
+import { SelectOptionsInterface } from '@/shared/interfaces/select-options.interface';
 import { useLocale, useTranslations } from 'next-intl';
-import { Locale } from '../../../../../../i18n/routing';
-import { useProjectParticipantsOptions } from '../../../../../../hooks/useProjectParticipantsOptions';
-import { useProjectStatusOptions } from '../../../../../../hooks/useProjectStatusOptions';
+import { Locale } from '@/i18n/routing';
+import { useProjectParticipantsOptions } from '@/hooks/useProjectParticipantsOptions';
+import { useProjectStatusOptions } from '@/hooks/useProjectStatusOptions';
 
 interface FormData {
   status: 'active' | 'done' | null;

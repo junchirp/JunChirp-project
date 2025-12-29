@@ -1,4 +1,4 @@
-import { ParticipantsOptionsWithKeyInterface } from '../interfaces/participants-options-with-key.interface';
+import { ParticipantsOptionsWithKeyInterface } from '@/shared/interfaces/participants-options-with-key.interface';
 
 export const projectParticipantsOptions: ParticipantsOptionsWithKeyInterface[] =
   [

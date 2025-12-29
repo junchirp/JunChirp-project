@@ -1,9 +1,9 @@
 import { Metadata } from 'next';
 import { ReactElement } from 'react';
-import { Locale, routing } from '../../i18n/routing';
+import { Locale, routing } from '@/i18n/routing';
 import { notFound } from 'next/navigation';
 import { setRequestLocale } from 'next-intl/server';
-import BaseLayout from '../../shared/components/BaseLayout/BaseLayout';
+import BaseLayout from '@/shared/components/BaseLayout/BaseLayout';
 
 export function generateStaticParams(): { locale: Locale }[] {
   return routing.locales.map((locale) => ({ locale }));

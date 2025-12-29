@@ -8,7 +8,7 @@ import styles from './MultiSelectWithChips.module.scss';
 import CheckboxChecked from '@/assets/icons/checkbox-checked.svg';
 import Checkbox from '@/assets/icons/checkbox-empty.svg';
 import Image from 'next/image';
-import Button from '../Button/Button';
+import Button from '@/shared/components/Button/Button';
 import X from '@/assets/icons/x.svg';
 
 interface MultiSelectWithChipsProps<T> extends Partial<ControllerRenderProps> {

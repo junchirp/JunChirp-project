@@ -7,7 +7,7 @@ import { ConfirmEmailInterface } from '@/shared/interfaces/confirm-email.interfa
 import { TokenValidationInterface } from '@/shared/interfaces/token-validation.interface';
 import { ResetPasswordInterface } from '@/shared/interfaces/reset-password.interface';
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
-import { UpdateUserInterface } from '../shared/interfaces/update-user.interface';
+import { UpdateUserInterface } from '@/shared/interfaces/update-user.interface';
 
 const USER_RELATED_TAGS = [
   'auth',

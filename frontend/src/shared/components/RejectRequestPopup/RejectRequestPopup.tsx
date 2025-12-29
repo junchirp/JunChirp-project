@@ -6,7 +6,7 @@ import Button from '@/shared/components/Button/Button';
 import { useRejectRequestMutation } from '@/api/participationsApi';
 import { useToast } from '@/hooks/useToast';
 import { UserInterface } from '@/shared/interfaces/user.interface';
-import { ProjectParticipationInterface } from '../../interfaces/project-participation.interface';
+import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
 import { useTranslations } from 'next-intl';
 
 interface RejectRequestPopupProps {

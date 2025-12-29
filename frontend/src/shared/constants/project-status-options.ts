@@ -1,4 +1,4 @@
-import { SelectStatusWithKeyInterface } from '../interfaces/select-status-with-key.interface';
+import { SelectStatusWithKeyInterface } from '@/shared/interfaces/select-status-with-key.interface';
 
 export const projectStatusOptions: SelectStatusWithKeyInterface[] = [
   { id: '1', value: null, labelKey: 'all' },

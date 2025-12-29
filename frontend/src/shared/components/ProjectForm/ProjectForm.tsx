@@ -27,7 +27,7 @@ import { useAppSelector } from '@/hooks/reduxHooks';
 import authSelector from '@/redux/auth/authSelector';
 import DiscordBanner from '@/shared/components/DiscordBanner/DiscordBanner';
 import { useLocale, useTranslations } from 'next-intl';
-import { Locale } from '../../../i18n/routing';
+import { Locale } from '@/i18n/routing';
 
 type FormData = z.infer<typeof projectSchemaStatic>;
 

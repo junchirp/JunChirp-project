@@ -1,6 +1,6 @@
 import { z, ZodArray, ZodObject, ZodString } from 'zod';
 import { userNameValidator } from '@/shared/forms/validators/userNameValidator';
-import { desiredRolesValidator } from '../validators/desiredRolesValidator';
+import { desiredRolesValidator } from '@/shared/forms/validators/desiredRolesValidator';
 
 export const userNameSchemaBaseStatic = z.object({
   firstName: z.string(),

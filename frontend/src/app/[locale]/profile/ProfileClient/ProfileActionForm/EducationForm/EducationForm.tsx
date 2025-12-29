@@ -19,7 +19,7 @@ import {
 } from '@/shared/forms/schemas/educationSchema';
 import Autocomplete from '@/shared/components/Autocomplete/Autocomplete';
 import { useTranslations } from 'next-intl';
-import { useToast } from '../../../../../../hooks/useToast';
+import { useToast } from '@/hooks/useToast';
 
 type FormData = z.infer<typeof educationSchemaStatic>;
 

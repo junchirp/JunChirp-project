@@ -8,7 +8,7 @@ import DataContainer from '@/shared/components/DataContainer/DataContainer';
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import RejectInvitePopup from '@/shared/components/RejectInvitePopup/RejectInvitePopup';
 import { useTranslations } from 'next-intl';
-import DiscordBanner from '../../../../../shared/components/DiscordBanner/DiscordBanner';
+import DiscordBanner from '@/shared/components/DiscordBanner/DiscordBanner';
 
 interface MyInvitesProps {
   invites: ProjectParticipationInterface[];
