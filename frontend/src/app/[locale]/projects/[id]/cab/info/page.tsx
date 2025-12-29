@@ -10,12 +10,16 @@ import { useGetProjectByIdQuery } from '@/api/projectsApi';
 import { useAppSelector } from '@/hooks/reduxHooks';
 import authSelector from '@/redux/auth/authSelector';
 import ProjectMenu from './ProjectMenu/ProjectMenu';
+import { useLocale, useTranslations } from 'next-intl';
+import { Locale } from '@/i18n/routing';
 
 export default function Info(): ReactElement {
   const { id } = useParams<{ id: string }>();
   const { data: project } = useGetProjectByIdQuery(id);
   const user = useAppSelector(authSelector.selectUser);
   const isOwner = !!project && !!user && project.ownerId === user.id;
+  const tProjectsPage = useTranslations('projectsPage');
+  const locale = useLocale();
 
   return (
     <>
@@ -63,7 +67,7 @@ export default function Info(): ReactElement {
             </div>
             <p className={styles.info__description}>{project.description}</p>
             <p className={styles.info__category}>
-              {project.category.categoryName}
+              {project.category.categoryName[locale as Locale]}
             </p>
             <div className={styles.info__team}>
               <div className={styles.info__members}>
@@ -74,7 +78,7 @@ export default function Info(): ReactElement {
                   height={24}
                 />
                 <span className={styles['info__team-text']}>
-                  {membersPipe(project.participantsCount)}
+                  {membersPipe(project.participantsCount, tProjectsPage)}
                 </span>
               </div>
               <span className={styles['info__team-text']}>

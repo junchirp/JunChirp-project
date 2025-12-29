@@ -9,6 +9,7 @@ import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import DiscordBanner from '@/shared/components/DiscordBanner/DiscordBanner';
 import { useRouter } from 'next/navigation';
 import Plus from '@/assets/icons/plus.svg';
+import { useTranslations } from 'next-intl';
 
 interface MyProjectsProps {
   myProjects: ProjectCardInterface[];
@@ -21,6 +22,7 @@ export default function MyProjects({
 }: MyProjectsProps): ReactElement {
   const [isBanner, setBanner] = useState(false);
   const router = useRouter();
+  const t = useTranslations('projectsPage');
 
   const handleClick = (): void => {
     if (user?.discordId) {
@@ -37,7 +39,7 @@ export default function MyProjects({
   return (
     <>
       <div className={styles['my-projects']}>
-        <h3 className={styles['my-projects__title']}>Мої проєкти</h3>
+        <h3 className={styles['my-projects__title']}>{t('myProjects')}</h3>
         <div className={styles['my-projects__list-wrapper']}>
           <Button
             className={styles['my-projects__button']}
@@ -46,7 +48,7 @@ export default function MyProjects({
             icon={<Plus />}
             onClick={handleClick}
           >
-            Створити проєкт
+            {t('createProject')}
           </Button>
           {!!myProjects.length && user && (
             <div className={styles['my-projects__list']}>

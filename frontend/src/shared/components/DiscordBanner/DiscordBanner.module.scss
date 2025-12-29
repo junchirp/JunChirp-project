@@ -1,6 +1,7 @@
 @use '@/assets/styles/variables';
 
 .discord-banner {
+  position: relative;
   width: 584px;
   padding: 40px;
   border-radius: 32px;

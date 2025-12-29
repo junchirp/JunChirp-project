@@ -1,4 +1,4 @@
-import { ProfileActionType } from '../types/profile-action.type';
+import { ProfileActionType } from '@/shared/types/profile-action.type';
 
 export const profileActionTranslationKeys: Record<
   NonNullable<ProfileActionType>['type'],

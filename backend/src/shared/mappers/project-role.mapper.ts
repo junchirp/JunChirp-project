@@ -1,6 +1,7 @@
 import {
   Project,
   ProjectCategory,
+  ProjectCategoryTranslation,
   ProjectRole,
   ProjectRoleType,
   User,
@@ -25,7 +26,9 @@ export class ProjectRoleMapper {
     role: ProjectRole & {
       roleType: ProjectRoleType;
       project: Project & {
-        category: ProjectCategory;
+        category: ProjectCategory & {
+          translations: ProjectCategoryTranslation[];
+        };
         roles: (ProjectRole & {
           roleType: ProjectRoleType;
           user:

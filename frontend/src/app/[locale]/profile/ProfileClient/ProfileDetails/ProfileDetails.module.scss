@@ -3,6 +3,7 @@
 .profile-details {
   display: flex;
   align-items: flex-start;
+  overflow-wrap: anywhere;
 
   &__content {
     display: flex;

@@ -6,7 +6,7 @@ import Image from 'next/image';
 import Button from '@/shared/components/Button/Button';
 import { useRouter } from 'next/navigation';
 import SocialInvitePopup from './SocialInvitePopup/SocialInvitePopup';
-import { AuthInterface } from '../../../../shared/interfaces/auth.interface';
+import { AuthInterface } from '@/shared/interfaces/auth.interface';
 
 interface CallToActionProps {
   user: AuthInterface | null;

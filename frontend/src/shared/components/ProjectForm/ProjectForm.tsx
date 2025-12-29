@@ -26,7 +26,8 @@ import { useRouter } from 'next/navigation';
 import { useAppSelector } from '@/hooks/reduxHooks';
 import authSelector from '@/redux/auth/authSelector';
 import DiscordBanner from '@/shared/components/DiscordBanner/DiscordBanner';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
+import { Locale } from '@/i18n/routing';
 
 type FormData = z.infer<typeof projectSchemaStatic>;
 
@@ -52,6 +53,7 @@ export default function ProjectForm(): ReactElement {
   const router = useRouter();
   const [isBanner, setBanner] = useState(false);
   const user = useAppSelector(authSelector.selectUser);
+  const locale = useLocale();
 
   const closeBanner = (): void => {
     setBanner(false);
@@ -145,7 +147,7 @@ export default function ProjectForm(): ReactElement {
                 labelMargin={12}
                 placeholder="Будь ласка, вибери категорію проєкту"
                 {...field}
-                getOptionLabel={(o) => o.categoryName}
+                getOptionLabel={(o) => o.categoryName[locale as Locale]}
                 getOptionValue={(o) => o.id}
                 withError
                 errorMessages={

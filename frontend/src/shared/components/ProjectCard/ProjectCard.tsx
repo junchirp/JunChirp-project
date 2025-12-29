@@ -12,10 +12,11 @@ import RejectInvitePopup from '@/shared/components/RejectInvitePopup/RejectInvit
 import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
 import {
   useAcceptInviteMutation,
+  useCancelRequestMutation,
   useCreateRequestMutation,
 } from '@/api/participationsApi';
 import DiscordBanner from '@/shared/components/DiscordBanner/DiscordBanner';
-import { Link } from '@/i18n/routing';
+import { Link, Locale } from '@/i18n/routing';
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import { ProjectRoleInterface } from '@/shared/interfaces/project-role.interface';
 import RadioGroup from '@/shared/components/RadioGroup/RadioGroup';
@@ -27,7 +28,10 @@ import {
   requestSchemaStatic,
 } from '@/shared/forms/schemas/requestSchema';
 import { useToast } from '@/hooks/useToast';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
+import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
+import { SerializedError } from '@reduxjs/toolkit';
+import { projectDurationPipe } from '@/shared/utils/projectDurationPipe';
 
 interface ProjectCardProps {
   project: ProjectCardInterface;
@@ -46,13 +50,17 @@ export default function ProjectCard({
   user,
   size = 'small',
 }: ProjectCardProps): ReactElement {
-  const t = useTranslations('forms');
+  const tForm = useTranslations('forms');
+  const tStatus = useTranslations('status');
+  const tDiscord = useTranslations('discord');
+  const tButtons = useTranslations('buttons');
+  const tProjectsPage = useTranslations('projectsPage');
   const {
     control,
     handleSubmit,
     formState: { isValid },
   } = useForm<FormData>({
-    resolver: zodResolver(requestSchema(t)),
+    resolver: zodResolver(requestSchema(tForm)),
     mode: 'onChange',
     defaultValues: {
       projectId: project.id,
@@ -85,6 +93,9 @@ export default function ProjectCard({
   const [isInviteBanner, setInviteBanner] = useState(false);
   const [isRequestBanner, setRequestBanner] = useState(false);
   const roleTypeIds = user?.desiredRoles.map((role) => role.id) ?? [];
+  const locale = useLocale();
+  const [cancelRequest, { isLoading: cancelRequestLoading }] =
+    useCancelRequestMutation();
 
   const goProject = (): void => {
     if (isMyProject) {
@@ -93,6 +104,13 @@ export default function ProjectCard({
       router.push(`/projects/${project.id}`);
     }
   };
+
+  const viewWebSite = (): void => {
+    if (project.publicUrl) {
+      window.open(project.publicUrl, '_blank');
+    }
+  };
+
   const closeInvitePopup = (): void => setInvitePopupOpen(false);
   const openInvitePopup = (): void => setInvitePopupOpen(true);
   const closeInviteBanner = (): void => setInviteBanner(false);
@@ -104,8 +122,38 @@ export default function ProjectCard({
       return;
     }
 
+    if (isActive('invite')) {
+      return;
+    }
+
     if (currentInvite) {
       const result = await acceptInvite(currentInvite.id);
+
+      if ('error' in result) {
+        const errorData = result.error as
+          | ((FetchBaseQueryError | SerializedError) & {
+              status: number;
+            })
+          | undefined;
+        const status = errorData?.status;
+
+        if (status === 400) {
+          showToast({
+            severity: 'error',
+            summary: tProjectsPage('invite.error400'),
+            life: 3000,
+            actionKey: 'invite',
+          });
+        } else {
+          showToast({
+            severity: 'error',
+            summary: tProjectsPage('invite.error'),
+            detail: tProjectsPage('invite.errorDetails'),
+            life: 3000,
+            actionKey: 'invite',
+          });
+        }
+      }
 
       if ('data' in result) {
         goProject();
@@ -123,23 +171,54 @@ export default function ProjectCard({
       return;
     }
 
-    const result = await createRequest(data);
+    const result = await createRequest({ ...data, locale: locale as Locale });
+
+    if ('error' in result) {
+      const errorData = result.error as
+        | ((FetchBaseQueryError | SerializedError) & {
+            status: number;
+          })
+        | undefined;
+      const status = errorData?.status;
+
+      if (status === 400) {
+        showToast({
+          severity: 'error',
+          summary: tProjectsPage('request.error400'),
+          life: 3000,
+          actionKey: 'request',
+        });
+      } else {
+        showToast({
+          severity: 'error',
+          summary: tProjectsPage('request.error'),
+          detail: tProjectsPage('request.errorDetails'),
+          life: 3000,
+          actionKey: 'request',
+        });
+      }
+    }
 
     if ('data' in result) {
       showToast({
         severity: 'success',
-        summary: 'Запит на участь в проєкті надіслано успішно!',
+        summary: tProjectsPage('request.success'),
         life: 3000,
         actionKey: 'request',
       });
-    } else if ('error' in result) {
-      showToast({
-        severity: 'error',
-        summary: 'Не вдалося надіслати заявку.',
-        detail: 'Спробуй пізніше.',
-        life: 3000,
-        actionKey: 'request',
+    }
+  };
+
+  const handleCancelRequest = async (): Promise<void> => {
+    if (currentRequest) {
+      const result = await cancelRequest({
+        id: currentRequest.id,
+        userId: user?.id ?? '',
       });
+
+      if ('data' in result) {
+        goProject();
+      }
     }
   };
 
@@ -190,7 +269,9 @@ export default function ProjectCard({
                   ${size === 'small' ? styles['project-card__status--small'] : styles['project-card__status--large']}
                 `}
               >
-                {project.status === 'active' ? 'Активний' : 'Завершений'}
+                {project.status === 'active'
+                  ? tStatus('active')
+                  : tStatus('completed')}
               </p>
               {size === 'small' ? (
                 <Link
@@ -230,7 +311,7 @@ export default function ProjectCard({
                     ${size === 'small' ? styles['project-card__category--small'] : styles['project-card__category--large']}
                   `}
                 >
-                  {project.category.categoryName}
+                  {project.category.categoryName[locale as Locale]}
                 </p>
                 <div
                   className={`
@@ -251,7 +332,7 @@ export default function ProjectCard({
                         ${size === 'small' ? styles['project-card__team-text--small'] : styles['project-card__team-text--large']}
                       `}
                     >
-                      {membersPipe(project.participantsCount)}
+                      {membersPipe(project.participantsCount, tProjectsPage)}
                     </span>
                   </div>
                   <span
@@ -263,6 +344,24 @@ export default function ProjectCard({
                     {datePipe(project.createdAt.toString(), 'DD/MM/YYYY')}
                   </span>
                 </div>
+                {project.duration !== null && project.status === 'done' && (
+                  <p
+                    className={`
+                      ${styles['project-card__duration']}
+                      ${size === 'small' ? styles['project-card__duration--small'] : styles['project-card__duration--large']}
+                    `}
+                  >
+                    <span>{tProjectsPage('duration.title')}:</span>
+                    <span
+                      className={`
+                      ${styles['project-card__duration-value']}
+                      ${size === 'small' ? styles['project-card__duration-value--small'] : styles['project-card__duration-value--large']}
+                    `}
+                    >
+                      {projectDurationPipe(project.duration, tProjectsPage)}
+                    </span>
+                  </p>
+                )}
               </div>
               {(isMyProject || project.status === 'active') && (
                 <div className={styles['project-card__footer']}>
@@ -281,7 +380,7 @@ export default function ProjectCard({
                               ${size === 'small' ? styles['project-card__label--small'] : styles['project-card__label--large']}
                             `}
                           >
-                            В пошуку:
+                            {tForm('requestForm.field')}:
                           </p>
                           <div className={styles['project-card__roles']}>
                             {vacantRoles.map((role, index) => (
@@ -309,7 +408,7 @@ export default function ProjectCard({
                         `}
                       >
                         <Button color="green" onClick={goProject}>
-                          Перейти в кабінет проєкту
+                          {tButtons('goDashboard')}
                         </Button>
                       </div>
                     </>
@@ -328,7 +427,7 @@ export default function ProjectCard({
                             ${size === 'small' ? styles['project-card__label--small'] : styles['project-card__label--large']}
                           `}
                         >
-                          В пошуку:
+                          {tForm('requestForm.field')}:
                         </p>
                         <div className={styles['project-card__roles']}>
                           {vacantRoles.map((role, index) => (
@@ -361,8 +460,12 @@ export default function ProjectCard({
                           ${size === 'small' ? styles['project-card__actions--small'] : styles['project-card__actions--large']}
                         `}
                       >
-                        <Button color="green" disabled>
-                          Заявку подано
+                        <Button
+                          color="green"
+                          loading={cancelRequestLoading}
+                          onClick={handleCancelRequest}
+                        >
+                          {tButtons('cancelRequest')}
                         </Button>
                       </div>
                     </>
@@ -381,7 +484,7 @@ export default function ProjectCard({
                             ${size === 'small' ? styles['project-card__label--small'] : styles['project-card__label--large']}
                           `}
                         >
-                          В пошуку:
+                          {tForm('requestForm.field')}:
                         </p>
                         <div className={styles['project-card__roles']}>
                           {vacantRoles.map((role, index) => (
@@ -419,14 +522,14 @@ export default function ProjectCard({
                           variant="secondary-frame"
                           onClick={openInvitePopup}
                         >
-                          Відхилити
+                          {tButtons('decline')}
                         </Button>
                         <Button
                           color="green"
                           onClick={handleAccept}
                           loading={inviteLoading}
                         >
-                          Прийняти
+                          {tButtons('accept')}
                         </Button>
                       </div>
                     </>
@@ -444,7 +547,7 @@ export default function ProjectCard({
                             ${size === 'small' ? styles['project-card__label--small'] : styles['project-card__label--large']}
                           `}
                           >
-                            В пошуку:
+                            {tForm('requestForm.field')}:
                           </p>
                         ) : null}
                         <Controller
@@ -473,13 +576,30 @@ export default function ProjectCard({
                           disabled={!isValid || !vacantRoles.length}
                           loading={requestLoading}
                         >
-                          Подати заявку
+                          {tButtons('sendRequest')}
                         </Button>
                       </div>
                     </form>
                   )}
                 </div>
               )}
+              {!isMyProject &&
+                project.status === 'done' &&
+                project.publicUrl && (
+                  <div className={styles['project-card__footer']}>
+                    <div
+                      className={`
+                          ${styles['project-card__actions']} 
+                          ${!vacantRoles.length ? styles['project-card__actions--empty'] : ''}
+                          ${size === 'small' ? styles['project-card__actions--small'] : styles['project-card__actions--large']}
+                        `}
+                    >
+                      <Button color="green" onClick={viewWebSite}>
+                        {tButtons('viewWebSite')}
+                      </Button>
+                    </div>
+                  </div>
+                )}
             </div>
           </div>
           {isInvitePopupOpen && currentInvite && user && (
@@ -492,7 +612,7 @@ export default function ProjectCard({
           {isInviteBanner && (
             <DiscordBanner
               closeBanner={closeInviteBanner}
-              message="Підключи Discord, щоб прийняти запрошення. Це дозволить отримати доступ до проєктного чату."
+              message={tDiscord('invite')}
               isCancelButton
               withWrapper
             />
@@ -500,7 +620,7 @@ export default function ProjectCard({
           {isRequestBanner && (
             <DiscordBanner
               closeBanner={closeRequestBanner}
-              message="Підключи Discord, щоб подати заявку. Це дозволить отримати доступ до проєктного чату після прийняття."
+              message={tDiscord('request')}
               isCancelButton
               withWrapper
             />

@@ -5,8 +5,8 @@ import styles from './CancelRequestPopup.module.scss';
 import Button from '@/shared/components/Button/Button';
 import { useCancelRequestMutation } from '@/api/participationsApi';
 import { useToast } from '@/hooks/useToast';
-import { ProjectParticipationInterface } from '../../interfaces/project-participation.interface';
-import { AuthInterface } from '../../interfaces/auth.interface';
+import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
+import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import { useTranslations } from 'next-intl';
 
 interface CancelRequestPopupProps {
@@ -34,14 +34,15 @@ export default function CancelRequestPopup(
     if ('data' in result) {
       showToast({
         severity: 'success',
-        summary: `${t('success')}`,
+        summary: t('success'),
         life: 3000,
         actionKey: 'request',
       });
     } else {
       showToast({
         severity: 'error',
-        summary: `${t('error')}`,
+        summary: t('error'),
+        detail: t('errorDetails'),
         life: 3000,
         actionKey: 'request',
       });

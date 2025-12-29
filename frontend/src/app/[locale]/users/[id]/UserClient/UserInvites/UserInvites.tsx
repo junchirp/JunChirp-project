@@ -29,7 +29,6 @@ export default function UserInvites({
     if (isActive('invite')) {
       return;
     }
-    console.log(invite);
 
     const result = await cancelInvite({ id: invite.id, userId: user.id });
     if ('data' in result) {
@@ -43,6 +42,7 @@ export default function UserInvites({
       showToast({
         severity: 'error',
         summary: tAction('error'),
+        detail: tAction('errorDetails'),
         life: 3000,
         actionKey: 'invite',
       });

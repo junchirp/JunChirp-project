@@ -29,6 +29,11 @@ export const softSkillsApi = mainApi.injectEndpoints({
       }),
       invalidatesTags: ['soft-skills'],
     }),
+    getSoftSkillsList: builder.query<string[], string>({
+      query: (fragment) => ({
+        url: `soft-skills/list?skill=${encodeURIComponent(fragment)}`,
+      }),
+    }),
   }),
 });
 
@@ -36,4 +41,5 @@ export const {
   useAddSoftSkillMutation,
   useDeleteSoftSkillMutation,
   useGetSoftSkillsQuery,
+  useLazyGetSoftSkillsListQuery,
 } = softSkillsApi;

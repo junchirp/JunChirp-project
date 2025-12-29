@@ -1,21 +1,24 @@
 'use client';
 
 import { ReactElement, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import Input from '@/shared/components/Input/Input';
 import Button from '@/shared/components/Button/Button';
 import styles from './HardSkillForm.module.scss';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
 import { useToast } from '@/hooks/useToast';
-import { useAddHardSkillMutation } from '@/api/hardSkillsApi';
+import {
+  useAddHardSkillMutation,
+  useLazyGetHardSkillsListQuery,
+} from '@/api/hardSkillsApi';
 import {
   hardSkillSchema,
   hardSkillSchemaStatic,
 } from '@/shared/forms/schemas/hardSkillSchema';
 import { useTranslations } from 'next-intl';
+import Autocomplete from '@/shared/components/Autocomplete/Autocomplete';
 
 type FormData = z.infer<typeof hardSkillSchemaStatic>;
 
@@ -25,14 +28,15 @@ interface HardSkillFormProps {
 
 export default function HardSkillForm(props: HardSkillFormProps): ReactElement {
   const [addHardSkill, { isLoading }] = useAddHardSkillMutation();
+  const [getSkills] = useLazyGetHardSkillsListQuery();
   const { showToast, isActive } = useToast();
   const { onCancel } = props;
   const tForms = useTranslations('forms');
   const tButtons = useTranslations('buttons');
   const {
-    register,
     handleSubmit,
     setFocus,
+    control,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(hardSkillSchema(tForms)),
@@ -61,14 +65,14 @@ export default function HardSkillForm(props: HardSkillFormProps): ReactElement {
       if (status === 409) {
         showToast({
           severity: 'error',
-          summary: `${tForms('hardSkillForm.error409')}`,
+          summary: tForms('hardSkillForm.error409'),
           life: 3000,
           actionKey: 'hard skill',
         });
       } else {
         showToast({
           severity: 'error',
-          summary: `${tForms('hardSkillForm.error')}`,
+          summary: tForms('hardSkillForm.error'),
           life: 3000,
           actionKey: 'hard skill',
         });
@@ -78,7 +82,7 @@ export default function HardSkillForm(props: HardSkillFormProps): ReactElement {
     if ('data' in result) {
       showToast({
         severity: 'success',
-        summary: `${tForms('hardSkillForm.success')}`,
+        summary: tForms('hardSkillForm.success'),
         life: 3000,
         actionKey: 'hard skill',
       });
@@ -95,14 +99,22 @@ export default function HardSkillForm(props: HardSkillFormProps): ReactElement {
         className={styles['hard-skill-form__fieldset']}
         disabled={isLoading}
       >
-        <Input
-          {...register('hardSkillName')}
-          label={tForms('hardSkillForm.hardSkillName')}
-          placeholder={tForms('hardSkillForm.placeholders.hardSkillName')}
-          withError
-          errorMessages={
-            errors.hardSkillName?.message && [errors.hardSkillName.message]
-          }
+        <Controller
+          name="hardSkillName"
+          control={control}
+          render={({ field }) => (
+            <Autocomplete
+              {...field}
+              label={tForms('hardSkillForm.hardSkillName')}
+              placeholder={tForms('hardSkillForm.placeholders.hardSkillName')}
+              fetcher={(query) => getSkills(query)}
+              onSelectOption={() => {}}
+              errorMessages={
+                errors.hardSkillName?.message && [errors.hardSkillName.message]
+              }
+              withError
+            />
+          )}
         />
       </fieldset>
       <div className={styles['hard-skill-form__actions']}>
@@ -114,7 +126,7 @@ export default function HardSkillForm(props: HardSkillFormProps): ReactElement {
         >
           {tButtons('cancel')}
         </Button>
-        <Button type="submit" color="green">
+        <Button type="submit" color="green" loading={isLoading}>
           {tButtons('save')}
         </Button>
       </div>

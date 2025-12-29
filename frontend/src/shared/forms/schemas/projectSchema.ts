@@ -1,7 +1,7 @@
 import { z, ZodArray, ZodObject, ZodString } from 'zod';
-import { nonEmptyValidator } from '../validators/nonEmptyValidator';
-import { projectNameValidator } from '../validators/projectNameValidator';
-import { projectDescriptionValidator } from '../validators/projectDescriptionValidator';
+import { nonEmptyValidator } from '@/shared/forms/validators/nonEmptyValidator';
+import { projectNameValidator } from '@/shared/forms/validators/projectNameValidator';
+import { projectDescriptionValidator } from '@/shared/forms/validators/projectDescriptionValidator';
 
 export const projectSchemaStatic = z.object({
   projectName: z.string(),

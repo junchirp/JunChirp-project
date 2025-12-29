@@ -42,9 +42,7 @@ const socialNetworks: SocialNetworkInterface = {
 };
 
 @ValidatorConstraint({ name: 'isValidSocialNetworkUrl', async: false })
-export class IsValidSocialNetworkUrlValidator
-  implements ValidatorConstraintInterface
-{
+export class IsValidSocialNetworkUrlValidator implements ValidatorConstraintInterface {
   public validate(url: string, args: ValidationArguments): boolean {
     const { network } = args.object as {
       network: keyof SocialNetworkInterface;

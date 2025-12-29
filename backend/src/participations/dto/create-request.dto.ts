@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsUUID } from 'class-validator';
+import { IsIn, IsNotEmpty, IsUUID } from 'class-validator';
+import { localeArray, LocaleType } from '../../shared/types/locale.type';
 
 export class CreateRequestDto {
   @ApiProperty({
@@ -17,4 +18,11 @@ export class CreateRequestDto {
   @IsUUID(4, { message: 'Must be a string in UUIDv4 format' })
   @IsNotEmpty({ message: 'Project role ID is required' })
   public readonly projectRoleId: string;
+
+  @ApiProperty({
+    example: 'en',
+    description: 'Locale',
+  })
+  @IsIn(localeArray, { message: 'Must be a locale string' })
+  public readonly locale: LocaleType;
 }

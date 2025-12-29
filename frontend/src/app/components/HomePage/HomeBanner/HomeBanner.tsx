@@ -6,7 +6,7 @@ import Button from '@/shared/components/Button/Button';
 import Image from 'next/image';
 import ArrowUpRight from '@/assets/icons/arrow-up-right.svg';
 import { useRouter } from 'next/navigation';
-import { AuthInterface } from '../../../../shared/interfaces/auth.interface';
+import { AuthInterface } from '@/shared/interfaces/auth.interface';
 
 interface HomeBannerProps {
   user: AuthInterface | null;

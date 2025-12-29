@@ -3,7 +3,7 @@
 import { UsersFiltersInterface } from '@/shared/interfaces/users-filters.interface';
 import { useSearchParams } from 'next/navigation';
 import { useMemo } from 'react';
-import { useRouter } from '../i18n/routing';
+import { useRouter } from '@/i18n/routing';
 
 interface UsersFiltersResultInterface {
   filters: UsersFiltersInterface;

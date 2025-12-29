@@ -2,6 +2,7 @@ import { Participation } from '../types/participation.type';
 import {
   Project,
   ProjectCategory,
+  ProjectCategoryTranslation,
   ProjectRole,
   ProjectRoleType,
   User,
@@ -15,7 +16,9 @@ export class ProjectParticipationMapper {
       projectRole: ProjectRole & {
         roleType: ProjectRoleType;
         project: Project & {
-          category: ProjectCategory;
+          category: ProjectCategory & {
+            translations: ProjectCategoryTranslation[];
+          };
           roles: (ProjectRole & {
             roleType: ProjectRoleType;
             user:

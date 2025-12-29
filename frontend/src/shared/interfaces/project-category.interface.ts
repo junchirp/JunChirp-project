@@ -1,4 +1,6 @@
+import { Locale } from '@/i18n/routing';
+
 export interface ProjectCategoryInterface {
   id: string;
-  categoryName: string;
+  categoryName: Record<Locale, string>;
 }

@@ -13,6 +13,7 @@ import {
 } from 'react';
 import Input from '@/shared/components/Input/Input';
 import styles from './Autocomplete.module.scss';
+import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 
 interface AutocompleteProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -59,45 +60,60 @@ function AutocompleteComponent(
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState(value?.toString() ?? '');
   const [filtered, setFiltered] = useState<string[]>([]);
+  const debouncedValue = useDebouncedValue(inputValue, debounce);
 
   useEffect(() => {
     setInputValue(value?.toString() ?? '');
   }, [value]);
 
   useEffect(() => {
-    const delay = setTimeout(async () => {
-      const query = inputValue.trim();
-      if (query.length < minLength) {
-        setFiltered([]);
-        return;
-      }
+    const query = debouncedValue.trim();
 
-      if (options) {
-        const res = options.filter((item) =>
+    if (!isOpen || query.length < minLength) {
+      setFiltered([]);
+      return;
+    }
+
+    if (options) {
+      setFiltered(
+        options.filter((item) =>
           item.toLowerCase().includes(query.toLowerCase()),
-        );
-        setFiltered(res);
-        return;
-      }
+        ),
+      );
+      return;
+    }
 
-      if (fetcher) {
-        try {
-          const result = await fetcher(query);
-          if (Array.isArray(result)) {
-            setFiltered(result);
-          } else if (result && typeof result === 'object' && 'data' in result) {
-            setFiltered((result as { data?: string[] }).data ?? []);
-          } else {
-            setFiltered([]);
-          }
-        } catch {
+    if (!fetcher) {
+      return;
+    }
+
+    let cancelled = false;
+
+    (async (): Promise<void> => {
+      try {
+        const result = await fetcher(query);
+        if (cancelled) {
+          return;
+        }
+
+        if (Array.isArray(result)) {
+          setFiltered(result);
+        } else if (result && typeof result === 'object' && 'data' in result) {
+          setFiltered(result.data ?? []);
+        } else {
+          setFiltered([]);
+        }
+      } catch {
+        if (!cancelled) {
           setFiltered([]);
         }
       }
-    }, debounce);
+    })();
 
-    return (): void => clearTimeout(delay);
-  }, [inputValue, options, fetcher, minLength, debounce]);
+    return (): void => {
+      cancelled = true;
+    };
+  }, [debouncedValue, isOpen, minLength]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent): void => {
@@ -122,13 +138,13 @@ function AutocompleteComponent(
   };
 
   const handleSelect = (item: string): void => {
+    setIsOpen(false);
     setInputValue(item);
     const syntheticEvent = {
       target: { value: item },
     } as ChangeEvent<HTMLInputElement>;
     onChange?.(syntheticEvent);
     onSelectOption?.(item);
-    setIsOpen(false);
   };
 
   return (

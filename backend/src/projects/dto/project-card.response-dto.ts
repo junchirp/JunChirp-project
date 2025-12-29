@@ -50,6 +50,20 @@ export class ProjectCardResponseDto {
   })
   public readonly logoUrl: string | null;
 
+  @ApiProperty({
+    example: 'www.project-public-url.com',
+    description: 'Project public url',
+    type: String,
+  })
+  public readonly publicUrl: string | null;
+
+  @ApiProperty({
+    example: 22,
+    description: 'Project duration',
+    type: Number,
+  })
+  public readonly duration: number | null;
+
   @ApiProperty({ type: () => ProjectCategoryResponseDto })
   public readonly category: ProjectCategoryResponseDto;
 

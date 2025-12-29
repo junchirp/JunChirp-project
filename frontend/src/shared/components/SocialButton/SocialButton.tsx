@@ -35,6 +35,7 @@ export default function SocialButton({
   const searchParams = useSearchParams();
   const router = useRouter();
   const { showToast } = useToast();
+  const locale = useLocale();
 
   const className = [
     styles['social-button'],
@@ -57,7 +58,6 @@ export default function SocialButton({
   }, [searchParams, showToast, router]);
 
   const handleSocialLogin = (): void => {
-    const locale = useLocale();
     const currentPath = window.location.pathname;
     const returnUrl = encodeURIComponent(currentPath);
     const baseUrl = process.env.NEXT_PUBLIC_API_URL;

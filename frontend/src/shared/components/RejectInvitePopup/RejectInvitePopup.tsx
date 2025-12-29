@@ -6,7 +6,7 @@ import Button from '@/shared/components/Button/Button';
 import { useRejectInviteMutation } from '@/api/participationsApi';
 import { useToast } from '@/hooks/useToast';
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
-import { ProjectParticipationInterface } from '../../interfaces/project-participation.interface';
+import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
 import { useTranslations } from 'next-intl';
 
 interface RejectInvitePopupProps {
@@ -34,14 +34,15 @@ export default function RejectInvitePopup(
     if ('data' in result) {
       showToast({
         severity: 'success',
-        summary: `${t('success')}`,
+        summary: t('success'),
         life: 3000,
         actionKey: 'invite',
       });
     } else {
       showToast({
         severity: 'error',
-        summary: `${t('error')}`,
+        summary: t('error'),
+        detail: t('errorDetails'),
         life: 3000,
         actionKey: 'invite',
       });

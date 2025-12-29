@@ -134,8 +134,8 @@ export class MailService {
     locale: LocaleType,
   ): Promise<void> {
     const subjects: LocaleEmailSubjectType = {
-      en: 'Запрошення в проєкт',
-      ua: 'Запрошення в проєкт',
+      en: 'Invitation to join the project',
+      ua: 'Запрошення приєднатися до проєкту',
     };
 
     const subject = subjects[locale] ?? subjects.ua;
@@ -161,12 +161,20 @@ export class MailService {
         project: Project & { owner: User };
       };
     },
+    locale: LocaleType,
   ): Promise<void> {
+    const subjects: LocaleEmailSubjectType = {
+      en: 'Request to join your project ',
+      ua: 'Запит на участь у твоєму проєкті',
+    };
+
+    const subject = subjects[locale] ?? subjects.ua;
+
     await this.addEmailToQueue({
       to: request.projectRole.project.owner.email,
       from: `Support Team <${this.configService.get<string>('EMAIL_USER')}>`,
-      subject: 'Запит на участь у твоєму проєкті',
-      template: './participation-request',
+      subject: subject,
+      template: `participation-request-${locale}`,
       context: {
         url,
         projectName: request.projectRole.project.projectName,
@@ -209,7 +217,7 @@ export class MailService {
     to: string;
     subject: string;
     template: string;
-    lang?: 'en' | 'ua';
+    lang?: LocaleType;
     context?: Record<string, unknown>;
   }): Promise<void> {
     await this.queue.add('mail', data, {

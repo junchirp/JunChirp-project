@@ -7,9 +7,7 @@ import {
 } from 'class-validator';
 
 @ValidatorConstraint({ name: 'isPasswordNotContainName', async: false })
-export class IsPasswordNotContainNameValidator
-  implements ValidatorConstraintInterface
-{
+export class IsPasswordNotContainNameValidator implements ValidatorConstraintInterface {
   public validate(password: string, args: ValidationArguments): boolean {
     const { firstName, lastName } = args.object as {
       firstName: string;

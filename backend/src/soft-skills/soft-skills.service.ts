@@ -14,6 +14,23 @@ import { SoftSkillMapper } from '../shared/mappers/soft-skill.mapper';
 export class SoftSkillsService {
   public constructor(private prisma: PrismaService) {}
 
+  public async getSoftSkillsAutocomplete(query: string): Promise<string[]> {
+    const results = await this.prisma.softSkill.findMany({
+      where: {
+        softSkillName: {
+          contains: query,
+          mode: 'insensitive',
+        },
+      },
+      select: {
+        softSkillName: true,
+      },
+      take: 10,
+    });
+
+    return results.map((skill) => skill.softSkillName);
+  }
+
   public async getSoftSkills(userId: string): Promise<SoftSkillResponseDto[]> {
     const skills = await this.prisma.userSoftSkill.findMany({
       where: { userId },
@@ -33,21 +50,37 @@ export class SoftSkillsService {
       throw new BadRequestException('You can only add up to 20 soft skills.');
     }
 
-    try {
-      const softSkill = await this.prisma.userSoftSkill.create({
-        data: {
-          ...createSoftSkillDto,
-          userId,
-        },
-      });
+    return this.prisma.$transaction(async (prisma) => {
+      try {
+        const softSkill = await this.prisma.userSoftSkill.create({
+          data: {
+            ...createSoftSkillDto,
+            userId,
+          },
+        });
 
-      return SoftSkillMapper.toResponse(softSkill);
-    } catch (error) {
-      if (error.code === 'P2002') {
-        throw new ConflictException('Soft skill is already in list');
+        const record = await prisma.softSkill.findFirst({
+          where: {
+            softSkillName: createSoftSkillDto.softSkillName,
+          },
+        });
+
+        if (!record) {
+          await prisma.softSkill.create({
+            data: {
+              softSkillName: createSoftSkillDto.softSkillName,
+            },
+          });
+        }
+
+        return SoftSkillMapper.toResponse(softSkill);
+      } catch (error) {
+        if (error.code === 'P2002') {
+          throw new ConflictException('Soft skill is already in list');
+        }
+        throw error;
       }
-      throw error;
-    }
+    });
   }
 
   public async updateSoftSkill(

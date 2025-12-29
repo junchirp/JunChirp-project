@@ -1,5 +1,5 @@
 import { z, ZodObject, ZodString } from 'zod';
-import { educationValidator } from '../validators/educationValidator';
+import { educationValidator } from '@/shared/forms/validators/educationValidator';
 
 export const educationSchemaStatic = z.object({
   institution: z.string(),

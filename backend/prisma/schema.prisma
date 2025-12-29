@@ -95,6 +95,7 @@ model Project {
   description         String
   status              ProjectStatus   @default(active)
   createdAt           DateTime        @default(now()) @map("created_at")
+  finishedAt          DateTime?       @map("finished_at")
   logoUrl             String?         @map("logo_url")
   participantsCount   Int             @default(1) @map("participiants_count")
   ownerId             String          @map("owner_id")
@@ -103,6 +104,7 @@ model Project {
   discordAdminRoleId  String          @map("discord_admin_role_id")
   discordMemberRoleId String          @map("discord_member_role_id")
   discordUrl          String          @default("https://discord.gg/x2rdtS2Vbz") @map("discord_url")
+  publicUrl           String?         @map("public_url")
   boards              Board[]
   documents           Document[]
   roles               ProjectRole[]
@@ -155,11 +157,22 @@ model ProjectRoleType {
 }
 
 model ProjectCategory {
-  id           String    @id @default(dbgenerated("gen_random_uuid()"))
-  categoryName String    @unique @map("category_name")
+  id           String                       @id @default(dbgenerated("gen_random_uuid()"))
+  translations ProjectCategoryTranslation[]
   projects     Project[]
 
   @@map("project_categories")
+}
+
+model ProjectCategoryTranslation {
+  id           String          @id @default(dbgenerated("gen_random_uuid()"))
+  locale       String
+  categoryName String          @map("category_name")
+  categoryId   String          @map("category_id")
+  category     ProjectCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([categoryId, locale])
+  @@map("project_category_translations")
 }
 
 model Board {
@@ -274,6 +287,7 @@ model Institution {
   id              String @id @default(dbgenerated("gen_random_uuid()"))
   institutionName String @unique @map("institution_name")
 
+  @@index([institutionName])
   @@map("institutions")
 }
 
@@ -281,6 +295,7 @@ model Specialization {
   id                 String @id @default(dbgenerated("gen_random_uuid()"))
   specializationName String @unique @map("specialization_name")
 
+  @@index([specializationName])
   @@map("specializations")
 }
 
@@ -306,6 +321,22 @@ model ParticipationRequest {
 
   @@unique([userId, projectRoleId])
   @@map("participation_requests")
+}
+
+model SoftSkill {
+  id            String @id @default(dbgenerated("gen_random_uuid()"))
+  softSkillName String @unique @map("soft_skill_name")
+
+  @@index([softSkillName])
+  @@map("soft_skills")
+}
+
+model HardSkill {
+  id            String @id @default(dbgenerated("gen_random_uuid()"))
+  hardSkillName String @unique @map("hard_skill_name")
+
+  @@index([hardSkillName])
+  @@map("hard_skills")
 }
 
 enum ProjectStatus {

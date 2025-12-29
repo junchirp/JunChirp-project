@@ -6,9 +6,7 @@ import {
 } from 'class-validator';
 
 @ValidatorConstraint({ name: 'ContainsOnlyAllowedCharacters', async: false })
-export class ContainsOnlyAllowedCharactersValidator
-  implements ValidatorConstraintInterface
-{
+export class ContainsOnlyAllowedCharactersValidator implements ValidatorConstraintInterface {
   public validate(value: unknown): boolean {
     if (typeof value !== 'string') {
       return false;

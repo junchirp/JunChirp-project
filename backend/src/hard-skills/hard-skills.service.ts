@@ -14,6 +14,23 @@ import { HardSkillMapper } from '../shared/mappers/hard-skill.mapper';
 export class HardSkillsService {
   public constructor(private prisma: PrismaService) {}
 
+  public async getHardSkillsAutocomplete(query: string): Promise<string[]> {
+    const results = await this.prisma.hardSkill.findMany({
+      where: {
+        hardSkillName: {
+          contains: query,
+          mode: 'insensitive',
+        },
+      },
+      select: {
+        hardSkillName: true,
+      },
+      take: 10,
+    });
+
+    return results.map((skill) => skill.hardSkillName);
+  }
+
   public async getHardSkills(userId: string): Promise<HardSkillResponseDto[]> {
     const skills = await this.prisma.userHardSkill.findMany({
       where: { userId },
@@ -33,21 +50,37 @@ export class HardSkillsService {
       throw new BadRequestException('You can only add up to 20 hard skills.');
     }
 
-    try {
-      const hardSkill = await this.prisma.userHardSkill.create({
-        data: {
-          ...createHardSkillDto,
-          userId,
-        },
-      });
+    return this.prisma.$transaction(async (prisma) => {
+      try {
+        const hardSkill = await this.prisma.userHardSkill.create({
+          data: {
+            ...createHardSkillDto,
+            userId,
+          },
+        });
 
-      return HardSkillMapper.toResponse(hardSkill);
-    } catch (error) {
-      if (error.code === 'P2002') {
-        throw new ConflictException('Hard skill is already in list');
+        const record = await prisma.hardSkill.findFirst({
+          where: {
+            hardSkillName: createHardSkillDto.hardSkillName,
+          },
+        });
+
+        if (!record) {
+          await prisma.hardSkill.create({
+            data: {
+              hardSkillName: createHardSkillDto.hardSkillName,
+            },
+          });
+        }
+
+        return HardSkillMapper.toResponse(hardSkill);
+      } catch (error) {
+        if (error.code === 'P2002') {
+          throw new ConflictException('Hard skill is already in list');
+        }
+        throw error;
       }
-      throw error;
-    }
+    });
   }
 
   public async updateHardSkill(

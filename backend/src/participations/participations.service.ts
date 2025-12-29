@@ -96,7 +96,11 @@ export class ParticipationsService {
                 roleType: true,
                 project: {
                   include: {
-                    category: true,
+                    category: {
+                      include: {
+                        translations: true,
+                      },
+                    },
                     roles: {
                       include: {
                         roleType: true,
@@ -115,16 +119,12 @@ export class ParticipationsService {
           },
         });
 
-        this.mailService
-          .sendParticipationInvite(
-            `${this.configService.get<string>('BASE_FRONTEND_URL')}/project/${invite.projectRole.projectId}`,
-            invite,
-            user,
-            createInviteDto.locale,
-          )
-          .catch((err) => {
-            console.error('Error sending email:', err);
-          });
+        await this.mailService.sendParticipationInvite(
+          `${this.configService.get<string>('BASE_FRONTEND_URL')}/project/${invite.projectRole.projectId}`,
+          invite,
+          user,
+          createInviteDto.locale,
+        );
 
         return ProjectParticipationMapper.toResponse(invite);
       } catch (error) {
@@ -209,7 +209,11 @@ export class ParticipationsService {
                 roleType: true,
                 project: {
                   include: {
-                    category: true,
+                    category: {
+                      include: {
+                        translations: true,
+                      },
+                    },
                     roles: {
                       include: {
                         roleType: true,
@@ -231,6 +235,7 @@ export class ParticipationsService {
         await this.mailService.sendParticipationRequest(
           `${this.configService.get<string>('BASE_FRONTEND_URL')}/users/${request.userId}`,
           request,
+          createRequestDto.locale,
         );
 
         return ProjectParticipationMapper.toResponse(request);
@@ -476,7 +481,11 @@ export class ParticipationsService {
             roleType: true,
             project: {
               include: {
-                category: true,
+                category: {
+                  include: {
+                    translations: true,
+                  },
+                },
                 roles: {
                   include: {
                     roleType: true,
@@ -520,7 +529,11 @@ export class ParticipationsService {
             roleType: true,
             project: {
               include: {
-                category: true,
+                category: {
+                  include: {
+                    translations: true,
+                  },
+                },
                 roles: {
                   include: {
                     roleType: true,

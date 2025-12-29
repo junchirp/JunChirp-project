@@ -292,4 +292,31 @@
     justify-content: flex-start;
     align-items: flex-start;
   }
+
+  &__duration {
+    display: flex;
+    gap: 12px;
+    font-weight: 500;
+    line-height: 1.4;
+
+    &--small {
+      font-size: 16px;
+    }
+
+    &--large {
+      font-size: 20px;
+    }
+  }
+
+  &__duration-value {
+    font-weight: 400;
+
+    &--small {
+      color: variables.$gray-4;
+    }
+
+    &--large {
+      color: variables.$gray-6;
+    }
+  }
 }

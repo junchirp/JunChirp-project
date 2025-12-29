@@ -23,7 +23,7 @@ export const useProjectsFilters = (): ProjectsFiltersResultInterface => {
   const filters = useMemo(() => {
     return {
       page: Number(searchParams.get('page') ?? 1),
-      limit: Number(searchParams.get('limit') ?? 5),
+      limit: Number(searchParams.get('limit') ?? 20),
       status: (searchParams.get('status') as 'active' | 'done') ?? undefined,
       categoryId: searchParams.get('categoryId') ?? undefined,
       minParticipants: min !== null ? Number(min) : undefined,

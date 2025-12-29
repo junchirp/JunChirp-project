@@ -79,6 +79,7 @@ export default function InviteForm(props: InviteFormProps): ReactElement {
       showToast({
         severity: 'error',
         summary: tForm('inviteForm.error'),
+        detail: tForm('inviteForm.errorDetails'),
         life: 3000,
         actionKey: 'invite user',
       });
@@ -114,11 +115,7 @@ export default function InviteForm(props: InviteFormProps): ReactElement {
               {...field}
               options={roleOptions}
               label={tForm('inviteForm.role')}
-              placeholder={
-                selectedProject
-                  ? tForm('inviteForm.placeholders.role')
-                  : tForm('inviteForm.placeholders.roleEmptyProject')
-              }
+              placeholder={tForm('inviteForm.placeholders.role')}
               disabled={!selectedProject}
               getOptionLabel={(o) => o.roleType.roleName}
               getOptionValue={(o) => o.id}
