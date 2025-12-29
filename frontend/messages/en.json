@@ -306,7 +306,9 @@
       "error": "Failed to apply.",
       "errorDetails": "Please try again.",
       "error400": "Maximum number of active projects reached (2).",
-      "success": "Application submitted successfully."
+      "success": "Application submitted successfully.",
+      "cancelError": "Failed to cancel the application.",
+      "cancelSuccess": "Application canceled."
     },
     "members": "{count, plural, one {# member} other {# members}}"
   },

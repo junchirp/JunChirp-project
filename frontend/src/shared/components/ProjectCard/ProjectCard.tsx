@@ -211,13 +211,32 @@ export default function ProjectCard({
 
   const handleCancelRequest = async (): Promise<void> => {
     if (currentRequest) {
+      if (isActive('cancel-request')) {
+        return;
+      }
+
       const result = await cancelRequest({
         id: currentRequest.id,
         userId: user?.id ?? '',
       });
 
+      if ('error' in result) {
+        showToast({
+          severity: 'error',
+          summary: tProjectsPage('request.cancelError'),
+          detail: tProjectsPage('request.errorDetails'),
+          life: 3000,
+          actionKey: 'cancel-request',
+        });
+      }
+
       if ('data' in result) {
-        goProject();
+        showToast({
+          severity: 'success',
+          summary: tProjectsPage('request.cancelSuccess'),
+          life: 3000,
+          actionKey: 'cancel-request',
+        });
       }
     }
   };
