@@ -29,6 +29,11 @@ export const hardSkillsApi = mainApi.injectEndpoints({
       }),
       invalidatesTags: ['hard-skills'],
     }),
+    getHardSkillsList: builder.query<string[], string>({
+      query: (fragment) => ({
+        url: `hard-skills/list?skill=${encodeURIComponent(fragment)}`,
+      }),
+    }),
   }),
 });
 
@@ -36,4 +41,5 @@ export const {
   useAddHardSkillMutation,
   useDeleteHardSkillMutation,
   useGetHardSkillsQuery,
+  useLazyGetHardSkillsListQuery,
 } = hardSkillsApi;

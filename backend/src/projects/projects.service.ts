@@ -21,6 +21,7 @@ import { UserParticipationResponseDto } from '../participations/dto/user-partici
 import { DiscordService } from '../discord/discord.service';
 import { UsersService } from '../users/users.service';
 import { ProjectCardResponseDto } from './dto/project-card.response-dto';
+import { ProjectCategoryMapper } from '../shared/mappers/project-category.mapper';
 
 interface GetProjectsOptionsInterface {
   userId: string;
@@ -45,7 +46,15 @@ export class ProjectsService {
   ) {}
 
   public async getCategories(): Promise<ProjectCategoryResponseDto[]> {
-    return this.prisma.projectCategory.findMany();
+    const categories = await this.prisma.projectCategory.findMany({
+      include: {
+        translations: true,
+      },
+    });
+
+    return categories.map((category) =>
+      ProjectCategoryMapper.toResponse(category),
+    );
   }
 
   public async getProjects(
@@ -89,7 +98,11 @@ export class ProjectsService {
         skip,
         take: limit,
         include: {
-          category: true,
+          category: {
+            include: {
+              translations: true,
+            },
+          },
           roles: {
             include: {
               roleType: true,
@@ -151,7 +164,11 @@ export class ProjectsService {
             },
           },
           include: {
-            category: true,
+            category: {
+              include: {
+                translations: true,
+              },
+            },
             roles: {
               include: {
                 roleType: true,
@@ -226,7 +243,11 @@ export class ProjectsService {
       const project = await this.prisma.project.findUniqueOrThrow({
         where: { id },
         include: {
-          category: true,
+          category: {
+            include: {
+              translations: true,
+            },
+          },
           roles: {
             include: {
               roleType: true,
@@ -274,7 +295,11 @@ export class ProjectsService {
           },
         },
         include: {
-          category: true,
+          category: {
+            include: {
+              translations: true,
+            },
+          },
           roles: {
             include: {
               roleType: true,
@@ -316,9 +341,13 @@ export class ProjectsService {
 
         const closedProject = await prisma.project.update({
           where: { id },
-          data: { status: 'done' },
+          data: { status: 'done', finishedAt: new Date() },
           include: {
-            category: true,
+            category: {
+              include: {
+                translations: true,
+              },
+            },
             roles: {
               include: {
                 roleType: true,
@@ -425,7 +454,11 @@ export class ProjectsService {
         where: { id },
         data: { logoUrl },
         include: {
-          category: true,
+          category: {
+            include: {
+              translations: true,
+            },
+          },
           roles: {
             include: {
               roleType: true,
@@ -457,7 +490,11 @@ export class ProjectsService {
         where: { id },
         data: { logoUrl: null },
         include: {
-          category: true,
+          category: {
+            include: {
+              translations: true,
+            },
+          },
           roles: {
             include: {
               roleType: true,

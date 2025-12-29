@@ -25,14 +25,25 @@ export default function DiscordBanner(props: DiscordBannerProps): ReactElement {
   } = props;
   const searchParams = useSearchParams();
   const { showToast } = useToast();
+  const t = useTranslations('buttons');
 
   useEffect(() => {
-    const error = searchParams.get('error');
-    if (error === 'discord_auth_failed') {
+    const status = searchParams.get('status');
+
+    if (status === 'failure') {
       showToast({
         severity: 'error',
-        summary: 'Не вдалося підтвердити Discord',
-        detail: 'Спробуй ще раз.',
+        summary: t('error'),
+        detail: t('errorDetails'),
+        life: 3000,
+        actionKey: 'discord',
+      });
+    }
+
+    if (status === 'success') {
+      showToast({
+        severity: 'success',
+        summary: t('success'),
         life: 3000,
         actionKey: 'discord',
       });
@@ -45,8 +56,6 @@ export default function DiscordBanner(props: DiscordBannerProps): ReactElement {
     const baseUrl = process.env.NEXT_PUBLIC_API_URL;
     window.location.href = `${baseUrl}/auth/discord?returnUrl=${returnUrl}`;
   };
-
-  const t = useTranslations('buttons');
 
   const content = (
     <>

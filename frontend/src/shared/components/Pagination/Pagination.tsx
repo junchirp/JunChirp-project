@@ -6,6 +6,7 @@ import Button from '@/shared/components/Button/Button';
 import { getPaginationPages } from '@/shared/utils/getPaginationPages';
 import ArrowLeft from '@/assets/icons/arrow-left.svg';
 import ArrowRight from '@/assets/icons/arrow-right.svg';
+import { useTranslations } from 'next-intl';
 
 interface PaginationProps {
   total: number;
@@ -18,6 +19,7 @@ export default function Pagination(props: PaginationProps): ReactElement {
   const { total, limit, page, onPageChange } = props;
   const totalPages = Math.ceil(total / limit);
   const pages = getPaginationPages(page, totalPages);
+  const t = useTranslations('pagination');
 
   return (
     <div className={styles.pagination}>
@@ -30,7 +32,7 @@ export default function Pagination(props: PaginationProps): ReactElement {
         onClick={() => onPageChange(page - 1)}
         disabled={page === 1}
       >
-        Попередня
+        {t('prev')}
       </Button>
       <div className={styles.pagination__pages}>
         {pages.map((p, idx) =>
@@ -60,7 +62,7 @@ export default function Pagination(props: PaginationProps): ReactElement {
         onClick={() => onPageChange(page + 1)}
         disabled={page === totalPages}
       >
-        Наступна
+        {t('next')}
       </Button>
     </div>
   );

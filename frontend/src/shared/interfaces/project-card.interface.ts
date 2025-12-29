@@ -10,6 +10,8 @@ export interface ProjectCardInterface {
   participantsCount: number;
   ownerId: string;
   logoUrl: string | null;
+  publicUrl: string | null;
+  duration: number | null;
   roles: RoleWithUserInterface[];
   category: ProjectCategoryInterface;
 }

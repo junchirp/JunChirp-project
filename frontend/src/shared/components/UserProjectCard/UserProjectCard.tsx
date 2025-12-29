@@ -47,7 +47,8 @@ export default function UserProjectCard({
     }
   };
 
-  const t = useTranslations('project');
+  const tStatus = useTranslations('status');
+  const tButtons = useTranslations('buttons');
 
   return (
     <div className={cardClassName}>
@@ -56,8 +57,8 @@ export default function UserProjectCard({
         <div className={styles['user-project-card__content']}>
           <div className={statusClassName}>
             {project.status === 'active'
-              ? t('status.active')
-              : t('status.completed')}
+              ? tStatus('active')
+              : tStatus('completed')}
           </div>
           <div className={styles['user-project-card__text']}>
             <h3 className={styles['user-project-card__title']}>
@@ -74,7 +75,7 @@ export default function UserProjectCard({
           color="green"
           onClick={handleRedirect}
         >
-          {!isMember ? t('buttons.viewDetails') : t('buttons.goDashboard')}
+          {!isMember ? tButtons('viewDetails') : tButtons('goDashboard')}
         </Button>
       </div>
     </div>

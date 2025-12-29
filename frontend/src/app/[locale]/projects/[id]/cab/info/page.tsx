@@ -3,7 +3,7 @@
 import { ReactElement } from 'react';
 import styles from './page.module.scss';
 import Image from 'next/image';
-import { membersPipe } from '@/shared/utils/membersPipe';
+import { membersPipe } from '../../../../../../shared/utils/membersPipe';
 import { datePipe } from '@/shared/utils/datePipe';
 import { useParams } from 'next/navigation';
 import { useGetProjectByIdQuery } from '@/api/projectsApi';

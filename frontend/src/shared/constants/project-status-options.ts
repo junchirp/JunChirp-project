@@ -1,7 +1,7 @@
-import { SelectOptionsInterface } from '@/shared/interfaces/select-options.interface';
+import { SelectStatusWithKeyInterface } from '../interfaces/select-status-with-key.interface';
 
-export const projectStatusOptions: SelectOptionsInterface[] = [
-  { id: '1', value: null, label: 'Всі' },
-  { id: '2', value: 'active', label: 'Активний' },
-  { id: '3', value: 'done', label: 'Завершений' },
+export const projectStatusOptions: SelectStatusWithKeyInterface[] = [
+  { id: '1', value: null, labelKey: 'all' },
+  { id: '2', value: 'active', labelKey: 'active' },
+  { id: '3', value: 'done', labelKey: 'completed' },
 ];

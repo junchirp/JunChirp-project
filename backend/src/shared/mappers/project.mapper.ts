@@ -6,16 +6,20 @@ import {
   Document,
   ProjectRoleType,
   User,
+  ProjectCategoryTranslation,
 } from '@prisma/client';
 import { ProjectResponseDto } from '../../projects/dto/project.response-dto';
 import { ProjectRoleMapper } from './project-role.mapper';
 import { ProjectCardResponseDto } from '../../projects/dto/project-card.response-dto';
 import { BoardMapper } from './board.mapper';
+import { ProjectCategoryMapper } from './project-category.mapper';
 
 export class ProjectMapper {
   public static toCardResponse(
     project: Project & {
-      category: ProjectCategory;
+      category: ProjectCategory & {
+        translations: ProjectCategoryTranslation[];
+      };
       roles: (ProjectRole & {
         roleType: ProjectRoleType;
         user:
@@ -34,8 +38,15 @@ export class ProjectMapper {
       participantsCount: project.participantsCount,
       status: project.status,
       createdAt: project.createdAt,
-      category: project.category,
-      logoUrl: project.logoUrl ?? '',
+      duration: project.finishedAt
+        ? ProjectMapper.calculateDurationMonths(
+            project.createdAt,
+            project.finishedAt,
+          )
+        : null,
+      category: ProjectCategoryMapper.toResponse(project.category),
+      logoUrl: project.logoUrl,
+      publicUrl: project.publicUrl,
       roles: project.roles.map((role) =>
         ProjectRoleMapper.toUserResponse(role),
       ),
@@ -44,7 +55,9 @@ export class ProjectMapper {
 
   public static toFullResponse(
     project: Project & {
-      category: ProjectCategory;
+      category: ProjectCategory & {
+        translations: ProjectCategoryTranslation[];
+      };
       roles: (ProjectRole & {
         roleType: ProjectRoleType;
         user:
@@ -65,14 +78,33 @@ export class ProjectMapper {
       participantsCount: project.participantsCount,
       status: project.status,
       createdAt: project.createdAt,
-      category: project.category,
+      duration: project.finishedAt
+        ? ProjectMapper.calculateDurationMonths(
+            project.createdAt,
+            project.finishedAt,
+          )
+        : null,
+      category: ProjectCategoryMapper.toResponse(project.category),
       discordUrl: project.discordUrl,
-      logoUrl: project.logoUrl ?? '',
+      logoUrl: project.logoUrl,
+      publicUrl: project.publicUrl,
       documents: project.documents,
       roles: project.roles.map((role) =>
         ProjectRoleMapper.toUserResponse(role),
       ),
       boards: project.boards.map((board) => BoardMapper.toBaseResponse(board)),
     };
+  }
+
+  private static calculateDurationMonths(start: Date, end: Date): number {
+    let months =
+      (end.getFullYear() - start.getFullYear()) * 12 +
+      (end.getMonth() - start.getMonth());
+
+    if (end.getDate() < start.getDate()) {
+      months -= 1;
+    }
+
+    return Math.max(0, months);
   }
 }

@@ -109,14 +109,14 @@ export default function SocialForm(props: SocialFormProps): ReactElement {
         if (status === 409) {
           showToast({
             severity: 'error',
-            summary: `${tForms('socialForm.error409')}`,
+            summary: tForms('socialForm.error409'),
             life: 3000,
             actionKey: 'social',
           });
         } else {
           showToast({
             severity: 'error',
-            summary: `${tForms('socialForm.error')}`,
+            summary: tForms('socialForm.error'),
             life: 3000,
             actionKey: 'social',
           });
@@ -127,7 +127,7 @@ export default function SocialForm(props: SocialFormProps): ReactElement {
       if ('data' in result) {
         showToast({
           severity: 'success',
-          summary: `${tForms('socialForm.success')}`,
+          summary: tForms('socialForm.success'),
           life: 3000,
           actionKey: 'social',
         });
@@ -147,14 +147,14 @@ export default function SocialForm(props: SocialFormProps): ReactElement {
         if (status === 409) {
           showToast({
             severity: 'error',
-            summary: `${tForms('socialForm.error409')}`,
+            summary: tForms('socialForm.error409'),
             life: 3000,
             actionKey: 'social',
           });
         } else {
           showToast({
             severity: 'error',
-            summary: `${tForms('socialForm.error')}`,
+            summary: tForms('socialForm.error'),
             life: 3000,
             actionKey: 'social',
           });
@@ -164,7 +164,7 @@ export default function SocialForm(props: SocialFormProps): ReactElement {
       if ('data' in result) {
         showToast({
           severity: 'success',
-          summary: `${tForms('socialForm.success')}`,
+          summary: tForms('socialForm.success'),
           life: 3000,
           actionKey: 'social',
         });
@@ -215,7 +215,11 @@ export default function SocialForm(props: SocialFormProps): ReactElement {
         >
           {tButtons('cancel')}
         </Button>
-        <Button type="submit" color="green">
+        <Button
+          type="submit"
+          color="green"
+          loading={updateSocialLoading || addSocialLoading}
+        >
           {tButtons('save')}
         </Button>
       </div>

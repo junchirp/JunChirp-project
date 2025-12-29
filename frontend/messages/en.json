@@ -7,10 +7,23 @@
     "accept": "Accept",
     "decline": "Decline",
     "login": "Login",
-    "invite": "Запросити"
+    "viewDetails": "View details",
+    "goDashboard": "Go to project dashboard",
+    "viewWebSite": "View website",
+    "sendRequest": "Apply Now",
+    "cancelRequest": "Cancel Application",
+    "sendInvite": "Send invitation"
+  },
+  "discord": {
+    "profile": "Connect Discord to join projects and gain access to project chats.",
+    "invite": "Connect Discord to join the project. This will allow you to access the project chat.",
+    "request": "Connect Discord to apply. This will allow you to access the project chat after being accepted.",
+    "newProject": "Connect Discord to create a project. This is required to create a project chat.",
+    "error": "Failed to connect Discord.",
+    "errorDetails": "Please try again.",
+    "success": "Discord connected successfully."
   },
   "profile": {
-    "discord": "Connect Discord to join projects and gain access to project chats.",
     "viewProfileBtn": "View profile",
     "addBtn": "Add",
     "actions": {
@@ -45,27 +58,28 @@
         "title": "Delete social network?",
         "firstPart": "Are you sure you want to delete the social network ",
         "success": "Social network deleted.",
-        "error": "Failed to delete social network. Please try again later."
+        "error": "Failed to delete social network."
       },
       "educations": {
         "title": "Delete education record?",
         "firstPart": "Are you sure you want to delete the education record ",
         "success": "Education record deleted.",
-        "error": "Failed to delete education record. Please try again later."
+        "error": "Failed to delete education record."
       },
       "softSkills": {
         "title": "Delete skill?",
         "firstPart": "Are you sure you want to delete the soft skill ",
         "success": "Soft skill deleted.",
-        "error": "Failed to delete soft skill. Please try again later."
+        "error": "Failed to delete soft skill."
       },
       "hardSkills": {
         "title": "Delete skill?",
         "firstPart": "Are you sure you want to delete the hard skill ",
         "success": "Hard skill deleted.",
-        "error": "Failed to delete hard skill. Please try again later."
+        "error": "Failed to delete hard skill."
       },
-      "secondPart": "? This action cannot be undone."
+      "secondPart": "? This action cannot be undone.",
+      "errorDetails": "Please try again later."
     },
     "saveChanges": "Save your changes before viewing."
   },
@@ -86,7 +100,8 @@
     "secondPart": "? This action cannot be undone.",
     "cancel": "Cancel",
     "decline": "Decline invitation",
-    "error": "Failed to decline invitation. Please try again later.",
+    "error": "Failed to decline invitation.",
+    "errorDetails": "Please try again later.",
     "success": "Invitation declined."
   },
   "rejectRequestPopup": {
@@ -96,7 +111,8 @@
     "thirdPart": "? This action cannot be undone.",
     "cancel": "Cancel",
     "decline": "Decline application",
-    "error": "Failed to decline application. Please try again later.",
+    "error": "Failed to decline application.",
+    "errorDetails": "Please try again later.",
     "success": "Application declined."
   },
   "cancelRequestPopup": {
@@ -105,11 +121,13 @@
     "secondPart": "? This action cannot be undone.",
     "cancel": "Cancel",
     "delete": "Cancel application",
-    "error": "Failed to cancel application. Please try again later.",
+    "error": "Failed to cancel application.",
+    "errorDetails": "Please try again later.",
     "success": "Application cancelled."
   },
   "cancelInvite": {
-    "error": "Failed to cancel invitation. Please try again later.",
+    "error": "Failed to cancel invitation.",
+    "errorDetails": "Please try again later.",
     "success": "Invitation cancelled."
   },
   "forms": {
@@ -138,7 +156,7 @@
       "projectDescriptionLength": "Введи опис від 2 до 500 символів",
       "projectNameLength": "Введи назву від 2 до 50 символів",
       "requestLength": "Enter a description between 10 and 1000 characters.",
-      "requestSymbols": "Invalid characters in the description"
+      "requestSymbols": "Invalid characters in the name"
     },
     "userNameForm": {
       "firstName": "First name",
@@ -203,15 +221,18 @@
       "button": "Send Request"
     },
     "inviteForm": {
-      "project": "Проєкт",
-      "role": "Роль",
+      "project": "Select project",
+      "role": "Select role",
       "placeholders": {
-        "project": "Обери проєкт",
-        "role": "Обери роль",
-        "roleEmptyProject": "Спочатку обери проєкт"
+        "project": "Select project",
+        "role": "Select role"
       },
-      "error": "Не вдалося надіслати запрошення.",
-      "success": "Запрошення надіслано."
+      "error": "Failed to send the invitation.",
+      "errorDetails": "Please try again.",
+      "success": "Invitation sent."
+    },
+    "requestForm": {
+      "field": "Looking for"
     }
   },
   "page404": {
@@ -252,17 +273,50 @@
     "title": "Have a question? We’re here to help!",
     "description": "Write to us – we’ll find a solution together!"
   },
-  "project": {
-    "status": {
-      "active": "Active",
-      "completed": "Completed"
-    },
-    "buttons": {
-      "viewDetails": "View details",
-      "goDashboard": "Go to project dashboard"
-    }
+  "status": {
+    "active": "Active",
+    "completed": "Completed",
+    "all": "All"
   },
   "invitePopup": {
-    "title": "Запросити в проєкт"
+    "title": "Invite to project"
+  },
+  "projectsPage": {
+    "bannerName": "Projects",
+    "filterName": "Project filter",
+    "myProjects": "My projects",
+    "projectList": "Project list",
+    "createProject": "Create project",
+    "status": "Project status",
+    "categoryId": "Project category",
+    "participantsRange": "Number of participants",
+    "duration": {
+      "title": "Duration",
+      "none": "less than a month",
+      "years": "{count, plural, one {# year} other {# years}}",
+      "months": "{count, plural, one {# month} other {# months}}"
+    },
+    "all": "All",
+    "invite": {
+      "error": "Failed to accept invitation.",
+      "errorDetails": "Please try again.",
+      "error400": "Maximum number of active projects reached (2)."
+    },
+    "request": {
+      "error": "Failed to apply.",
+      "errorDetails": "Please try again.",
+      "error400": "Maximum number of active projects reached (2)."
+    },
+    "members": "{count, plural, one {# member} other {# members}}"
+  },
+  "participants": {
+    "all": "All",
+    "lessThan5": "Less than 5",
+    "from5to10": "5 – 10",
+    "moreThan10": "More than 10"
+  },
+  "pagination": {
+    "next": "Next",
+    "prev": "Previous"
   }
 }

@@ -42,6 +42,7 @@ export default function RejectRequestPopup(
       showToast({
         severity: 'error',
         summary: t('error'),
+        detail: t('errorDetails'),
         life: 3000,
         actionKey: 'request',
       });

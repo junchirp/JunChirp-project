@@ -61,7 +61,7 @@ export default function UserNameForm(props: UserNameFormProps): ReactElement {
     if ('error' in result) {
       showToast({
         severity: 'error',
-        summary: `${tForms('userNameForm.error')}`,
+        summary: tForms('userNameForm.error'),
         life: 3000,
         actionKey: 'user name',
       });
@@ -70,7 +70,7 @@ export default function UserNameForm(props: UserNameFormProps): ReactElement {
     if ('data' in result) {
       showToast({
         severity: 'success',
-        summary: `${tForms('userNameForm.success')}`,
+        summary: tForms('userNameForm.success'),
         life: 3000,
         actionKey: 'user name',
       });

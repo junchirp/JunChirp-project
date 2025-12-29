@@ -8,6 +8,7 @@ import {
   Req,
   Put,
   Get,
+  Query,
 } from '@nestjs/common';
 import { SoftSkillsService } from './soft-skills.service';
 import { CreateSoftSkillDto } from './dto/create-soft-skill.dto';
@@ -36,7 +37,19 @@ import { User } from '../auth/decorators/user.decorator';
 export class SoftSkillsController {
   public constructor(private softSkillsService: SoftSkillsService) {}
 
-  @ApiOperation({ summary: 'Get list of soft skills' })
+  @ApiOperation({ summary: 'Get list of soft skills names' })
+  @ApiOkResponse({ type: [String] })
+  @ApiForbiddenResponse({
+    description: 'Access denied: email not confirmed',
+  })
+  @Get('list')
+  public async getSkillsAutocomplete(
+    @Query('skill') query: string,
+  ): Promise<string[]> {
+    return this.softSkillsService.getSoftSkillsAutocomplete(query);
+  }
+
+  @ApiOperation({ summary: `Get list of the current user's soft skills` })
   @ApiOkResponse({ type: [SoftSkillResponseDto] })
   @ApiForbiddenResponse({
     description: 'Access denied: email not confirmed',

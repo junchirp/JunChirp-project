@@ -31,6 +31,7 @@ import { UserWithPasswordResponseDto } from '../users/dto/user-with-password.res
 import { ParseUUIDv4Pipe } from '../shared/pipes/parse-UUIDv4/parse-UUIDv4.pipe';
 import { User } from '../auth/decorators/user.decorator';
 import { UserCardResponseDto } from '../users/dto/user-card.response-dto';
+import { CreateRequestDto } from './dto/create-request.dto';
 
 @User()
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
@@ -89,7 +90,7 @@ export class ParticipationsController {
   @UsePipes(ValidationPipe)
   @Post('request')
   public async createRequest(
-    @Body() createRequestDto: CreateInviteDto,
+    @Body() createRequestDto: CreateRequestDto,
     @Req() req: Request,
   ): Promise<ProjectParticipationResponseDto> {
     const user: UserWithPasswordResponseDto =

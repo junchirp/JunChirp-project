@@ -8,7 +8,7 @@ export class CreateSoftSkillDto {
   })
   @IsString({ message: 'Must be a string' })
   @Length(2, 50, { message: 'Must be between 2 and 50 characters' })
-  @Matches(/^[A-Za-zА-Яа-яІіЇїЄєҐґ0-9 .'\-+_/]{2,50}$/, {
+  @Matches(/^[A-Za-zА-Яа-яІіЇїЄєҐґ0-9 .'\-+_/,()]{2,50}$/, {
     message: 'Skill name is incorrect',
   })
   @IsNotEmpty({ message: 'Skill name is required' })

@@ -85,7 +85,7 @@ export default function EducationForm(props: EducationFormProps): ReactElement {
       if ('error' in result) {
         showToast({
           severity: 'error',
-          summary: `${tForms('educationForm.error')}`,
+          summary: tForms('educationForm.error'),
           life: 3000,
           actionKey: 'education',
         });
@@ -94,7 +94,7 @@ export default function EducationForm(props: EducationFormProps): ReactElement {
       if ('data' in result) {
         showToast({
           severity: 'success',
-          summary: `${tForms('educationForm.success')}`,
+          summary: tForms('educationForm.success'),
           life: 3000,
           actionKey: 'education',
         });
@@ -105,7 +105,7 @@ export default function EducationForm(props: EducationFormProps): ReactElement {
       if ('error' in result) {
         showToast({
           severity: 'error',
-          summary: `${tForms('educationForm.error')}`,
+          summary: tForms('educationForm.error'),
           life: 3000,
           actionKey: 'education',
         });
@@ -114,7 +114,7 @@ export default function EducationForm(props: EducationFormProps): ReactElement {
       if ('data' in result) {
         showToast({
           severity: 'success',
-          summary: `${tForms('educationForm.success')}`,
+          summary: tForms('educationForm.success'),
           life: 3000,
           actionKey: 'education',
         });
@@ -178,7 +178,11 @@ export default function EducationForm(props: EducationFormProps): ReactElement {
         >
           {tButtons('cancel')}
         </Button>
-        <Button type="submit" color="green">
+        <Button
+          type="submit"
+          color="green"
+          loading={updateEducationLoading || addEducationLoading}
+        >
           {tButtons('save')}
         </Button>
       </div>

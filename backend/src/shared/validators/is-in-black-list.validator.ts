@@ -29,9 +29,7 @@ const BLACK_LIST = [
 ];
 
 @ValidatorConstraint({ name: 'isPasswordInBlackList', async: false })
-export class IsPasswordInBlackListValidator
-  implements ValidatorConstraintInterface
-{
+export class IsPasswordInBlackListValidator implements ValidatorConstraintInterface {
   public validate(password: string): boolean {
     return !BLACK_LIST.includes(password);
   }

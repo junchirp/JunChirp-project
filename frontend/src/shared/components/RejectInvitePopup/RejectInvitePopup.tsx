@@ -34,14 +34,15 @@ export default function RejectInvitePopup(
     if ('data' in result) {
       showToast({
         severity: 'success',
-        summary: `${t('success')}`,
+        summary: t('success'),
         life: 3000,
         actionKey: 'invite',
       });
     } else {
       showToast({
         severity: 'error',
-        summary: `${t('error')}`,
+        summary: t('error'),
+        detail: t('errorDetails'),
         life: 3000,
         actionKey: 'invite',
       });

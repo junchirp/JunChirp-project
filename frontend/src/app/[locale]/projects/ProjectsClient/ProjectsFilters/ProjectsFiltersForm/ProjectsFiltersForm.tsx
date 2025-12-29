@@ -3,15 +3,16 @@
 import { ReactElement, useEffect } from 'react';
 import styles from './ProjectsFiltersForm.module.scss';
 import { Controller, useForm } from 'react-hook-form';
-import Button from '@/shared/components/Button/Button';
-import { useProjectsFilters } from '@/hooks/useProjectsFilters';
-import { useGetCategoriesQuery } from '@/api/projectsApi';
-import { projectStatusOptions } from '@/shared/constants/project-status-options';
-import { projectParticipantsOptions } from '@/shared/constants/project-participants-options';
-import Dropdown from '@/shared/components/Dropdown/Dropdown';
-import { ProjectCategoryInterface } from '@/shared/interfaces/project-category.interface';
-import { ParticipantsOptionsInterface } from '@/shared/interfaces/participants-options.interface';
-import { SelectOptionsInterface } from '@/shared/interfaces/select-options.interface';
+import { useProjectsFilters } from '../../../../../../hooks/useProjectsFilters';
+import { useGetCategoriesQuery } from '../../../../../../api/projectsApi';
+import Dropdown from '../../../../../../shared/components/Dropdown/Dropdown';
+import { ProjectCategoryInterface } from '../../../../../../shared/interfaces/project-category.interface';
+import { ParticipantsOptionsInterface } from '../../../../../../shared/interfaces/participants-options.interface';
+import { SelectOptionsInterface } from '../../../../../../shared/interfaces/select-options.interface';
+import { useLocale, useTranslations } from 'next-intl';
+import { Locale } from '../../../../../../i18n/routing';
+import { useProjectParticipantsOptions } from '../../../../../../hooks/useProjectParticipantsOptions';
+import { useProjectStatusOptions } from '../../../../../../hooks/useProjectStatusOptions';
 
 interface FormData {
   status: 'active' | 'done' | null;
@@ -22,7 +23,19 @@ interface FormData {
 export default function ProjectsFiltersForm(): ReactElement {
   const { filters, updateFilters } = useProjectsFilters();
   const { data = [] } = useGetCategoriesQuery(undefined);
-  const categories = [{ id: '', categoryName: 'Всі' }, ...data];
+  const t = useTranslations('projectsPage');
+  const locale = useLocale();
+  const categories = [
+    {
+      id: '',
+      categoryName: {
+        [locale]: t('all'),
+      } as Record<Locale, string>,
+    },
+    ...data,
+  ];
+  const participantsOptions = useProjectParticipantsOptions();
+  const statusOptions = useProjectStatusOptions();
 
   const form = useForm<FormData>({
     mode: 'onChange',
@@ -32,15 +45,6 @@ export default function ProjectsFiltersForm(): ReactElement {
       participantsRange: { minParticipants: 0, maxParticipants: 0 },
     },
   });
-  const watchedValues = form.watch();
-
-  const isFiltersChanged =
-    watchedValues.status !== (filters.status ?? null) ||
-    watchedValues.categoryId !== (filters.categoryId ?? '') ||
-    watchedValues.participantsRange.minParticipants !==
-      (filters.minParticipants ?? 0) ||
-    watchedValues.participantsRange.maxParticipants !==
-      (filters.maxParticipants ?? 0);
 
   useEffect(() => {
     form.reset({
@@ -53,19 +57,6 @@ export default function ProjectsFiltersForm(): ReactElement {
     });
   }, [filters, form.reset]);
 
-  useEffect(() => {
-    if (!isFiltersChanged) {
-      return;
-    }
-    updateFilters({
-      status: watchedValues.status,
-      categoryId: watchedValues.categoryId,
-      minParticipants: watchedValues.participantsRange.minParticipants,
-      maxParticipants: watchedValues.participantsRange.maxParticipants,
-      page: 1,
-    });
-  }, [watchedValues, isFiltersChanged, updateFilters]);
-
   return (
     <div className={styles['projects-filters-form']}>
       <form className={styles['projects-filters-form__form']}>
@@ -77,14 +68,21 @@ export default function ProjectsFiltersForm(): ReactElement {
               <Dropdown<ProjectCategoryInterface>
                 {...field}
                 options={categories}
-                label="Категорія проєкту:"
+                label={`${t('categoryId')}:`}
                 labelSize={20}
                 labelHeight={1.4}
                 labelWeight={600}
                 labelMargin={12}
                 placeholder="Всі"
-                getOptionLabel={(o) => o.categoryName}
+                getOptionLabel={(o) => o.categoryName[locale as Locale]}
                 getOptionValue={(o) => o.id}
+                onChange={(value) => {
+                  field.onChange(value);
+                  updateFilters({
+                    categoryId: value,
+                    page: 1,
+                  });
+                }}
               />
             )}
           />
@@ -96,8 +94,8 @@ export default function ProjectsFiltersForm(): ReactElement {
             render={({ field }) => (
               <Dropdown<SelectOptionsInterface>
                 {...field}
-                options={projectStatusOptions}
-                label="Статус проєкту:"
+                options={statusOptions}
+                label={`${t('status')}:`}
                 labelSize={20}
                 labelHeight={1.4}
                 labelWeight={600}
@@ -105,6 +103,13 @@ export default function ProjectsFiltersForm(): ReactElement {
                 placeholder="Всі"
                 getOptionLabel={(o) => o.label}
                 getOptionValue={(o) => o.value}
+                onChange={(value) => {
+                  field.onChange(value);
+                  updateFilters({
+                    status: value,
+                    page: 1,
+                  });
+                }}
               />
             )}
           />
@@ -116,8 +121,8 @@ export default function ProjectsFiltersForm(): ReactElement {
             render={({ field }) => (
               <Dropdown<ParticipantsOptionsInterface>
                 {...field}
-                options={projectParticipantsOptions}
-                label="Кількість учасників:"
+                options={participantsOptions}
+                label={`${t('participantsRange')}:`}
                 labelSize={20}
                 labelHeight={1.4}
                 labelWeight={600}
@@ -133,12 +138,23 @@ export default function ProjectsFiltersForm(): ReactElement {
                 onChange={(val) => {
                   if (!val) {
                     field.onChange({ minParticipants: 0, maxParticipants: 0 });
+                    updateFilters({
+                      minParticipants: undefined,
+                      maxParticipants: undefined,
+                      page: 1,
+                    });
                     return;
                   }
+
                   const [min, max] = val.split('-').map(Number);
                   field.onChange({
                     minParticipants: min,
                     maxParticipants: max,
+                  });
+                  updateFilters({
+                    minParticipants: min,
+                    maxParticipants: max,
+                    page: 1,
                   });
                 }}
               />

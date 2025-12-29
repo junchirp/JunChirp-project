@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { LocaleType } from '../../shared/types/locale.type';
 
 export class ProjectCategoryResponseDto {
   @ApiProperty({
@@ -7,6 +8,15 @@ export class ProjectCategoryResponseDto {
   })
   public readonly id: string;
 
-  @ApiProperty({ example: 'Web development', description: 'Category name' })
-  public readonly categoryName: string;
+  @ApiProperty({
+    example: {
+      ua: 'Веб розробка',
+      en: 'Web Development',
+    },
+    description: 'Localized category names',
+    additionalProperties: {
+      type: 'string',
+    },
+  })
+  public readonly categoryName: Record<LocaleType, string>;
 }

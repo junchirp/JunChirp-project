@@ -448,7 +448,7 @@ export class AuthService {
       this.configService.get<string>('BASE_FRONTEND_URL') ??
       'https://localhost:3000';
 
-    const fallbackRedirect = `${frontendBaseUrl}/?error=discord_auth_failed`;
+    const fallbackRedirect = `${frontendBaseUrl}/?status=failure&error=discord_auth_failed`;
 
     try {
       const data = await this.redisService.get(state);
@@ -487,7 +487,7 @@ export class AuthService {
 
     const redirectWithError = (returnUrl: string): void => {
       const safeUrl = this.getSafeReturnUrl(returnUrl);
-      const finalUrl = `${frontendBaseUrl}${safeUrl}?error=google_auth_failed`;
+      const finalUrl = `${frontendBaseUrl}${safeUrl}?status=failure&error=google_auth_failed`;
       return res.redirect(finalUrl);
     };
 
@@ -530,7 +530,7 @@ export class AuthService {
   private getSafeReturnUrl(url: string | undefined): string {
     try {
       const decoded = decodeURIComponent(url ?? '');
-      return decoded.startsWith('/') ? decoded : '/';
+      return decoded.startsWith('/') ? `${decoded}?status=success` : '/';
     } catch {
       return '/';
     }
