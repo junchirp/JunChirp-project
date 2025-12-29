@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsIn, IsNotEmpty, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsUUID } from 'class-validator';
 import { CreateRequestDto } from './create-request.dto';
-import { localeArray, LocaleType } from '../../shared/types/locale.type';
 
 export class CreateInviteDto extends CreateRequestDto {
   @ApiProperty({
