@@ -265,6 +265,7 @@ export default function ProjectCard({
                   alt="logo"
                   width={180}
                   height={0}
+                  unoptimized
                 />
               ) : (
                 <Image

@@ -51,6 +51,11 @@ export default function BurgerMenu(): ReactElement {
     closeMenu();
   };
 
+  const discordRedirect = (): void => {
+    window.open('https://discord.gg/x2rdtS2Vbz', '_blank');
+    closeMenu();
+  };
+
   return (
     <div className={styles['burger-menu']}>
       <button
@@ -97,6 +102,18 @@ export default function BurgerMenu(): ReactElement {
           >
             <Image src="/images/users.svg" alt="users" width={48} height={48} />
             <span>Учасники</span>
+          </button>
+          <button
+            className={styles['burger-menu__menu-item']}
+            onClick={discordRedirect}
+          >
+            <Image
+              src="/images/discord-2.svg"
+              alt="chat"
+              width={48}
+              height={48}
+            />
+            <span>Чат</span>
           </button>
           <button
             className={styles['burger-menu__menu-item']}

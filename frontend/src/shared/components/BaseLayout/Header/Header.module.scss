@@ -19,4 +19,10 @@
   &__link {
     height: 76px;
   }
+
+  &__login {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
 }
