@@ -1,3 +1,5 @@
+'use client';
+
 import { useTranslations } from 'next-intl';
 import { localizeOptions } from '@/shared/utils/localizeOptions';
 import { SelectStatusWithKeyInterface } from '@/shared/interfaces/select-status-with-key.interface';

@@ -7,6 +7,7 @@ import Button from '@/shared/components/Button/Button';
 import { useRouter } from 'next/navigation';
 import SocialInvitePopup from './SocialInvitePopup/SocialInvitePopup';
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
+import { useTranslations } from 'next-intl';
 
 interface CallToActionProps {
   user: AuthInterface | null;
@@ -17,6 +18,8 @@ export default function CallToAction({
 }: CallToActionProps): ReactElement {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
+  const tButtons = useTranslations('buttons');
+  const tCallToAction = useTranslations('callToAction');
 
   const handleRegistration = (): void => {
     router.push('/auth/registration');
@@ -33,44 +36,33 @@ export default function CallToAction({
             <div className={styles['call-to-action__description']}>
               {user?.isVerified ? (
                 <h2 className={styles['call-to-action__header']}>
-                  Створювати щось велике разом з друзями &mdash; це завжди
-                  круто!
+                  {tCallToAction('auth.title')}
                 </h2>
               ) : (
                 <h2 className={styles['call-to-action__header']}>
-                  Тепер твій момент!
+                  {tCallToAction('noAuth.title')}
                 </h2>
               )}
               {user?.isVerified ? (
                 <div className={styles['call-to-action__text']}>
-                  <p>
-                    Запроси своїх знайомих, об'єднайтесь, генеруйте ідеї та
-                    створюйте інноваційні проєкти, які змінять світ!
-                  </p>
-                  <p>
-                    Коли працюєш з тими, кого знаєш, процес стає ще більш
-                    захоплюючим та надихаючим. Разом досягнемо більше!
-                  </p>
+                  <p>{tCallToAction('auth.paragraphOne')}</p>
+                  <p>{tCallToAction('auth.paragraphTwo')}</p>
                 </div>
               ) : (
                 <div className={styles['call-to-action__text']}>
-                  <p>
-                    Долистав до кінця? Тепер вибір за тобою! Час не чекає. Зараз
-                    твоя черга: залишайся спостерігачем або починай підкорювати
-                    нові горизонти!
-                  </p>
-                  <p>Реєструйся і зроби перший крок до своєї кар'єри в ІТ.</p>
-                  <p>Успіх чекає на тебе!</p>
+                  <p>{tCallToAction('noAuth.paragraphOne')}</p>
+                  <p>{tCallToAction('noAuth.paragraphTwo')}</p>
+                  <p>{tCallToAction('noAuth.paragraphThree')}</p>
                 </div>
               )}
             </div>
             {user?.isVerified ? (
               <Button color="green" onClick={openPopup}>
-                Запросити
+                {tButtons('inviteToPlatform')}
               </Button>
             ) : (
               <Button color="green" onClick={handleRegistration}>
-                Зареєструватись
+                {tButtons('signUp')}
               </Button>
             )}
           </div>

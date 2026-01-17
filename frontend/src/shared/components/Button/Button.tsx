@@ -4,6 +4,8 @@ import styles from './Button.module.scss';
 import {
   ButtonHTMLAttributes,
   cloneElement,
+  ForwardedRef,
+  forwardRef,
   MouseEvent,
   ReactElement,
   ReactNode,
@@ -37,21 +39,24 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   type?: 'button' | 'submit' | 'reset';
 }
 
-export default function Button({
-  color = 'gray',
-  size = 'sm',
-  variant = 'primary',
-  icon,
-  iconPosition = 'left',
-  children,
-  onClick,
-  disabled,
-  fullWidth = false,
-  loading = false,
-  isLoader = false,
-  className,
-  type = 'button',
-}: ButtonProps): ReactElement {
+function ButtonComponent(
+  {
+    color = 'gray',
+    size = 'sm',
+    variant = 'primary',
+    icon,
+    iconPosition = 'left',
+    children,
+    onClick,
+    disabled,
+    fullWidth = false,
+    loading = false,
+    isLoader = false,
+    className,
+    type = 'button',
+  }: ButtonProps,
+  ref: ForwardedRef<HTMLButtonElement>,
+): ReactElement {
   const isIconOnly = !!icon && !children;
 
   const classNames = [
@@ -91,6 +96,7 @@ export default function Button({
 
   return (
     <button
+      ref={ref}
       type={type}
       className={classNames}
       onClick={handleClick}
@@ -112,3 +118,7 @@ export default function Button({
     </button>
   );
 }
+
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(ButtonComponent);
+
+export default Button;

@@ -1,8 +1,13 @@
+'use client';
+
 import { ReactElement } from 'react';
 import styles from './Quote.module.scss';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 
 export default function Quote(): ReactElement {
+  const t = useTranslations('homeQuote');
+
   return (
     <div className={styles.quote}>
       <div className={styles.quote__inner}>
@@ -13,10 +18,7 @@ export default function Quote(): ReactElement {
           width={33}
           height={35}
         />
-        <h2 className={styles.quote__quote}>
-          Разом ми досягаємо більше. Кожен внесок важливий, а успіх команди
-          &mdash; це успіх кожного.
-        </h2>
+        <h2 className={styles.quote__quote}>{t('quote')}</h2>
         <Image
           className={styles['quote__bottom-star']}
           src="/images/star.svg"

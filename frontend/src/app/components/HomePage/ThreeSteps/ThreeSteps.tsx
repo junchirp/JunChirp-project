@@ -2,10 +2,12 @@
 
 import { ReactElement, useEffect, useRef, useState } from 'react';
 import styles from './ThreeSteps.module.scss';
+import { useTranslations } from 'next-intl';
 
 export default function ThreeSteps(): ReactElement {
   const containerRef = useRef(null);
   const [visible, setVisible] = useState(false);
+  const t = useTranslations('threeSteps');
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -30,9 +32,7 @@ export default function ThreeSteps(): ReactElement {
 
   return (
     <div className={styles['three-steps']}>
-      <h2 className={styles['three-steps__header']}>
-        Три прості кроки до впевненого IT-Профі:
-      </h2>
+      <h2 className={styles['three-steps__header']}>{t('title')}</h2>
       <div className={styles['three-steps__steps']} ref={containerRef}>
         <div
           className={`${styles['three-steps__one']} ${visible ? styles['three-steps__show'] : ''}`}
@@ -41,11 +41,10 @@ export default function ThreeSteps(): ReactElement {
             className={`${styles['three-steps__step-box']} ${styles['three-steps__step-box--one-top']}`}
           >
             <h3 className={styles['three-steps__step-title']}>
-              Заповни профіль.
+              {t('stepOne.title')}
             </h3>
             <p className={styles['three-steps__step-text']}>
-              Розкажи про себе та свої навички &mdash; це твій стартовий
-              майданчик.
+              {t('stepOne.description')}
             </p>
           </div>
           <div
@@ -62,15 +61,14 @@ export default function ThreeSteps(): ReactElement {
           >
             <p className={styles['three-steps__step-number']}>2</p>
             <h3 className={styles['three-steps__step-title']}>
-              Приєднуйся до проєкту.
+              {t('stepTwo.title')}
             </h3>
           </div>
           <div
             className={`${styles['three-steps__step-box']} ${styles['three-steps__step-box--two-bottom']}`}
           >
             <p className={styles['three-steps__step-text']}>
-              Знайди команду, в якій твої ідеї матимуть значення. Отримай
-              реальний досвід і підтримку!
+              {t('stepTwo.description')}
             </p>
           </div>
         </div>
@@ -84,11 +82,10 @@ export default function ThreeSteps(): ReactElement {
           </div>
           <div className={styles['three-steps__step-box']}>
             <h3 className={styles['three-steps__step-title']}>
-              Запусти свій проєкт.
+              {t('stepThree.title')}
             </h3>
             <p className={styles['three-steps__step-text']}>
-              Візьми на себе роль лідера — керуй командою та втілюй ідеї в
-              реальність.
+              {t('stepThree.description')}
             </p>
           </div>
         </div>
