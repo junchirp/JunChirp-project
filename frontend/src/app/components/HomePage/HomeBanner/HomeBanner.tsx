@@ -1,12 +1,14 @@
 'use client';
 
-import { ReactElement } from 'react';
+import { ReactElement, useRef } from 'react';
 import styles from './HomeBanner.module.scss';
 import Button from '@/shared/components/Button/Button';
 import Image from 'next/image';
 import ArrowUpRight from '@/assets/icons/arrow-up-right.svg';
 import { useRouter } from 'next/navigation';
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
+import { useTranslations } from 'next-intl';
+import { useElementWidth } from '../../../../hooks/useElementWidth';
 
 interface HomeBannerProps {
   user: AuthInterface | null;
@@ -14,6 +16,10 @@ interface HomeBannerProps {
 
 export default function HomeBanner({ user }: HomeBannerProps): ReactElement {
   const router = useRouter();
+  const tBanner = useTranslations('homeBanner');
+  const tButtons = useTranslations('buttons');
+  const ref = useRef<HTMLButtonElement>(null);
+  const width = useElementWidth(ref);
 
   const handleRedirect = (): void => {
     router.push(user ? '/projects' : '/auth/registration');
@@ -34,39 +40,37 @@ export default function HomeBanner({ user }: HomeBannerProps): ReactElement {
             <div className={styles['home-banner__title-wrapper']}>
               {user?.isVerified ? (
                 <h2 className={styles['home-banner__title']}>
-                  Вітаємо,{' '}
+                  {tBanner('authTitleFirst')}
                   <span className={styles['home-banner__title--green']}>
                     [{user.firstName}]
                   </span>
-                  ! Готовий до нових викликів?
+                  {tBanner('authTitleSecond')}
                 </h2>
               ) : (
                 <h2 className={styles['home-banner__title']}>
-                  Від новачка до{' '}
+                  {tBanner('title')}
                   <span className={styles['home-banner__title--green']}>
-                    [професіонала]
+                    {tBanner('titleGreen')}
                   </span>
                 </h2>
               )}
               {!user?.isVerified && (
                 <h3 className={styles['home-banner__sub-title']}>
-                  Твоя IT-кар'єра починається тут!
+                  {tBanner('subTitle')}
                 </h3>
               )}
             </div>
             {user?.isVerified ? (
               <p className={styles['home-banner__text']}>
-                Обирай проєкт, прокачуй навички та зроби перший крок у реальних
-                IT-розробках!
+                {tBanner('authText')}
               </p>
             ) : (
               <div className={styles['home-banner__text-wrapper']}>
                 <p className={styles['home-banner__text']}>
-                  Реєструйся на платформі для джуніорів IT та отримуй доступ до
-                  реальних проєктів для розвитку своїх навичок.
+                  {tBanner('textFirst')}
                 </p>
                 <p className={styles['home-banner__text']}>
-                  Тренуйся, працюй над проєктами та ставай експертом!
+                  {tBanner('textSecond')}
                 </p>
               </div>
             )}
@@ -79,16 +83,19 @@ export default function HomeBanner({ user }: HomeBannerProps): ReactElement {
           width={441}
           priority
         />
-        <div className={styles['home-banner__button-wrapper']}>
+        <div
+          className={styles['home-banner__button-wrapper']}
+          style={{ width: width + 8 }}
+        >
           <Button
+            ref={ref}
             size="lg"
             color="green"
             iconPosition="right"
             icon={<ArrowUpRight />}
-            fullWidth
             onClick={handleRedirect}
           >
-            {user?.isVerified ? 'Обрати' : 'Зареєструватися'}
+            {tButtons(user?.isVerified ? 'choose' : 'signUp')}
           </Button>
         </div>
       </div>

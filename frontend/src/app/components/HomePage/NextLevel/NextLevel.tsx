@@ -1,20 +1,22 @@
+'use client';
+
 import { ReactElement } from 'react';
 import styles from './NextLevel.module.scss';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 
 export default function NextLevel(): ReactElement {
+  const t = useTranslations('nextLevel');
+
   return (
     <div className={styles['next-level']}>
-      <h2 className={styles['next-level__header']}>
-        Наступний рівень на горизонті
-      </h2>
+      <h2 className={styles['next-level__header']}>{t('title')}</h2>
       <div className={styles['next-level__inner']}>
         <div className={styles['next-level__content']}>
           <div className={styles['next-level__new-opportunities']}>
-            Ми готуємо для тебе нові можливості, щоб твій шлях до професіонала
-            став ще цікавішим і захоплюючим.{' '}
+            {t('descriptionLeft')}
             <span className={styles['next-level__green-text']}>
-              [НЕЗАБАРОМ:]
+              {t('comingSoon')}
             </span>
           </div>
           <div className={styles['next-level__arrow']}>
@@ -28,20 +30,18 @@ export default function NextLevel(): ReactElement {
           <div className={styles['next-level__right-block']}>
             <div className={styles['next-level__dashboard']}>
               <h3 className={styles['next-level__title']}>
-                [ПЕРСОНАЛЬНИЙ ДАШБОРД]
+                {t('titleRightOne')}
               </h3>
               <p className={styles['next-level__text']}>
-                Всі твої проєкти, досягнення та виклики — в одному місці. Керуй
-                своїм прогресом, слідкуй за результатами та стеж за тим, як
-                кожен крок наближає тебе до мети!
+                {t('descriptionRightOne')}
               </p>
             </div>
             <div className={styles['next-level__grow-playing']}>
-              <h3 className={styles['next-level__title']}>[ЗРОСТАЙ ГРАЮЧИ]</h3>
+              <h3 className={styles['next-level__title']}>
+                {t('titleRightTwo')}
+              </h3>
               <p className={styles['next-level__text']}>
-                Заробляй ХР, отримуй ексклюзивні бейджі та підвищуй рівень,
-                виконуючи завдання. Розвивайся через досягнення та покращуй свої
-                навички в процесі!
+                {t('descriptionRightTwo')}
               </p>
             </div>
           </div>

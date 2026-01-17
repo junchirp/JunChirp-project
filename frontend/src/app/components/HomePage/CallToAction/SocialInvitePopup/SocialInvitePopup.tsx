@@ -13,6 +13,7 @@ import Telegram from '@/assets/icons/telegram.svg';
 import Discord from '@/assets/icons/discord.svg';
 import { PlatformType } from '@/shared/types/platform.type';
 import { useToast } from '@/hooks/useToast';
+import { useTranslations } from 'next-intl';
 
 interface SocialInvitePopupProps {
   onClose: () => void;
@@ -38,13 +39,14 @@ export default function SocialInvitePopup(
   props: SocialInvitePopupProps,
 ): ReactElement {
   const { onClose, userId } = props;
-
   const [inviteUrl, setInviteUrl] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
   const { showToast, isActive } = useToast();
+  const tPopup = useTranslations('invitePlatformPopup');
+  const tButtons = useTranslations('buttons');
 
   useEffect(() => {
-    const url = `${window.location.origin}/invite?ref=${userId}`;
+    const url = `${window.location.origin}?ref=${userId}`;
     setInviteUrl(url);
   }, [userId]);
 
@@ -79,15 +81,15 @@ export default function SocialInvitePopup(
       await navigator.clipboard.writeText(textToCopy);
       showToast({
         severity: 'success',
-        summary: 'Посилання скопійовано!',
+        summary: tPopup('success'),
         life: 1000,
         actionKey: 'copy',
       });
     } catch {
       showToast({
         severity: 'error',
-        summary: 'Помилка при копіюванні посилання.',
-        detail: 'Спробуй ще раз.',
+        summary: tPopup('error'),
+        detail: tPopup('details'),
         life: 1000,
         actionKey: 'copy',
       });
@@ -105,9 +107,14 @@ export default function SocialInvitePopup(
           size="md"
           onClick={onClose}
         />
-        <h3 className={styles['social-invite-popup__title']}>
-          Запросити за допомогою
-        </h3>
+        <div className={styles['social-invite-popup__content']}>
+          <h3 className={styles['social-invite-popup__title']}>
+            {tPopup('title')}
+          </h3>
+          <p className={styles['social-invite-popup__text']}>
+            {tPopup('description')}
+          </p>
+        </div>
         <div className={styles['social-invite-popup__field']}>
           <Input
             className={styles['social-invite-popup__input']}
@@ -116,7 +123,7 @@ export default function SocialInvitePopup(
             readOnly
           />
           <Button color="green" onClick={handleCopy}>
-            Скопіювати
+            {tButtons('copy')}
           </Button>
         </div>
         <div className={styles['social-invite-popup__social-buttons']}>

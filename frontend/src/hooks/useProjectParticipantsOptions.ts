@@ -1,3 +1,5 @@
+'use client';
+
 import { localizeOptions } from '@/shared/utils/localizeOptions';
 import { useTranslations } from 'next-intl';
 import { projectParticipantsOptions } from '@/shared/constants/project-participants-options';

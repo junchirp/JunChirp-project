@@ -13,6 +13,7 @@ import Button from '@/shared/components/Button/Button';
 import { useRouter } from 'next/navigation';
 import { authBlocks, noAuthBlocks } from '@/shared/constants/what-we-need';
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
+import { useTranslations } from 'next-intl';
 
 const CENTER_GAP = 264;
 const FIXED_INDEXES = [2, 3, 4];
@@ -30,6 +31,7 @@ export default function WhatWeNeed({ user }: WhatWeNeedProps): ReactElement {
   const [translate, setTranslate] = useState(0);
   const router = useRouter();
   const blocks = user?.isVerified ? authBlocks : noAuthBlocks;
+  const t = useTranslations('whatWeNeed');
 
   useLayoutEffect(() => {
     const cH = containerRef.current?.offsetHeight ?? 0;
@@ -116,14 +118,14 @@ export default function WhatWeNeed({ user }: WhatWeNeedProps): ReactElement {
     if (n <= 0.45) {
       return color;
     } else {
-      const t = (n - 0.45) / 0.55;
+      const x = (n - 0.45) / 0.55;
 
       const gray = { r: 161, g: 161, b: 161 };
       const white = { r: 255, g: 255, b: 255 };
 
-      const r = Math.round(gray.r + (white.r - gray.r) * t);
-      const g = Math.round(gray.g + (white.g - gray.g) * t);
-      const b = Math.round(gray.b + (white.b - gray.b) * t);
+      const r = Math.round(gray.r + (white.r - gray.r) * x);
+      const g = Math.round(gray.g + (white.g - gray.g) * x);
+      const b = Math.round(gray.b + (white.b - gray.b) * x);
 
       return `rgb(${r}, ${g}, ${b})`;
     }
@@ -185,9 +187,7 @@ export default function WhatWeNeed({ user }: WhatWeNeedProps): ReactElement {
   return (
     <div className={styles['what-we-need__wrapper']} ref={sectionRef}>
       <div className={styles['what-we-need']}>
-        <h2 className={styles['what-we-need__header']}>
-          Все, що потрібно для ІТ-старту
-        </h2>
+        <h2 className={styles['what-we-need__header']}>{t('title')}</h2>
         <div ref={containerRef} className={styles['what-we-need__container']}>
           <div style={{ transform: `translateY(${translate}px)` }}>
             {blocks.map((block, i) => {
@@ -209,7 +209,7 @@ export default function WhatWeNeed({ user }: WhatWeNeedProps): ReactElement {
                 >
                   <div className={styles['what-we-need__item-content']}>
                     {block.title && (
-                      <h3 style={getTitleStyle(i)}>{block.title}</h3>
+                      <h3 style={getTitleStyle(i)}>{t(block.title)}</h3>
                     )}
                   </div>
                   <Circle
@@ -219,14 +219,14 @@ export default function WhatWeNeed({ user }: WhatWeNeedProps): ReactElement {
                   <div
                     className={`${styles['what-we-need__item-content']} ${styles['what-we-need__item-content--right']}`}
                   >
-                    {block.text && <p style={getTextStyle(i)}>{block.text}</p>}
+                    {block.text && <p style={getTextStyle(i)}>{t(block.text)}</p>}
                     {block.buttonText && getNorm(i) <= 0.45 && (
                       <Button
                         color="green"
                         variant="secondary-frame"
                         onClick={() => handleRedirect(i)}
                       >
-                        {block.buttonText}
+                        {t(block.buttonText)}
                       </Button>
                     )}
                   </div>

@@ -8,10 +8,13 @@ import Button from '@/shared/components/Button/Button';
 import Linkedin from '@/assets/icons/linkedin.svg';
 import React, { ReactElement } from 'react';
 import { useSupport } from '@/hooks/useSupport';
+import { useTranslations } from 'next-intl';
 
 export default function Footer(): ReactElement {
   const router = useRouter();
   const support = useSupport();
+  const dateNow = new Date();
+  const t = useTranslations('footer');
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>): void => {
     e.preventDefault();
@@ -45,7 +48,7 @@ export default function Footer(): ReactElement {
         <div className={styles.footer__content}>
           <div className={styles.footer__buttons}>
             <Button color="green" variant="secondary-footer" onClick={goAbout}>
-              Про нас
+              {t('aboutBtn')}
             </Button>
             <Button
               color="green"
@@ -54,17 +57,19 @@ export default function Footer(): ReactElement {
               onClick={goLinkedin}
             ></Button>
             <Button color="green" variant="secondary-footer" onClick={support}>
-              Підтримка
+              {t('supportBtn')}
             </Button>
           </div>
           <div className={styles.footer__links}>
             <Link className={styles.footer__link} href="/privacy-policy">
-              Політика конфіденційності
+              {t('privacyPolicy')}
             </Link>
             <Link className={styles.footer__link} href="/legal-terms">
-              Умови використання
+              {t('terms')}
             </Link>
-            <span className={styles.footer__copyright}>&#169; 2025</span>
+            <span className={styles.footer__copyright}>
+              &#169; {dateNow.getFullYear()}
+            </span>
           </div>
         </div>
       </div>

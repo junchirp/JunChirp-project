@@ -3,16 +3,20 @@
     "cancel": "Cancel",
     "delete": "Delete",
     "save": "Save",
+    "copy": "Copy",
     "connect": "Connect",
     "accept": "Accept",
     "decline": "Decline",
     "login": "Login",
+    "signUp": "Sign up",
+    "choose": "Choose",
     "viewDetails": "View details",
     "goDashboard": "Go to project dashboard",
     "viewWebSite": "View website",
     "sendRequest": "Apply Now",
     "cancelRequest": "Cancel Application",
-    "sendInvite": "Send invitation"
+    "sendInvite": "Send invitation",
+    "inviteToPlatform": "Invite"
   },
   "discord": {
     "profile": "Connect Discord to join projects and gain access to project chats.",
@@ -321,5 +325,105 @@
   "pagination": {
     "next": "Next",
     "prev": "Previous"
+  },
+  "footer": {
+    "aboutBtn": "About us",
+    "supportBtn": "Support",
+    "privacyPolicy": "Privacy Policy",
+    "terms": "Terms of Use"
+  },
+  "homeBanner": {
+    "title": "From beginner to ",
+    "titleGreen": "[professional]",
+    "subTitle": "Your IT career starts here!",
+    "textFirst": "Register on the platform for IT juniors and get access to real projects to develop your skills.",
+    "textSecond": "Train, work on projects and become an expert!",
+    "authTitleFirst": "Welcome, ",
+    "authTitleSecond": "! Ready for new challenges?",
+    "authText": "Choose a project, level up your skills, and take your first step in real IT development!"
+  },
+  "homeQuote": {
+    "quote": "Together we achieve more. Every contribution matters, and the success of the team is the success of everyone."
+  },
+  "threeSteps": {
+    "title": "Three simple steps to becoming a confident IT-Pro:",
+    "stepOne": {
+      "title": "Complete your profile.",
+      "description": "Tell about yourself and your skills — this is your starting point."
+    },
+    "stepTwo": {
+      "title": "Join a project.",
+      "description": "Find a team where your ideas matter. Gain real experience and support!"
+    },
+    "stepThree": {
+      "title": "Start your own project.",
+      "description": "Become a leader — guide your team and bring ideas to life."
+    }
+  },
+  "whatWeNeed": {
+    "title": "Everything you need for an IT start",
+    "noAuth": {
+      "stepOne": {
+        "title": "1. Creative space for \n inspiration",
+        "description": "All resources for creating creative projects are at your disposal. JunChirp provides everything you need to focus on bringing your ideas to life. Explore the workspace and start creating today!",
+        "button": "Find inspiration"
+      },
+      "stepTwo": {
+        "title": "Develop your skills in \n real projects",
+        "description": "Complete tasks, improve your skills, and add new ones to your profile. Solving real problems helps you grow professionally and gain experience that becomes the foundation of your IT career.",
+        "button": "Start tasks"
+      },
+      "stepThree": {
+        "title": "Expand your professional \n network",
+        "description": "Find like-minded people and conquer new heights together! Build a network of professionals and unlock new opportunities for growth and career development.",
+        "button": "Find a team"
+      }
+    },
+    "auth": {
+      "stepOne": {
+        "title": "1. Want to level up \n your skills?",
+        "description": "Choose a project you’re interested in and join in!",
+        "button": "View projects"
+      },
+      "stepTwo": {
+        "title": "2. Have a great idea?",
+        "description": "Launch your own project and build your dream team!",
+        "button": "Create project"
+      },
+      "stepThree": {
+        "title": "3. Need more \n networking?",
+        "description": "Connect with the community, find like-minded people, and gain valuable insights.",
+        "button": "Go to chat"
+      }
+    }
+  },
+  "nextLevel": {
+    "title": "The next level is on the horizon!",
+    "descriptionLeft": "We are preparing new opportunities to make your journey to becoming a professional even more exciting and engaging. ",
+    "comingSoon": "[COMING SOON:]",
+    "titleRightOne": "[PERSONAL DASHBOARD]",
+    "descriptionRightOne": "All your projects, achievements and challenges — in one place. Track your progress, monitor results, and see how each step brings you closer to your goals!",
+    "titleRightTwo": "[GROW THROUGH PLAY]",
+    "descriptionRightTwo": "Earn XP, collect exclusive badges, and level up by completing tasks. Develop through achievements and improve your skills along the way!"
+  },
+  "callToAction": {
+    "auth": {
+      "title": "Creating something big together with friends is always awesome!",
+      "paragraphOne": "Invite your friends, collaborate, generate ideas, and create innovative projects that can change the world!",
+      "paragraphTwo": "Working with people you know makes the process even more inspiring. Together we achieve more!"
+    },
+    "noAuth": {
+      "title": "Now it’s your moment!",
+      "paragraphOne": "Reached the end? Now the choice is yours! Time doesn’t wait. It’s your turn now: remain an observer or start conquering new horizons!",
+      "paragraphTwo": "Register and make your first step toward your IT career.",
+      "paragraphThree": "Success is waiting for you!"
+    }
+  },
+  "invitePlatformPopup": {
+    "title": "Better together",
+    "description": "Invite friends and build awesome projects side by side.",
+    "success": "Link copied successfully!",
+    "error": "Failed to copy link.",
+    "errorDetails": "Try again."
   }
 }
