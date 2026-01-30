@@ -8,6 +8,7 @@ export default function ThreeSteps(): ReactElement {
   const containerRef = useRef(null);
   const [visible, setVisible] = useState(false);
   const t = useTranslations('threeSteps');
+  const steps = t.raw('steps');
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -41,10 +42,10 @@ export default function ThreeSteps(): ReactElement {
             className={`${styles['three-steps__step-box']} ${styles['three-steps__step-box--one-top']}`}
           >
             <h3 className={styles['three-steps__step-title']}>
-              {t('stepOne.title')}
+              {steps[0].title}
             </h3>
             <p className={styles['three-steps__step-text']}>
-              {t('stepOne.description')}
+              {steps[0].description}
             </p>
           </div>
           <div
@@ -61,14 +62,14 @@ export default function ThreeSteps(): ReactElement {
           >
             <p className={styles['three-steps__step-number']}>2</p>
             <h3 className={styles['three-steps__step-title']}>
-              {t('stepTwo.title')}
+              {steps[1].title}
             </h3>
           </div>
           <div
             className={`${styles['three-steps__step-box']} ${styles['three-steps__step-box--two-bottom']}`}
           >
             <p className={styles['three-steps__step-text']}>
-              {t('stepTwo.description')}
+              {steps[1].description}
             </p>
           </div>
         </div>
@@ -82,10 +83,10 @@ export default function ThreeSteps(): ReactElement {
           </div>
           <div className={styles['three-steps__step-box']}>
             <h3 className={styles['three-steps__step-title']}>
-              {t('stepThree.title')}
+              {steps[2].title}
             </h3>
             <p className={styles['three-steps__step-text']}>
-              {t('stepThree.description')}
+              {steps[2].description}
             </p>
           </div>
         </div>

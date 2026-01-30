@@ -11,9 +11,15 @@ import styles from './WhatWeNeed.module.scss';
 import Circle from '@/assets/icons/circle.svg';
 import Button from '@/shared/components/Button/Button';
 import { useRouter } from 'next/navigation';
-import { authBlocks, noAuthBlocks } from '@/shared/constants/what-we-need';
+import {
+  authRoutes,
+  emptyBlock,
+  noAuthRoutes,
+} from '@/shared/constants/what-we-need';
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import { useTranslations } from 'next-intl';
+import DiscordBanner from '@/shared/components/DiscordBanner/DiscordBanner';
+import { WhatWeNeedType } from '@/shared/interfaces/what-we-need.interface';
 
 const CENTER_GAP = 264;
 const FIXED_INDEXES = [2, 3, 4];
@@ -29,9 +35,44 @@ export default function WhatWeNeed({ user }: WhatWeNeedProps): ReactElement {
   const [heights, setHeights] = useState<number[]>([]);
   const [containerH, setContainerH] = useState(1);
   const [translate, setTranslate] = useState(0);
+  const [isBanner, setBanner] = useState(false);
   const router = useRouter();
-  const blocks = user?.isVerified ? authBlocks : noAuthBlocks;
-  const t = useTranslations('whatWeNeed');
+  const tWhatNeed = useTranslations('whatWeNeed');
+  const tDiscord = useTranslations('discord');
+  const tBlocks: {
+    title: string;
+    description: string;
+    button: string;
+    buttonChat?: string;
+  }[] = user?.isVerified ? tWhatNeed.raw('auth') : tWhatNeed.raw('noAuth');
+  const whatWeNeedRoutes: string[] = user?.isVerified
+    ? authRoutes
+    : noAuthRoutes;
+  const noEmptyBlocks: WhatWeNeedType[] = tBlocks.map((item, index) => {
+    if (item.buttonChat) {
+      return {
+        title: item.title,
+        text: item.description,
+        buttonText: item.button,
+        buttonTextChat: item.buttonChat,
+        buttonUrl: whatWeNeedRoutes[index],
+      };
+    }
+
+    return {
+      title: item.title,
+      text: item.description,
+      buttonText: item.button,
+      buttonRoute: whatWeNeedRoutes[index],
+    };
+  });
+  const blocks = [
+    emptyBlock,
+    emptyBlock,
+    ...noEmptyBlocks,
+    emptyBlock,
+    emptyBlock,
+  ];
 
   useLayoutEffect(() => {
     const cH = containerRef.current?.offsetHeight ?? 0;
@@ -176,66 +217,87 @@ export default function WhatWeNeed({ user }: WhatWeNeedProps): ReactElement {
     };
   };
 
-  const handleRedirect = (i: number): void => {
+  const handleClick = (i: number): void => {
     if (blocks[i].buttonRoute) {
       router.push(blocks[i].buttonRoute);
-    } else {
+    } else if (user?.discordId) {
       window.open(blocks[i].buttonUrl, '_blank');
+    } else {
+      setBanner(true);
     }
   };
 
-  return (
-    <div className={styles['what-we-need__wrapper']} ref={sectionRef}>
-      <div className={styles['what-we-need']}>
-        <h2 className={styles['what-we-need__header']}>{t('title')}</h2>
-        <div ref={containerRef} className={styles['what-we-need__container']}>
-          <div style={{ transform: `translateY(${translate}px)` }}>
-            {blocks.map((block, i) => {
-              const fixedHeight = FIXED_INDEXES.includes(i)
-                ? CENTER_GAP
-                : 'auto';
+  const closeBanner = (): void => {
+    setBanner(false);
+  };
 
-              return (
-                <div
-                  key={i}
-                  ref={(el) => {
-                    itemRefs.current[i] = el;
-                  }}
-                  className={styles['what-we-need__item']}
-                  style={{
-                    marginTop: getMarginTop(i),
-                    height: fixedHeight,
-                  }}
-                >
-                  <div className={styles['what-we-need__item-content']}>
-                    {block.title && (
-                      <h3 style={getTitleStyle(i)}>{t(block.title)}</h3>
-                    )}
-                  </div>
-                  <Circle
-                    className={styles['what-we-need__circle']}
-                    style={getCircleStyle(i)}
-                  />
+  return (
+    <>
+      <div className={styles['what-we-need__wrapper']} ref={sectionRef}>
+        <div className={styles['what-we-need']}>
+          <h2 className={styles['what-we-need__header']}>
+            {tWhatNeed('title')}
+          </h2>
+          <div ref={containerRef} className={styles['what-we-need__container']}>
+            <div style={{ transform: `translateY(${translate}px)` }}>
+              {blocks.map((block, i) => {
+                const fixedHeight = FIXED_INDEXES.includes(i)
+                  ? CENTER_GAP
+                  : 'auto';
+
+                return (
                   <div
-                    className={`${styles['what-we-need__item-content']} ${styles['what-we-need__item-content--right']}`}
+                    key={i}
+                    ref={(el) => {
+                      itemRefs.current[i] = el;
+                    }}
+                    className={styles['what-we-need__item']}
+                    style={{
+                      marginTop: getMarginTop(i),
+                      height: fixedHeight,
+                    }}
                   >
-                    {block.text && <p style={getTextStyle(i)}>{t(block.text)}</p>}
-                    {block.buttonText && getNorm(i) <= 0.45 && (
-                      <Button
-                        color="green"
-                        variant="secondary-frame"
-                        onClick={() => handleRedirect(i)}
-                      >
-                        {t(block.buttonText)}
-                      </Button>
-                    )}
+                    <div className={styles['what-we-need__item-content']}>
+                      {block.title && (
+                        <h3 style={getTitleStyle(i)}>{block.title}</h3>
+                      )}
+                    </div>
+                    <Circle
+                      className={styles['what-we-need__circle']}
+                      style={getCircleStyle(i)}
+                    />
+                    <div
+                      className={`${styles['what-we-need__item-content']} ${styles['what-we-need__item-content--right']}`}
+                    >
+                      {block.text && (
+                        <p style={getTextStyle(i)}>{block.text}</p>
+                      )}
+                      {block.buttonText && getNorm(i) <= 0.45 && (
+                        <Button
+                          color="green"
+                          variant="secondary-frame"
+                          onClick={() => handleClick(i)}
+                        >
+                          {user?.discordId && block.buttonTextChat
+                            ? block.buttonTextChat
+                            : block.buttonText}
+                        </Button>
+                      )}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+      {isBanner && (
+        <DiscordBanner
+          closeBanner={closeBanner}
+          message={tDiscord('homePage')}
+          isCancelButton
+        />
+      )}
+    </>
   );
 }

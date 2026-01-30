@@ -28,7 +28,8 @@ import { useTranslations } from 'next-intl';
 type FormData = z.infer<typeof registrationSchemaStatic>;
 
 export default function RegistrationForm(): ReactElement {
-  const t = useTranslations('forms');
+  const tForms = useTranslations('forms');
+  const tButtons = useTranslations('buttons');
   const {
     register,
     trigger,
@@ -37,7 +38,7 @@ export default function RegistrationForm(): ReactElement {
     control,
     formState: { errors, dirtyFields, isSubmitted },
   } = useForm<FormData>({
-    resolver: zodResolver(registrationSchema(t)),
+    resolver: zodResolver(registrationSchema(tForms)),
     mode: 'onChange',
     defaultValues: {
       firstName: '',
@@ -96,8 +97,8 @@ export default function RegistrationForm(): ReactElement {
       if (status === 409) {
         showToast({
           severity: 'error',
-          summary: 'Ця електронна пошта вже використовується.',
-          detail: 'Спробуй іншу електронну пошту.',
+          summary: tForms('registrationForm.error409'),
+          detail: tForms('registrationForm.error409Details'),
           life: 3000,
           actionKey: 'register',
         });
@@ -106,8 +107,8 @@ export default function RegistrationForm(): ReactElement {
 
       showToast({
         severity: 'error',
-        summary: 'Виникла помилка під час реєстрації.',
-        detail: 'Спробуй пізніше.',
+        summary: tForms('registrationForm.error'),
+        detail: tForms('registrationForm.errorDetails'),
         life: 3000,
         actionKey: 'register',
       });
@@ -132,8 +133,8 @@ export default function RegistrationForm(): ReactElement {
           control={control}
           render={({ field }) => (
             <Input
-              label="Ім'я"
-              placeholder="Ім'я"
+              label={tForms('registrationForm.firstName')}
+              placeholder={tForms('registrationForm.placeholders.firstName')}
               {...field}
               onChange={(e) => {
                 const normalized = normalizeApostrophes(e.target.value);
@@ -151,8 +152,8 @@ export default function RegistrationForm(): ReactElement {
           control={control}
           render={({ field }) => (
             <Input
-              label="Прізвище"
-              placeholder="Прізвище"
+              label={tForms('registrationForm.lastName')}
+              placeholder={tForms('registrationForm.placeholders.lastName')}
               {...field}
               onChange={(e) => {
                 const normalized = normalizeApostrophes(e.target.value);
@@ -166,7 +167,7 @@ export default function RegistrationForm(): ReactElement {
           )}
         />
         <Input
-          label="Email"
+          label={tForms('registrationForm.email')}
           placeholder="example@email.com"
           type="email"
           {...register('email')}
@@ -175,8 +176,8 @@ export default function RegistrationForm(): ReactElement {
         />
         <Input
           autoComplete="new-password"
-          label="Пароль"
-          placeholder="Пароль"
+          label={tForms('registrationForm.password')}
+          placeholder={tForms('registrationForm.placeholders.password')}
           type="password"
           {...register('password')}
           withError
@@ -190,8 +191,8 @@ export default function RegistrationForm(): ReactElement {
         />
         <PasswordStrengthIndicator strength={passwordStrength} />
         <Input
-          label="Повторити пароль"
-          placeholder="Повторити пароль"
+          label={tForms('registrationForm.confirm')}
+          placeholder={tForms('registrationForm.placeholders.confirm')}
           type="password"
           {...register('confirmPassword')}
           withError
@@ -205,22 +206,6 @@ export default function RegistrationForm(): ReactElement {
         />
         <div>
           <div className={styles['registration-form__checkbox-wrapper']}>
-            <p className={styles['registration-form__checkbox-label']}>
-              Я погоджуюсь з{' '}
-              <Link
-                className={styles['registration-form__link']}
-                href="/legal-terms"
-              >
-                Умовами використання
-              </Link>{' '}
-              та{' '}
-              <Link
-                className={styles['registration-form__link']}
-                href="/privacy-policy"
-              >
-                Політикою конфіденційності
-              </Link>
-            </p>
             <label htmlFor="checkbox">
               {agreement ? (
                 <CheckboxChecked
@@ -230,6 +215,28 @@ export default function RegistrationForm(): ReactElement {
                 <Checkbox className={styles['registration-form__icon']} />
               )}
             </label>
+            <p className={styles['registration-form__checkbox-label']}>
+              {tForms.rich('registrationForm.agreement', {
+                terms: (chunks) => (
+                  <Link
+                    className={styles['registration-form__link']}
+                    href="/terms-of-use"
+                    target="_blank"
+                  >
+                    {chunks}
+                  </Link>
+                ),
+                privacy: (chunks) => (
+                  <Link
+                    className={styles['registration-form__link']}
+                    href="/privacy-policy"
+                    target="_blank"
+                  >
+                    {chunks}
+                  </Link>
+                ),
+              })}
+            </p>
             <input
               className={styles['registration-form__checkbox']}
               id="checkbox"
@@ -254,7 +261,7 @@ export default function RegistrationForm(): ReactElement {
         loading={isLoading}
         isLoader
       >
-        Зареєструватися
+        {tButtons('signUp')}
       </Button>
     </form>
   );

@@ -7,10 +7,12 @@ interface WhatWeNeedInterface {
 interface WithRoute extends WhatWeNeedInterface {
   buttonRoute: string;
   buttonUrl?: never;
+  buttonTextChat?: never;
 }
 
 interface WithUrl extends WhatWeNeedInterface {
   buttonUrl: string;
+  buttonTextChat: string;
   buttonRoute?: never;
 }
 

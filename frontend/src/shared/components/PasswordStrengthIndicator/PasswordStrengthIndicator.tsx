@@ -1,5 +1,8 @@
+'use client';
+
 import React, { ReactElement } from 'react';
 import styles from './PasswordStrengthIndicator.module.scss';
+import { useTranslations } from 'next-intl';
 
 type PasswordStrength = 'none' | 'weak' | 'medium' | 'strong';
 
@@ -7,36 +10,36 @@ interface PasswordStrengthIndicatorProps {
   strength: PasswordStrength;
 }
 
-const strengthInfoMap = {
-  none: {
-    classNames: ['', '', ''],
-    text: 'Стан паролю',
-  },
-  weak: {
-    classNames: [styles['password-strength__item--weak'], '', ''],
-    text: 'Пароль занадто слабкий',
-  },
-  medium: {
-    classNames: [
-      styles['password-strength__item--medium'],
-      styles['password-strength__item--medium'],
-      '',
-    ],
-    text: 'Можна покращити',
-  },
-  strong: {
-    classNames: [
-      styles['password-strength__item--strong'],
-      styles['password-strength__item--strong'],
-      styles['password-strength__item--strong'],
-    ],
-    text: 'Надійний пароль',
-  },
-};
-
 export default function PasswordStrengthIndicator({
   strength,
 }: PasswordStrengthIndicatorProps): ReactElement {
+  const t = useTranslations('passwordIndicator');
+  const strengthInfoMap = {
+    none: {
+      classNames: ['', '', ''],
+      text: '',
+    },
+    weak: {
+      classNames: [styles['password-strength__item--weak'], '', ''],
+      text: t('weak'),
+    },
+    medium: {
+      classNames: [
+        styles['password-strength__item--medium'],
+        styles['password-strength__item--medium'],
+        '',
+      ],
+      text: t('medium'),
+    },
+    strong: {
+      classNames: [
+        styles['password-strength__item--strong'],
+        styles['password-strength__item--strong'],
+        styles['password-strength__item--strong'],
+      ],
+      text: t('strong'),
+    },
+  };
   const strengthInfo = strengthInfoMap[strength];
 
   return (

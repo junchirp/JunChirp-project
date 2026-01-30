@@ -1,36 +1,38 @@
 'use client';
 
 import styles from './LoginForm.module.scss';
-import Input from '@/shared/components/Input/Input';
-import Button from '@/shared/components/Button/Button';
-import { Link, useRouter } from '@/i18n/routing';
+import Input from '../../../../../../shared/components/Input/Input';
+import Button from '../../../../../../shared/components/Button/Button';
+import { Link, useRouter } from '../../../../../../i18n/routing';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useLoginMutation } from '@/api/authApi';
+import { useLoginMutation } from '../../../../../../api/authApi';
 import { useSearchParams } from 'next/navigation';
 import React, { ReactElement } from 'react';
-import { useToast } from '@/hooks/useToast';
+import { useToast } from '../../../../../../hooks/useToast';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
-import { useLazyGetProjectRolesListQuery } from '@/api/projectRolesApi';
-import { useSupport } from '@/hooks/useSupport';
+import { useLazyGetProjectRolesListQuery } from '../../../../../../api/projectRolesApi';
+import { useSupport } from '../../../../../../hooks/useSupport';
 import {
   loginSchema,
   loginSchemaStatic,
-} from '@/shared/forms/schemas/loginShema';
+} from '../../../../../../shared/forms/schemas/loginShema';
 import { useTranslations } from 'next-intl';
 
 type FormData = z.infer<typeof loginSchemaStatic>;
 
 export default function LoginForm(): ReactElement {
-  const t = useTranslations('forms');
+  const tForms = useTranslations('forms');
+  const tButtons = useTranslations('buttons');
+  const tAuth = useTranslations('auth');
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>({
-    resolver: zodResolver(loginSchema(t)),
+    resolver: zodResolver(loginSchema(tForms)),
     mode: 'onChange',
   });
 
@@ -82,53 +84,41 @@ export default function LoginForm(): ReactElement {
         let [summary, detail] = ['', <></>];
         if (attemptsCount === 15) {
           [summary, detail] = [
-            'Твій обліковий запис заблоковано через невдалі спроби входу.',
+            tForms('loginForm.error429'),
             <p>
-              Ти можеш повернути доступ до свого облікового запису звернувшись
-              до нашої служби{' '}
-              <Button
-                className={styles['login-form__message-button']}
-                variant="link"
-                color="blue"
-                onClick={support}
-              >
-                підтримки
-              </Button>
-              .
+              {tForms.rich('loginForm.error429_15Details', {
+                cta: (chunks) => (
+                  <Button variant="link" color="blue" onClick={support}>
+                    {chunks}
+                  </Button>
+                ),
+              })}
             </p>,
           ];
         } else if (attemptsCount === 10) {
           [summary, detail] = [
-            'Твій обліковий запис заблоковано через невдалі спроби входу.',
+            tForms('loginForm.error429'),
             <p>
-              Ти можеш повернути доступ до свого облікового запису через 1
-              годину. Якщо тобі потрібна допомога, звернись до нашої служби{' '}
-              <Button
-                className={styles['login-form__message-button']}
-                variant="link"
-                color="blue"
-                onClick={support}
-              >
-                підтримки
-              </Button>
-              .
+              {tForms.rich('loginForm.error429_10Details', {
+                cta: (chunks) => (
+                  <Button variant="link" color="blue" onClick={support}>
+                    {chunks}
+                  </Button>
+                ),
+              })}
             </p>,
           ];
         } else if (attemptsCount === 5) {
           [summary, detail] = [
-            'Твій обліковий запис заблоковано через невдалі спроби входу.',
+            tForms('loginForm.error429'),
             <p>
-              Ти можеш повернути доступ до свого облікового запису через 15
-              хвилин. Якщо тобі потрібна допомога, звернись до нашої служби{' '}
-              <Button
-                className={styles['login-form__message-button']}
-                variant="link"
-                color="blue"
-                onClick={support}
-              >
-                підтримки
-              </Button>
-              .
+              {tForms.rich('loginForm.error429_5Details', {
+                cta: (chunks) => (
+                  <Button variant="link" color="blue" onClick={support}>
+                    {chunks}
+                  </Button>
+                ),
+              })}
             </p>,
           ];
         }
@@ -145,8 +135,8 @@ export default function LoginForm(): ReactElement {
       if (status === 401) {
         showToast({
           severity: 'error',
-          summary: 'Схоже введено неправильну електронну пошту або пароль.',
-          detail: 'Спробуй ще раз або віднови пароль.',
+          summary: tForms('loginForm.error401'),
+          detail: tForms('loginForm.error401Details'),
           life: 3000,
           actionKey: 'login',
         });
@@ -155,8 +145,8 @@ export default function LoginForm(): ReactElement {
 
       showToast({
         severity: 'error',
-        summary: 'Виникла помилка під час входу.',
-        detail: 'Спробуй пізніше.',
+        summary: tForms('loginForm.error'),
+        detail: tForms('loginForm.errorDetails'),
         life: 3000,
         actionKey: 'login',
       });
@@ -172,7 +162,7 @@ export default function LoginForm(): ReactElement {
     >
       <fieldset className={styles['login-form__fieldset']} disabled={isLoading}>
         <Input
-          label="Email"
+          label={tForms('loginForm.email')}
           type="email"
           placeholder="example@email.com"
           {...register('email')}
@@ -180,9 +170,8 @@ export default function LoginForm(): ReactElement {
           errorMessages={errors.email?.message && [errors.email.message]}
         />
         <Input
-          label="Пароль"
+          label={tForms('loginForm.password')}
           type="password"
-          placeholder="Пароль"
           {...register('password')}
           withError
           errorMessages={errors.password?.message && [errors.password.message]}
@@ -197,13 +186,13 @@ export default function LoginForm(): ReactElement {
           loading={isLoading}
           isLoader
         >
-          Увійти
+          {tButtons('signIn')}
         </Button>
         <Link
           className={styles['login-form__link']}
           href="/request-password-reset"
         >
-          Забули пароль?
+          {tAuth('forgotPassword')}
         </Link>
       </div>
     </form>

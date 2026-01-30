@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useToast } from '@/hooks/useToast';
 import { ToastMessageWithKey } from '@/providers/MessageProvider';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   iconOnly?: boolean;
@@ -14,17 +14,6 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   fullWidth?: boolean;
   message: ToastMessageWithKey;
 }
-
-const buttonData = {
-  google: {
-    text: 'Продовжити з Google',
-    iconSrc: '/images/google.svg',
-  },
-  facebook: {
-    text: 'Продовжити з Facebook',
-    iconSrc: '/images/google.svg',
-  },
-};
 
 export default function SocialButton({
   social,
@@ -36,6 +25,18 @@ export default function SocialButton({
   const router = useRouter();
   const { showToast } = useToast();
   const locale = useLocale();
+  const t = useTranslations('buttons');
+
+  const buttonData = {
+    google: {
+      text: `${t('continueWith')} Google`,
+      iconSrc: '/images/google.svg',
+    },
+    facebook: {
+      text: `${t('continueWith')} Facebook`,
+      iconSrc: '/images/google.svg',
+    },
+  };
 
   const className = [
     styles['social-button'],

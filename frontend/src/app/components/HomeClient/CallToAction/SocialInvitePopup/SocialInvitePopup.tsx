@@ -51,18 +51,8 @@ export default function SocialInvitePopup(
   }, [userId]);
 
   const handleClick = async (platform: PlatformType): Promise<void> => {
-    if (platform === 'instagram' || platform === 'discord') {
-      try {
-        await navigator.clipboard.writeText(inviteUrl);
-        window.open(
-          platform === 'instagram'
-            ? 'https://www.instagram.com'
-            : 'https://discord.com/channels/@me',
-          '_blank',
-        );
-      } catch {
-        return;
-      }
+    if (platform === 'discord') {
+      window.open('https://discord.com/channels/@me', '_blank');
       return;
     }
 
@@ -144,12 +134,6 @@ export default function SocialInvitePopup(
             color="green"
             icon={<Facebook />}
             onClick={() => handleClick('facebook')}
-          />
-          <Button
-            variant="secondary-frame"
-            color="green"
-            icon={<Instagram />}
-            onClick={() => handleClick('instagram')}
           />
           <Button
             variant="secondary-frame"

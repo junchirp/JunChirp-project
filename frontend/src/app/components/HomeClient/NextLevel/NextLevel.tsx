@@ -1,12 +1,14 @@
 'use client';
 
-import { ReactElement } from 'react';
+import React, { ReactElement } from 'react';
 import styles from './NextLevel.module.scss';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 
 export default function NextLevel(): ReactElement {
   const t = useTranslations('nextLevel');
+  const tAnimation: { title: string; description: string }[] =
+    t.raw('animation');
 
   return (
     <div className={styles['next-level']}>
@@ -14,10 +16,13 @@ export default function NextLevel(): ReactElement {
       <div className={styles['next-level__inner']}>
         <div className={styles['next-level__content']}>
           <div className={styles['next-level__new-opportunities']}>
-            {t('descriptionLeft')}
-            <span className={styles['next-level__green-text']}>
-              {t('comingSoon')}
-            </span>
+            {t.rich('description', {
+              span: (chunks) => (
+                <span className={styles['next-level__green-text']}>
+                  {chunks}
+                </span>
+              ),
+            })}
           </div>
           <div className={styles['next-level__arrow']}>
             <Image
@@ -30,18 +35,18 @@ export default function NextLevel(): ReactElement {
           <div className={styles['next-level__right-block']}>
             <div className={styles['next-level__dashboard']}>
               <h3 className={styles['next-level__title']}>
-                {t('titleRightOne')}
+                {tAnimation[0].title}
               </h3>
               <p className={styles['next-level__text']}>
-                {t('descriptionRightOne')}
+                {tAnimation[0].description}
               </p>
             </div>
             <div className={styles['next-level__grow-playing']}>
               <h3 className={styles['next-level__title']}>
-                {t('titleRightTwo')}
+                {tAnimation[1].title}
               </h3>
               <p className={styles['next-level__text']}>
-                {t('descriptionRightTwo')}
+                {tAnimation[1].description}
               </p>
             </div>
           </div>

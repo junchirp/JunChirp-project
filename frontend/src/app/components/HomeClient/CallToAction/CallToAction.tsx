@@ -20,6 +20,9 @@ export default function CallToAction({
   const [isOpen, setIsOpen] = useState(false);
   const tButtons = useTranslations('buttons');
   const tCallToAction = useTranslations('callToAction');
+  const text: string[] = user?.isVerified
+    ? tCallToAction.raw('auth.text')
+    : tCallToAction.raw('noAuth.text');
 
   const handleRegistration = (): void => {
     router.push('/auth/registration');
@@ -43,22 +46,15 @@ export default function CallToAction({
                   {tCallToAction('noAuth.title')}
                 </h2>
               )}
-              {user?.isVerified ? (
-                <div className={styles['call-to-action__text']}>
-                  <p>{tCallToAction('auth.paragraphOne')}</p>
-                  <p>{tCallToAction('auth.paragraphTwo')}</p>
-                </div>
-              ) : (
-                <div className={styles['call-to-action__text']}>
-                  <p>{tCallToAction('noAuth.paragraphOne')}</p>
-                  <p>{tCallToAction('noAuth.paragraphTwo')}</p>
-                  <p>{tCallToAction('noAuth.paragraphThree')}</p>
-                </div>
-              )}
+              <div className={styles['call-to-action__text']}>
+                {text.map((item, index) => (
+                  <p key={index}>{item}</p>
+                ))}
+              </div>
             </div>
             {user?.isVerified ? (
               <Button color="green" onClick={openPopup}>
-                {tButtons('inviteToPlatform')}
+                {tButtons('invite')}
               </Button>
             ) : (
               <Button color="green" onClick={handleRegistration}>

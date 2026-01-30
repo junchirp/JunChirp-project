@@ -7,7 +7,7 @@
     "connect": "Connect",
     "accept": "Accept",
     "decline": "Decline",
-    "login": "Login",
+    "signIn": "Sign in",
     "signUp": "Sign up",
     "choose": "Choose",
     "viewDetails": "View details",
@@ -16,13 +16,15 @@
     "sendRequest": "Apply Now",
     "cancelRequest": "Cancel Application",
     "sendInvite": "Send invitation",
-    "inviteToPlatform": "Invite"
+    "invite": "Invite",
+    "continueWith": "Continue with"
   },
   "discord": {
     "profile": "Connect Discord to join projects and gain access to project chats.",
     "invite": "Connect Discord to join the project. This will allow you to access the project chat.",
     "request": "Connect Discord to apply. This will allow you to access the project chat after being accepted.",
     "newProject": "Connect Discord to create a project. This is required to create a project chat.",
+    "homePage": "To continue, connect your Discord. This is required to access project chats.",
     "error": "Failed to connect Discord.",
     "errorDetails": "Please try again.",
     "success": "Discord connected successfully."
@@ -56,7 +58,7 @@
     "activeProjects": "Active projects",
     "completedProjects": "Completed projects",
     "showMore": "Show more",
-    "inviteBtn": "Invite to the project",
+    "inviteBtn": "Invite to project",
     "deleteItem": {
       "socials": {
         "title": "Delete social network?",
@@ -146,17 +148,17 @@
       "urlInvalid": "Invalid link",
       "skillLength": "The name must be between 2 and 50 characters",
       "skillSymbols": "Invalid characters in the name",
-      "agreement": "Підтверди згоду з умовами та політикою конфіденційності",
-      "emailLength": "The email must contain between 7 and 254 characters.",
+      "agreement": "Confirm your consent to the terms and privacy policy.",
+      "emailLength": "The email must contain between 7 and 254 characters",
       "emailFormat": "Invalid email format",
       "emailDomain": "The '.ru' domain is not supported",
-      "emailTaken": "Цей e-mail вже використовується",
+      "emailTaken": "This email is already in use",
       "emailNotFound": "Електронна пошта не знайдена",
-      "passwordIncludes": "Пароль не може містити твоє ім'я чи прізвище",
-      "blackList": "Уникай занадто простих або очевидних паролів",
-      "confirmPassword": "Паролі не збігаються",
-      "passwordLength": "Пароль має містити 8–20 символів",
-      "passwordSymbols": "Використовуй лише латиницю, цифри та спецсимволи",
+      "passwordIncludes": "The password must not contain your first or last name",
+      "blackList": "Avoid overly simple or obvious passwords",
+      "confirmPassword": "Passwords do not match",
+      "passwordLength": "The password must contain 8–20 characters",
+      "passwordSymbols": "Use only Latin letters, numbers, and special characters",
       "projectDescriptionLength": "Введи опис від 2 до 500 символів",
       "projectNameLength": "Введи назву від 2 до 50 символів",
       "requestLength": "Enter a description between 10 and 1000 characters.",
@@ -237,6 +239,36 @@
     },
     "requestForm": {
       "field": "Looking for"
+    },
+    "loginForm": {
+      "email": "Email",
+      "password": "Password",
+      "error": "Something went wrong while signing in.",
+      "errorDetails": "Please try again later.",
+      "error401": "It looks like the email or password you entered is incorrect.",
+      "error401Details": "Try again or reset your password.",
+      "error429": "Your account has been temporarily locked due to multiple failed login attempts.",
+      "error429_5Details": "You can try again in 15 minutes. If you need help, please contact <cta>support</cta>.",
+      "error429_10Details": "You can try again in 1 hour. If you need help, please contact <cta>support</cta>.",
+      "error429_15Details": "Please contact <cta>support</cta> to restore access."
+    },
+    "registrationForm": {
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Email",
+      "password": "Password",
+      "confirm": "Confirm password",
+      "agreement": "I agree with <terms>the Terms of Use</terms> and <privacy>Privacy Policy</privacy>",
+      "placeholders": {
+        "firstName": "Enter your first name",
+        "lastName": "Enter your last name",
+        "password": "Create a password",
+        "confirm": "Repeat password"
+      },
+      "error": "An error occurred during registration.",
+      "errorDetails": "Please try again.",
+      "error409": "This email is already in use.",
+      "error409Details": "Try another one."
     }
   },
   "page404": {
@@ -333,13 +365,13 @@
     "terms": "Terms of Use"
   },
   "homeBanner": {
-    "title": "From beginner to ",
-    "titleGreen": "[professional]",
+    "title": "From beginner to <span>[professional]</span>",
     "subTitle": "Your IT career starts here!",
-    "textFirst": "Register on the platform for IT juniors and get access to real projects to develop your skills.",
-    "textSecond": "Train, work on projects and become an expert!",
-    "authTitleFirst": "Welcome, ",
-    "authTitleSecond": "! Ready for new challenges?",
+    "text": [
+      "Register on the platform for IT juniors and get access to real projects to develop your skills.",
+      "Train, work on projects and become an expert!"
+    ],
+    "authTitle": "Welcome, <span>[{user}]</span>! Ready for new challenges?",
     "authText": "Choose a project, level up your skills, and take your first step in real IT development!"
   },
   "homeQuote": {
@@ -347,76 +379,88 @@
   },
   "threeSteps": {
     "title": "Three simple steps to becoming a confident IT-Pro:",
-    "stepOne": {
-      "title": "Complete your profile.",
-      "description": "Tell about yourself and your skills — this is your starting point."
-    },
-    "stepTwo": {
-      "title": "Join a project.",
-      "description": "Find a team where your ideas matter. Gain real experience and support!"
-    },
-    "stepThree": {
-      "title": "Start your own project.",
-      "description": "Become a leader — guide your team and bring ideas to life."
-    }
+    "steps": [
+      {
+        "title": "Complete your profile.",
+        "description": "Tell about yourself and your skills — this is your starting point."
+      },
+      {
+        "title": "Join a project.",
+        "description": "Find a team where your ideas matter. Gain real experience and support!"
+      },
+      {
+        "title": "Start your own project.",
+        "description": "Become a leader — guide your team and bring ideas to life."
+      }
+    ]
   },
   "whatWeNeed": {
     "title": "Everything you need for an IT start",
-    "noAuth": {
-      "stepOne": {
-        "title": "1. Creative space for \n inspiration",
+    "noAuth": [
+      {
+        "title": "1. Creative space for inspiration",
         "description": "All resources for creating creative projects are at your disposal. JunChirp provides everything you need to focus on bringing your ideas to life. Explore the workspace and start creating today!",
         "button": "Find inspiration"
       },
-      "stepTwo": {
-        "title": "Develop your skills in \n real projects",
+      {
+        "title": "2. Develop your skills in real projects",
         "description": "Complete tasks, improve your skills, and add new ones to your profile. Solving real problems helps you grow professionally and gain experience that becomes the foundation of your IT career.",
         "button": "Start tasks"
       },
-      "stepThree": {
-        "title": "Expand your professional \n network",
+      {
+        "title": "3. Expand your professional network",
         "description": "Find like-minded people and conquer new heights together! Build a network of professionals and unlock new opportunities for growth and career development.",
         "button": "Find a team"
       }
-    },
-    "auth": {
-      "stepOne": {
-        "title": "1. Want to level up \n your skills?",
+    ],
+    "auth": [
+      {
+        "title": "1. Want to level up your skills?",
         "description": "Choose a project you’re interested in and join in!",
         "button": "View projects"
       },
-      "stepTwo": {
+      {
         "title": "2. Have a great idea?",
         "description": "Launch your own project and build your dream team!",
         "button": "Create project"
       },
-      "stepThree": {
-        "title": "3. Need more \n networking?",
+      {
+        "title": "3. Need more networking?",
         "description": "Connect with the community, find like-minded people, and gain valuable insights.",
-        "button": "Go to chat"
+        "button": "Join the Community",
+        "buttonChat": "Go to chat"
       }
-    }
+    ]
   },
   "nextLevel": {
     "title": "The next level is on the horizon!",
-    "descriptionLeft": "We are preparing new opportunities to make your journey to becoming a professional even more exciting and engaging. ",
-    "comingSoon": "[COMING SOON:]",
-    "titleRightOne": "[PERSONAL DASHBOARD]",
-    "descriptionRightOne": "All your projects, achievements and challenges — in one place. Track your progress, monitor results, and see how each step brings you closer to your goals!",
-    "titleRightTwo": "[GROW THROUGH PLAY]",
-    "descriptionRightTwo": "Earn XP, collect exclusive badges, and level up by completing tasks. Develop through achievements and improve your skills along the way!"
+    "description": "We are preparing new opportunities to make your journey to becoming a professional even more exciting and engaging. <span>[COMING SOON:]</span>",
+    "animation": [
+      {
+        "title": "[PERSONAL DASHBOARD]",
+        "description": "All your projects, achievements and challenges — in one place. Track your progress, monitor results, and see how each step brings you closer to your goals!"
+      },
+      {
+        "title": "[GROW THROUGH PLAY]",
+        "description": "Earn XP, collect exclusive badges, and level up by completing tasks. Develop through achievements and improve your skills along the way!"
+      }
+    ]
   },
   "callToAction": {
     "auth": {
       "title": "Creating something big together with friends is always awesome!",
-      "paragraphOne": "Invite your friends, collaborate, generate ideas, and create innovative projects that can change the world!",
-      "paragraphTwo": "Working with people you know makes the process even more inspiring. Together we achieve more!"
+      "text": [
+        "Invite your friends, collaborate, generate ideas, and create innovative projects that can change the world!",
+        "Working with people you know makes the process even more inspiring. Together we achieve more!"
+      ]
     },
     "noAuth": {
       "title": "Now it’s your moment!",
-      "paragraphOne": "Reached the end? Now the choice is yours! Time doesn’t wait. It’s your turn now: remain an observer or start conquering new horizons!",
-      "paragraphTwo": "Register and make your first step toward your IT career.",
-      "paragraphThree": "Success is waiting for you!"
+      "text": [
+        "Reached the end? Now the choice is yours! Time doesn’t wait. It’s your turn now: remain an observer or start conquering new horizons!",
+        "Register and make your first step toward your IT career.",
+        "Success is waiting for you!"
+      ]
     }
   },
   "invitePlatformPopup": {
@@ -425,5 +469,27 @@
     "success": "Link copied successfully!",
     "error": "Failed to copy link.",
     "errorDetails": "Try again."
-  }
+  },
+  "auth": {
+    "signIn": "Sign in",
+    "signUp": "Sign up",
+    "or": "or",
+    "forgotPassword": "Forgot your password?",
+    "googleSignInError": "Failed to sign in with Google.",
+    "googleSignInErrorDetails": "Please try again or choose another sign-in method.",
+    "googleSignUpError": "Failed to sign up with Google.",
+    "googleSignUpErrorDetails": "Please try again or choose another registration method."
+  },
+  "meta": {
+    "home": {
+      "title": "Build the future with us",
+      "description": "Grow your skills by working on real projects with a team. Join us and become part of the change!"
+    }
+  },
+  "passwordIndicator": {
+    "weak": "Password is too weak",
+    "medium": "Can be improved",
+    "strong": "Strong password"
+  },
+  "burgerMenu": ""
 }

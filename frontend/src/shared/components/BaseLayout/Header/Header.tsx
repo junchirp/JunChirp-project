@@ -51,7 +51,7 @@ export default function Header(): ReactElement {
                     variant="secondary-frame"
                     onClick={login}
                   >
-                    {t('login')}
+                    {t('signIn')}
                   </Button>
                 )}
               </>
