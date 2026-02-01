@@ -8,6 +8,8 @@ export const size = {
   height: 630,
 };
 
+export const runtime = 'nodejs';
+
 export default async function OpengraphImage({
   params,
 }: {
