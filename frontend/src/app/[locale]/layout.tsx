@@ -10,6 +10,14 @@ export function generateStaticParams(): { locale: Locale }[] {
 }
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://junchirp-ugdf.onrender.com'),
+  alternates: {
+    canonical: '/',
+    languages: {
+      'en-US': '/en-US',
+      'de-DE': '/de-DE',
+    },
+  },
   title: 'JunChirp',
   description: 'JunChirp platform',
   icons: {

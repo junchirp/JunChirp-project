@@ -19,4 +19,10 @@
   &__link {
     height: 76px;
   }
+
+  &__menu-wrapper {
+    display: flex;
+    gap: 40px;
+    align-items: center;
+  }
 }

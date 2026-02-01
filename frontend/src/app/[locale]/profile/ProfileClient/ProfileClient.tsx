@@ -192,6 +192,9 @@ export default function ProfileClient(): ReactElement {
       });
     }
     if (isEducation(item)) {
+      let edu = `${item.institution} | ${item.specialization}`;
+      edu = edu.length <= 50 ? edu : `${edu.slice(0, 50)}...`;
+
       setDeletedItem({
         item,
         title: `${tProfile('deleteItem.educations.title')}`,
@@ -199,7 +202,7 @@ export default function ProfileClient(): ReactElement {
           <p className={styles['profile-client__message']}>
             {tProfile('deleteItem.educations.firstPart')}
             <span className={styles['profile-client__message--green']}>
-              [{item.institution} | {item.specialization}]
+              [{edu}]
             </span>
             {tProfile('deleteItem.secondPart')}
           </p>

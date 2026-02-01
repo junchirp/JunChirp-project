@@ -47,6 +47,10 @@ select {
     width: 100%;
   }
 
+  &.p-tabmenu .p-tabmenu-nav .p-tabmenuitem.p-highlight.p-disabled {
+    opacity: 1;
+  }
+
   &.p-tabmenu .p-tabmenu-nav .p-tabmenuitem .p-menuitem-link {
     color: variables.$gray-7;
     background: variables.$gray-1;

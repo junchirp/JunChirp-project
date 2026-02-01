@@ -7,4 +7,4 @@ export const softSkillNameValidator = (t: (key: string) => string): ZodString =>
     .nonempty(t('errors.nonEmpty'))
     .min(2, t('errors.skillLength'))
     .max(50, t('errors.skillLength'))
-    .regex(/^[A-Za-zА-Яа-яІіЇїЄєҐґ0-9 .'\-+_/,()]+$/, t('errors.nameSymbols'));
+    .regex(/^[A-Za-zА-Яа-яІіЇїЄєҐґ0-9 .'\-+_/,()]+$/, t('errors.skillSymbols'));

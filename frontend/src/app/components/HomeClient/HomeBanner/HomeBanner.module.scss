@@ -1,0 +1,95 @@
+@use '@/assets/styles/variables';
+
+.home-banner {
+  padding: 40px;
+
+  &__inner {
+    position: relative;
+    background-color: variables.$gray-1;
+    border-radius: 32px;
+    padding: 93px 40px 104px;
+    display: flex;
+    gap: 32px;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+
+  &__button-wrapper {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    height: 112px;
+    width: 369px;
+    background-color: #fff;
+    border-top-left-radius: 32px;
+    padding: 8px 0 0 8px;
+
+    &::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: -32px;
+      width: 32px;
+      height: 32px;
+      background: variables.$white-3;
+      mask: radial-gradient(circle at top left, transparent 32px, variables.$black-1 32px);
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: -32px;
+      right: 0;
+      width: 32px;
+      height: 32px;
+      background: variables.$white-3;
+      mask: radial-gradient(circle at top left, transparent 32px, variables.$black-1 32px);
+    }
+  }
+
+  &__star {
+    margin-left: 72px;
+  }
+
+  &__content {
+    padding-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 66px;
+  }
+
+  &__title {
+    font-family: variables.$montserrat;
+    font-weight: 600;
+    font-size: 56px;
+    line-height: 1.2;
+
+    &--green {
+      color: variables.$green-2;
+    }
+  }
+
+  &__describe {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  &__title-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  &__sub-title {
+    font-weight: 600;
+    font-size: 32px;
+    line-height: 1.2;
+  }
+
+  &__text {
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 1.4;
+  }
+}

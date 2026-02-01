@@ -9,6 +9,7 @@ import { useAppSelector } from '@/hooks/reduxHooks';
 import BurgerMenu from './BurgerMenu/BurgerMenu';
 import { ReactElement } from 'react';
 import { useTranslations } from 'next-intl';
+import LocaleSwitcher from './LocaleSwitcher/LocaleSwitcher';
 
 export default function Header(): ReactElement {
   const router = useRouter();
@@ -42,7 +43,8 @@ export default function Header(): ReactElement {
         {loadingStatus !== 'loaded'
           ? null
           : !isAuthPage && (
-              <>
+              <div className={styles['header__menu-wrapper']}>
+                <LocaleSwitcher />
                 {user?.isVerified ? (
                   <BurgerMenu />
                 ) : (
@@ -51,10 +53,10 @@ export default function Header(): ReactElement {
                     variant="secondary-frame"
                     onClick={login}
                   >
-                    {t('login')}
+                    {t('signIn')}
                   </Button>
                 )}
-              </>
+              </div>
             )}
       </div>
     </header>

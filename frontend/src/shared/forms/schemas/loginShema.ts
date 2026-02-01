@@ -1,6 +1,5 @@
 import { z, ZodObject, ZodString } from 'zod';
 import { nonEmptyValidator } from '@/shared/forms/validators/nonEmptyValidator';
-import { basicEmailValidator } from '@/shared/forms/validators/emailValidator';
 
 export const loginSchemaStatic = z.object({
   email: z.string(),
@@ -14,6 +13,6 @@ export const loginSchema = (
   password: ZodString;
 }> =>
   loginSchemaStatic.extend({
-    email: basicEmailValidator(t),
+    email: nonEmptyValidator(t),
     password: nonEmptyValidator(t),
   });
