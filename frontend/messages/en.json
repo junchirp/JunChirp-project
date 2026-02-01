@@ -491,5 +491,12 @@
     "medium": "Can be improved",
     "strong": "Strong password"
   },
-  "burgerMenu": ""
+  "burgerMenu": {
+    "profile": "My profile",
+    "projects": "Projects",
+    "users": "Participants",
+    "joinCommunity": "Join the Community",
+    "chat": "Chat",
+    "signOut": "Sign out"
+  }
 }

@@ -21,6 +21,8 @@ interface DropdownProps<T> extends Partial<ControllerRenderProps> {
   withError?: boolean;
   errorMessages?: string[] | string;
   autoFocus?: boolean;
+  defaultValue?: string | number | null;
+  onValueChange?: (value: string | number | null) => void;
 }
 
 export default function Dropdown<T>(props: DropdownProps<T>): ReactElement {
@@ -41,13 +43,21 @@ export default function Dropdown<T>(props: DropdownProps<T>): ReactElement {
     withError,
     errorMessages,
     autoFocus = false,
+    defaultValue,
+    onValueChange,
+    disabled = false,
   } = props;
 
+  const [internalValue, setInternalValue] = useState<
+    string | number | null | undefined
+  >(defaultValue);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedLabel, setSelectedLabel] = useState<string | null>(null);
   const id = useId();
   const ref = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const isControlled = value !== undefined;
+  const currentValue = isControlled ? value : internalValue;
 
   const labelFn = getOptionLabel ?? ((opt: unknown): string => String(opt));
   const valueFn = getOptionValue ?? ((opt: unknown): string => String(opt));
@@ -64,9 +74,10 @@ export default function Dropdown<T>(props: DropdownProps<T>): ReactElement {
       return;
     }
 
-    const selected = options.find((opt) => valueFn(opt) === value);
+    const selected = options.find((opt) => valueFn(opt) === currentValue);
+
     setSelectedLabel(selected ? labelFn(selected) : null);
-  }, [value, options]);
+  }, [currentValue, options]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent): void => {
@@ -80,7 +91,15 @@ export default function Dropdown<T>(props: DropdownProps<T>): ReactElement {
   }, []);
 
   const handleSelect = (option: T): void => {
-    onChange?.(valueFn(option));
+    const newValue = valueFn(option);
+
+    if (isControlled) {
+      onChange?.(newValue);
+    } else {
+      setInternalValue(newValue);
+      onValueChange?.(newValue);
+    }
+
     setIsOpen(false);
   };
 
@@ -117,6 +136,7 @@ export default function Dropdown<T>(props: DropdownProps<T>): ReactElement {
           onClick={() => setIsOpen((prev) => !prev)}
           onBlur={onBlur}
           ref={buttonRef}
+          disabled={disabled}
         >
           {selectedLabel ? (
             <span className={styles.dropdown__selected}>{selectedLabel}</span>
@@ -156,10 +176,15 @@ export default function Dropdown<T>(props: DropdownProps<T>): ReactElement {
             const optionLabel = labelFn(option);
             const optionValue = valueFn(option);
             const optionDisabled = isOptionDisabled?.(option) ?? false;
+            const isSelected = optionValue === currentValue;
             return (
               <li
                 key={optionValue === null ? 'null' : optionValue.toString()}
-                className={`${styles.dropdown__item} ${optionDisabled ? styles['dropdown__item--disabled'] : ''}`}
+                className={`
+                  ${styles.dropdown__item} 
+                  ${optionDisabled ? styles['dropdown__item--disabled'] : ''}
+                  ${isSelected ? styles['dropdown__item--selected'] : ''}  
+                `}
                 onClick={() => {
                   if (!optionDisabled) {
                     handleSelect(option);
