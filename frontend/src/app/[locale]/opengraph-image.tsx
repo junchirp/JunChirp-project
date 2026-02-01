@@ -32,12 +32,12 @@ export default async function OpengraphImage({
           descriptionTwo: 'Join us and become part of the change!',
         };
 
-  const inter = await readFile(join(process.cwd(), 'assets/fonts/Inter.ttf'));
+  const inter = await readFile(join(process.cwd(), 'public/fonts/Inter.ttf'));
   const montserrat = await readFile(
-    join(process.cwd(), 'assets/fonts/Montserrat.ttf'),
+    join(process.cwd(), 'public/fonts/Montserrat.ttf'),
   );
   const bannerData = await readFile(
-    join(process.cwd(), 'assets/images/empty-banner.png'),
+    join(process.cwd(), 'public/images/empty-banner.png'),
     'base64',
   );
   const bannerSrc = `data:image/png;base64,${bannerData}`;
