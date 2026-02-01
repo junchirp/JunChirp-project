@@ -10,7 +10,7 @@ import { useLogoutMutation } from '@/api/authApi';
 import { useTranslations } from 'next-intl';
 import { useSelector } from 'react-redux';
 import authSelector from '@/redux/auth/authSelector';
-import DiscordBanner from '../../../DiscordBanner/DiscordBanner';
+import DiscordBanner from '@/shared/components/DiscordBanner/DiscordBanner';
 
 export default function BurgerMenu(): ReactElement {
   const router = useRouter();
