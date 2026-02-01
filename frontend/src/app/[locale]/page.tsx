@@ -25,8 +25,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       type: 'website',
       images:
         locale === 'ua'
-          ? ['/invitation-banner_ua.jpg']
-          : ['/invitation-banner_en.jpg'],
+          ? ['/images/invitation-banner_ua.jpg']
+          : ['/images/invitation-banner_en.jpg'],
     },
     twitter: {
       card: 'summary_large_image',
@@ -34,8 +34,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: t('description'),
       images:
         locale === 'ua'
-          ? ['/invitation-banner_ua.jpg']
-          : ['/invitation-banner_en.jpg'],
+          ? ['/images/invitation-banner_ua.jpg']
+          : ['/images/invitation-banner_en.jpg'],
     },
   };
 }
