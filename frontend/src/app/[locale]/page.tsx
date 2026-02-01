@@ -23,13 +23,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       siteName: 'JunChirp',
       locale: locale === 'ua' ? 'uk_UA' : 'en_US',
       type: 'website',
-      images: ['/opengraph-image'],
+      images:
+        locale === 'ua' ? ['/opengraph-image_ua'] : ['/opengraph-image_en'],
     },
     twitter: {
       card: 'summary_large_image',
       title: t('title'),
       description: t('description'),
-      images: ['/opengraph-image'],
+      images:
+        locale === 'ua' ? ['/opengraph-image_ua'] : ['/opengraph-image_en'],
     },
   };
 }
