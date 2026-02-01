@@ -24,14 +24,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       locale: locale === 'ua' ? 'uk_UA' : 'en_US',
       type: 'website',
       images:
-        locale === 'ua' ? ['/opengraph-image_ua'] : ['/opengraph-image_en'],
+        locale === 'ua'
+          ? ['/invitation-banner_ua.jpg']
+          : ['/invitation-banner_en.jpg'],
     },
     twitter: {
       card: 'summary_large_image',
       title: t('title'),
       description: t('description'),
       images:
-        locale === 'ua' ? ['/opengraph-image_ua'] : ['/opengraph-image_en'],
+        locale === 'ua'
+          ? ['/invitation-banner_ua.jpg']
+          : ['/invitation-banner_en.jpg'],
     },
   };
 }
