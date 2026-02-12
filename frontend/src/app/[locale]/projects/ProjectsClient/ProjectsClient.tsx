@@ -19,9 +19,11 @@ import { useProjectsFilters } from '@/hooks/useProjectsFilters';
 import { useAppSelector } from '@/hooks/reduxHooks';
 import authSelector from '@/redux/auth/authSelector';
 import { useTranslations } from 'next-intl';
+import { usePathname } from '../../../../i18n/routing';
 
 export default function ProjectsClient(): ReactElement {
   const { filters, updateFilters } = useProjectsFilters();
+  const pathname = usePathname();
   const user = useAppSelector(authSelector.selectUser);
   const t = useTranslations('projectsPage');
 
@@ -47,7 +49,10 @@ export default function ProjectsClient(): ReactElement {
     listLoading || requestsLoading || invitesLoading || myProjectsLoading;
 
   return (
-    <AuthGuard requireVerified>
+    <AuthGuard
+      requireVerified
+      redirectTo={`/auth/login?next=${encodeURIComponent(pathname)}`}
+    >
       <div className={styles['projects-client']}>
         <div className={styles.projects__banner}>
           <Image

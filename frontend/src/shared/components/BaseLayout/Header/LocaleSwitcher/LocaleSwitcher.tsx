@@ -69,7 +69,8 @@ export default function LocaleSwitcher(): ReactElement {
   return (
     <div className={styles['locale-switcher']}>
       <div className={styles['locale-switcher__language']}>
-        <Image src="/images/globe.svg" alt="language" width={16} height={16} />|
+        <Image src="/images/globe.svg" alt="language" width={16} height={16} />
+        <div className={styles['locale-switcher__divider']} />
       </div>
       <div className={styles['locale-switcher__dropdown']} ref={ref}>
         <button

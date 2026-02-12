@@ -24,19 +24,11 @@
     font-weight: 600;
   }
 
-  &__inline-button {
-    display: inline-flex;
-  }
-
   &__green-text {
     color: variables.$green-2;
   }
 
   &__dark-green-text {
     color: variables.$green-1;
-  }
-
-  &__button-wrapper {
-    display: inline-block;
   }
 }

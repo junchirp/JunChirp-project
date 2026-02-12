@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
-  IsEmail,
+  IsEmail, IsIn,
   IsNotEmpty,
   IsString,
   Length,
@@ -10,6 +10,7 @@ import { IsPasswordInBlackList } from '../../shared/validators/is-in-black-list.
 import { IsPasswordNotContainName } from '../../shared/validators/is-password-not-contain-name.validator';
 import { ContainsOnlyAllowedCharacters } from '../../shared/validators/contains-only-allowed-characters.validator';
 import { HasTwoGroups } from '../../shared/validators/has-two-groups.validator';
+import { localeArray, LocaleType } from '../../shared/types/locale.type';
 
 export class CreateUserDto {
   @ApiProperty({ example: 'email@mail.com', description: 'Email' })
@@ -49,4 +50,11 @@ export class CreateUserDto {
   })
   @IsNotEmpty({ message: 'Last name is required' })
   public readonly lastName: string;
+
+  @ApiProperty({
+    example: 'en',
+    description: 'Locale',
+  })
+  @IsIn(localeArray, { message: 'Must be a locale string' })
+  public readonly locale: LocaleType;
 }

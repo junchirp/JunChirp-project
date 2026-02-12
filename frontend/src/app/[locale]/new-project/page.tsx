@@ -5,10 +5,16 @@ import styles from './page.module.scss';
 import Image from 'next/image';
 import AuthGuard from '@/shared/components/AuthGuard/AuthGuard';
 import ProjectForm from '@/shared/components/ProjectForm/ProjectForm';
+import { usePathname } from '@/i18n/routing';
 
 export default function NewProject(): ReactElement {
+  const pathname = usePathname();
+
   return (
-    <AuthGuard requireVerified>
+    <AuthGuard
+      requireVerified
+      redirectTo={`/auth/login?next=${encodeURIComponent(pathname)}`}
+    >
       <div className={styles['new-project']}>
         <div className={styles['new-project__banner']}>
           <Image

@@ -89,12 +89,23 @@ export class MailService {
     return response.data;
   }
 
-  public async sendVerificationMail(email: string, url: string): Promise<void> {
+  public async sendVerificationMail(
+    email: string,
+    url: string,
+    locale: LocaleType,
+  ): Promise<void> {
+    const subjects: LocaleEmailSubjectType = {
+      en: 'Email confirmation',
+      ua: 'Підтвердження електронної пошти',
+    };
+
+    const subject = subjects[locale] ?? subjects.ua;
+
     await this.addEmailToQueue({
       from: `Support Team <${this.configService.get<string>('EMAIL_USER')}>`,
       to: email,
-      subject: 'Підтвердження електронної пошти',
-      template: './confirmation-email',
+      subject: subject,
+      template: `./confirmation-email-${locale}`,
       context: { url },
     });
   }

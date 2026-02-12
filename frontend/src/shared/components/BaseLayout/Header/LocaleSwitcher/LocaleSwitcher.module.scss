@@ -2,12 +2,18 @@
 
 .locale-switcher {
   display: flex;
-  gap: 4px;
   align-items: center;
 
   &__language {
     display: flex;
+    align-items: center;
     gap: 8px;
+  }
+
+  &__divider {
+    border-right: 1px solid variables.$gray-7;
+    height: 12px;
+    width: 0;
   }
 
   &__dropdown {
@@ -29,7 +35,7 @@
     height: 44px;
     box-sizing: border-box;
     cursor: default;
-    width: 100%;
+    width: 64px;
 
     &:hover {
       color: variables.$green-2;

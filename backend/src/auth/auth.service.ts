@@ -236,7 +236,11 @@ export class AuthService {
     });
     const url = `${this.configService.get('BASE_FRONTEND_URL')}/verify-email?${params.toString()}`;
 
-    await this.mailService.sendVerificationMail(createUserDto.email, url);
+    await this.mailService.sendVerificationMail(
+      createUserDto.email,
+      url,
+      createUserDto.locale,
+    );
 
     const { educations, socials, hardSkills, softSkills, ...baseUserInfo } =
       user;
@@ -421,7 +425,7 @@ export class AuthService {
       refreshToken: string;
     };
 
-    const user = await this.usersService.createOrUpdateGoogleUser(ip, reqUser);
+    const user = await this.usersService.createOrUpdateGoogleUser(reqUser);
     const { accessToken, refreshToken } = this.createTokens(user.id);
     this.addRefreshTokenToResponse(res, refreshToken);
     this.addAccessTokenToResponse(res, accessToken);

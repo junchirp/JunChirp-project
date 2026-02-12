@@ -11,12 +11,12 @@ import { useToast } from '@/hooks/useToast';
 import { useRequestPasswordResetMutation } from '@/api/authApi';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
-import { useRouter } from 'next/navigation';
+import { Locale, useRouter } from '@/i18n/routing';
 import {
   usedEmailSchema,
   usedEmailSchemaStatic,
 } from '@/shared/forms/schemas/usedEmailSchema';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 type FormData = z.infer<typeof usedEmailSchemaStatic>;
 
@@ -35,6 +35,7 @@ export default function RequestPasswordResetForm(): ReactElement {
   const [reqResetPassword, { isLoading }] = useRequestPasswordResetMutation();
   const { showToast, isActive } = useToast();
   const router = useRouter();
+  const locale = useLocale();
 
   const onSubmit = async (data: FormData): Promise<void> => {
     if (errors.email?.message || isActive('request password reset')) {
@@ -43,6 +44,7 @@ export default function RequestPasswordResetForm(): ReactElement {
 
     const trimmedData = {
       email: data.email.trim(),
+      locale: locale as Locale,
     };
     const result = await reqResetPassword(trimmedData);
 

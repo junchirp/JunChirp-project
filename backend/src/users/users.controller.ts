@@ -72,7 +72,7 @@ export class UsersController {
     @Ip() ip: string,
     @Body() body: EmailDto,
   ): Promise<MessageResponseDto> {
-    return this.usersService.sendVerificationUrl(ip, body.email);
+    return this.usersService.sendVerificationUrl(ip, body.email, body.locale);
   }
 
   @ApiOperation({ summary: 'Confirm email' })

@@ -13,7 +13,8 @@ import {
   availableEmailSchema,
   availableEmailSchemaStatic,
 } from '@/shared/forms/schemas/availableEmailSchema';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
+import { Locale } from '@/i18n/routing';
 
 type FormData = z.infer<typeof availableEmailSchemaStatic>;
 
@@ -22,18 +23,20 @@ interface FormProps {
 }
 
 export default function ChangeEmailForm({ onClose }: FormProps): ReactElement {
-  const t = useTranslations('forms');
+  const tForms = useTranslations('forms');
+  const tButtons = useTranslations('buttons');
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>({
-    resolver: zodResolver(availableEmailSchema(t)),
+    resolver: zodResolver(availableEmailSchema(tForms)),
     mode: 'onChange',
   });
 
   const [updateEmail, { isLoading }] = useUpdateEmailMutation();
   const { showToast, isActive } = useToast();
+  const locale = useLocale();
 
   const onSubmit = async (data: FormData): Promise<void> => {
     if (errors.email?.message || isActive('change email')) {
@@ -41,22 +44,23 @@ export default function ChangeEmailForm({ onClose }: FormProps): ReactElement {
     }
     const trimmedData = {
       email: data.email.trim(),
+      locale: locale as Locale,
     };
     const result = await updateEmail(trimmedData);
 
     if ('data' in result) {
       showToast({
         severity: 'success',
-        summary: 'E-mail змінено успішно.',
-        detail: 'Перевір пошту для підтвердження.',
+        summary: tForms('changeEmailForm.success'),
+        detail: tForms('changeEmailForm.successDetails'),
         life: 3000,
         actionKey: 'change email',
       });
     } else if ('error' in result) {
       showToast({
         severity: 'error',
-        summary: 'Помилка: не вдалося змінити e-mail.',
-        detail: 'Спробуй ще раз.',
+        summary: tForms('changeEmailForm.error'),
+        detail: tForms('changeEmailForm.errorDetails'),
         life: 3000,
         actionKey: 'change email',
       });
@@ -73,7 +77,7 @@ export default function ChangeEmailForm({ onClose }: FormProps): ReactElement {
     >
       <fieldset disabled={isLoading}>
         <Input
-          label="Email"
+          label={tForms('changeEmailForm.email')}
           placeholder="example@email.com"
           type="email"
           {...register('email')}
@@ -89,10 +93,10 @@ export default function ChangeEmailForm({ onClose }: FormProps): ReactElement {
           fullWidth
           onClick={onClose}
         >
-          Назад
+          {tButtons('cancel')}
         </Button>
         <Button color="green" type="submit" fullWidth loading={isLoading}>
-          Змінити e-mail
+          {tButtons('changeEmail')}
         </Button>
       </div>
     </form>
