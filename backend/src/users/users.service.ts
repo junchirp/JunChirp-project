@@ -39,6 +39,7 @@ import { EmailValidationResponseDto } from './dto/email-validation.response-dto'
 import { TokenValidationResponseDto } from './dto/token-validation.response-dto';
 import { AuthResponseDto } from './dto/auth.response-dto';
 import { EmailDto } from './dto/email.dto';
+import { LocaleType } from '../shared/types/locale.type';
 
 interface GetUsersOptionsInterface {
   activeProjectsCount: number;
@@ -236,6 +237,7 @@ export class UsersService {
   public async sendVerificationUrl(
     ip: string,
     email: string,
+    locale: LocaleType,
   ): Promise<MessageResponseDto> {
     const record = await this.createVerificationUrl(ip, email);
     const params = new URLSearchParams({
@@ -244,7 +246,7 @@ export class UsersService {
     });
     const url = `${this.configService.get('BASE_FRONTEND_URL')}/verify-email?${params.toString()}`;
 
-    await this.mailService.sendVerificationMail(email, url);
+    await this.mailService.sendVerificationMail(email, url, locale);
 
     await this.loggerService.log(
       ip,
@@ -551,7 +553,6 @@ export class UsersService {
   }
 
   public async createOrUpdateGoogleUser(
-    ip: string,
     createGoogleUserDto: CreateGoogleUserDto,
   ): Promise<UserResponseDto> {
     const user = await this.getUserByEmail(createGoogleUserDto.email, false);
@@ -567,6 +568,7 @@ export class UsersService {
           email: createGoogleUserDto.email,
           googleId: createGoogleUserDto.googleId,
           avatarUrl: this.cloudinaryService.getUrl('avatars/avatar_beta'),
+          isVerified: true,
           role: {
             connect: { id: role.id },
           },
@@ -584,7 +586,7 @@ export class UsersService {
     } else if (user && !user.googleId) {
       const userFromDB = await this.prisma.user.update({
         where: { email: createGoogleUserDto.email },
-        data: { googleId: createGoogleUserDto.googleId },
+        data: { googleId: createGoogleUserDto.googleId, isVerified: true },
         include: {
           role: true,
           educations: true,
@@ -597,17 +599,6 @@ export class UsersService {
       updatedUser = UserMapper.toFullResponse(userFromDB, false);
     } else {
       updatedUser = user;
-    }
-
-    if (!updatedUser.isVerified) {
-      const record = await this.createVerificationUrl(ip, updatedUser.email);
-      const params = new URLSearchParams({
-        token: record.token,
-        email: updatedUser.email,
-      });
-      const url = `${this.configService.get('BASE_FRONTEND_URL')}/verify-email?${params.toString()}`;
-
-      await this.mailService.sendVerificationMail(updatedUser.email, url);
     }
 
     return updatedUser;
@@ -668,7 +659,11 @@ export class UsersService {
         });
         const url = `${this.configService.get('BASE_FRONTEND_URL')}/verify-email?${params.toString()}`;
 
-        await this.mailService.sendVerificationMail(updatedUser.email, url);
+        await this.mailService.sendVerificationMail(
+          updatedUser.email,
+          url,
+          emailDto.locale,
+        );
       }
 
       return UserMapper.toAuthResponse(updatedUser);

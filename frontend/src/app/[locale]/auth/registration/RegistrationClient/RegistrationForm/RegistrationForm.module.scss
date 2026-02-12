@@ -19,8 +19,7 @@
 
   &__checkbox-error {
     height: 34px;
-    font-size: 14px;
-    line-height: 1.2;
+    font-size: 12px;
     color: variables.$red-2;
   }
 
@@ -43,7 +42,7 @@
     border-radius: 4px;
     height: 16px;
     width: 16px;
-    color: variables.$gray-8;
+    color: variables.$gray-14;
 
     &:hover {
       color: variables.$green-2;
@@ -53,5 +52,11 @@
       box-shadow: 0 0 0 4px variables.$green-4;
       color: variables.$green-2;
     }
+  }
+
+  &__checkbox-with-error {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
   }
 }

@@ -3,11 +3,13 @@
 import { ReactElement } from 'react';
 import styles from './ConfirmPasswordResetContent.module.scss';
 import Button from '@/shared/components/Button/Button';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useRequestPasswordResetMutation } from '@/api/authApi';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
 import { useToast } from '@/hooks/useToast';
+import { Locale, useRouter } from '@/i18n/routing';
+import { useLocale } from 'next-intl';
 
 export default function ConfirmPasswordResetContent(): ReactElement {
   const searchParams = useSearchParams();
@@ -15,13 +17,14 @@ export default function ConfirmPasswordResetContent(): ReactElement {
   const [reqResetPassword, { isLoading }] = useRequestPasswordResetMutation();
   const { showToast, isActive } = useToast();
   const router = useRouter();
+  const locale = useLocale();
 
   const handleClick = async (): Promise<void> => {
     if (isActive('confirm password reset')) {
       return;
     }
 
-    const result = await reqResetPassword({ email });
+    const result = await reqResetPassword({ email, locale: locale as Locale });
 
     if ('data' in result) {
       showToast({

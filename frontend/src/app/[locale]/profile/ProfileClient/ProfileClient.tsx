@@ -41,12 +41,13 @@ import { useGetMyInvitesQuery, useGetMyRequestsQuery } from '@/api/usersApi';
 import MyRequests from './MyRequests/MyRequests';
 import MyInvites from './MyInvites/MyInvites';
 import Button from '@/shared/components/Button/Button';
-import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { profileActionTranslationKeys } from '@/shared/constants/profile-action-translation-keys';
+import { usePathname, useRouter } from '@/i18n/routing';
 
 export default function ProfileClient(): ReactElement {
   const router = useRouter();
+  const pathname = usePathname();
   const [action, setAction] = useState<ProfileActionType>(null);
   const [deletedItem, setDeletedItem] = useState<DeletedItemInterface<
     | SocialInterface
@@ -361,7 +362,10 @@ export default function ProfileClient(): ReactElement {
   };
 
   return (
-    <AuthGuard requireVerified>
+    <AuthGuard
+      requireVerified
+      redirectTo={`/auth/login?next=${encodeURIComponent(pathname)}`}
+    >
       {user && !isLoading && (
         <div className={styles['profile-client']}>
           <div className={styles['profile-client__details']}>

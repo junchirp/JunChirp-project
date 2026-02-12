@@ -17,7 +17,10 @@
     "cancelRequest": "Cancel Application",
     "sendInvite": "Send invitation",
     "invite": "Invite",
-    "continueWith": "Continue with"
+    "continueWith": "Continue with",
+    "enterAnotherEmail": "Enter another email",
+    "changeEmail": "Change email",
+    "send": "Send"
   },
   "discord": {
     "profile": "Connect Discord to join projects and gain access to project chats.",
@@ -246,7 +249,7 @@
       "error": "Something went wrong while signing in.",
       "errorDetails": "Please try again later.",
       "error401": "It looks like the email or password you entered is incorrect.",
-      "error401Details": "Try again or reset your password.",
+      "error401Details": "Check the entered details and try again.",
       "error429": "Your account has been temporarily locked due to multiple failed login attempts.",
       "error429_5Details": "You can try again in 15 minutes. If you need help, please contact <cta>support</cta>.",
       "error429_10Details": "You can try again in 1 hour. If you need help, please contact <cta>support</cta>.",
@@ -269,6 +272,16 @@
       "errorDetails": "Please try again.",
       "error409": "This email is already in use.",
       "error409Details": "Try another one."
+    },
+    "changeEmailForm": {
+      "email": "Email",
+      "success": "Email changed successfully.",
+      "successDetails": "Email changed successfully.",
+      "error": "Failed to change email.",
+      "errorDetails": "Please try again."
+    },
+    "requestPasswordResetForm": {
+      "email": "Email"
     }
   },
   "page404": {
@@ -498,5 +511,56 @@
     "joinCommunity": "Join the Community",
     "chat": "Chat",
     "signOut": "Sign out"
+  },
+  "emailConfirmation": {
+    "title": "Email confirmation",
+    "subTitle": "Important information:",
+    "firstRegistrationPart": "We've sent an email with a confirmation link to <email>[{userEmail}]</email>. Please check your inbox and click the link to confirm your registration.",
+    "firstLoginPart": "Your email address has not been confirmed yet. To complete your registration, <button>Click here</button> — we will send an email with a confirmation link to <email>[{userEmail}]</email>.",
+    "secondPart": "If you didn’t receive the email, please check your Spam folder or <button>Send the request again</button>.",
+    "information": [
+      "Link validity period: The email confirmation link is valid for 24 hours.",
+      "A new link invalidates the previous one: Each time you request a new confirmation link, the previous one becomes invalid. This means the old link will no longer work, and you will need to use the new one.",
+      "After 24 hours: If you do not confirm your email address within 24 hours, your data will be deleted from our database, and you will need to start the registration process again."
+    ],
+    "success": "Your request has been successfully processed.",
+    "successDetails": "Please check your email for confirmation.",
+    "error429": "You have exceeded the limit for email confirmation requests.",
+    "error429Details": "Please try sending a new request in 1 hour.",
+    "error400": "An error occurred while processing the request.",
+    "error400Details": "Email has already been confirmed."
+  },
+  "changeEmailPopup": {
+    "title": "Change email",
+    "description": "Please enter your new email so we can send you a confirmation email."
+  },
+  "confirmationResult": {
+    "deleted": {
+      "title": "Link has expired",
+      "description": "The link has expired, and your account has been deleted. To access the platform, please register again."
+    },
+    "invalid": {
+      "title": "Link has expired",
+      "description": "This link is no longer valid. Please <button>Send the request again</button> to receive a new email confirmation link.",
+      "success": "Your request has been successfully processed.",
+      "successDetails": "Please check your email for confirmation.",
+      "error429": "You have exceeded the limit for email confirmation requests.",
+      "error429Details": "Please try sending a new request in 1 hour.",
+      "error400": "An error occurred while processing the request.",
+      "error400Details": "Email has already been confirmed.",
+      "error": "An error occurred while processing the request.",
+      "errorDetails": "The link may have been copied and modified. Email not found."
+    },
+    "success": {
+      "title": "Congratulations!",
+      "description": [
+        "Registration completed. Email successfully confirmed!",
+        "You can now sign in to the system."
+      ]
+    }
+  },
+  "requestPasswordReset": {
+    "title": "Password reset request",
+    "description": "To reset your password, enter your email address — if an account with this email exists, we’ll send instructions to restore access."
   }
 }

@@ -110,8 +110,8 @@ function InputComponent(
             <Image
               src="/images/alert-circle.svg"
               alt={'alert'}
-              width={16}
-              height={16}
+              width={12}
+              height={12}
             />
             {errorMessages[0]}
           </p>

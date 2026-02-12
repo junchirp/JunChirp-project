@@ -3,7 +3,6 @@
 import { z } from 'zod';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/navigation';
 import { useRegisterMutation } from '@/api/authApi';
 import React, { ReactElement, useEffect } from 'react';
 import { useToast } from '@/hooks/useToast';
@@ -13,7 +12,7 @@ import Button from '@/shared/components/Button/Button';
 import { blackListPasswords } from '@/shared/constants/black-list-passwords';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
-import { Link } from '@/i18n/routing';
+import { Link, Locale, useRouter } from '@/i18n/routing';
 import Checkbox from '@/assets/icons/checkbox-empty.svg';
 import CheckboxChecked from '@/assets/icons/checkbox-checked.svg';
 import PasswordStrengthIndicator from '@/shared/components/PasswordStrengthIndicator/PasswordStrengthIndicator';
@@ -23,7 +22,7 @@ import {
   registrationSchemaStatic,
 } from '@/shared/forms/schemas/registrationSchema';
 import { normalizeApostrophes } from '@/shared/utils/normalizeApostrophes';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 type FormData = z.infer<typeof registrationSchemaStatic>;
 
@@ -74,6 +73,7 @@ export default function RegistrationForm(): ReactElement {
   const router = useRouter();
   const [registration, { isLoading }] = useRegisterMutation();
   const { showToast, isActive } = useToast();
+  const locale = useLocale();
 
   const onSubmit = async (data: FormData): Promise<void> => {
     if (errors.email?.message || isActive('register')) {
@@ -85,6 +85,7 @@ export default function RegistrationForm(): ReactElement {
       lastName: data.lastName.trim(),
       email: data.email.trim(),
       password: data.password,
+      locale: locale as Locale,
     };
     const result = await registration(trimmedData);
 
@@ -204,7 +205,7 @@ export default function RegistrationForm(): ReactElement {
               : undefined
           }
         />
-        <div>
+        <div className={styles['registration-form__checkbox-with-error']}>
           <div className={styles['registration-form__checkbox-wrapper']}>
             <label htmlFor="checkbox">
               {agreement ? (
