@@ -28,7 +28,7 @@ export default function ChangeEmailForm({ onClose }: FormProps): ReactElement {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm<FormData>({
     resolver: zodResolver(availableEmailSchema(tForms)),
     mode: 'onChange',
@@ -95,7 +95,13 @@ export default function ChangeEmailForm({ onClose }: FormProps): ReactElement {
         >
           {tButtons('cancel')}
         </Button>
-        <Button color="green" type="submit" fullWidth loading={isLoading}>
+        <Button
+          color="green"
+          type="submit"
+          fullWidth
+          loading={isLoading}
+          disabled={!isValid}
+        >
           {tButtons('changeEmail')}
         </Button>
       </div>
