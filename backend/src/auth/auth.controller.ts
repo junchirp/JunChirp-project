@@ -34,9 +34,10 @@ import { LoginDto } from './dto/login.dto';
 import { LocalAuthGuard } from './guards/local-auth/local-auth.guard';
 import { Auth } from './decorators/auth.decorator';
 import { MessageResponseDto } from '../users/dto/message.response-dto';
-import { GoogleAuthGuard } from './guards/google-auth/google-auth.guard';
+import { GoogleInitGuard } from './guards/google-init/google-init.guard';
 import { Discord } from './decorators/discord.decorator';
 import { AuthResponseDto } from '../users/dto/auth.response-dto';
+import { GoogleCallbackGuard } from './guards/google-callback/google-callback.guard';
 
 @ApiTags('Authorization')
 @Controller('auth')
@@ -127,7 +128,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Initiate Google OAuth2 login' })
   @ApiResponse({ status: HttpStatus.FOUND })
   @HttpCode(HttpStatus.FOUND)
-  @UseGuards(GoogleAuthGuard)
+  @UseGuards(GoogleInitGuard)
   @Get('google')
   // eslint-disable-next-line
   public async googleAuth(): Promise<void> {}
@@ -136,16 +137,18 @@ export class AuthController {
   @ApiResponse({ status: HttpStatus.FOUND })
   @HttpCode(HttpStatus.FOUND)
   @Get('google/callback')
-  @UseGuards(GoogleAuthGuard)
+  @UseGuards(GoogleCallbackGuard)
   @ApiOperation({ summary: 'Callback endpoint for Google authentication' })
   public async googleRedirect(
     @Ip() ip: string,
     @Req() req: Request,
     @Res() res: Response,
     @Query('state') state: string,
-    @Query('returnUrl') _returnUrl: string,
+    @Query('error') error?: string,
   ): Promise<void> {
-    return this.authService.handleGoogleCallback(ip, req, res, state);
+    return error === 'access_denied'
+      ? this.authService.handleGoogleCancel(ip, res, state)
+      : this.authService.handleGoogleCallback(ip, req, res, state, error);
   }
 
   @Discord()

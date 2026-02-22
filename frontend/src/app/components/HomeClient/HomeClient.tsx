@@ -1,7 +1,7 @@
 'use client';
 
 import styles from './HomeClient.module.scss';
-import { ReactElement } from 'react';
+import { ReactElement, useEffect, useRef } from 'react';
 import HomeBanner from './HomeBanner/HomeBanner';
 import { useAppSelector } from '@/hooks/reduxHooks';
 import authSelector from '@/redux/auth/authSelector';
@@ -11,10 +11,37 @@ import CallToAction from './CallToAction/CallToAction';
 import NextLevel from './NextLevel/NextLevel';
 import ThreeSteps from './ThreeSteps/ThreeSteps';
 import WhatWeNeed from './WhatWeNeed/WhatWeNeed';
+import { useSearchParams } from 'next/navigation';
+import { useToast } from '@/hooks/useToast';
+import { useTranslations } from 'next-intl';
+import { useRouter } from '@/i18n/routing';
 
 export default function HomeClient(): ReactElement {
   const user = useAppSelector(authSelector.selectUser);
   const loadingStatus = useAppSelector(authSelector.selectLoadingStatus);
+  const searchParams = useSearchParams();
+  const { showToast } = useToast();
+  const t = useTranslations('auth');
+  const hasShownToast = useRef(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (hasShownToast.current || loadingStatus !== 'loaded') {
+      return;
+    }
+    const authType = searchParams.get('authType');
+    if (authType === 'registration') {
+      hasShownToast.current = true;
+      showToast({
+        severity: 'success',
+        summary: t('googleSuccess'),
+        detail: t('googleSuccessDetails'),
+        life: 3000,
+        actionKey: 'google',
+      });
+      router.replace('/', { scroll: false });
+    }
+  }, [loadingStatus]);
 
   if (loadingStatus !== 'loaded') {
     return <HomeSkeleton />;

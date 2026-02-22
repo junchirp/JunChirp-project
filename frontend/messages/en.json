@@ -488,10 +488,10 @@
     "signUp": "Sign up",
     "or": "or",
     "forgotPassword": "Forgot your password?",
-    "googleSignInError": "Failed to sign in with Google.",
-    "googleSignInErrorDetails": "Please try again or choose another sign-in method.",
-    "googleSignUpError": "Failed to sign up with Google.",
-    "googleSignUpErrorDetails": "Please try again or choose another registration method."
+    "googleError": "Unable to continue with Google.",
+    "googleErrorDetails": "Please try again or choose another sign-in method.",
+    "googleSuccess": "Registration successful.",
+    "googleSuccessDetails": "Welcome!"
   },
   "meta": {
     "home": {

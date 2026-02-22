@@ -2,12 +2,35 @@
 
 import styles from './LoginClient.module.scss';
 import LoginForm from './LoginForm/LoginForm';
-import { ReactElement } from 'react';
+import { ReactElement, useEffect, useRef } from 'react';
 import SocialButton from '@/shared/components/SocialButton/SocialButton';
 import { useTranslations } from 'next-intl';
+import { useSearchParams } from 'next/navigation';
+import { useToast } from '@/hooks/useToast';
+import { useRouter } from '@/i18n/routing';
 
 export default function LoginClient(): ReactElement {
   const t = useTranslations('auth');
+  const searchParams = useSearchParams();
+  const { showToast } = useToast();
+  const hasShownToast = useRef(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    const error = searchParams.get('error');
+    if (!error || hasShownToast.current) {
+      return;
+    }
+    hasShownToast.current = true;
+    showToast({
+      severity: 'error',
+      summary: t('googleError'),
+      detail: t('googleErrorDetails'),
+      life: 3000,
+      actionKey: 'google',
+    });
+    router.replace(window.location.pathname, { scroll: false });
+  }, []);
 
   return (
     <div className={styles['login-client']}>
@@ -17,17 +40,7 @@ export default function LoginClient(): ReactElement {
         <span className={styles['login-client__text']}>{t('or')}</span>
         <div className={styles['login-client__line']}></div>
       </div>
-      <SocialButton
-        social="google"
-        fullWidth={true}
-        message={{
-          severity: 'error',
-          summary: t('googleSignInError'),
-          detail: t('googleSignInErrorDetails'),
-          life: 3000,
-          actionKey: 'google',
-        }}
-      />
+      <SocialButton social="google" fullWidth={true} />
     </div>
   );
 }

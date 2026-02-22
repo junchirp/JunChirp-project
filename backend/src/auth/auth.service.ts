@@ -404,12 +404,12 @@ export class AuthService {
     ip: string,
     req: Request,
     res: Response,
-  ): Promise<AuthResponseDto> {
+  ): Promise<'registration' | 'login'> {
     if (!req.user) {
       await this.loggerService.log(
         ip,
         'unknown',
-        'google login',
+        'google authentication',
         'Google authentication failed',
       );
       throw new UnauthorizedException('Google authentication failed');
@@ -425,7 +425,8 @@ export class AuthService {
       refreshToken: string;
     };
 
-    const user = await this.usersService.createOrUpdateGoogleUser(reqUser);
+    const { user, authType } =
+      await this.usersService.createOrUpdateGoogleUser(reqUser);
     const { accessToken, refreshToken } = this.createTokens(user.id);
     this.addRefreshTokenToResponse(res, refreshToken);
     this.addAccessTokenToResponse(res, accessToken);
@@ -433,14 +434,11 @@ export class AuthService {
     await this.loggerService.log(
       ip,
       'unknown',
-      'google login',
+      'google authentication',
       'Google authentication successfully',
     );
 
-    const { educations, socials, hardSkills, softSkills, ...baseUserInfo } =
-      user;
-
-    return baseUserInfo;
+    return authType;
   }
 
   public async handleDiscordCallback(
@@ -461,7 +459,10 @@ export class AuthService {
       }
 
       const { userId, returnUrl } = JSON.parse(data);
-      const safeReturnUrl = this.getSafeReturnUrl(returnUrl);
+      const safeReturnUrl = this.getSafeReturnUrl(returnUrl, {
+        social: 'discord',
+        status: 'success',
+      });
       const redirectBase = `${frontendBaseUrl}${safeReturnUrl}`;
 
       const { discordId, accessToken } = req.user as {
@@ -484,57 +485,111 @@ export class AuthService {
     req: Request,
     res: Response,
     state: string,
+    error?: string,
   ): Promise<void> {
     const frontendBaseUrl =
       this.configService.get<string>('BASE_FRONTEND_URL') ??
       'https://localhost:3000';
 
-    const redirectWithError = (returnUrl: string): void => {
-      const safeUrl = this.getSafeReturnUrl(returnUrl);
-      const finalUrl = `${frontendBaseUrl}${safeUrl}?status=failure&error=google_auth_failed`;
-      return res.redirect(finalUrl);
-    };
-
     try {
       const data = await this.redisService.get(state);
-      if (!data) {
-        return redirectWithError('/');
-      }
+      const authType = await this.googleLogin(ip, req, res);
+      const { returnUrl } = data ? JSON.parse(data) : { returnUrl: '/' };
+      const safeReturnUrl = error
+        ? this.getSafeReturnUrl(returnUrl, {
+            social: 'google',
+            status: 'failure',
+            error,
+          })
+        : this.getSafeReturnUrl('/', {
+            social: 'google',
+            status: 'success',
+            authType,
+          });
 
-      const { returnUrl } = JSON.parse(data);
-      const safeReturnUrl = this.getSafeReturnUrl(returnUrl);
-      const user = await this.googleLogin(ip, req, res);
-      let redirectUrl: string;
-
-      if (user.isVerified) {
-        redirectUrl = `${frontendBaseUrl}`;
-      } else if (safeReturnUrl.startsWith('/auth/login')) {
-        redirectUrl = `${frontendBaseUrl}/confirm-email?type=login`;
-      } else if (safeReturnUrl.startsWith('/auth/registration')) {
-        redirectUrl = `${frontendBaseUrl}/confirm-email?type=registration`;
-      } else {
-        redirectUrl = `${frontendBaseUrl}`;
-      }
+      const redirectUrl = `${frontendBaseUrl}${safeReturnUrl}`;
 
       await this.redisService.del(state);
 
       return res.redirect(redirectUrl);
     } catch {
-      try {
-        const fallback = await this.redisService.get(state);
-        const parsed = fallback ? JSON.parse(fallback) : {};
-        const returnUrl = parsed?.returnUrl ?? '/';
-        return redirectWithError(returnUrl);
-      } catch {
-        return redirectWithError('/');
-      }
+      const data = await this.redisService.get(state);
+      const { returnUrl } = data ? JSON.parse(data) : { returnUrl: '/' };
+      const safeReturnUrl = this.getSafeReturnUrl(returnUrl, {
+        social: 'google',
+        status: 'failure',
+        error: 'google_auth_failed',
+      });
+
+      const redirectUrl = `${frontendBaseUrl}${safeReturnUrl}`;
+      return res.redirect(redirectUrl);
     }
   }
 
-  private getSafeReturnUrl(url: string | undefined): string {
+  public async handleGoogleCancel(
+    ip: string,
+    res: Response,
+    state: string,
+  ): Promise<void> {
+    const frontendBaseUrl =
+      this.configService.get<string>('BASE_FRONTEND_URL') ??
+      'https://localhost:3000';
+
     try {
-      const decoded = decodeURIComponent(url ?? '');
-      return decoded.startsWith('/') ? `${decoded}?status=success` : '/';
+      const data = await this.redisService.get(state);
+      const { returnUrl } = data ? JSON.parse(data) : { returnUrl: '/' };
+      const safeReturnUrl = this.getSafeReturnUrl(returnUrl, {
+        social: 'google',
+        status: 'cancel',
+      });
+
+      await this.loggerService.log(
+        ip,
+        'unknown',
+        'google authentication',
+        'Google authentication canceled',
+      );
+      await this.redisService.del(state);
+
+      const redirectUrl = `${frontendBaseUrl}${safeReturnUrl}`;
+      return res.redirect(redirectUrl);
+    } catch {
+      return res.redirect('/');
+    }
+  }
+
+  private getSafeReturnUrl(
+    url: string | undefined,
+    data: {
+      social: 'discord' | 'google';
+      status: 'success' | 'failure' | 'cancel';
+      error?: string;
+      authType?: 'login' | 'registration';
+    },
+  ): string {
+    try {
+      const decodedUrl = decodeURIComponent(url ?? '');
+      let params = '';
+
+      if (data.status !== 'cancel') {
+        params = `status=${data.status}&social=${data.social}`;
+      }
+
+      if (data.status === 'success' && data.social === 'google') {
+        params = `${params}&authType=${data.authType}`;
+      }
+
+      if (data.status === 'failure' && data.error) {
+        params = `${params}&error=${data.error}`;
+      }
+
+      return params
+        ? decodedUrl.startsWith('/')
+          ? `${decodedUrl}?${params}`
+          : `/?${params}`
+        : decodedUrl.startsWith('/')
+          ? `${decodedUrl}`
+          : '/';
     } catch {
       return '/';
     }
