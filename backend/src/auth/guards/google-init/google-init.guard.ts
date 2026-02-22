@@ -4,7 +4,7 @@ import { v4 as uuidV4 } from 'uuid';
 import { RedisService } from '../../../redis/redis.service';
 
 @Injectable()
-export class GoogleAuthGuard extends AuthGuard('google') {
+export class GoogleInitGuard extends AuthGuard('google') {
   public constructor(private redisService: RedisService) {
     super({
       accessType: 'offline',

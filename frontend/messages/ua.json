@@ -485,10 +485,10 @@
     "signUp": "Реєстрація",
     "or": "або",
     "forgotPassword": "Забули пароль?",
-    "googleSignInError": "Не вдалося увійти через Google.",
-    "googleSignInErrorDetails": "Спробуй ще раз або обери інший спосіб входу.",
-    "googleSignUpError": "Не вдалося зареєструватись через Google.",
-    "googleSignUpErrorDetails": "Спробуй ще раз або обери інший спосіб реєстрації."
+    "googleError": "Не вдалося виконати авторизацію через Google.",
+    "googleErrorDetails": "Спробуй ще раз або обери інший спосіб входу.",
+    "googleSuccess": "Реєстрація успішна.",
+    "googleSuccessDetails": "Ласкаво просимо!"
   },
   "meta": {
     "home": {

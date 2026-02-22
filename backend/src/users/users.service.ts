@@ -554,13 +554,14 @@ export class UsersService {
 
   public async createOrUpdateGoogleUser(
     createGoogleUserDto: CreateGoogleUserDto,
-  ): Promise<UserResponseDto> {
+  ): Promise<{ user: UserResponseDto; authType: 'registration' | 'login' }> {
     const user = await this.getUserByEmail(createGoogleUserDto.email, false);
     let updatedUser: UserResponseDto;
+    let authType: 'registration' | 'login';
 
     if (!user) {
+      authType = 'registration';
       const role = await this.rolesService.findOrCreateRole('user');
-
       const userFromDB = await this.prisma.user.create({
         data: {
           firstName: createGoogleUserDto.firstName,
@@ -584,6 +585,7 @@ export class UsersService {
       });
       updatedUser = UserMapper.toFullResponse(userFromDB, false);
     } else if (user && !user.googleId) {
+      authType = user.isVerified ? 'login' : 'registration';
       const userFromDB = await this.prisma.user.update({
         where: { email: createGoogleUserDto.email },
         data: { googleId: createGoogleUserDto.googleId, isVerified: true },
@@ -599,9 +601,10 @@ export class UsersService {
       updatedUser = UserMapper.toFullResponse(userFromDB, false);
     } else {
       updatedUser = user;
+      authType = 'login';
     }
 
-    return updatedUser;
+    return { user: updatedUser, authType };
   }
 
   public async updateUser(
