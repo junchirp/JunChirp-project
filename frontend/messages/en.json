@@ -143,7 +143,7 @@
     "errors": {
       "nonEmpty": "The field cannot be empty",
       "nameLength": "Enter between 2 and 50 letters",
-      "nameSymbols": "Only letters, spaces, apostrophes, and hyphens are allowed",
+      "nameSymbols": "Allowed characters: letters, spaces, apostrophes, and hyphens",
       "desiredRolesMax": "You can select up to three roles",
       "educationLength": "The name must be between 2 and 100 characters",
       "educationSymbols": "Invalid characters in the name",
