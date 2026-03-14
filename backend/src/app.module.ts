@@ -9,7 +9,7 @@ import { CronTasksService } from './shared/services/cron-tasks/cron-tasks.servic
 import { RolesModule } from './roles/roles.module';
 import { RedisModule } from './redis/redis.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { CsrfModule } from './csrf/csrf.module';
 import { SocialsModule } from './socials/socials.module';
 import { EducationsModule } from './educations/educations.module';
@@ -27,6 +27,7 @@ import { SupportModule } from './support/support.module';
 import { LoggerModule } from './logger/logger.module';
 import { DiscordModule } from './discord/discord.module';
 import { HttpModule } from '@nestjs/axios';
+import { ValidationPipe } from './shared/pipes/validation/validation.pipe';
 
 @Module({
   imports: [
@@ -77,6 +78,10 @@ import { HttpModule } from '@nestjs/axios';
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
+    },
+    {
+      provide: APP_PIPE,
+      useClass: ValidationPipe,
     },
   ],
 })

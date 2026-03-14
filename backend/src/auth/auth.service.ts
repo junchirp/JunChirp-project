@@ -10,7 +10,6 @@ import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Request, Response } from 'express';
-import { UserResponseDto } from '../users/dto/user.response-dto';
 import { UserWithPasswordResponseDto } from '../users/dto/user-with-password.response-dto';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { MailService } from '../mail/mail.service';
@@ -81,6 +80,7 @@ export class AuthService {
         throw new TooManyRequestsException(
           'Too many failed attempts. Please try again later',
           loginAttempt.attemptsCount,
+          loginAttempt.blockedUntil,
         );
       }
     }
@@ -152,6 +152,7 @@ export class AuthService {
           throw new TooManyRequestsException(
             'Too many failed attempts. Please try again later',
             updateData.attemptsCount,
+            updateData.blockedUntil,
           );
         }
       } else {
@@ -226,13 +227,10 @@ export class AuthService {
     const { accessToken, refreshToken } = this.createTokens(user.id);
     this.addRefreshTokenToResponse(res, refreshToken);
     this.addAccessTokenToResponse(res, accessToken);
-    const record = await this.usersService.createVerificationUrl(
-      ip,
-      createUserDto.email,
-    );
+    const token = this.usersService.createCryptoToken();
+    await this.usersService.createVerificationEmailRecords(ip, user, token);
     const params = new URLSearchParams({
-      token: record.token,
-      email: createUserDto.email,
+      token: token.raw,
     });
     const url = `${this.configService.get('BASE_FRONTEND_URL')}/verify-email?${params.toString()}`;
 
@@ -248,7 +246,7 @@ export class AuthService {
     return baseUserInfo;
   }
 
-  public createAccessToken(userId: string): string {
+  private createAccessToken(userId: string): string {
     const data = { id: userId };
 
     return this.jwtService.sign(data, {
@@ -257,7 +255,7 @@ export class AuthService {
     });
   }
 
-  public createRefreshToken(userId: string): string {
+  private createRefreshToken(userId: string): string {
     const data = { id: userId };
 
     return this.jwtService.sign(data, {
@@ -266,7 +264,7 @@ export class AuthService {
     });
   }
 
-  public createTokens(userId: string): {
+  private createTokens(userId: string): {
     accessToken: string;
     refreshToken: string;
   } {
@@ -279,7 +277,7 @@ export class AuthService {
     };
   }
 
-  public addRefreshTokenToResponse(res: Response, refreshToken: string): void {
+  private addRefreshTokenToResponse(res: Response, refreshToken: string): void {
     const expiresIn = new Date();
     expiresIn.setDate(expiresIn.getDate() + this.EXPIRE_DAY_REFRESH_TOKEN);
 
@@ -291,7 +289,7 @@ export class AuthService {
     });
   }
 
-  public addAccessTokenToResponse(res: Response, accessToken: string): void {
+  private addAccessTokenToResponse(res: Response, accessToken: string): void {
     const expiresIn = new Date();
     expiresIn.setMinutes(expiresIn.getMinutes() + 15);
 
@@ -303,7 +301,7 @@ export class AuthService {
     });
   }
 
-  public validateRefreshToken(refreshToken: string): string {
+  private validateRefreshToken(refreshToken: string): string {
     try {
       const payload = this.jwtService.verify(refreshToken, {
         secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
@@ -377,7 +375,7 @@ export class AuthService {
   ): Promise<MessageResponseDto> {
     const accessToken = req.cookies['accessToken'];
     const refreshToken = req.cookies['refreshToken'];
-    const user = req.user as UserResponseDto;
+    const user = req.user as AuthResponseDto;
 
     try {
       await this.clearTokens(accessToken, refreshToken, res);

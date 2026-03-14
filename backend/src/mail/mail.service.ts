@@ -113,12 +113,20 @@ export class MailService {
   public async sendResetPasswordMail(
     email: string,
     url: string,
+    locale: LocaleType,
   ): Promise<void> {
+    const subjects: LocaleEmailSubjectType = {
+      en: 'Your password reset link',
+      ua: 'Твоє посилання для відновлення паролю',
+    };
+
+    const subject = subjects[locale] ?? subjects.ua;
+
     await this.addEmailToQueue({
       to: email,
       from: `Support Team <${this.configService.get<string>('EMAIL_USER')}>`,
-      subject: 'Твоє посилання для відновлення паролю',
-      template: './reset-password-email',
+      subject: subject,
+      template: `./reset-password-email-${locale}`,
       context: { url },
     });
   }

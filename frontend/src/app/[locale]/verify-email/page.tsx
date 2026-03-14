@@ -2,7 +2,8 @@
 
 import { ReactElement, useEffect } from 'react';
 import Spinner from '@/shared/components/Spinner/Spinner';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
+import { useRouter } from '@/i18n/routing';
 import { useConfirmEmailMutation } from '@/api/authApi';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
@@ -12,12 +13,11 @@ export default function VerifyEmail(): ReactElement {
   const searchParams = useSearchParams();
   const router = useRouter();
   const token = searchParams.get('token') ?? '';
-  const email = searchParams.get('email') ?? '';
   const [verifyEmail, { isError, isSuccess, error }] =
     useConfirmEmailMutation();
 
   useEffect(() => {
-    verifyEmail({ token, email });
+    verifyEmail({ token });
   }, [verifyEmail]);
 
   useEffect(() => {
@@ -33,7 +33,7 @@ export default function VerifyEmail(): ReactElement {
       const resStatus = errorData.status;
 
       if (resStatus === 400 && errorData.data.error !== 'Validation Error') {
-        router.push(`/verify-email/invalid?email=${encodeURIComponent(email)}`);
+        router.push(`/verify-email/invalid?token=${encodeURIComponent(token)}`);
       } else {
         router.push(`/verify-email/deleted`);
       }

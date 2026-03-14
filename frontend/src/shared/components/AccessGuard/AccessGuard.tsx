@@ -1,7 +1,8 @@
 'use client';
 
 import { ReactElement, ReactNode, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
+import { useRouter } from '@/i18n/routing';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { useAppSelector } from '@/hooks/reduxHooks';
 import authSelector from '@/redux/auth/authSelector';

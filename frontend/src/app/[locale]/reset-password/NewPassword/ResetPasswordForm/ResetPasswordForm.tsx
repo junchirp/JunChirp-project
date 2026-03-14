@@ -7,7 +7,7 @@ import Input from '@/shared/components/Input/Input';
 import PasswordStrengthIndicator from '@/shared/components/PasswordStrengthIndicator/PasswordStrengthIndicator';
 import { z } from 'zod';
 import { blackListPasswords } from '@/shared/constants/black-list-passwords';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from '@/i18n/routing';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { getPasswordStrength } from '@/shared/utils/getPasswordStrength';
@@ -20,25 +20,30 @@ import CancelPasswordPopup from './CancelPasswordPopup/CancelPasswordPopup';
 import { passwordSchemaStatic } from '@/shared/forms/schemas/passwordSchema';
 import { resetPasswordSchema } from '@/shared/forms/schemas/resetPasswordSchema';
 import { useTranslations } from 'next-intl';
+import { RecoveryPasswordInterface } from '@/shared/interfaces/recovery-password.interface';
 
 type FormData = z.infer<typeof passwordSchemaStatic>;
 
-export default function ResetPasswordForm(): ReactElement {
-  const searchParams = useSearchParams();
+interface ResetPasswordFormProps {
+  recoveryData: RecoveryPasswordInterface;
+}
+
+export default function ResetPasswordForm({
+  recoveryData,
+}: ResetPasswordFormProps): ReactElement {
+  const { firstName, lastName, token } = recoveryData;
   const router = useRouter();
   const { showToast, isActive } = useToast();
-  const firstName = searchParams.get('firstName') ?? '';
-  const lastName = searchParams.get('lastName') ?? '';
-  const token = searchParams.get('token') ?? '';
   const [resetPassword, { isLoading: isResetLoading }] =
     useResetPasswordMutation();
   const [cancelResetPassword, { isLoading: isCancelLoading }] =
     useCancelResetPasswordMutation();
   const [isModalOpen, setModalOpen] = useState(false);
-  const t = useTranslations('forms');
+  const tForms = useTranslations('forms');
+  const tButtons = useTranslations('buttons');
 
   const schema = useMemo(
-    () => resetPasswordSchema(t, firstName, lastName),
+    () => resetPasswordSchema(tForms, firstName, lastName),
     [firstName, lastName],
   );
 
@@ -80,9 +85,8 @@ export default function ResetPasswordForm(): ReactElement {
     if ('error' in result) {
       showToast({
         severity: 'error',
-        summary: 'Виникла помилка при збереженні нового пароля.',
-        detail:
-          'Спробуй ще раз або звернись до підтримки, якщо проблема повторюється.',
+        summary: tForms('resetPasswordForm.error'),
+        detail: tForms('resetPasswordForm.errorDetails'),
         life: 3000,
         actionKey: 'reset password',
       });
@@ -91,11 +95,11 @@ export default function ResetPasswordForm(): ReactElement {
 
     showToast({
       severity: 'success',
-      summary: 'Пароль успішно збережено!',
-      detail: 'Тепер ти можеш увійти з новим паролем.',
+      summary: tForms('resetPasswordForm.success'),
       life: 3000,
       actionKey: 'reset password',
     });
+
     router.push('/auth/login');
   };
 
@@ -107,11 +111,13 @@ export default function ResetPasswordForm(): ReactElement {
     await cancelResetPassword(encodeURIComponent(token));
     showToast({
       severity: 'success',
-      summary: 'Відновлення пароля скасовано.',
-      detail: 'Усі внесені зміни видалено.',
+      summary: tForms('resetPasswordForm.successCancel'),
+      detail: tForms('resetPasswordForm.successCancelDetails'),
       life: 3000,
       actionKey: 'cancel reset password',
     });
+
+    setModalOpen(false);
     router.push('/auth/login');
   };
 
@@ -127,8 +133,8 @@ export default function ResetPasswordForm(): ReactElement {
         >
           <Input
             autoComplete="new-password"
-            label="Пароль"
-            placeholder="Пароль"
+            label={tForms('resetPasswordForm.password')}
+            placeholder={tForms('resetPasswordForm.placeholders.password')}
             type="password"
             {...register('password')}
             withError
@@ -142,8 +148,8 @@ export default function ResetPasswordForm(): ReactElement {
           />
           <PasswordStrengthIndicator strength={passwordStrength} />
           <Input
-            label="Повторити пароль"
-            placeholder="Повторити пароль"
+            label={tForms('resetPasswordForm.confirm')}
+            placeholder={tForms('resetPasswordForm.placeholders.confirm')}
             type="password"
             {...register('confirmPassword')}
             withError
@@ -164,14 +170,14 @@ export default function ResetPasswordForm(): ReactElement {
             onClick={openModal}
             loading={isResetLoading || isCancelLoading}
           >
-            Скасувати
+            {tButtons('cancel')}
           </Button>
           <Button
             type="submit"
             color="green"
             loading={isResetLoading || isCancelLoading}
           >
-            Зберегти пароль
+            {tButtons('save')}
           </Button>
         </div>
       </form>

@@ -4,7 +4,7 @@ import { ReactElement } from 'react';
 import styles from './Page404.module.scss';
 import Button from '@/shared/components/Button/Button';
 import ArrowUpRight from '@/assets/icons/arrow-up-right.svg';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/routing';
 import { useSupport } from '@/hooks/useSupport';
 import { useTranslations } from 'next-intl';
 

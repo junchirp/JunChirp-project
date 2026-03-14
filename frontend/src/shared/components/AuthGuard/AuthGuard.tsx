@@ -1,7 +1,7 @@
 'use client';
 
 import { ReactElement, ReactNode, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/routing';
 import { useAppSelector } from '@/hooks/reduxHooks';
 import authSelector from '@/redux/auth/authSelector';
 

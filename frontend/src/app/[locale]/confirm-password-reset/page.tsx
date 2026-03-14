@@ -8,8 +8,8 @@ export default function ConfirmPasswordReset(): ReactElement {
     <Suspense fallback={null}>
       <div className={styles['confirm-password-reset']}>
         <div className={styles['confirm-password-reset__inner']}>
-          <ConfirmPasswordResetContent />
           <Image src="/images/bird-1.svg" alt="bird" width={420} height={662} />
+          <ConfirmPasswordResetContent />
         </div>
       </div>
     </Suspense>

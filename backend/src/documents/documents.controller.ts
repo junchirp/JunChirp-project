@@ -2,9 +2,7 @@ import {
   Controller,
   Post,
   Body,
-  Param,
   Delete,
-  UsePipes,
   Put,
   HttpCode,
   HttpStatus,
@@ -25,10 +23,9 @@ import {
   ApiOperation,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { ValidationPipe } from '../shared/pipes/validation/validation.pipe';
 import { DocumentResponseDto } from './dto/document.response-dto';
-import { ParseUUIDv4Pipe } from '../shared/pipes/parse-UUIDv4/parse-UUIDv4.pipe';
 import { User } from '../auth/decorators/user.decorator';
+import { UUIDParam } from '../shared/decorators/UUID-param.decorator';
 
 @User('discord')
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
@@ -52,7 +49,6 @@ export class DocumentsController {
     description: 'CSRF token for the request',
     required: true,
   })
-  @UsePipes(ValidationPipe)
   @Post('')
   public async addDocument(
     @Body() createDocumentDto: CreateDocumentDto,
@@ -72,8 +68,8 @@ export class DocumentsController {
   })
   @Put(':id')
   public async updateDocument(
-    @Param('id', ParseUUIDv4Pipe) id: string,
-    @Body(ValidationPipe) updateDocumentDto: UpdateDocumentDto,
+    @UUIDParam('id') id: string,
+    @Body() updateDocumentDto: UpdateDocumentDto,
   ): Promise<DocumentResponseDto> {
     return this.documentsService.updateDocument(id, updateDocumentDto);
   }
@@ -89,9 +85,7 @@ export class DocumentsController {
   })
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')
-  public async deleteProjectRole(
-    @Param('id', ParseUUIDv4Pipe) id: string,
-  ): Promise<void> {
+  public async deleteProjectRole(@UUIDParam('id') id: string): Promise<void> {
     return this.documentsService.deleteDocument(id);
   }
 }

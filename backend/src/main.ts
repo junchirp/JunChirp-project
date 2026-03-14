@@ -11,10 +11,12 @@ import helmet from 'helmet';
 import nextModule = require('next');
 import { NextServer } from 'next/dist/server/next';
 import { NextFunction, Request, Response } from 'express';
+import { ValidationPipe } from './shared/pipes/validation/validation.pipe';
 
 async function bootstrap(): Promise<void> {
   const PORT = Number(process.env.PORT) || 3000;
   const server = express();
+  server.set('trust proxy', true);
 
   const dev = process.env.NODE_ENV !== 'production';
   const frontendDir = path.resolve(__dirname, '../../frontend');
@@ -49,6 +51,7 @@ async function bootstrap(): Promise<void> {
   app.use((req: Request, res: Response, nextFunc: NextFunction) =>
     csrfService.doubleCsrfProtection(req, res, nextFunc),
   );
+  app.useGlobalPipes(new ValidationPipe());
 
   app.setGlobalPrefix('api');
 

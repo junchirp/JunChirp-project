@@ -10,7 +10,6 @@ import {
   Req,
   Res,
   UseGuards,
-  UsePipes,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -27,7 +26,6 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Request, Response } from 'express';
-import { ValidationPipe } from '../shared/pipes/validation/validation.pipe';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
@@ -77,7 +75,6 @@ export class AuthController {
     description: 'CSRF token for the request',
     required: true,
   })
-  @UsePipes(ValidationPipe)
   @Post('register')
   public async registration(
     @Body() createUserDto: CreateUserDto,

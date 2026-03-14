@@ -6,13 +6,11 @@ import {
   HttpCode,
   HttpStatus,
   Ip,
-  Param,
   Patch,
   Post,
   Query,
   Req,
   Res,
-  UsePipes,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Auth } from '../auth/decorators/auth.decorator';
@@ -29,17 +27,14 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { MessageResponseDto } from './dto/message.response-dto';
-import { EmailDto } from './dto/email.dto';
+import { EmailWithLocaleDto } from './dto/email-with-locale.dto';
 import { UserResponseDto } from './dto/user.response-dto';
 import { ConfirmEmailDto } from './dto/confirm-email.dto';
-import { ValidationPipe } from '../shared/pipes/validation/validation.pipe';
 import { Request, Response } from 'express';
-import { UserWithPasswordResponseDto } from './dto/user-with-password.response-dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ProjectsListResponseDto } from '../projects/dto/projects-list.response-dto';
 import { UserProjectsFilterDto } from './dto/user-projects-filter.dto';
-import { ParseUUIDv4Pipe } from '../shared/pipes/parse-UUIDv4/parse-UUIDv4.pipe';
 import { UsersListResponseDto } from './dto/users-list.response-dto';
 import { UsersFilterDto } from './dto/users-filter.dto';
 import { ProjectParticipationResponseDto } from '../participations/dto/project-participation.response-dto';
@@ -47,41 +42,70 @@ import { User } from '../auth/decorators/user.decorator';
 import { EmailValidationResponseDto } from './dto/email-validation.response-dto';
 import { TokenValidationResponseDto } from './dto/token-validation.response-dto';
 import { AuthResponseDto } from './dto/auth.response-dto';
+import { EmailResponseDto } from './dto/email.response-dto';
+import { UUIDParam } from '../shared/decorators/UUID-param.decorator';
+import { LocaleDto } from '../shared/dto/locale.dto';
+import { ConfirmEmailWithLocaleDto } from './dto/confirm-email-with-locale.dto';
+import { CurrentUser } from '../shared/decorators/current-user.decorator';
 
 @Controller('users')
 export class UsersController {
   public constructor(private usersService: UsersService) {}
 
-  @ApiOperation({ summary: 'Send confirmation email' })
+  @ApiOperation({ summary: 'Resend confirmation email' })
   @ApiOkResponse({ type: MessageResponseDto })
-  @ApiNotFoundResponse({ description: 'User not found' })
   @ApiTooManyRequestsResponse({
     description: 'You have used up all your attempts. Please try again later.',
   })
   @ApiForbiddenResponse({ description: 'Invalid CSRF token' })
   @ApiBadRequestResponse({ description: 'Email is confirmed' })
+  @ApiNotFoundResponse({ description: 'User not found' })
   @ApiHeader({
     name: 'x-csrf-token',
     description: 'CSRF token for the request',
     required: true,
   })
   @HttpCode(HttpStatus.OK)
-  @UsePipes(ValidationPipe)
+  @Post('send-confirmation-email/resend')
+  public async resendConfirmationEmail(
+    @Ip() ip: string,
+    @Body() confirmEmailWithLocale: ConfirmEmailWithLocaleDto,
+  ): Promise<MessageResponseDto> {
+    return this.usersService.resendConfirmationEmail(
+      ip,
+      confirmEmailWithLocale,
+    );
+  }
+
+  @Auth()
+  @ApiOperation({ summary: 'Send confirmation email' })
+  @ApiOkResponse({ type: MessageResponseDto })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiTooManyRequestsResponse({
+    description: 'You have used up all your attempts. Please try again later.',
+  })
+  @ApiForbiddenResponse({ description: 'Invalid CSRF token' })
+  @ApiBadRequestResponse({ description: 'Email is confirmed' })
+  @ApiNotFoundResponse({ description: 'User not found' })
+  @ApiHeader({
+    name: 'x-csrf-token',
+    description: 'CSRF token for the request',
+    required: true,
+  })
+  @HttpCode(HttpStatus.OK)
   @Post('send-confirmation-email')
   public async sendConfirmationEmail(
     @Ip() ip: string,
-    @Body() body: EmailDto,
+    @Body() localeDto: LocaleDto,
+    @CurrentUser() user: AuthResponseDto,
   ): Promise<MessageResponseDto> {
-    return this.usersService.sendVerificationUrl(ip, body.email, body.locale);
+    return this.usersService.sendConfirmationEmail(ip, localeDto.locale, user);
   }
 
   @ApiOperation({ summary: 'Confirm email' })
   @ApiOkResponse({ type: MessageResponseDto })
-  @ApiBadRequestResponse({
-    description:
-      'Invalid or expired verification token / Email does not match token',
-  })
-  @ApiNotFoundResponse({ description: 'User not found' })
+  @ApiBadRequestResponse({ description: 'Token expired' })
+  @ApiNotFoundResponse({ description: 'Token not found / User not found' })
   @ApiForbiddenResponse({ description: 'Invalid CSRF token' })
   @ApiHeader({
     name: 'x-csrf-token',
@@ -89,7 +113,6 @@ export class UsersController {
     required: true,
   })
   @HttpCode(HttpStatus.OK)
-  @UsePipes(ValidationPipe)
   @Post('confirm')
   public async confirmEmail(
     @Ip() ip: string,
@@ -106,10 +129,10 @@ export class UsersController {
   @ApiNotFoundResponse({ description: 'User not found' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Get('me')
-  public async getCurrentUser(@Req() req: Request): Promise<AuthResponseDto> {
-    const user: UserWithPasswordResponseDto =
-      req.user as UserWithPasswordResponseDto;
-    return this.usersService.getUserById(user.id, 'edit');
+  public async getCurrentUser(
+    @CurrentUser('id') id: string,
+  ): Promise<AuthResponseDto> {
+    return this.usersService.getUserById(id, 'edit');
   }
 
   @ApiOperation({ summary: 'Check email' })
@@ -131,8 +154,7 @@ export class UsersController {
   }
 
   @ApiOperation({ summary: 'Send email to reset your password' })
-  @ApiOkResponse({ type: MessageResponseDto })
-  @ApiNotFoundResponse({ description: 'User not found' })
+  @ApiOkResponse({ type: String })
   @ApiTooManyRequestsResponse({
     description: 'You have used up all your attempts. Please try again later.',
   })
@@ -143,13 +165,22 @@ export class UsersController {
     required: true,
   })
   @HttpCode(HttpStatus.OK)
-  @UsePipes(ValidationPipe)
   @Post('request-password-reset')
   public async sendPasswordResetUrl(
     @Ip() ip: string,
-    @Body() body: EmailDto,
-  ): Promise<MessageResponseDto> {
-    return this.usersService.sendPasswordResetUrl(ip, body.email);
+    @Body() body: EmailWithLocaleDto,
+  ): Promise<string> {
+    return this.usersService.sendPasswordResetUrl(ip, body);
+  }
+
+  @ApiOperation({ summary: 'Get password reset token by id' })
+  @ApiOkResponse({ type: EmailResponseDto })
+  @ApiNotFoundResponse({ description: 'Token not found' })
+  @Get('password-reset-token')
+  public async getPasswordResetToken(
+    @Query('requestId') id: string,
+  ): Promise<EmailResponseDto> {
+    return this.usersService.getPasswordResetToken(id);
   }
 
   @ApiOperation({ summary: 'Reset password' })
@@ -164,7 +195,6 @@ export class UsersController {
     required: true,
   })
   @HttpCode(HttpStatus.OK)
-  @UsePipes(ValidationPipe)
   @Post('reset-password')
   public async resetPassword(
     @Ip() ip: string,
@@ -187,16 +217,13 @@ export class UsersController {
     description: 'CSRF token for the request',
     required: true,
   })
-  @UsePipes(ValidationPipe)
   @Patch('me/email')
   public async updateEmail(
-    @Req() req: Request,
+    @CurrentUser('id') id: string,
     @Ip() ip: string,
-    @Body() emailDto: EmailDto,
+    @Body() emailDto: EmailWithLocaleDto,
   ): Promise<AuthResponseDto> {
-    const user: UserWithPasswordResponseDto =
-      req.user as UserWithPasswordResponseDto;
-    return this.usersService.updateEmail(user.id, ip, emailDto);
+    return this.usersService.updateEmail(id, ip, emailDto);
   }
 
   @User()
@@ -212,15 +239,12 @@ export class UsersController {
     description: 'CSRF token for the request',
     required: true,
   })
-  @UsePipes(ValidationPipe)
   @Patch('me')
   public async updateUser(
-    @Req() req: Request,
+    @CurrentUser('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<AuthResponseDto> {
-    const user: UserWithPasswordResponseDto =
-      req.user as UserWithPasswordResponseDto;
-    return this.usersService.updateUser(user.id, updateUserDto);
+    return this.usersService.updateUser(id, updateUserDto);
   }
 
   @User()
@@ -230,16 +254,13 @@ export class UsersController {
   @ApiOkResponse({ type: ProjectsListResponseDto })
   @ApiForbiddenResponse({ description: 'Access denied: email not confirmed' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @UsePipes(ValidationPipe)
   @Get('me/projects')
   public async getMyProjects(
-    @Req() req: Request,
+    @CurrentUser('id') id: string,
     @Query() query: UserProjectsFilterDto,
   ): Promise<ProjectsListResponseDto> {
-    const user: UserWithPasswordResponseDto =
-      req.user as UserWithPasswordResponseDto;
     return this.usersService.getUserProjects(
-      user.id,
+      id,
       query.page,
       query.limit,
       query.status,
@@ -255,8 +276,8 @@ export class UsersController {
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Get(':id/projects')
   public async getUserProjects(
-    @Param('id', ParseUUIDv4Pipe) id: string,
-    @Query(ValidationPipe) query: UserProjectsFilterDto,
+    @UUIDParam('id') id: string,
+    @Query() query: UserProjectsFilterDto,
   ): Promise<ProjectsListResponseDto> {
     return this.usersService.getUserProjects(
       id,
@@ -274,7 +295,7 @@ export class UsersController {
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Get(':id')
   public async getUserById(
-    @Param('id', ParseUUIDv4Pipe) id: string,
+    @UUIDParam('id') id: string,
   ): Promise<UserResponseDto> {
     return this.usersService.getUserById(id, 'view');
   }
@@ -286,7 +307,6 @@ export class UsersController {
   @ApiOkResponse({ type: UsersListResponseDto })
   @ApiForbiddenResponse({ description: 'Access denied: email not confirmed' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @UsePipes(ValidationPipe)
   @Get('')
   public async getUsers(
     @Query() query: UsersFilterDto,
@@ -303,11 +323,9 @@ export class UsersController {
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Get('me/invites')
   public async getInvites(
-    @Req() req: Request,
+    @CurrentUser('id') id: string,
   ): Promise<ProjectParticipationResponseDto[]> {
-    const user: UserWithPasswordResponseDto =
-      req.user as UserWithPasswordResponseDto;
-    return this.usersService.getInvites(user.id);
+    return this.usersService.getInvites(id);
   }
 
   @User()
@@ -319,11 +337,9 @@ export class UsersController {
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Get('me/requests')
   public async getRequests(
-    @Req() req: Request,
+    @CurrentUser('id') id: string,
   ): Promise<ProjectParticipationResponseDto[]> {
-    const user: UserWithPasswordResponseDto =
-      req.user as UserWithPasswordResponseDto;
-    return this.usersService.getRequests(user.id);
+    return this.usersService.getRequests(id);
   }
 
   @ApiOperation({ summary: 'Delete password recovery token' })
@@ -351,12 +367,10 @@ export class UsersController {
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Get(':id/requests')
   public async getRequestsByUserId(
-    @Param('id', ParseUUIDv4Pipe) id: string,
-    @Req() req: Request,
+    @UUIDParam('id') id: string,
+    @CurrentUser('id') ownerId: string,
   ): Promise<ProjectParticipationResponseDto[]> {
-    const owner: UserWithPasswordResponseDto =
-      req.user as UserWithPasswordResponseDto;
-    return this.usersService.getRequests(id, owner.id);
+    return this.usersService.getRequests(id, ownerId);
   }
 
   @User()
@@ -368,11 +382,9 @@ export class UsersController {
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Get(':id/invites')
   public async getInvitesByUserId(
-    @Param('id', ParseUUIDv4Pipe) id: string,
-    @Req() req: Request,
+    @UUIDParam('id') id: string,
+    @CurrentUser('id') ownerId: string,
   ): Promise<ProjectParticipationResponseDto[]> {
-    const owner: UserWithPasswordResponseDto =
-      req.user as UserWithPasswordResponseDto;
-    return this.usersService.getInvites(id, owner.id);
+    return this.usersService.getInvites(id, ownerId);
   }
 }

@@ -156,7 +156,6 @@
       "emailFormat": "Invalid email format",
       "emailDomain": "The '.ru' domain is not supported",
       "emailTaken": "This email is already in use",
-      "emailNotFound": "Електронна пошта не знайдена",
       "passwordIncludes": "The password must not contain your first or last name",
       "blackList": "Avoid overly simple or obvious passwords",
       "confirmPassword": "Passwords do not match",
@@ -246,10 +245,7 @@
     "loginForm": {
       "email": "Email",
       "password": "Password",
-      "error": "Something went wrong while signing in.",
-      "errorDetails": "Please try again later.",
-      "error401": "It looks like the email or password you entered is incorrect.",
-      "error401Details": "Check the entered details and try again.",
+      "error": "It looks like the email or password you entered is incorrect.",
       "error429": "Your account has been temporarily locked due to multiple failed login attempts.",
       "error429_5Details": "You can try again in 15 minutes. If you need help, please contact <cta>support</cta>.",
       "error429_10Details": "You can try again in 1 hour. If you need help, please contact <cta>support</cta>.",
@@ -281,7 +277,23 @@
       "errorDetails": "Please try again."
     },
     "requestPasswordResetForm": {
-      "email": "Email"
+      "email": "Email",
+      "error": "It looks like the email address is incorrect.",
+      "error429": "Too many password reset requests.",
+      "error429Details": "Please try again in 1 hour."
+    },
+    "resetPasswordForm": {
+      "password": "Password",
+      "confirm": "Confirm password",
+      "placeholders": {
+        "password": "Create a password",
+        "confirm": "Repeat password"
+      },
+      "success": "Password successfully updated.",
+      "successCancel": "Password reset has been canceled.",
+      "successCancelDetails": "All entered changes have been discarded.",
+      "error": "Failed to reset password.",
+      "errorDetails": "Please try again."
     }
   },
   "page404": {
@@ -525,8 +537,6 @@
     ],
     "success": "Your request has been successfully processed.",
     "successDetails": "Please check your email for confirmation.",
-    "error429": "You have exceeded the limit for email confirmation requests.",
-    "error429Details": "Please try sending a new request in 1 hour.",
     "error400": "An error occurred while processing the request.",
     "error400Details": "Email has already been confirmed."
   },
@@ -562,5 +572,52 @@
   "requestPasswordReset": {
     "title": "Password reset request",
     "description": "To reset your password, enter your email address — if an account with this email exists, we’ll send instructions to restore access."
+  },
+  "resetPasswordConfirmation": {
+    "title": "Password reset request confirmation",
+    "subTitle": "Important information:",
+    "firstPart": "We've sent an email with a password reset link to <email>[{userEmail}]</email>. Please check your inbox and click the link.",
+    "secondPart": "If you don’t see the email, check your Spam folder or <button>Send the request again</button>.",
+    "information": [
+      "Link validity: The password reset confirmation link is valid for 24 hours.",
+      "New link invalidates the old one: Each time you request a new link, the previous one becomes invalid. This means the old link will no longer work, and you must use the new one.",
+      "After 24 hours: If you don’t confirm your request within 24 hours, it will be considered expired, and you’ll need to start the password recovery process again."
+    ],
+    "success": "Your request has been successfully processed.",
+    "successDetails": "Please check your email for confirmation."
+  },
+  "resetPassword": {
+    "error": {
+      "title": "Link has expired",
+      "description": "This link is no longer valid. Please <button>Send the request again</button> to receive a new password reset link."
+    },
+    "newPassword": {
+      "title": "Reset password"
+    }
+  },
+  "cancelPasswordPopup": {
+    "title": "Cancel password recovery?",
+    "yesBtn": "Yes, cancel",
+    "noBtn": "No, stay"
+  },
+  "error429Toast": {
+    "login": {
+      "error": "Перевищено ліміт запитів на підтвердження електронної пошти.",
+      "errorDetails5": "Будь ласка, спробуй надіслати новий запит через {time}.",
+      "errorDetails10": "Будь ласка, спробуй надіслати новий запит через {time}.",
+      "errorDetails15": "Будь ласка, спробуй надіслати новий запит через {time}."
+    },
+    "confirmEmail": {
+      "error": "You have exceeded the limit for email confirmation requests.",
+      "errorDetails": "Please try sending a new request in {time}."
+    },
+    "resetPassword": {
+      "error": "Перевищено ліміт запитів на підтвердження електронної пошти.",
+      "errorDetails": "Будь ласка, спробуй надіслати новий запит через {time}."
+    },
+    "time": {
+      "minutes": "{count, plural, one {# minute} other {# minutes}}",
+      "hours": "{count, plural, one {# hour} other {# hours}}"
+    }
   }
 }

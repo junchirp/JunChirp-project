@@ -2,9 +2,7 @@ import {
   Controller,
   Post,
   Body,
-  Param,
   Delete,
-  UsePipes,
   Req,
   Put,
   HttpCode,
@@ -24,14 +22,13 @@ import {
   ApiOperation,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { ValidationPipe } from '../shared/pipes/validation/validation.pipe';
 import { ProjectParticipationResponseDto } from './dto/project-participation.response-dto';
 import { Request } from 'express';
 import { UserWithPasswordResponseDto } from '../users/dto/user-with-password.response-dto';
-import { ParseUUIDv4Pipe } from '../shared/pipes/parse-UUIDv4/parse-UUIDv4.pipe';
 import { User } from '../auth/decorators/user.decorator';
 import { UserCardResponseDto } from '../users/dto/user-card.response-dto';
 import { CreateRequestDto } from './dto/create-request.dto';
+import { UUIDParam } from '../shared/decorators/UUID-param.decorator';
 
 @User()
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
@@ -59,7 +56,6 @@ export class ParticipationsController {
     description: 'CSRF token for the request',
     required: true,
   })
-  @UsePipes(ValidationPipe)
   @Post('invite')
   public async createInvite(
     @Body() createInviteDto: CreateInviteDto,
@@ -87,7 +83,6 @@ export class ParticipationsController {
     description: 'CSRF token for the request',
     required: true,
   })
-  @UsePipes(ValidationPipe)
   @Post('request')
   public async createRequest(
     @Body() createRequestDto: CreateRequestDto,
@@ -121,7 +116,7 @@ export class ParticipationsController {
   @Put('invite/:id/accept')
   public async acceptInvite(
     @Req() req: Request,
-    @Param('id', ParseUUIDv4Pipe) id: string,
+    @UUIDParam('id') id: string,
   ): Promise<UserCardResponseDto> {
     const user: UserWithPasswordResponseDto =
       req.user as UserWithPasswordResponseDto;
@@ -143,7 +138,7 @@ export class ParticipationsController {
   @Delete('invite/:id/decline')
   public async declineInvite(
     @Req() req: Request,
-    @Param('id', ParseUUIDv4Pipe) id: string,
+    @UUIDParam('id') id: string,
   ): Promise<void> {
     const user: UserWithPasswordResponseDto =
       req.user as UserWithPasswordResponseDto;
@@ -171,9 +166,7 @@ export class ParticipationsController {
   })
   @HttpCode(HttpStatus.NO_CONTENT)
   @Put('request/:id/accept')
-  public async acceptRequest(
-    @Param('id', ParseUUIDv4Pipe) id: string,
-  ): Promise<void> {
+  public async acceptRequest(@UUIDParam('id') id: string): Promise<void> {
     return this.participationsService.acceptRequest(id);
   }
 
@@ -192,9 +185,7 @@ export class ParticipationsController {
   })
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete('request/:id/decline')
-  public async declineRequest(
-    @Param('id', ParseUUIDv4Pipe) id: string,
-  ): Promise<void> {
+  public async declineRequest(@UUIDParam('id') id: string): Promise<void> {
     return this.participationsService.declineRequest(id);
   }
 
@@ -214,7 +205,7 @@ export class ParticipationsController {
   @Delete('request/:id/cancel')
   public async cancelRequest(
     @Req() req: Request,
-    @Param('id', ParseUUIDv4Pipe) id: string,
+    @UUIDParam('id') id: string,
   ): Promise<void> {
     const user: UserWithPasswordResponseDto =
       req.user as UserWithPasswordResponseDto;
@@ -236,9 +227,7 @@ export class ParticipationsController {
   })
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete('invite/:id/cancel')
-  public async cancelInvite(
-    @Param('id', ParseUUIDv4Pipe) id: string,
-  ): Promise<void> {
+  public async cancelInvite(@UUIDParam('id') id: string): Promise<void> {
     return this.participationsService.cancelInvite(id);
   }
 }

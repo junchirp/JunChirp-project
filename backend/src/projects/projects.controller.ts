@@ -7,7 +7,6 @@ import {
   Param,
   Delete,
   Query,
-  UsePipes,
   Req,
   UploadedFile,
   UseInterceptors,
@@ -34,7 +33,6 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { ProjectsListResponseDto } from './dto/projects-list.response-dto';
-import { ValidationPipe } from '../shared/pipes/validation/validation.pipe';
 import { ProjectsFilterDto } from './dto/projects-filter.dto';
 import { ProjectResponseDto } from './dto/project.response-dto';
 import { Request } from 'express';
@@ -47,6 +45,7 @@ import { Member } from '../auth/decorators/member.decorator';
 import { UserParticipationResponseDto } from '../participations/dto/user-participation.response-dto';
 import { User } from '../auth/decorators/user.decorator';
 import { ProjectCardResponseDto } from './dto/project-card.response-dto';
+import { UUIDParam } from '../shared/decorators/UUID-param.decorator';
 
 @User()
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
@@ -67,7 +66,6 @@ export class ProjectsController {
   })
   @ApiOkResponse({ type: ProjectsListResponseDto })
   @ApiForbiddenResponse({ description: 'Access denied: email not confirmed' })
-  @UsePipes(ValidationPipe)
   @Get('')
   public async getProjects(
     @Query() query: ProjectsFilterDto,
@@ -94,7 +92,7 @@ export class ProjectsController {
   @Post('')
   public async createProject(
     @Req() req: Request,
-    @Body(ValidationPipe) createProjectDto: CreateProjectDto,
+    @Body() createProjectDto: CreateProjectDto,
   ): Promise<ProjectResponseDto> {
     const user: UserWithPasswordResponseDto =
       req.user as UserWithPasswordResponseDto;
@@ -117,8 +115,8 @@ export class ProjectsController {
   })
   @Put(':id')
   public async updateProject(
-    @Param('id', ParseUUIDv4Pipe) id: string,
-    @Body(ValidationPipe) updateProjectDto: UpdateProjectDto,
+    @UUIDParam('id') id: string,
+    @Body() updateProjectDto: UpdateProjectDto,
   ): Promise<ProjectResponseDto> {
     return this.projectsService.updateProject(id, updateProjectDto);
   }
@@ -140,7 +138,7 @@ export class ProjectsController {
   })
   @Patch(':id/close')
   public async closeProject(
-    @Param('id', ParseUUIDv4Pipe) id: string,
+    @UUIDParam('id') id: string,
   ): Promise<ProjectResponseDto> {
     return this.projectsService.closeProject(id);
   }
@@ -163,9 +161,7 @@ export class ProjectsController {
   })
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')
-  public async deleteProject(
-    @Param('id', ParseUUIDv4Pipe) id: string,
-  ): Promise<void> {
+  public async deleteProject(@UUIDParam('id') id: string): Promise<void> {
     return this.projectsService.deleteProject(id);
   }
 
@@ -197,7 +193,7 @@ export class ProjectsController {
   })
   @Put(':id/logo')
   public async updateProjectLogo(
-    @Param('id', ParseUUIDv4Pipe) id: string,
+    @UUIDParam('id') id: string,
     @UploadedFile(ParseImageFilePipe) file: Express.Multer.File,
   ): Promise<ProjectResponseDto> {
     return this.projectsService.updateProjectLogo(id, file);
@@ -218,7 +214,7 @@ export class ProjectsController {
   })
   @Delete(':id/logo')
   public async deleteProjectLogo(
-    @Param('id', ParseUUIDv4Pipe) id: string,
+    @UUIDParam('id') id: string,
   ): Promise<ProjectResponseDto> {
     return this.projectsService.deleteProjectLogo(id);
   }

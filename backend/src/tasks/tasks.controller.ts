@@ -3,9 +3,7 @@ import {
   Get,
   Post,
   Body,
-  Param,
   Delete,
-  UsePipes,
   Put,
   HttpCode,
   HttpStatus,
@@ -23,12 +21,11 @@ import {
   ApiOperation,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { ValidationPipe } from '../shared/pipes/validation/validation.pipe';
 import { Member } from '../auth/decorators/member.decorator';
 import { TaskWithStatusResponseDto } from './dto/task-with-status.response-dto';
-import { ParseUUIDv4Pipe } from '../shared/pipes/parse-UUIDv4/parse-UUIDv4.pipe';
 import { UpdateStatusTaskDto } from './dto/update-status-task.dto';
 import { User } from '../auth/decorators/user.decorator';
+import { UUIDParam } from '../shared/decorators/UUID-param.decorator';
 
 @User('discord')
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
@@ -51,7 +48,6 @@ export class TasksController {
     description: 'CSRF token for the request',
     required: true,
   })
-  @UsePipes(ValidationPipe)
   @Post('')
   public async createTask(
     @Body() createTaskDto: CreateTaskDto,
@@ -69,7 +65,7 @@ export class TasksController {
   })
   @Get(':id')
   public async getTaskById(
-    @Param('id', ParseUUIDv4Pipe) id: string,
+    @UUIDParam('id') id: string,
   ): Promise<TaskWithStatusResponseDto> {
     return this.tasksService.getTaskById(id);
   }
@@ -89,8 +85,8 @@ export class TasksController {
   })
   @Put(':id')
   public async updateTask(
-    @Param('id', ParseUUIDv4Pipe) id: string,
-    @Body(ValidationPipe) updateTaskDto: UpdateTaskDto,
+    @UUIDParam('id') id: string,
+    @Body() updateTaskDto: UpdateTaskDto,
   ): Promise<TaskWithStatusResponseDto> {
     return this.tasksService.updateTask(id, updateTaskDto);
   }
@@ -110,9 +106,7 @@ export class TasksController {
   })
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')
-  public async deleteTask(
-    @Param('id', ParseUUIDv4Pipe) id: string,
-  ): Promise<void> {
+  public async deleteTask(@UUIDParam('id') id: string): Promise<void> {
     return this.tasksService.deleteTask(id);
   }
 
@@ -133,8 +127,8 @@ export class TasksController {
   })
   @Put(':id/status')
   public async updateTaskStatus(
-    @Param('id', ParseUUIDv4Pipe) id: string,
-    @Body(ValidationPipe) updateStatusTaskDto: UpdateStatusTaskDto,
+    @UUIDParam('id') id: string,
+    @Body() updateStatusTaskDto: UpdateStatusTaskDto,
   ): Promise<TaskWithStatusResponseDto> {
     return this.tasksService.updateTaskStatus(id, updateStatusTaskDto);
   }

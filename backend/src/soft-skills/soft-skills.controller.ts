@@ -2,9 +2,7 @@ import {
   Controller,
   Post,
   Body,
-  Param,
   Delete,
-  UsePipes,
   Req,
   Put,
   Get,
@@ -24,12 +22,11 @@ import {
   ApiOperation,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { ValidationPipe } from '../shared/pipes/validation/validation.pipe';
 import { Request } from 'express';
 import { UserWithPasswordResponseDto } from '../users/dto/user-with-password.response-dto';
 import { SoftSkillResponseDto } from './dto/soft-skill.response-dto';
-import { ParseUUIDv4Pipe } from '../shared/pipes/parse-UUIDv4/parse-UUIDv4.pipe';
 import { User } from '../auth/decorators/user.decorator';
+import { UUIDParam } from '../shared/decorators/UUID-param.decorator';
 
 @User()
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
@@ -77,7 +74,6 @@ export class SoftSkillsController {
     description: 'CSRF token for the request',
     required: true,
   })
-  @UsePipes(ValidationPipe)
   @Post('')
   public async addSoftSkill(
     @Req() req: Request,
@@ -102,8 +98,8 @@ export class SoftSkillsController {
   })
   @Put(':id')
   public async updateSoftSkill(
-    @Param('id', ParseUUIDv4Pipe) id: string,
-    @Body(ValidationPipe) updateSoftSkillDto: UpdateSoftSkillDto,
+    @UUIDParam('id') id: string,
+    @Body() updateSoftSkillDto: UpdateSoftSkillDto,
   ): Promise<SoftSkillResponseDto> {
     return this.softSkillsService.updateSoftSkill(id, updateSoftSkillDto);
   }
@@ -120,9 +116,7 @@ export class SoftSkillsController {
     required: true,
   })
   @Delete(':id')
-  public async deleteSoftSkill(
-    @Param('id', ParseUUIDv4Pipe) id: string,
-  ): Promise<string> {
+  public async deleteSoftSkill(@UUIDParam('id') id: string): Promise<string> {
     return this.softSkillsService.deleteSoftSkill(id);
   }
 }

@@ -1,11 +1,4 @@
-import {
-  Controller,
-  Post,
-  Body,
-  HttpCode,
-  HttpStatus,
-  UsePipes,
-} from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { SupportService } from './support.service';
 import { CreateSupportDto } from './dto/create-support.dto';
 import {
@@ -16,7 +9,6 @@ import {
   ApiOperation,
 } from '@nestjs/swagger';
 import { MessageResponseDto } from '../users/dto/message.response-dto';
-import { ValidationPipe } from '../shared/pipes/validation/validation.pipe';
 
 @Controller('support')
 export class SupportController {
@@ -34,10 +26,9 @@ export class SupportController {
     required: true,
   })
   @HttpCode(HttpStatus.OK)
-  @UsePipes(ValidationPipe)
   @Post('')
   public async updateTaskStatus(
-    @Body(ValidationPipe) createSupportDto: CreateSupportDto,
+    @Body() createSupportDto: CreateSupportDto,
   ): Promise<MessageResponseDto> {
     return this.supportService.createSupportRequest(createSupportDto);
   }

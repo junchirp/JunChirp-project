@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/routing';
 import styles from './Footer.module.scss';
 import { Link } from '@/i18n/routing';
 import Image from 'next/image';

@@ -10,7 +10,7 @@ import {
 import styles from './WhatWeNeed.module.scss';
 import Circle from '@/assets/icons/circle.svg';
 import Button from '@/shared/components/Button/Button';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/routing';
 import {
   authRoutes,
   emptyBlock,

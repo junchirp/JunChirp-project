@@ -3,11 +3,9 @@ import {
   Get,
   Post,
   Body,
-  Param,
   Delete,
   Put,
   Query,
-  UsePipes,
   Req,
 } from '@nestjs/common';
 import { EducationsService } from './educations.service';
@@ -24,12 +22,11 @@ import {
   ApiOperation,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { ValidationPipe } from '../shared/pipes/validation/validation.pipe';
 import { Request } from 'express';
 import { UserWithPasswordResponseDto } from '../users/dto/user-with-password.response-dto';
 import { EducationResponseDto } from './dto/education.response-dto';
-import { ParseUUIDv4Pipe } from '../shared/pipes/parse-UUIDv4/parse-UUIDv4.pipe';
 import { User } from '../auth/decorators/user.decorator';
+import { UUIDParam } from '../shared/decorators/UUID-param.decorator';
 
 @User()
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
@@ -90,7 +87,6 @@ export class EducationsController {
     description: 'CSRF token for the request',
     required: true,
   })
-  @UsePipes(ValidationPipe)
   @Post('')
   public async addEducation(
     @Req() req: Request,
@@ -116,8 +112,8 @@ export class EducationsController {
   })
   @Put(':id')
   public async updateEducation(
-    @Param('id', ParseUUIDv4Pipe) id: string,
-    @Body(ValidationPipe) updateEducationDto: UpdateEducationDto,
+    @UUIDParam('id') id: string,
+    @Body() updateEducationDto: UpdateEducationDto,
   ): Promise<EducationResponseDto> {
     return this.educationsService.updateEducation(id, updateEducationDto);
   }
@@ -134,9 +130,7 @@ export class EducationsController {
     required: true,
   })
   @Delete(':id')
-  public async deleteEducation(
-    @Param('id', ParseUUIDv4Pipe) id: string,
-  ): Promise<string> {
+  public async deleteEducation(@UUIDParam('id') id: string): Promise<string> {
     return this.educationsService.deleteEducation(id);
   }
 }

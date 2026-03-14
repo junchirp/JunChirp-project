@@ -5,7 +5,7 @@ import styles from './HomeBanner.module.scss';
 import Button from '@/shared/components/Button/Button';
 import Image from 'next/image';
 import ArrowUpRight from '@/assets/icons/arrow-up-right.svg';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/routing';
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import { useTranslations } from 'next-intl';
 
