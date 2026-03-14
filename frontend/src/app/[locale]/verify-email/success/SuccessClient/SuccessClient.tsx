@@ -3,7 +3,7 @@
 import { ReactElement } from 'react';
 import VerificationResultContent from '@/shared/components/VerificationResultContent/VerificationResultContent';
 import Button from '@/shared/components/Button/Button';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
 
 export default function SuccessClient(): ReactElement {

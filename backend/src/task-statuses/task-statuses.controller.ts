@@ -2,9 +2,7 @@ import {
   Controller,
   Post,
   Body,
-  Param,
   Delete,
-  UsePipes,
   Put,
   HttpCode,
   HttpStatus,
@@ -25,10 +23,9 @@ import {
   ApiOperation,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { ValidationPipe } from '../shared/pipes/validation/validation.pipe';
 import { TaskStatusResponseDto } from './dto/task-status.response-dto';
-import { ParseUUIDv4Pipe } from '../shared/pipes/parse-UUIDv4/parse-UUIDv4.pipe';
 import { User } from '../auth/decorators/user.decorator';
+import { UUIDParam } from '../shared/decorators/UUID-param.decorator';
 
 @User('discord')
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
@@ -55,7 +52,6 @@ export class TaskStatusesController {
     description: 'CSRF token for the request',
     required: true,
   })
-  @UsePipes(ValidationPipe)
   @Post('')
   public async addTaskStatus(
     @Body() createTaskStatusDto: CreateTaskStatusDto,
@@ -77,8 +73,8 @@ export class TaskStatusesController {
   })
   @Put(':id')
   public async updateTaskStatus(
-    @Param('id', ParseUUIDv4Pipe) id: string,
-    @Body(ValidationPipe) updateTaskStatusDto: UpdateTaskStatusDto,
+    @UUIDParam('id') id: string,
+    @Body() updateTaskStatusDto: UpdateTaskStatusDto,
   ): Promise<TaskStatusResponseDto> {
     return this.taskStatusesService.updateTaskStatus(id, updateTaskStatusDto);
   }
@@ -94,9 +90,7 @@ export class TaskStatusesController {
   })
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')
-  public async deleteTaskStatus(
-    @Param('id', ParseUUIDv4Pipe) id: string,
-  ): Promise<void> {
+  public async deleteTaskStatus(@UUIDParam('id') id: string): Promise<void> {
     return this.taskStatusesService.deleteTaskStatus(id);
   }
 }

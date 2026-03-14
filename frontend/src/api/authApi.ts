@@ -2,12 +2,15 @@ import mainApi from './mainApi';
 import { RegistrationInterface } from '@/shared/interfaces/registration.interface';
 import { LoginInterface } from '@/shared/interfaces/login.interface';
 import { MessageInterface } from '@/shared/interfaces/message.interface';
-import { EmailInterface } from '@/shared/interfaces/email.interface';
+import { EmailWithLocaleInterface } from '../shared/interfaces/email-with-locale.interface';
 import { ConfirmEmailInterface } from '@/shared/interfaces/confirm-email.interface';
 import { TokenValidationInterface } from '@/shared/interfaces/token-validation.interface';
 import { ResetPasswordInterface } from '@/shared/interfaces/reset-password.interface';
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import { UpdateUserInterface } from '@/shared/interfaces/update-user.interface';
+import { LocaleInterface } from '@/shared/interfaces/locale.interface';
+import { ConfirmEmailWithLocaleInterface } from '@/shared/interfaces/confirm-email-with-locale.interface';
+import { EmailWithIdInterface } from '../shared/interfaces/email-with-id.interface';
 
 const USER_RELATED_TAGS = [
   'auth',
@@ -53,9 +56,20 @@ export const authApi = mainApi.injectEndpoints({
       }),
       invalidatesTags: ['auth'],
     }),
-    sendConfirmationEmail: builder.mutation<MessageInterface, EmailInterface>({
+    sendConfirmationEmail: builder.mutation<MessageInterface, LocaleInterface>({
       query: (data) => ({
         url: 'users/send-confirmation-email',
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['auth'],
+    }),
+    resendConfirmationEmail: builder.mutation<
+      MessageInterface,
+      ConfirmEmailWithLocaleInterface
+    >({
+      query: (data) => ({
+        url: 'users/send-confirmation-email/resend',
         method: 'POST',
         body: data,
       }),
@@ -69,11 +83,12 @@ export const authApi = mainApi.injectEndpoints({
       }),
       invalidatesTags: ['auth', 'users'],
     }),
-    requestPasswordReset: builder.mutation<MessageInterface, EmailInterface>({
+    requestPasswordReset: builder.mutation<string, EmailWithLocaleInterface>({
       query: (data) => ({
         url: 'users/request-password-reset',
         method: 'POST',
         body: data,
+        responseHandler: (response): Promise<string> => response.text(),
       }),
       invalidatesTags: ['auth'],
     }),
@@ -85,7 +100,7 @@ export const authApi = mainApi.injectEndpoints({
       }),
       invalidatesTags: ['auth', 'users'],
     }),
-    updateEmail: builder.mutation<AuthInterface, EmailInterface>({
+    updateEmail: builder.mutation<AuthInterface, EmailWithLocaleInterface>({
       query: (data) => ({
         url: 'users/me/email',
         method: 'PATCH',
@@ -111,6 +126,11 @@ export const authApi = mainApi.injectEndpoints({
         method: 'DELETE',
       }),
     }),
+    getPasswordResetToken: builder.query<EmailWithIdInterface, string>({
+      query: (id) => ({
+        url: `users/password-reset-token?requestId=${id}`,
+      }),
+    }),
   }),
 });
 
@@ -120,6 +140,7 @@ export const {
   useLogoutMutation,
   useGetMeQuery,
   useSendConfirmationEmailMutation,
+  useResendConfirmationEmailMutation,
   useUpdateUserMutation,
   useUpdateEmailMutation,
   useConfirmEmailMutation,
@@ -127,4 +148,5 @@ export const {
   useValidateTokenQuery,
   useResetPasswordMutation,
   useCancelResetPasswordMutation,
+  useGetPasswordResetTokenQuery,
 } = authApi;

@@ -1,14 +1,4 @@
-import {
-  Controller,
-  Post,
-  Body,
-  Param,
-  Delete,
-  UsePipes,
-  Req,
-  Put,
-  Get,
-} from '@nestjs/common';
+import { Controller, Post, Body, Delete, Req, Put, Get } from '@nestjs/common';
 import { SocialsService } from './socials.service';
 import { CreateSocialDto } from './dto/create-social.dto';
 import { UpdateSocialDto } from './dto/update-social.dto';
@@ -24,11 +14,10 @@ import {
   ApiOperation,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { ValidationPipe } from '../shared/pipes/validation/validation.pipe';
 import { Request } from 'express';
 import { UserWithPasswordResponseDto } from '../users/dto/user-with-password.response-dto';
-import { ParseUUIDv4Pipe } from '../shared/pipes/parse-UUIDv4/parse-UUIDv4.pipe';
 import { User } from '../auth/decorators/user.decorator';
+import { UUIDParam } from '../shared/decorators/UUID-param.decorator';
 
 @User()
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
@@ -66,7 +55,6 @@ export class SocialsController {
     description: 'CSRF token for the request',
     required: true,
   })
-  @UsePipes(ValidationPipe)
   @Post('')
   public async addSocialNetwork(
     @Req() req: Request,
@@ -93,8 +81,8 @@ export class SocialsController {
   })
   @Put(':id')
   public async updateSocialNetwork(
-    @Param('id', ParseUUIDv4Pipe) id: string,
-    @Body(ValidationPipe) updateSocialDto: UpdateSocialDto,
+    @UUIDParam('id') id: string,
+    @Body() updateSocialDto: UpdateSocialDto,
   ): Promise<SocialResponseDto> {
     return this.socialsService.updateSocialNetwork(id, updateSocialDto);
   }
@@ -112,7 +100,7 @@ export class SocialsController {
   })
   @Delete(':id')
   public async deleteSocialNetwork(
-    @Param('id', ParseUUIDv4Pipe) id: string,
+    @UUIDParam('id') id: string,
   ): Promise<string> {
     return this.socialsService.deleteSocialNetwork(id);
   }

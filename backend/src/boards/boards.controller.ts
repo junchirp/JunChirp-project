@@ -3,9 +3,7 @@ import {
   Get,
   Post,
   Body,
-  Param,
   Delete,
-  UsePipes,
   Put,
   HttpCode,
   HttpStatus,
@@ -26,13 +24,12 @@ import {
   ApiOperation,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { ValidationPipe } from '../shared/pipes/validation/validation.pipe';
 import { Owner } from '../auth/decorators/owner.decorator';
 import { Member } from '../auth/decorators/member.decorator';
-import { ParseUUIDv4Pipe } from '../shared/pipes/parse-UUIDv4/parse-UUIDv4.pipe';
 import { UpdateColumnsOrderDto } from './dto/update-columns-order.dto';
 import { BoardWithColumnsResponseDto } from './dto/board-with-columns.response-dto';
 import { User } from '../auth/decorators/user.decorator';
+import { UUIDParam } from '../shared/decorators/UUID-param.decorator';
 
 @User('discord')
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
@@ -56,7 +53,6 @@ export class BoardsController {
     description: 'CSRF token for the request',
     required: true,
   })
-  @UsePipes(ValidationPipe)
   @Post('')
   public async addBoard(
     @Body() createBoardDto: CreateBoardDto,
@@ -74,7 +70,7 @@ export class BoardsController {
   })
   @Get(':id')
   public async getBoardById(
-    @Param('id', ParseUUIDv4Pipe) id: string,
+    @UUIDParam('id') id: string,
   ): Promise<BoardWithColumnsResponseDto> {
     return this.boardsService.getBoardById(id);
   }
@@ -95,8 +91,8 @@ export class BoardsController {
   })
   @Put(':id')
   public async updateBoard(
-    @Param('id', ParseUUIDv4Pipe) id: string,
-    @Body(ValidationPipe) updateBoardDto: UpdateBoardDto,
+    @UUIDParam('id') id: string,
+    @Body() updateBoardDto: UpdateBoardDto,
   ): Promise<BoardWithColumnsResponseDto> {
     return this.boardsService.updateBoard(id, updateBoardDto);
   }
@@ -116,9 +112,7 @@ export class BoardsController {
   })
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')
-  public async deleteBoard(
-    @Param('id', ParseUUIDv4Pipe) id: string,
-  ): Promise<void> {
+  public async deleteBoard(@UUIDParam('id') id: string): Promise<void> {
     return this.boardsService.deleteBoard(id);
   }
 
@@ -143,8 +137,8 @@ export class BoardsController {
   })
   @Patch(':id/reorder-columns')
   public async updateColumnsOrder(
-    @Param('id', ParseUUIDv4Pipe) id: string,
-    @Body(ValidationPipe) updateColumnsOrderDto: UpdateColumnsOrderDto,
+    @UUIDParam('id') id: string,
+    @Body() updateColumnsOrderDto: UpdateColumnsOrderDto,
   ): Promise<BoardWithColumnsResponseDto> {
     return this.boardsService.updateColumnsOrder(id, updateColumnsOrderDto);
   }

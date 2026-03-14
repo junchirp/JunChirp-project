@@ -1,67 +1,83 @@
 'use client';
 
-import { ReactElement } from 'react';
+import { ReactElement, useEffect } from 'react';
 import styles from './ConfirmPasswordResetContent.module.scss';
 import Button from '@/shared/components/Button/Button';
-import { useSearchParams } from 'next/navigation';
-import { useRequestPasswordResetMutation } from '@/api/authApi';
+import {
+  useGetPasswordResetTokenQuery,
+  useRequestPasswordResetMutation,
+} from '@/api/authApi';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
 import { useToast } from '@/hooks/useToast';
 import { Locale, useRouter } from '@/i18n/routing';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
+import { useSearchParams } from 'next/navigation';
+import { ToastKeysEnum } from '../../../../shared/enums/toast-keys.enum';
+import { useError429Toast } from '../../../../hooks/useError429Toast';
 
-export default function ConfirmPasswordResetContent(): ReactElement {
-  const searchParams = useSearchParams();
-  const email = searchParams.get('email') ?? '';
+export default function ConfirmPasswordResetContent(): ReactElement | null {
   const [reqResetPassword, { isLoading }] = useRequestPasswordResetMutation();
   const { showToast, isActive } = useToast();
+  const { showToast: showError } = useError429Toast();
   const router = useRouter();
   const locale = useLocale();
+  const t = useTranslations('resetPasswordConfirmation');
+  const tInfo: string[] = t.raw('information');
+  const searchParams = useSearchParams();
+  const requestId = searchParams.get('requestId') ?? '';
+  const { data: token, isError } = useGetPasswordResetTokenQuery(requestId, {
+    skip: !requestId,
+  });
+
+  useEffect(() => {
+    if (!requestId) {
+      router.replace('/request-password-reset');
+    }
+  }, [requestId, router]);
+
+  useEffect(() => {
+    if (isError) {
+      router.replace('/request-password-reset');
+    }
+  }, [isError, router]);
 
   const handleClick = async (): Promise<void> => {
-    if (isActive('confirm password reset')) {
+    if (isActive('confirm password reset') || !token) {
       return;
     }
 
-    const result = await reqResetPassword({ email, locale: locale as Locale });
+    const result = await reqResetPassword({
+      email: token.email,
+      locale: locale as Locale,
+    });
 
     if ('data' in result) {
       showToast({
         severity: 'success',
-        summary: 'Запит успішно оброблено.',
-        detail: 'Перевір пошту для підтвердження.',
+        summary: t('success'),
+        detail: t('successDetails'),
         life: 3000,
         actionKey: 'confirm password reset',
       });
     }
 
     if ('error' in result) {
-      const errorData = result.error as (
-        | FetchBaseQueryError
-        | SerializedError
-      ) & {
-        status?: number;
-      };
-      const status = errorData.status;
+      const errorData = result.error as
+        | ((FetchBaseQueryError | SerializedError) & {
+            status: number;
+            data: { attemptsCount: number; retryAfter: string };
+          })
+        | undefined;
+      const status = errorData?.status;
+
       if (status === 429) {
-        showToast({
-          severity: 'error',
-          summary:
-            'Перевищено ліміт запитів на підтвердження електронної пошти.',
-          detail: 'Будь ласка, спробуй надіслати новий запит через 1 годину.',
-          life: 3000,
-          actionKey: 'confirm password reset',
-        });
+        showError(
+          errorData?.data.retryAfter ?? '',
+          ToastKeysEnum.PASSWORD_RESET_CONFIRMATION,
+        );
       } else {
-        showToast({
-          severity: 'error',
-          summary: 'Помилка обробки запиту.',
-          detail: 'Адресу електронної пошти не знайдено в базі даних.',
-          life: 3000,
-          actionKey: 'confirm password reset',
-        });
-        router.push('/request-password-reset');
+        router.replace('/request-password-reset');
       }
     }
   };
@@ -69,45 +85,43 @@ export default function ConfirmPasswordResetContent(): ReactElement {
   return (
     <div className={styles['confirm-password-reset-content']}>
       <h2 className={styles['confirm-password-reset-content__title']}>
-        Підтвердження запиту на відновлення пароля
+        {t('title')}
       </h2>
       <div className={styles['confirm-password-reset-content__content']}>
-        <p>
-          Ми надіслали лист із посиланням для підтвердження запиту на
-          відновлення пароля на {email}. Перевір свою поштову скриньку та
-          натисни на посилання для підтвердження відновлення пароля.
-        </p>
-        <p>
-          Якщо лист не надійшов, будь ласка, перевір папку "Спам" або{' '}
-          <Button
-            className={styles['confirm-password-reset-content__inline-button']}
-            variant="link"
-            color="green"
-            onClick={handleClick}
-            loading={isLoading}
-          >
-            Надішли запит ще раз.
-          </Button>
-        </p>
+        <div>
+          {t.rich('firstPart', {
+            email: (chunks) => (
+              <span
+                className={styles['confirm-password-reset-content__green-text']}
+              >
+                {chunks}
+              </span>
+            ),
+            userEmail: token?.email ?? '',
+          })}
+        </div>
+        <div>
+          {t.rich('secondPart', {
+            button: (chunks) => (
+              <Button
+                variant="link"
+                color="green"
+                onClick={handleClick}
+                loading={isLoading}
+              >
+                {chunks}
+              </Button>
+            ),
+          })}
+        </div>
       </div>
       <div className={styles['confirm-password-reset-content__content']}>
         <h6 className={styles['confirm-password-reset-content__sub-title']}>
-          Важлива інформація:
+          {t('subTitle')}
         </h6>
-        <p>
-          Термін дії посилання: Посилання на підтвердження відновлення пароля
-          дійсне протягом 24 годин.
-        </p>
-        <p>
-          Нове посилання анулює старе: Кожного разу, коли ти запитуєш нове
-          посилання, попереднє стає недійсним. Це означає, що старе посилання
-          більше не буде працювати, і тобі потрібно буде використати нове.
-        </p>
-        <p>
-          По закінченні 24 годин: Якщо ти не підтвердиш свій запит протягом 24
-          годин, він вважатиметься анульованим, і тобі потрібно буде почати
-          процес відновлення пароля знову.
-        </p>
+        {tInfo.map((fragment, index) => (
+          <p key={index}>{fragment}</p>
+        ))}
       </div>
     </div>
   );

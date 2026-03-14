@@ -8,7 +8,7 @@ import Image from 'next/image';
 import { ProjectCardInterface } from '@/shared/interfaces/project-card.interface';
 import InvitePopup from '@/shared/components/InvitePopup/InvitePopup';
 import { UserCardInterface } from '@/shared/interfaces/user-card.interface';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/routing';
 
 interface UserItemProps {
   user: UserCardInterface;

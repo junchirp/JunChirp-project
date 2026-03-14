@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from 'react';
 
-export function useColumns(options?: {
+export const useColumns = (options?: {
   fixed?: number;
   breakpoint?: number;
-}): number {
+}): number => {
   const { fixed, breakpoint = 0 } = options ?? {};
   const [columns, setColumns] = useState<number>(fixed ?? 1);
 
@@ -24,4 +24,4 @@ export function useColumns(options?: {
   }, [fixed, breakpoint]);
 
   return columns;
-}
+};

@@ -2,9 +2,7 @@ import {
   Controller,
   Post,
   Body,
-  Param,
   Delete,
-  UsePipes,
   Req,
   Put,
   Get,
@@ -24,12 +22,11 @@ import {
   ApiOperation,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { ValidationPipe } from '../shared/pipes/validation/validation.pipe';
 import { Request } from 'express';
 import { UserWithPasswordResponseDto } from '../users/dto/user-with-password.response-dto';
 import { HardSkillResponseDto } from './dto/hard-skill.response-dto';
-import { ParseUUIDv4Pipe } from '../shared/pipes/parse-UUIDv4/parse-UUIDv4.pipe';
 import { User } from '../auth/decorators/user.decorator';
+import { UUIDParam } from 'src/shared/decorators/UUID-param.decorator';
 
 @User()
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
@@ -77,7 +74,6 @@ export class HardSkillsController {
     description: 'CSRF token for the request',
     required: true,
   })
-  @UsePipes(ValidationPipe)
   @Post('')
   public async addHardSkill(
     @Req() req: Request,
@@ -102,8 +98,8 @@ export class HardSkillsController {
   })
   @Put(':id')
   public async updateHardSkill(
-    @Param('id', ParseUUIDv4Pipe) id: string,
-    @Body(ValidationPipe) updateHardSkillDto: UpdateHardSkillDto,
+    @UUIDParam('id') id: string,
+    @Body() updateHardSkillDto: UpdateHardSkillDto,
   ): Promise<HardSkillResponseDto> {
     return this.hardSkillsService.updateHardSkill(id, updateHardSkillDto);
   }
@@ -120,9 +116,7 @@ export class HardSkillsController {
     required: true,
   })
   @Delete(':id')
-  public async deleteHardSkill(
-    @Param('id', ParseUUIDv4Pipe) id: string,
-  ): Promise<string> {
+  public async deleteHardSkill(@UUIDParam('id') id: string): Promise<string> {
     return this.hardSkillsService.deleteHardSkill(id);
   }
 }

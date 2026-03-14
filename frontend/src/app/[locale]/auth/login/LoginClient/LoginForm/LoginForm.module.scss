@@ -3,12 +3,12 @@
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: 61px;
 
   &__fieldset {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 29px;
   }
 
   &__button-wrapper {
@@ -22,5 +22,20 @@
     font-size: 14px;
     line-height: 1.2;
     color: variables.$black-2;
+  }
+
+  &__error {
+    border: 1px solid variables.$red-8;
+    border-radius: 8px;
+    padding: 16px;
+    background-color: variables.$red-5;
+    margin-bottom: -24px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  &__error-text {
+    line-height: 1.2;
   }
 }

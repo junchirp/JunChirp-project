@@ -12,19 +12,23 @@ import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
 import ChangeEmailPopup from './ChangeEmailPopup/ChangeEmailPopup';
 import { useLocale, useTranslations } from 'next-intl';
-import { Locale } from '@/i18n/routing';
+import { Locale, useRouter } from '@/i18n/routing';
+import { useError429Toast } from '../../../../hooks/useError429Toast';
+import { ToastKeysEnum } from '../../../../shared/enums/toast-keys.enum';
 
 export default function ConfirmEmailContent(): ReactElement {
   const user = useAppSelector(authSelector.selectUser);
   const searchParams = useSearchParams();
   const authType = searchParams.get('type');
   const { showToast, isActive } = useToast();
+  const { showToast: showError } = useError429Toast();
   const [sendEmail, { isLoading }] = useSendConfirmationEmailMutation();
   const [isModalOpen, setModalOpen] = useState(false);
   const tConfirmation = useTranslations('emailConfirmation');
   const tButtons = useTranslations('buttons');
   const tInfo: string[] = tConfirmation.raw('information');
   const locale = useLocale();
+  const router = useRouter();
 
   const sendConfirmationRequest = async (): Promise<void> => {
     if (isActive('confirm email')) {
@@ -32,7 +36,6 @@ export default function ConfirmEmailContent(): ReactElement {
     }
 
     const result = await sendEmail({
-      email: user?.email ?? '',
       locale: locale as Locale,
     });
 
@@ -46,25 +49,21 @@ export default function ConfirmEmailContent(): ReactElement {
       });
     } else if ('error' in result) {
       const errorData = result.error as
-        | ((FetchBaseQueryError | SerializedError) & { status: number })
+        | ((FetchBaseQueryError | SerializedError) & {
+            status: number;
+            data: {
+              retryAfter: string;
+            };
+          })
         | undefined;
-      const status = errorData?.status;
-      if (status === 429) {
-        showToast({
-          severity: 'error',
-          summary: tConfirmation('error429'),
-          detail: tConfirmation('error429Details'),
-          life: 3000,
-          actionKey: 'confirm email',
-        });
-      } else if (status === 400) {
-        showToast({
-          severity: 'error',
-          summary: tConfirmation('error400'),
-          detail: tConfirmation('error400Details'),
-          life: 3000,
-          actionKey: 'confirm email',
-        });
+      const resStatus = errorData?.status;
+      if (resStatus === 429) {
+        showError(
+          errorData?.data.retryAfter ?? '',
+          ToastKeysEnum.EMAIL_CONFIRMATION,
+        );
+      } else {
+        router.replace('/verify-email/deleted');
       }
     }
   };

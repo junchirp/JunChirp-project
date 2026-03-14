@@ -6,7 +6,7 @@ import styles from './UserProjectCard.module.scss';
 import Button from '@/shared/components/Button/Button';
 import { useAppSelector } from '@/hooks/reduxHooks';
 import authSelector from '@/redux/auth/authSelector';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
 
 interface UserProjectCardProps {

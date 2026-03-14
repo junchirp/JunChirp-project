@@ -7,7 +7,7 @@ import UserProjectCard from '@/shared/components/UserProjectCard/UserProjectCard
 import { ProjectCardInterface } from '@/shared/interfaces/project-card.interface';
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import DiscordBanner from '@/shared/components/DiscordBanner/DiscordBanner';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/routing';
 import Plus from '@/assets/icons/plus.svg';
 import { useTranslations } from 'next-intl';
 

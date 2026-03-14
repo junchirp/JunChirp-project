@@ -28,11 +28,8 @@ model User {
   socials               Social[]
   tasks                 Task[]
   role                  Role                   @relation(fields: [roleId], references: [id])
-  verificationAttempts  VerificationAttempt[]
-  verificationToken     VerificationToken?
+  verificationTokens    VerificationToken[]
   projectRoles          ProjectRole[]
-  resetPasswordToken    ResetPasswordToken?
-  resetPasswordAttempts ResetPasswordAttempt[]
   hardSkills            UserHardSkill[]
   softSkills            UserSoftSkill[]
   participationInvites  ParticipationInvite[]
@@ -55,27 +52,19 @@ model VerificationToken {
   id        String   @id @default(dbgenerated("gen_random_uuid()"))
   token     String   @unique
   createdAt DateTime @default(now()) @map("created_at")
-  userId    String?  @unique @map("user_id")
-  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
-
-  @@map("verification_tokens")
-}
-
-model VerificationAttempt {
-  id        String   @id @default(dbgenerated("gen_random_uuid()"))
-  createdAt DateTime @default(now()) @map("created_at")
+  used      Boolean  @default(false)
   userId    String   @map("user_id")
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@map("verification_attempts")
+  @@index([userId, used])
+  @@map("verification_tokens")
 }
 
 model ResetPasswordToken {
   id        String   @id @default(dbgenerated("gen_random_uuid()"))
   token     String   @unique
   createdAt DateTime @default(now()) @map("created_at")
-  userId    String   @unique @map("user_id")
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  email     String   @unique
 
   @@map("reset_password_tokens")
 }
@@ -83,8 +72,7 @@ model ResetPasswordToken {
 model ResetPasswordAttempt {
   id        String   @id @default(dbgenerated("gen_random_uuid()"))
   createdAt DateTime @default(now())
-  userId    String   @map("user_id")
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ip        String
 
   @@map("reset_password_attempts")
 }

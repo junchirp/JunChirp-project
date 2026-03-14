@@ -1,47 +1,41 @@
 'use client';
 
-import { ReactElement } from 'react';
-import { z } from 'zod';
+import React, { ReactElement, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import styles from './RequestPasswordResetForm.module.scss';
 import Input from '@/shared/components/Input/Input';
 import Button from '@/shared/components/Button/Button';
-import { useToast } from '@/hooks/useToast';
 import { useRequestPasswordResetMutation } from '@/api/authApi';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
 import { Locale, useRouter } from '@/i18n/routing';
-import {
-  usedEmailSchema,
-  usedEmailSchemaStatic,
-} from '@/shared/forms/schemas/usedEmailSchema';
 import { useLocale, useTranslations } from 'next-intl';
+import Image from 'next/image';
+import { useError429Toast } from '@/hooks/useError429Toast';
+import { ToastKeysEnum } from '../../../../shared/enums/toast-keys.enum';
 
-type FormData = z.infer<typeof usedEmailSchemaStatic>;
+interface FormData {
+  email: string;
+}
 
 export default function RequestPasswordResetForm(): ReactElement {
-  const t = useTranslations('forms');
-  const {
-    register,
-    watch,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FormData>({
-    resolver: zodResolver(usedEmailSchema(t)),
+  const tForms = useTranslations('forms');
+  const tButtons = useTranslations('buttons');
+  const { register, handleSubmit } = useForm<FormData>({
     mode: 'onChange',
   });
-  const email = watch('email');
   const [reqResetPassword, { isLoading }] = useRequestPasswordResetMutation();
-  const { showToast, isActive } = useToast();
+  const { showToast, isActive } = useError429Toast();
   const router = useRouter();
   const locale = useLocale();
+  const [isError, setError] = useState(false);
 
   const onSubmit = async (data: FormData): Promise<void> => {
-    if (errors.email?.message || isActive('request password reset')) {
+    if (isActive('request password reset')) {
       return;
     }
 
+    setError(false);
     const trimmedData = {
       email: data.email.trim(),
       locale: locale as Locale,
@@ -52,36 +46,22 @@ export default function RequestPasswordResetForm(): ReactElement {
       const errorData = result.error as
         | ((FetchBaseQueryError | SerializedError) & {
             status: number;
-            data: { attemptsCount: number };
+            data: { attemptsCount: number; retryAfter: string };
           })
         | undefined;
       const status = errorData?.status;
 
       if (status === 429) {
-        showToast({
-          severity: 'error',
-          summary:
-            'Перевищено ліміт запитів на підтвердження запиту на відновлення пароля.',
-          detail: 'Будь ласка, спробуй надіслати новий запит через 1 годину.',
-          life: 10000,
-          actionKey: 'request password reset',
-        });
-
-        return;
+        showToast(
+          errorData?.data.retryAfter ?? '',
+          ToastKeysEnum.PASSWORD_RESET_CONFIRMATION,
+        );
+      } else {
+        setError(true);
       }
-
-      showToast({
-        severity: 'error',
-        summary: 'Невідома помилка.',
-        detail: 'Спробуй пізніше.',
-        life: 3000,
-        actionKey: 'request password reset',
-      });
-
-      return;
+    } else if ('data' in result) {
+      router.replace(`/confirm-password-reset?requestId=${result.data}`);
     }
-
-    router.push(`/confirm-password-reset?email=${encodeURIComponent(email)}`);
   };
 
   return (
@@ -90,14 +70,25 @@ export default function RequestPasswordResetForm(): ReactElement {
       className={styles['request-password-reset-form']}
       onSubmit={handleSubmit(onSubmit)}
     >
+      {isError && (
+        <div className={styles['request-password-reset-form__error']}>
+          <Image
+            src="/images/alert-circle.svg"
+            alt={'alert'}
+            width={16}
+            height={16}
+          />
+          <p className={styles['request-password-reset-form__error-text']}>
+            {tForms('requestPasswordResetForm.error')}
+          </p>
+        </div>
+      )}
       <fieldset disabled={isLoading}>
         <Input
           label="Email"
           placeholder="example@email.com"
           type="email"
           {...register('email')}
-          withError
-          errorMessages={errors.email?.message && [errors.email.message]}
         />
       </fieldset>
       <Button
@@ -107,7 +98,7 @@ export default function RequestPasswordResetForm(): ReactElement {
         loading={isLoading}
         isLoader
       >
-        Відправити запит
+        {tButtons('send')}
       </Button>
     </form>
   );

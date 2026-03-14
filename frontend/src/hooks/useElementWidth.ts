@@ -2,7 +2,7 @@
 
 import { RefObject, useEffect, useState } from 'react';
 
-export function useElementWidth(ref: RefObject<HTMLElement | null>): number {
+export const useElementWidth = (ref: RefObject<HTMLElement | null>): number => {
   const [width, setWidth] = useState(0);
 
   useEffect(() => {

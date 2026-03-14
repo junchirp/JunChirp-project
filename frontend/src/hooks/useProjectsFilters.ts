@@ -1,6 +1,7 @@
 'use client';
 
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
+import { useRouter } from '@/i18n/routing';
 import { useMemo } from 'react';
 import { ProjectsFiltersInterface } from '@/shared/interfaces/projects-filters.interface';
 

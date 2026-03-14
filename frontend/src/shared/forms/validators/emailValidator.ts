@@ -52,29 +52,3 @@ export const availableEmailValidator = (
     },
   );
 };
-
-export const usedEmailValidator = (t: (key: string) => string): ZodString => {
-  const base = forbiddenDomainValidator(t);
-
-  return base.refine(
-    async (val) => {
-      try {
-        const res = await fetch(
-          `${BASE_URL}/users/check-email?email=${encodeURIComponent(val)}`,
-        );
-
-        if (!res.ok) {
-          return true;
-        }
-
-        const { isAvailable } = await res.json();
-        return !isAvailable;
-      } catch {
-        return true;
-      }
-    },
-    {
-      message: t('errors.emailNotFound'),
-    },
-  );
-};

@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Param,
   Delete,
   HttpCode,
   HttpStatus,
@@ -23,15 +22,14 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { ProjectRoleTypeResponseDto } from './dto/project-role-type.response-dto';
-import { ValidationPipe } from '../shared/pipes/validation/validation.pipe';
 import { Owner } from '../auth/decorators/owner.decorator';
 import { ProjectRoleResponseDto } from './dto/project-role.response-dto';
-import { ParseUUIDv4Pipe } from '../shared/pipes/parse-UUIDv4/parse-UUIDv4.pipe';
 import { User } from '../auth/decorators/user.decorator';
 import { ProjectRoleWithUserResponseDto } from './dto/project-role-with-user.response-dto';
 import { Member } from '../auth/decorators/member.decorator';
 import { UserWithPasswordResponseDto } from '../users/dto/user-with-password.response-dto';
 import { Request } from 'express';
+import { UUIDParam } from '../shared/decorators/UUID-param.decorator';
 
 @User()
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
@@ -68,7 +66,7 @@ export class ProjectRolesController {
   })
   @Post('')
   public async createProjectRole(
-    @Body(ValidationPipe) createProjectRoleDto: CreateProjectRoleDto,
+    @Body() createProjectRoleDto: CreateProjectRoleDto,
   ): Promise<ProjectRoleResponseDto> {
     return this.projectRolesService.createProjectRole(createProjectRoleDto);
   }
@@ -91,9 +89,7 @@ export class ProjectRolesController {
   })
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')
-  public async deleteProjectRole(
-    @Param('id', ParseUUIDv4Pipe) id: string,
-  ): Promise<void> {
+  public async deleteProjectRole(@UUIDParam('id') id: string): Promise<void> {
     return this.projectRolesService.deleteProjectRole(id);
   }
 
@@ -118,7 +114,7 @@ export class ProjectRolesController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':roleId/users/me')
   public async exitFromProject(
-    @Param('roleId', ParseUUIDv4Pipe) roleId: string,
+    @UUIDParam('roleId') roleId: string,
     @Req() req: Request,
   ): Promise<void> {
     const user: UserWithPasswordResponseDto =
@@ -146,8 +142,8 @@ export class ProjectRolesController {
   })
   @Delete(':roleId/users/:userId')
   public async removeUserFromProject(
-    @Param('roleId', ParseUUIDv4Pipe) projectId: string,
-    @Param('userId', ParseUUIDv4Pipe) userId: string,
+    @UUIDParam('roleId') projectId: string,
+    @UUIDParam('userId') userId: string,
   ): Promise<ProjectRoleWithUserResponseDto> {
     return this.projectRolesService.removeUserFromProject(projectId, userId);
   }

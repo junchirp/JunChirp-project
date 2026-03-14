@@ -7,7 +7,7 @@ import Button from '@/shared/components/Button/Button';
 import Image from 'next/image';
 import { membersPipe } from '@/shared/utils/membersPipe';
 import { datePipe } from '@/shared/utils/datePipe';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/routing';
 import RejectInvitePopup from '@/shared/components/RejectInvitePopup/RejectInvitePopup';
 import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
 import {

@@ -1,38 +1,32 @@
 'use client';
 
 import styles from './LoginForm.module.scss';
-import Input from '../../../../../../shared/components/Input/Input';
-import Button from '../../../../../../shared/components/Button/Button';
-import { Link, useRouter } from '../../../../../../i18n/routing';
+import Input from '@/shared/components/Input/Input';
+import Button from '@/shared/components/Button/Button';
+import { Link, useRouter } from '@/i18n/routing';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useLoginMutation } from '../../../../../../api/authApi';
+import { useLoginMutation } from '@/api/authApi';
 import { useSearchParams } from 'next/navigation';
-import React, { ReactElement } from 'react';
-import { useToast } from '../../../../../../hooks/useToast';
+import React, { ReactElement, useState } from 'react';
+import { useToast } from '@/hooks/useToast';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
-import { useLazyGetProjectRolesListQuery } from '../../../../../../api/projectRolesApi';
-import { useSupport } from '../../../../../../hooks/useSupport';
-import {
-  loginSchema,
-  loginSchemaStatic,
-} from '../../../../../../shared/forms/schemas/loginShema';
+import { useLazyGetProjectRolesListQuery } from '@/api/projectRolesApi';
+import { useSupport } from '@/hooks/useSupport';
 import { useTranslations } from 'next-intl';
+import Image from 'next/image';
 
-type FormData = z.infer<typeof loginSchemaStatic>;
+interface FormData {
+  email: string;
+  password: string;
+}
 
 export default function LoginForm(): ReactElement {
+  const [isError, setError] = useState(false);
   const tForms = useTranslations('forms');
   const tButtons = useTranslations('buttons');
   const tAuth = useTranslations('auth');
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FormData>({
-    resolver: zodResolver(loginSchema(tForms)),
+  const { register, handleSubmit } = useForm<FormData>({
     mode: 'onChange',
   });
 
@@ -48,6 +42,7 @@ export default function LoginForm(): ReactElement {
       return;
     }
 
+    setError(false);
     const result = await login(data);
 
     if ('data' in result) {
@@ -132,25 +127,7 @@ export default function LoginForm(): ReactElement {
         return;
       }
 
-      if (status === 401) {
-        showToast({
-          severity: 'error',
-          summary: tForms('loginForm.error401'),
-          detail: tForms('loginForm.error401Details'),
-          life: 3000,
-          actionKey: 'login',
-        });
-        return;
-      }
-
-      showToast({
-        severity: 'error',
-        summary: tForms('loginForm.error'),
-        detail: tForms('loginForm.errorDetails'),
-        life: 3000,
-        actionKey: 'login',
-      });
-      return;
+      setError(true);
     }
   };
 
@@ -160,21 +137,30 @@ export default function LoginForm(): ReactElement {
       className={styles['login-form']}
       onSubmit={handleSubmit(onSubmit)}
     >
+      {isError && (
+        <div className={styles['login-form__error']}>
+          <Image
+            src="/images/alert-circle.svg"
+            alt={'alert'}
+            width={16}
+            height={16}
+          />
+          <p className={styles['login-form__error-text']}>
+            {tForms('loginForm.error')}
+          </p>
+        </div>
+      )}
       <fieldset className={styles['login-form__fieldset']} disabled={isLoading}>
         <Input
           label={tForms('loginForm.email')}
           type="email"
           placeholder="example@email.com"
           {...register('email')}
-          withError
-          errorMessages={errors.email?.message && [errors.email.message]}
         />
         <Input
           label={tForms('loginForm.password')}
           type="password"
           {...register('password')}
-          withError
-          errorMessages={errors.password?.message && [errors.password.message]}
         />
       </fieldset>
       <div className={styles['login-form__button-wrapper']}>
