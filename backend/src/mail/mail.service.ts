@@ -65,28 +65,37 @@ export class MailService {
     to: string,
     subject: string,
     html: string,
-  ): Promise<gmail_v1.Schema$Message> {
-    const accessToken = await this.getAccessToken();
-    this.oauth2Client.setCredentials({ access_token: accessToken });
-    const gmail = google.gmail({ version: 'v1', auth: this.oauth2Client });
-    const message =
-      `From: ${from}\n` +
-      `To: ${to}\n` +
-      `Subject: =?UTF-8?B?${Buffer.from(subject).toString('base64')}?=\n` +
-      `Content-Type: text/html; charset=UTF-8\n\n` +
-      html;
-    const encodedMessage = Buffer.from(message)
-      .toString('base64')
-      .replace(/\+/g, '-')
-      .replace(/\//g, '_')
-      .replace(/=+$/, '');
+  ): Promise<gmail_v1.Schema$Message | null> {
+    try {
+      const accessToken = await this.getAccessToken();
+      this.oauth2Client.setCredentials({ access_token: accessToken });
+      const gmail = google.gmail({ version: 'v1', auth: this.oauth2Client });
 
-    const response = await gmail.users.messages.send({
-      userId: 'me',
-      requestBody: { raw: encodedMessage },
-    });
+      const message =
+        `From: ${from}\n` +
+        `To: ${to}\n` +
+        `Subject: =?UTF-8?B?${Buffer.from(subject).toString('base64')}?=\n` +
+        `Content-Type: text/html; charset=UTF-8\n\n` +
+        html;
 
-    return response.data;
+      const encodedMessage = Buffer.from(message)
+        .toString('base64')
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=+$/, '');
+
+      const response = await gmail.users.messages.send({
+        userId: 'me',
+        requestBody: { raw: encodedMessage },
+      });
+
+      return response.data;
+    } catch (error) {
+      if (error.response?.data) {
+        throw new Error(`Response data: ${error.response.data}`);
+      }
+      throw Error(error.message);
+    }
   }
 
   public async sendVerificationMail(
