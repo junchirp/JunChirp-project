@@ -547,7 +547,7 @@
   "confirmationResult": {
     "deleted": {
       "title": "Link has expired",
-      "description": "The link has expired, and your account has been deleted. To access the platform, please register again."
+      "description": "The link has expired. To access the platform, please try logging in or sign up again."
     },
     "invalid": {
       "title": "Link has expired",
