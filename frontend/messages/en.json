@@ -612,8 +612,8 @@
       "errorDetails": "Please try sending a new request in {time}."
     },
     "resetPassword": {
-      "error": "Перевищено ліміт запитів на підтвердження електронної пошти.",
-      "errorDetails": "Будь ласка, спробуй надіслати новий запит через {time}."
+      "error": "Too many password reset requests.",
+      "errorDetails": "Please try sending a new request in {time}."
     },
     "time": {
       "minutes": "{count, plural, one {# minute} other {# minutes}}",
