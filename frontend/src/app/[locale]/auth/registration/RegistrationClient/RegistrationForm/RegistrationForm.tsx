@@ -221,7 +221,7 @@ export default function RegistrationForm(): ReactElement {
                 terms: (chunks) => (
                   <Link
                     className={styles['registration-form__link']}
-                    href="/terms-of-use"
+                    href="/legacy-terms"
                     target="_blank"
                   >
                     {chunks}
