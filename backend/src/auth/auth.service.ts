@@ -443,26 +443,25 @@ export class AuthService {
     req: Request,
     res: Response,
     state: string,
+    error?: string,
   ): Promise<void> {
     const frontendBaseUrl =
       this.configService.get<string>('BASE_FRONTEND_URL') ??
       'https://localhost:3000';
 
-    const fallbackRedirect = `${frontendBaseUrl}/?status=failure&error=discord_auth_failed`;
-
     try {
       const data = await this.redisService.get(state);
       if (!data) {
+        const fallbackReturnUrl = this.getSafeReturnUrl('/', {
+          social: 'discord',
+          status: 'failure',
+          error,
+        });
+        const fallbackRedirect = `${frontendBaseUrl}${fallbackReturnUrl}`;
         return res.redirect(fallbackRedirect);
       }
 
       const { userId, returnUrl } = JSON.parse(data);
-      const safeReturnUrl = this.getSafeReturnUrl(returnUrl, {
-        social: 'discord',
-        status: 'success',
-      });
-      const redirectBase = `${frontendBaseUrl}${safeReturnUrl}`;
-
       const { discordId, accessToken } = req.user as {
         discordId: string;
         accessToken: string;
@@ -472,9 +471,58 @@ export class AuthService {
       await this.usersService.linkDiscord(userId, discordId);
       await this.redisService.del(state);
 
-      return res.redirect(redirectBase);
+      const safeReturnUrl = error
+        ? this.getSafeReturnUrl(returnUrl, {
+            social: 'discord',
+            status: 'failure',
+            error,
+          })
+        : this.getSafeReturnUrl(returnUrl, {
+            social: 'discord',
+            status: 'success',
+          });
+
+      const redirectUrl = `${frontendBaseUrl}${safeReturnUrl}`;
+
+      await this.redisService.del(state);
+
+      return res.redirect(redirectUrl);
     } catch {
-      return res.redirect(fallbackRedirect);
+      const data = await this.redisService.get(state);
+      const { returnUrl } = data ? JSON.parse(data) : { returnUrl: '/' };
+      const safeReturnUrl = this.getSafeReturnUrl(returnUrl, {
+        social: 'discord',
+        status: 'failure',
+        error: error ?? 'discord_auth_failed',
+      });
+
+      const redirectUrl = `${frontendBaseUrl}${safeReturnUrl}`;
+      return res.redirect(redirectUrl);
+    }
+  }
+
+  public async handleDiscordCancel(
+    res: Response,
+    state: string,
+  ): Promise<void> {
+    const frontendBaseUrl =
+      this.configService.get<string>('BASE_FRONTEND_URL') ??
+      'https://localhost:3000';
+
+    try {
+      const data = await this.redisService.get(state);
+      const { returnUrl } = data ? JSON.parse(data) : { returnUrl: '/' };
+      const safeReturnUrl = this.getSafeReturnUrl(returnUrl, {
+        social: 'discord',
+        status: 'cancel',
+      });
+
+      await this.redisService.del(state);
+
+      const redirectUrl = `${frontendBaseUrl}${safeReturnUrl}`;
+      return res.redirect(redirectUrl);
+    } catch {
+      return res.redirect('/');
     }
   }
 
@@ -516,7 +564,7 @@ export class AuthService {
       const safeReturnUrl = this.getSafeReturnUrl(returnUrl, {
         social: 'google',
         status: 'failure',
-        error: 'google_auth_failed',
+        error: error ?? 'google_auth_failed',
       });
 
       const redirectUrl = `${frontendBaseUrl}${safeReturnUrl}`;

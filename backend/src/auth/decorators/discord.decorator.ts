@@ -1,6 +1,14 @@
 import { applyDecorators, UseGuards } from '@nestjs/common';
 import { User } from './user.decorator';
-import { DiscordAuthGuard } from '../guards/discord-auth/discord-auth.guard';
+import { DiscordInitGuard } from '../guards/discord-init/discord-init.guard';
+import { DiscordCallbackGuard } from '../guards/discord-callback/discord-callback.guard';
 
-export const Discord = (): MethodDecorator & ClassDecorator =>
-  applyDecorators(User(), UseGuards(DiscordAuthGuard));
+type DiscordMode = 'init' | 'callback';
+
+export const Discord = (
+  mode: DiscordMode = 'init',
+): MethodDecorator & ClassDecorator => {
+  const guard = mode === 'init' ? DiscordInitGuard : DiscordCallbackGuard;
+
+  return applyDecorators(User(), UseGuards(guard));
+};

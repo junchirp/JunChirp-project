@@ -19,9 +19,7 @@ export default function CancelPasswordPopup({
   return (
     <div className={styles['cancel-password-popup__wrapper']}>
       <div className={styles['cancel-password-popup']}>
-        <h3 className={styles['cancel-password-popup__title']}>
-          {t('title')}
-        </h3>
+        <h3 className={styles['cancel-password-popup__title']}>{t('title')}</h3>
         <div className={styles['cancel-password-popup__buttons']}>
           <Button color="red" variant="secondary-frame" onClick={onCancel}>
             {t('noBtn')}
