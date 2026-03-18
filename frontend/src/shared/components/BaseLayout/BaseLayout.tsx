@@ -12,6 +12,7 @@ import { MessageProvider } from '@/providers/MessageProvider';
 import FooterWrapper from './FooterWrapper/FooterWrapper';
 import { SupportProvider } from '@/providers/SupportProvider';
 import { NextIntlClientProvider } from 'next-intl';
+import OAuthDiscordHandler from './OAuthDiscordHandler/OAuthDiscordHandler';
 
 interface BaseLayoutProps {
   children: ReactNode;
@@ -31,6 +32,7 @@ export default function BaseLayout({
               <MessageProvider>
                 <SupportProvider>
                   <DataLoader />
+                  <OAuthDiscordHandler />
                   <div className={styles.body__container}>
                     <Header />
                     <div className={styles.body__inner}>{children}</div>

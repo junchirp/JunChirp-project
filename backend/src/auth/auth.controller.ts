@@ -148,7 +148,7 @@ export class AuthController {
       : this.authService.handleGoogleCallback(ip, req, res, state, error);
   }
 
-  @Discord()
+  @Discord('init')
   @ApiOperation({ summary: 'Initiate Discord OAuth2 login' })
   @ApiResponse({ status: HttpStatus.FOUND })
   @ApiForbiddenResponse({ description: 'Access denied: email not confirmed' })
@@ -158,7 +158,7 @@ export class AuthController {
   // eslint-disable-next-line
   public async redirectToDiscord(): Promise<void> {}
 
-  @Discord()
+  @Discord('callback')
   @ApiOperation({ summary: 'Initiate Discord OAuth2 login' })
   @ApiResponse({ status: HttpStatus.FOUND })
   @HttpCode(HttpStatus.FOUND)
@@ -167,8 +167,10 @@ export class AuthController {
     @Req() req: Request,
     @Res() res: Response,
     @Query('state') state: string,
-    @Query('returnUrl') _returnUrl: string,
+    @Query('error') error?: string,
   ): Promise<void> {
-    return this.authService.handleDiscordCallback(req, res, state);
+    return error === 'access_denied'
+      ? this.authService.handleDiscordCancel(res, state)
+      : this.authService.handleDiscordCallback(req, res, state, error);
   }
 }

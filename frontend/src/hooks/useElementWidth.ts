@@ -25,4 +25,4 @@ export const useElementWidth = (ref: RefObject<HTMLElement | null>): number => {
   }, [ref]);
 
   return width;
-}
+};

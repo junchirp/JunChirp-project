@@ -4,7 +4,7 @@ import { v4 as uuidV4 } from 'uuid';
 import { RedisService } from '../../../redis/redis.service';
 
 @Injectable()
-export class DiscordAuthGuard extends AuthGuard('discord') {
+export class DiscordInitGuard extends AuthGuard('discord') {
   public constructor(private redisService: RedisService) {
     super();
   }
