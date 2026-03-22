@@ -25,7 +25,9 @@ async function bootstrap(): Promise<void> {
     dir: string;
   }) => NextServer;
   const nextApp = next({ dev, dir: frontendDir });
+  console.log('Preparing next...');
   await nextApp.prepare();
+  console.log('Next ready');
   const handle = nextApp.getRequestHandler();
 
   server.use((req, res, nextMiddleware) => {
@@ -63,7 +65,9 @@ async function bootstrap(): Promise<void> {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('swagger', app, document);
 
+  console.log('Initializing Nest...');
   await app.init();
+  console.log('Nest ready');
   server.listen(PORT, '0.0.0.0', () => {
     console.log(`Server + Next ready on port ${PORT}`);
   });
