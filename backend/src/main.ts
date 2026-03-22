@@ -64,7 +64,7 @@ async function bootstrap(): Promise<void> {
   SwaggerModule.setup('swagger', app, document);
 
   await app.init();
-  server.listen(PORT, () => {
+  server.listen(PORT, '0.0.0.0', () => {
     console.log(`Server + Next ready on port ${PORT}`);
   });
 }
