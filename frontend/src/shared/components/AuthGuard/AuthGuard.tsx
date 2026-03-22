@@ -5,7 +5,7 @@ import { useRouter } from '@/i18n/routing';
 import { useAppSelector } from '@/hooks/reduxHooks';
 import authSelector from '@/redux/auth/authSelector';
 
-interface AccessGuardProps {
+interface AuthGuardProps {
   children: ReactNode;
   requireVerified?: boolean;
   loadingFallback?: ReactNode;
@@ -17,7 +17,7 @@ export default function AuthGuard({
   requireVerified = false,
   loadingFallback = null,
   redirectTo = '/',
-}: AccessGuardProps): ReactElement {
+}: AuthGuardProps): ReactElement {
   const user = useAppSelector(authSelector.selectUser);
   const status = useAppSelector(authSelector.selectLoadingStatus);
   const router = useRouter();
