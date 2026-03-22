@@ -18,6 +18,10 @@ async function bootstrap(): Promise<void> {
   const server = express();
   server.set('trust proxy', true);
 
+  server.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server started on port ${PORT}`);
+  });
+
   const dev = process.env.NODE_ENV !== 'production';
   const frontendDir = path.resolve(__dirname, '../../frontend');
   const next = nextModule as unknown as (opts: {
@@ -25,7 +29,9 @@ async function bootstrap(): Promise<void> {
     dir: string;
   }) => NextServer;
   const nextApp = next({ dev, dir: frontendDir });
+  console.log('Preparing next...');
   await nextApp.prepare();
+  console.log('Next ready');
   const handle = nextApp.getRequestHandler();
 
   server.use((req, res, nextMiddleware) => {
@@ -33,6 +39,15 @@ async function bootstrap(): Promise<void> {
       return nextMiddleware();
     }
     return handle(req, res);
+  });
+
+  let isReady = false;
+
+  server.use((req, res, nextFunc) => {
+    if (!isReady) {
+      return res.status(503).send('Server is starting...');
+    }
+    nextFunc();
   });
 
   const app = await NestFactory.create(AppModule, new ExpressAdapter(server), {
@@ -63,9 +78,12 @@ async function bootstrap(): Promise<void> {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('swagger', app, document);
 
+  console.log('Initializing Nest...');
   await app.init();
-  server.listen(PORT, () => {
-    console.log(`Server + Next ready on port ${PORT}`);
-  });
+  console.log('Nest ready');
+  isReady = true;
+  // server.listen(PORT, '0.0.0.0', () => {
+  //   console.log(`Server + Next ready on port ${PORT}`);
+  // });
 }
 bootstrap();
