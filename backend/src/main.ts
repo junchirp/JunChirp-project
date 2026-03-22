@@ -18,6 +18,10 @@ async function bootstrap(): Promise<void> {
   const server = express();
   server.set('trust proxy', true);
 
+  server.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server started on port ${PORT}`);
+  });
+
   const dev = process.env.NODE_ENV !== 'production';
   const frontendDir = path.resolve(__dirname, '../../frontend');
   const next = nextModule as unknown as (opts: {
@@ -35,6 +39,15 @@ async function bootstrap(): Promise<void> {
       return nextMiddleware();
     }
     return handle(req, res);
+  });
+
+  let isReady = false;
+
+  server.use((req, res, nextFunc) => {
+    if (!isReady) {
+      return res.status(503).send('Server is starting...');
+    }
+    nextFunc();
   });
 
   const app = await NestFactory.create(AppModule, new ExpressAdapter(server), {
@@ -68,8 +81,9 @@ async function bootstrap(): Promise<void> {
   console.log('Initializing Nest...');
   await app.init();
   console.log('Nest ready');
-  server.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server + Next ready on port ${PORT}`);
-  });
+  isReady = true;
+  // server.listen(PORT, '0.0.0.0', () => {
+  //   console.log(`Server + Next ready on port ${PORT}`);
+  // });
 }
 bootstrap();
