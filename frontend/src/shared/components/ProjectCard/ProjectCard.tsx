@@ -7,7 +7,7 @@ import Button from '@/shared/components/Button/Button';
 import Image from 'next/image';
 import { membersPipe } from '@/shared/utils/membersPipe';
 import { datePipe } from '@/shared/utils/datePipe';
-import { useRouter } from '@/i18n/routing';
+import { Link, Locale, useRouter } from '@/i18n/routing';
 import RejectInvitePopup from '@/shared/components/RejectInvitePopup/RejectInvitePopup';
 import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
 import {
@@ -16,7 +16,6 @@ import {
   useCreateRequestMutation,
 } from '@/api/participationsApi';
 import DiscordBanner from '@/shared/components/DiscordBanner/DiscordBanner';
-import { Link, Locale } from '@/i18n/routing';
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import { ProjectRoleInterface } from '@/shared/interfaces/project-role.interface';
 import RadioGroup from '@/shared/components/RadioGroup/RadioGroup';
@@ -32,6 +31,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
 import { projectDurationPipe } from '@/shared/utils/projectDurationPipe';
+import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 
 interface ProjectCardProps {
   project: ProjectCardInterface;
@@ -122,7 +122,7 @@ export default function ProjectCard({
       return;
     }
 
-    if (isActive('invite')) {
+    if (isActive(ToastKeysEnum.PARTICIPATION_INVITE)) {
       return;
     }
 
@@ -142,7 +142,7 @@ export default function ProjectCard({
             severity: 'error',
             summary: tProjectsPage('invite.error400'),
             life: 3000,
-            actionKey: 'invite',
+            actionKey: ToastKeysEnum.PARTICIPATION_INVITE,
           });
         } else {
           showToast({
@@ -150,7 +150,7 @@ export default function ProjectCard({
             summary: tProjectsPage('invite.error'),
             detail: tProjectsPage('invite.errorDetails'),
             life: 3000,
-            actionKey: 'invite',
+            actionKey: ToastKeysEnum.PARTICIPATION_INVITE,
           });
         }
       }
@@ -167,7 +167,7 @@ export default function ProjectCard({
       return;
     }
 
-    if (isActive('request')) {
+    if (isActive(ToastKeysEnum.PARTICIPATION_REQUEST)) {
       return;
     }
 
@@ -186,7 +186,7 @@ export default function ProjectCard({
           severity: 'error',
           summary: tProjectsPage('request.error400'),
           life: 3000,
-          actionKey: 'request',
+          actionKey: ToastKeysEnum.PARTICIPATION_REQUEST,
         });
       } else {
         showToast({
@@ -194,7 +194,7 @@ export default function ProjectCard({
           summary: tProjectsPage('request.error'),
           detail: tProjectsPage('request.errorDetails'),
           life: 3000,
-          actionKey: 'request',
+          actionKey: ToastKeysEnum.PARTICIPATION_REQUEST,
         });
       }
     }
@@ -204,14 +204,14 @@ export default function ProjectCard({
         severity: 'success',
         summary: tProjectsPage('request.success'),
         life: 3000,
-        actionKey: 'request',
+        actionKey: ToastKeysEnum.PARTICIPATION_REQUEST,
       });
     }
   };
 
   const handleCancelRequest = async (): Promise<void> => {
     if (currentRequest) {
-      if (isActive('cancel-request')) {
+      if (isActive(ToastKeysEnum.PARTICIPATION_REQUEST)) {
         return;
       }
 
@@ -226,7 +226,7 @@ export default function ProjectCard({
           summary: tProjectsPage('request.cancelError'),
           detail: tProjectsPage('request.errorDetails'),
           life: 3000,
-          actionKey: 'cancel-request',
+          actionKey: ToastKeysEnum.PARTICIPATION_REQUEST,
         });
       }
 
@@ -235,7 +235,7 @@ export default function ProjectCard({
           severity: 'success',
           summary: tProjectsPage('request.cancelSuccess'),
           life: 3000,
-          actionKey: 'cancel-request',
+          actionKey: ToastKeysEnum.PARTICIPATION_REQUEST,
         });
       }
     }

@@ -15,6 +15,7 @@ import {
 } from '@/shared/forms/schemas/availableEmailSchema';
 import { useLocale, useTranslations } from 'next-intl';
 import { Locale } from '@/i18n/routing';
+import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 
 type FormData = z.infer<typeof availableEmailSchemaStatic>;
 
@@ -39,7 +40,7 @@ export default function ChangeEmailForm({ onClose }: FormProps): ReactElement {
   const locale = useLocale();
 
   const onSubmit = async (data: FormData): Promise<void> => {
-    if (errors.email?.message || isActive('change email')) {
+    if (errors.email?.message || isActive(ToastKeysEnum.CHANGE_EMAIL)) {
       return;
     }
     const trimmedData = {
@@ -54,7 +55,7 @@ export default function ChangeEmailForm({ onClose }: FormProps): ReactElement {
         summary: tForms('changeEmailForm.success'),
         detail: tForms('changeEmailForm.successDetails'),
         life: 3000,
-        actionKey: 'change email',
+        actionKey: ToastKeysEnum.CHANGE_EMAIL,
       });
     } else if ('error' in result) {
       showToast({
@@ -62,7 +63,7 @@ export default function ChangeEmailForm({ onClose }: FormProps): ReactElement {
         summary: tForms('changeEmailForm.error'),
         detail: tForms('changeEmailForm.errorDetails'),
         life: 3000,
-        actionKey: 'change email',
+        actionKey: ToastKeysEnum.CHANGE_EMAIL,
       });
     }
 

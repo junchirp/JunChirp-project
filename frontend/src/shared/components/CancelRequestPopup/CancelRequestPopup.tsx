@@ -8,6 +8,7 @@ import { useToast } from '@/hooks/useToast';
 import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import { useTranslations } from 'next-intl';
+import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 
 interface CancelRequestPopupProps {
   request: ProjectParticipationInterface;
@@ -24,7 +25,7 @@ export default function CancelRequestPopup(
   const t = useTranslations('cancelRequestPopup');
 
   const onSubmit = async (): Promise<void> => {
-    if (isActive('request')) {
+    if (isActive(ToastKeysEnum.PARTICIPATION_REQUEST)) {
       return;
     }
 
@@ -36,7 +37,7 @@ export default function CancelRequestPopup(
         severity: 'success',
         summary: t('success'),
         life: 3000,
-        actionKey: 'request',
+        actionKey: ToastKeysEnum.PARTICIPATION_REQUEST,
       });
     } else {
       showToast({
@@ -44,7 +45,7 @@ export default function CancelRequestPopup(
         summary: t('error'),
         detail: t('errorDetails'),
         life: 3000,
-        actionKey: 'request',
+        actionKey: ToastKeysEnum.PARTICIPATION_REQUEST,
       });
     }
   };

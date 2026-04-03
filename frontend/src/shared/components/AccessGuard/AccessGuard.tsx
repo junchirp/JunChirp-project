@@ -2,48 +2,68 @@
 
 import { ReactElement, ReactNode, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { useRouter } from '@/i18n/routing';
+import { usePathname, useRouter } from '@/i18n/routing';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { useAppSelector } from '@/hooks/reduxHooks';
 import authSelector from '@/redux/auth/authSelector';
 import { SerializedError } from '@reduxjs/toolkit';
+import { ModeType } from '@/shared/access/access-control.type';
+import { ACCESS_RESOLVERS } from '@/shared/access/access-control.config';
 
-interface AccessGuardProps {
-  children: ReactNode;
-  checkDataAccess?: () =>
-    | {
-        error?: FetchBaseQueryError | SerializedError | undefined;
-        isLoading?: boolean;
-      }
-    | undefined;
-  loadingFallback?: ReactNode;
-}
+type AccessGuardProps =
+  | {
+      children: ReactNode;
+      mode: Exclude<ModeType, 'member'>;
+      checkDataAccess?: never;
+      loadingFallback?: ReactNode;
+    }
+  | {
+      children: ReactNode;
+      mode: 'member';
+      checkDataAccess: () =>
+        | {
+            data?: unknown;
+            error?: FetchBaseQueryError | SerializedError;
+            isLoading?: boolean;
+          }
+        | undefined;
+      loadingFallback?: ReactNode;
+    };
 
 export default function AccessGuard({
   children,
   checkDataAccess,
   loadingFallback = null,
+  mode,
 }: AccessGuardProps): ReactElement {
+  const router = useRouter();
+  const params = useParams<{ id: string }>();
+  const pathname = usePathname();
   const user = useAppSelector(authSelector.selectUser);
   const status = useAppSelector(authSelector.selectLoadingStatus);
-  const router = useRouter();
-  const { id } = useParams<{ id: string }>();
+  const access = checkDataAccess?.();
 
-  const accessCheck = checkDataAccess?.();
-  const isDataLoading = accessCheck?.isLoading ?? false;
-  const accessError = accessCheck?.error;
+  const isLoading =
+    status !== 'loaded' || (mode === 'member' && access?.isLoading);
 
-  const isLoading = status !== 'loaded' || isDataLoading;
+  const resolver = ACCESS_RESOLVERS[mode];
 
-  const shouldRedirect = !user?.isVerified || !user || accessError;
+  const redirectTo = !isLoading
+    ? resolver({
+        user,
+        url: pathname,
+        projectId: params?.id,
+        error: access?.error,
+      })
+    : null;
 
   useEffect(() => {
-    if (!isLoading && shouldRedirect) {
-      router.push(`/projects/${id}`);
+    if (!isLoading && redirectTo) {
+      router.replace(redirectTo);
     }
-  }, [isLoading, shouldRedirect, router]);
+  }, [isLoading, redirectTo, router]);
 
-  if (isLoading || shouldRedirect) {
+  if (isLoading || redirectTo) {
     return <>{loadingFallback}</>;
   }
 

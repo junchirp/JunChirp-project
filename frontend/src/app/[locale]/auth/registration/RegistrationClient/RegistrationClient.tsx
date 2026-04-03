@@ -8,6 +8,7 @@ import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 import { useToast } from '@/hooks/useToast';
 import { useRouter } from '@/i18n/routing';
+import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 
 export default function RegistrationClient(): ReactElement {
   const t = useTranslations('auth');
@@ -27,9 +28,9 @@ export default function RegistrationClient(): ReactElement {
       summary: t('googleError'),
       detail: t('googleErrorDetails'),
       life: 3000,
-      actionKey: 'google',
+      actionKey: ToastKeysEnum.GOOGLE,
     });
-    router.replace(window.location.pathname, { scroll: false });
+    router.replace('/auth/registration');
   }, []);
 
   return (

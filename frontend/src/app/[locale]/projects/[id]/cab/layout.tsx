@@ -10,7 +10,7 @@ export default function CabLayout({
   children: ReactNode;
 }): ReactElement {
   return (
-    <AccessGuard checkDataAccess={useProjectAccessCheck}>
+    <AccessGuard mode="member" checkDataAccess={useProjectAccessCheck}>
       <div className={styles['cab-layout']}>
         <ProjectTabs />
         <div>{children}</div>

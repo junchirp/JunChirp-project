@@ -9,14 +9,15 @@ import {
   useState,
 } from 'react';
 import { Toast, ToastMessage } from 'primereact/toast';
+import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 
 export interface ToastMessageWithKey extends ToastMessage {
-  actionKey: string;
+  actionKey: ToastKeysEnum;
 }
 
 interface ToastContextType {
   showToast: (msg: ToastMessageWithKey | ToastMessageWithKey[]) => void;
-  isActive: (key: string) => boolean;
+  isActive: (key: ToastKeysEnum) => boolean;
 }
 
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
@@ -28,15 +29,15 @@ export function MessageProvider({
 }): ReactElement {
   const toastRef = useRef<Toast>(null);
 
-  const [activeKeys, setActiveKeys] = useState<Set<string>>(new Set());
+  const [activeKeys, setActiveKeys] = useState<Set<ToastKeysEnum>>(new Set());
 
   const showToast = (
     msg: ToastMessageWithKey | ToastMessageWithKey[],
   ): void => {
     const messages = Array.isArray(msg) ? msg : [msg];
 
-    messages.forEach((m, idx) => {
-      const uniqueKey = `${m.actionKey}-${idx}`;
+    messages.forEach((m) => {
+      const uniqueKey = m.actionKey;
 
       if (activeKeys.has(uniqueKey)) {
         return;
@@ -56,13 +57,8 @@ export function MessageProvider({
     });
   };
 
-  const isActive = (key: string): boolean => {
-    for (const k of activeKeys) {
-      if (k.startsWith(key + '-')) {
-        return true;
-      }
-    }
-    return false;
+  const isActive = (key: ToastKeysEnum): boolean => {
+    return activeKeys.has(key);
   };
 
   return (

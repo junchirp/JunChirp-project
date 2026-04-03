@@ -10,8 +10,8 @@ import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
 import { useLocale, useTranslations } from 'next-intl';
 import { Locale, useRouter } from '@/i18n/routing';
-import { useError429Toast } from '../../../../../hooks/useError429Toast';
-import { ToastKeysEnum } from '../../../../../shared/enums/toast-keys.enum';
+import { useError429Toast } from '@/hooks/useError429Toast';
+import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 
 export default function InvalidClient(): ReactElement {
   const { showToast, isActive } = useToast();
@@ -24,7 +24,7 @@ export default function InvalidClient(): ReactElement {
   const router = useRouter();
 
   const onSubmit = async (): Promise<void> => {
-    if (isActive('confirm email')) {
+    if (isActive(ToastKeysEnum.CONFIRM_EMAIL)) {
       return;
     }
 
@@ -36,7 +36,7 @@ export default function InvalidClient(): ReactElement {
         summary: t('success'),
         detail: t('successDetails'),
         life: 3000,
-        actionKey: 'confirm email',
+        actionKey: ToastKeysEnum.CONFIRM_EMAIL,
       });
     } else if ('error' in result) {
       const errorData = result.error as (

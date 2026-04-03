@@ -15,6 +15,7 @@ import { useSearchParams } from 'next/navigation';
 import { useToast } from '@/hooks/useToast';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
+import { ToastKeysEnum } from '../../../shared/enums/toast-keys.enum';
 
 export default function HomeClient(): ReactElement {
   const user = useAppSelector(authSelector.selectUser);
@@ -37,10 +38,10 @@ export default function HomeClient(): ReactElement {
         summary: t('googleSuccess'),
         detail: t('googleSuccessDetails'),
         life: 3000,
-        actionKey: 'google',
+        actionKey: ToastKeysEnum.GOOGLE,
       });
-      router.replace('/', { scroll: false });
     }
+    router.replace('/', { scroll: false });
   }, [loadingStatus]);
 
   if (loadingStatus !== 'loaded') {

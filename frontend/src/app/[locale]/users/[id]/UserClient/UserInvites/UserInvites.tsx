@@ -8,6 +8,7 @@ import DataContainer from '@/shared/components/DataContainer/DataContainer';
 import { useTranslations } from 'next-intl';
 import { useCancelInviteMutation } from '@/api/participationsApi';
 import { useToast } from '@/hooks/useToast';
+import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 
 interface UserInvitesProps {
   invites: ProjectParticipationInterface[];
@@ -26,7 +27,7 @@ export default function UserInvites({
   const handleCancel = async (
     invite: ProjectParticipationInterface,
   ): Promise<void> => {
-    if (isActive('invite')) {
+    if (isActive(ToastKeysEnum.PARTICIPATION_INVITE)) {
       return;
     }
 
@@ -36,7 +37,7 @@ export default function UserInvites({
         severity: 'success',
         summary: tAction('success'),
         life: 3000,
-        actionKey: 'invite',
+        actionKey: ToastKeysEnum.PARTICIPATION_INVITE,
       });
     } else {
       showToast({
@@ -44,7 +45,7 @@ export default function UserInvites({
         summary: tAction('error'),
         detail: tAction('errorDetails'),
         life: 3000,
-        actionKey: 'invite',
+        actionKey: ToastKeysEnum.PARTICIPATION_INVITE,
       });
     }
   };

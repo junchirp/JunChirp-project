@@ -5,29 +5,23 @@ import styles from './ProjectForm.module.scss';
 import Button from '@/shared/components/Button/Button';
 import Input from '@/shared/components/Input/Input';
 import Textarea from '@/shared/components/Textarea/Textarea';
-import {
-  useCreateProjectMutation,
-  useGetCategoriesQuery,
-} from '@/api/projectsApi';
+import { useCreateProjectMutation, useGetCategoriesQuery, } from '@/api/projectsApi';
 import { ProjectCategoryInterface } from '@/shared/interfaces/project-category.interface';
 import Dropdown from '@/shared/components/Dropdown/Dropdown';
 import { z } from 'zod';
-import {
-  projectSchema,
-  projectSchemaStatic,
-} from '@/shared/forms/schemas/projectSchema';
+import { projectSchema, projectSchemaStatic, } from '@/shared/forms/schemas/projectSchema';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useGetProjectRolesListQuery } from '@/api/projectRolesApi';
 import CheckboxChecked from '@/assets/icons/checkbox-checked.svg';
 import Checkbox from '@/assets/icons/checkbox-empty.svg';
 import { useToast } from '@/hooks/useToast';
-import { useRouter } from '@/i18n/routing';
+import { Locale, useRouter } from '@/i18n/routing';
 import { useAppSelector } from '@/hooks/reduxHooks';
 import authSelector from '@/redux/auth/authSelector';
 import DiscordBanner from '@/shared/components/DiscordBanner/DiscordBanner';
 import { useLocale, useTranslations } from 'next-intl';
-import { Locale } from '@/i18n/routing';
+import { ToastKeysEnum } from '../../enums/toast-keys.enum';
 
 type FormData = z.infer<typeof projectSchemaStatic>;
 
@@ -69,7 +63,7 @@ export default function ProjectForm(): ReactElement {
       return;
     }
 
-    if (isActive('project')) {
+    if (isActive(ToastKeysEnum.NEW_PROJECT)) {
       return;
     }
 
@@ -80,7 +74,7 @@ export default function ProjectForm(): ReactElement {
         summary: 'Не вдалося створити проєкт.',
         detail: 'Досягнуто ліміту активних проєктів.',
         life: 3000,
-        actionKey: 'project',
+        actionKey: ToastKeysEnum.NEW_PROJECT,
       });
       return;
     }
@@ -90,7 +84,7 @@ export default function ProjectForm(): ReactElement {
         severity: 'success',
         summary: 'Проєкт успішно створено!',
         life: 3000,
-        actionKey: 'project',
+        actionKey: ToastKeysEnum.NEW_PROJECT,
       });
 
       const projectId = result.data.id;

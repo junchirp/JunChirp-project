@@ -1,7 +1,7 @@
 'use client';
 
 import { ReactElement, useEffect } from 'react';
-import AuthGuard from '@/shared/components/AuthGuard/AuthGuard';
+import AccessGuard from '@/shared/components/AccessGuard/AccessGuard';
 import styles from './page.module.scss';
 import Image from 'next/image';
 import UsersFilters from './UsersFilters/UsersFilters';
@@ -13,6 +13,7 @@ import { useToast } from '@/hooks/useToast';
 import Pagination from '@/shared/components/Pagination/Pagination';
 import { useAppSelector } from '@/hooks/reduxHooks';
 import authSelector from '@/redux/auth/authSelector';
+import { ToastKeysEnum } from '../../../shared/enums/toast-keys.enum';
 
 export default function Users(): ReactElement {
   const { filters, updateFilters } = useUsersFilters();
@@ -45,7 +46,7 @@ export default function Users(): ReactElement {
         severity: 'error',
         summary: 'Не вдалося завантажити учасників.',
         life: 3000,
-        actionKey: 'get users',
+        actionKey: ToastKeysEnum.USERS,
       });
     }
   }, [isError]);
@@ -56,13 +57,13 @@ export default function Users(): ReactElement {
         severity: 'error',
         summary: 'Немає учасників за цими критеріями.',
         life: 3000,
-        actionKey: 'get users',
+        actionKey: ToastKeysEnum.USERS,
       });
     }
   }, [usersLoading, isError, usersList]);
 
   return (
-    <AuthGuard requireVerified>
+    <AccessGuard mode="verified">
       <div className={styles.users}>
         <div className={styles.users__banner}>
           <Image
@@ -101,6 +102,6 @@ export default function Users(): ReactElement {
           )}
         </div>
       </div>
-    </AuthGuard>
+    </AccessGuard>
   );
 }

@@ -1,4 +1,4 @@
-import React, { ReactElement, Suspense } from 'react';
+import React, { ReactElement } from 'react';
 import BirdBackground from '@/shared/components/BirdBackground/BirdBackground';
 
 export default function VerifyEmailLayout({
@@ -6,9 +6,5 @@ export default function VerifyEmailLayout({
 }: {
   children: React.ReactNode;
 }): ReactElement {
-  return (
-    <Suspense fallback={null}>
-      <BirdBackground>{children}</BirdBackground>
-    </Suspense>
-  );
+  return <BirdBackground>{children}</BirdBackground>;
 }

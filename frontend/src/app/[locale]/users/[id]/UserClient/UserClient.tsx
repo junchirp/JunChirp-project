@@ -1,13 +1,11 @@
 'use client';
 
 import { ReactElement, useState } from 'react';
-import AuthGuard from '@/shared/components/AuthGuard/AuthGuard';
 import styles from './UserClient.module.scss';
 import Button from '@/shared/components/Button/Button';
 import ArrowUpRight from '@/assets/icons/arrow-up-right.svg';
 import UserBaseInfo from './UserBaseInfo/UserBaseInfo';
 import { useParams } from 'next/navigation';
-import { usePathname } from '@/i18n/routing';
 import {
   useGetInvitesInMyProjectsQuery,
   useGetMyProjectsQuery,
@@ -30,7 +28,6 @@ import UserInvites from './UserInvites/UserInvites';
 
 export default function UserClient(): ReactElement {
   const params = useParams();
-  const pathname = usePathname();
   const userId = params.id as string;
   const authUser = useAppSelector(authSelector.selectUser);
   const isAuthUser = userId === authUser?.id;
@@ -85,10 +82,7 @@ export default function UserClient(): ReactElement {
   const t = useTranslations('profile');
 
   return (
-    <AuthGuard
-      requireVerified
-      redirectTo={`/auth/login?next=${encodeURIComponent(pathname)}`}
-    >
+    <>
       {isLoading ? (
         <UserSkeleton />
       ) : user ? (
@@ -161,6 +155,6 @@ export default function UserClient(): ReactElement {
       ) : (
         <Page404 />
       )}
-    </AuthGuard>
+    </>
   );
 }

@@ -4,23 +4,22 @@ import React, { ReactElement, useEffect, useMemo, useState } from 'react';
 import styles from './ResetPasswordForm.module.scss';
 import Button from '@/shared/components/Button/Button';
 import Input from '@/shared/components/Input/Input';
-import PasswordStrengthIndicator from '@/shared/components/PasswordStrengthIndicator/PasswordStrengthIndicator';
+import PasswordStrengthIndicator
+  from '@/shared/components/PasswordStrengthIndicator/PasswordStrengthIndicator';
 import { z } from 'zod';
 import { blackListPasswords } from '@/shared/constants/black-list-passwords';
 import { useRouter } from '@/i18n/routing';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { getPasswordStrength } from '@/shared/utils/getPasswordStrength';
-import {
-  useCancelResetPasswordMutation,
-  useResetPasswordMutation,
-} from '@/api/authApi';
+import { useCancelResetPasswordMutation, useResetPasswordMutation, } from '@/api/authApi';
 import { useToast } from '@/hooks/useToast';
 import CancelPasswordPopup from './CancelPasswordPopup/CancelPasswordPopup';
 import { passwordSchemaStatic } from '@/shared/forms/schemas/passwordSchema';
 import { resetPasswordSchema } from '@/shared/forms/schemas/resetPasswordSchema';
 import { useTranslations } from 'next-intl';
 import { RecoveryPasswordInterface } from '@/shared/interfaces/recovery-password.interface';
+import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 
 type FormData = z.infer<typeof passwordSchemaStatic>;
 
@@ -76,7 +75,7 @@ export default function ResetPasswordForm({
   const openModal = (): void => setModalOpen(true);
 
   const onSubmit = async (data: FormData): Promise<void> => {
-    if (isActive('reset password')) {
+    if (isActive(ToastKeysEnum.RESET_PASSWORD)) {
       return;
     }
 
@@ -88,7 +87,7 @@ export default function ResetPasswordForm({
         summary: tForms('resetPasswordForm.error'),
         detail: tForms('resetPasswordForm.errorDetails'),
         life: 3000,
-        actionKey: 'reset password',
+        actionKey: ToastKeysEnum.RESET_PASSWORD,
       });
       return;
     }
@@ -97,14 +96,14 @@ export default function ResetPasswordForm({
       severity: 'success',
       summary: tForms('resetPasswordForm.success'),
       life: 3000,
-      actionKey: 'reset password',
+      actionKey: ToastKeysEnum.RESET_PASSWORD,
     });
 
     router.push('/auth/login');
   };
 
   const cancelReset = async (): Promise<void> => {
-    if (isActive('cancel reset password')) {
+    if (isActive(ToastKeysEnum.RESET_PASSWORD)) {
       return;
     }
 
@@ -114,7 +113,7 @@ export default function ResetPasswordForm({
       summary: tForms('resetPasswordForm.successCancel'),
       detail: tForms('resetPasswordForm.successCancelDetails'),
       life: 3000,
-      actionKey: 'cancel reset password',
+      actionKey: ToastKeysEnum.RESET_PASSWORD,
     });
 
     setModalOpen(false);

@@ -19,6 +19,7 @@ import {
 } from '@/shared/forms/schemas/hardSkillSchema';
 import { useTranslations } from 'next-intl';
 import Autocomplete from '@/shared/components/Autocomplete/Autocomplete';
+import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 
 type FormData = z.infer<typeof hardSkillSchemaStatic>;
 
@@ -48,7 +49,7 @@ export default function HardSkillForm(props: HardSkillFormProps): ReactElement {
   }, [setFocus]);
 
   const onSubmit = async (data: FormData): Promise<void> => {
-    if (isActive('hard skill')) {
+    if (isActive(ToastKeysEnum.HARD_SKILL)) {
       return;
     }
 
@@ -67,14 +68,14 @@ export default function HardSkillForm(props: HardSkillFormProps): ReactElement {
           severity: 'error',
           summary: tForms('hardSkillForm.error409'),
           life: 3000,
-          actionKey: 'hard skill',
+          actionKey: ToastKeysEnum.HARD_SKILL,
         });
       } else {
         showToast({
           severity: 'error',
           summary: tForms('hardSkillForm.error'),
           life: 3000,
-          actionKey: 'hard skill',
+          actionKey: ToastKeysEnum.HARD_SKILL,
         });
       }
       return;
@@ -84,7 +85,7 @@ export default function HardSkillForm(props: HardSkillFormProps): ReactElement {
         severity: 'success',
         summary: tForms('hardSkillForm.success'),
         life: 3000,
-        actionKey: 'hard skill',
+        actionKey: ToastKeysEnum.HARD_SKILL,
       });
       onCancel();
     }

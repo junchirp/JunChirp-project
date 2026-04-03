@@ -20,6 +20,7 @@ import {
 import Autocomplete from '@/shared/components/Autocomplete/Autocomplete';
 import { useTranslations } from 'next-intl';
 import { useToast } from '@/hooks/useToast';
+import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 
 type FormData = z.infer<typeof educationSchemaStatic>;
 
@@ -73,7 +74,7 @@ export default function EducationForm(props: EducationFormProps): ReactElement {
   }, [initialValues, reset]);
 
   const onSubmit = async (data: FormData): Promise<void> => {
-    if (isActive('education')) {
+    if (isActive(ToastKeysEnum.EDUCATION)) {
       return;
     }
 
@@ -87,7 +88,7 @@ export default function EducationForm(props: EducationFormProps): ReactElement {
           severity: 'error',
           summary: tForms('educationForm.error'),
           life: 3000,
-          actionKey: 'education',
+          actionKey: ToastKeysEnum.EDUCATION,
         });
         return;
       }
@@ -96,7 +97,7 @@ export default function EducationForm(props: EducationFormProps): ReactElement {
           severity: 'success',
           summary: tForms('educationForm.success'),
           life: 3000,
-          actionKey: 'education',
+          actionKey: ToastKeysEnum.EDUCATION,
         });
         onCancel();
       }
@@ -107,7 +108,7 @@ export default function EducationForm(props: EducationFormProps): ReactElement {
           severity: 'error',
           summary: tForms('educationForm.error'),
           life: 3000,
-          actionKey: 'education',
+          actionKey: ToastKeysEnum.EDUCATION,
         });
         return;
       }
@@ -116,7 +117,7 @@ export default function EducationForm(props: EducationFormProps): ReactElement {
           severity: 'success',
           summary: tForms('educationForm.success'),
           life: 3000,
-          actionKey: 'education',
+          actionKey: ToastKeysEnum.EDUCATION,
         });
         onCancel();
       }
