@@ -15,6 +15,7 @@ import { useLazyGetProjectRolesListQuery } from '@/api/projectRolesApi';
 import { useSupport } from '@/hooks/useSupport';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
+import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 
 interface FormData {
   email: string;
@@ -38,7 +39,7 @@ export default function LoginForm(): ReactElement {
   const searchParams = useSearchParams();
 
   const onSubmit = async (data: FormData): Promise<void> => {
-    if (isActive('login')) {
+    if (isActive(ToastKeysEnum.LOGIN)) {
       return;
     }
 
@@ -122,7 +123,7 @@ export default function LoginForm(): ReactElement {
           summary,
           detail,
           life: 10000,
-          actionKey: 'login',
+          actionKey: ToastKeysEnum.LOGIN,
         });
         return;
       }

@@ -23,6 +23,7 @@ import {
 } from '@/shared/forms/schemas/registrationSchema';
 import { normalizeApostrophes } from '@/shared/utils/normalizeApostrophes';
 import { useLocale, useTranslations } from 'next-intl';
+import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 
 type FormData = z.infer<typeof registrationSchemaStatic>;
 
@@ -76,7 +77,7 @@ export default function RegistrationForm(): ReactElement {
   const locale = useLocale();
 
   const onSubmit = async (data: FormData): Promise<void> => {
-    if (errors.email?.message || isActive('register')) {
+    if (errors.email?.message || isActive(ToastKeysEnum.REGISTRATION)) {
       return;
     }
 
@@ -101,7 +102,7 @@ export default function RegistrationForm(): ReactElement {
           summary: tForms('registrationForm.error409'),
           detail: tForms('registrationForm.error409Details'),
           life: 3000,
-          actionKey: 'register',
+          actionKey: ToastKeysEnum.REGISTRATION,
         });
         return;
       }
@@ -111,7 +112,7 @@ export default function RegistrationForm(): ReactElement {
         summary: tForms('registrationForm.error'),
         detail: tForms('registrationForm.errorDetails'),
         life: 3000,
-        actionKey: 'register',
+        actionKey: ToastKeysEnum.REGISTRATION,
       });
       return;
     }

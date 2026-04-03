@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, ReactElement } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { ReactElement, useEffect } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Input from '@/shared/components/Input/Input';
@@ -25,6 +25,7 @@ import {
 } from '@/shared/forms/schemas/socialSchema';
 import Dropdown from '@/shared/components/Dropdown/Dropdown';
 import { useTranslations } from 'next-intl';
+import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 
 type FormData = z.infer<typeof socialSchemaStatic>;
 
@@ -82,7 +83,7 @@ export default function SocialForm(props: SocialFormProps): ReactElement {
   }, [watch, trigger]);
 
   const onSubmit = async (data: FormData): Promise<void> => {
-    if (isActive('social')) {
+    if (isActive(ToastKeysEnum.SOCIAL)) {
       return;
     }
 
@@ -111,14 +112,14 @@ export default function SocialForm(props: SocialFormProps): ReactElement {
             severity: 'error',
             summary: tForms('socialForm.error409'),
             life: 3000,
-            actionKey: 'social',
+            actionKey: ToastKeysEnum.SOCIAL,
           });
         } else {
           showToast({
             severity: 'error',
             summary: tForms('socialForm.error'),
             life: 3000,
-            actionKey: 'social',
+            actionKey: ToastKeysEnum.SOCIAL,
           });
         }
         return;
@@ -129,7 +130,7 @@ export default function SocialForm(props: SocialFormProps): ReactElement {
           severity: 'success',
           summary: tForms('socialForm.success'),
           life: 3000,
-          actionKey: 'social',
+          actionKey: ToastKeysEnum.SOCIAL,
         });
         onCancel();
       }
@@ -149,14 +150,14 @@ export default function SocialForm(props: SocialFormProps): ReactElement {
             severity: 'error',
             summary: tForms('socialForm.error409'),
             life: 3000,
-            actionKey: 'social',
+            actionKey: ToastKeysEnum.SOCIAL,
           });
         } else {
           showToast({
             severity: 'error',
             summary: tForms('socialForm.error'),
             life: 3000,
-            actionKey: 'social',
+            actionKey: ToastKeysEnum.SOCIAL,
           });
         }
         return;
@@ -166,7 +167,7 @@ export default function SocialForm(props: SocialFormProps): ReactElement {
           severity: 'success',
           summary: tForms('socialForm.success'),
           life: 3000,
-          actionKey: 'social',
+          actionKey: ToastKeysEnum.SOCIAL,
         });
         onCancel();
       }

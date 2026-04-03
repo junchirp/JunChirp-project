@@ -13,8 +13,8 @@ import { useToast } from '@/hooks/useToast';
 import { Locale, useRouter } from '@/i18n/routing';
 import { useLocale, useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
-import { ToastKeysEnum } from '../../../../shared/enums/toast-keys.enum';
-import { useError429Toast } from '../../../../hooks/useError429Toast';
+import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
+import { useError429Toast } from '@/hooks/useError429Toast';
 
 export default function ConfirmPasswordResetContent(): ReactElement | null {
   const [reqResetPassword, { isLoading }] = useRequestPasswordResetMutation();
@@ -43,7 +43,7 @@ export default function ConfirmPasswordResetContent(): ReactElement | null {
   }, [isError, router]);
 
   const handleClick = async (): Promise<void> => {
-    if (isActive('confirm password reset') || !token) {
+    if (isActive(ToastKeysEnum.PASSWORD_RESET_CONFIRMATION) || !token) {
       return;
     }
 
@@ -58,7 +58,7 @@ export default function ConfirmPasswordResetContent(): ReactElement | null {
         summary: t('success'),
         detail: t('successDetails'),
         life: 3000,
-        actionKey: 'confirm password reset',
+        actionKey: ToastKeysEnum.PASSWORD_RESET_CONFIRMATION,
       });
     }
 

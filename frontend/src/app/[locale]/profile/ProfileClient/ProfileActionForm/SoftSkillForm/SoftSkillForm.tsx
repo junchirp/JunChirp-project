@@ -19,6 +19,7 @@ import {
 } from '@/shared/forms/schemas/softSkillSchema';
 import { useTranslations } from 'next-intl';
 import Autocomplete from '@/shared/components/Autocomplete/Autocomplete';
+import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 
 type FormData = z.infer<typeof softSkillSchemaStatic>;
 
@@ -48,7 +49,7 @@ export default function SoftSkillForm(props: SoftSkillFormProps): ReactElement {
   }, [setFocus]);
 
   const onSubmit = async (data: FormData): Promise<void> => {
-    if (isActive('soft skill')) {
+    if (isActive(ToastKeysEnum.SOFT_SKILL)) {
       return;
     }
 
@@ -67,14 +68,14 @@ export default function SoftSkillForm(props: SoftSkillFormProps): ReactElement {
           severity: 'error',
           summary: tForms('softSkillForm.error409'),
           life: 3000,
-          actionKey: 'soft skill',
+          actionKey: ToastKeysEnum.SOFT_SKILL,
         });
       } else {
         showToast({
           severity: 'error',
           summary: tForms('softSkillForm.error'),
           life: 3000,
-          actionKey: 'soft skill',
+          actionKey: ToastKeysEnum.SOFT_SKILL,
         });
       }
       return;
@@ -84,7 +85,7 @@ export default function SoftSkillForm(props: SoftSkillFormProps): ReactElement {
         severity: 'success',
         summary: tForms('softSkillForm.success'),
         life: 3000,
-        actionKey: 'soft skill',
+        actionKey: ToastKeysEnum.SOFT_SKILL,
       });
       onCancel();
     }

@@ -12,7 +12,7 @@ import { Locale, useRouter } from '@/i18n/routing';
 import { useLocale, useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { useError429Toast } from '@/hooks/useError429Toast';
-import { ToastKeysEnum } from '../../../../shared/enums/toast-keys.enum';
+import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 
 interface FormData {
   email: string;
@@ -31,7 +31,7 @@ export default function RequestPasswordResetForm(): ReactElement {
   const [isError, setError] = useState(false);
 
   const onSubmit = async (data: FormData): Promise<void> => {
-    if (isActive('request password reset')) {
+    if (isActive(ToastKeysEnum.PASSWORD_RESET_CONFIRMATION)) {
       return;
     }
 

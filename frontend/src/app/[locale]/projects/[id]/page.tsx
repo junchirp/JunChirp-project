@@ -2,10 +2,10 @@
 
 import { ReactElement, useEffect } from 'react';
 import styles from './page.module.scss';
-import { usePathname, useRouter } from '@/i18n/routing';
+import { useRouter } from '@/i18n/routing';
 import { useParams } from 'next/navigation';
 import Page404 from '@/shared/components/Page404/Page404';
-import AuthGuard from '@/shared/components/AuthGuard/AuthGuard';
+import AccessGuard from '@/shared/components/AccessGuard/AccessGuard';
 import { useAppSelector } from '@/hooks/reduxHooks';
 import authSelector from '@/redux/auth/authSelector';
 import { useGetProjectCardByIdQuery } from '@/api/projectsApi';
@@ -28,7 +28,6 @@ export default function Project(): ReactElement | null {
     useGetMyInvitesQuery(user ? { userId: user.id } : undefined, {
       skip: !user,
     });
-  const pathname = usePathname();
   const isLoading = projectLoading || requestsLoading || invitesLoading;
 
   useEffect(() => {
@@ -51,10 +50,7 @@ export default function Project(): ReactElement | null {
   }
 
   return (
-    <AuthGuard
-      requireVerified
-      redirectTo={`/auth/login?next=${encodeURIComponent(pathname)}`}
-    >
+    <AccessGuard mode="verified">
       {isLoading ? (
         <div className={styles.project}>
           <div className={styles.project__skeleton} />
@@ -72,6 +68,6 @@ export default function Project(): ReactElement | null {
       ) : (
         <Page404 />
       )}
-    </AuthGuard>
+    </AccessGuard>
   );
 }

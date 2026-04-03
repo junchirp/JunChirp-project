@@ -21,6 +21,7 @@ import { passwordSchemaStatic } from '@/shared/forms/schemas/passwordSchema';
 import { resetPasswordSchema } from '@/shared/forms/schemas/resetPasswordSchema';
 import { useTranslations } from 'next-intl';
 import { RecoveryPasswordInterface } from '@/shared/interfaces/recovery-password.interface';
+import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 
 type FormData = z.infer<typeof passwordSchemaStatic>;
 
@@ -76,7 +77,7 @@ export default function ResetPasswordForm({
   const openModal = (): void => setModalOpen(true);
 
   const onSubmit = async (data: FormData): Promise<void> => {
-    if (isActive('reset password')) {
+    if (isActive(ToastKeysEnum.RESET_PASSWORD)) {
       return;
     }
 
@@ -88,7 +89,7 @@ export default function ResetPasswordForm({
         summary: tForms('resetPasswordForm.error'),
         detail: tForms('resetPasswordForm.errorDetails'),
         life: 3000,
-        actionKey: 'reset password',
+        actionKey: ToastKeysEnum.RESET_PASSWORD,
       });
       return;
     }
@@ -97,14 +98,14 @@ export default function ResetPasswordForm({
       severity: 'success',
       summary: tForms('resetPasswordForm.success'),
       life: 3000,
-      actionKey: 'reset password',
+      actionKey: ToastKeysEnum.RESET_PASSWORD,
     });
 
     router.push('/auth/login');
   };
 
   const cancelReset = async (): Promise<void> => {
-    if (isActive('cancel reset password')) {
+    if (isActive(ToastKeysEnum.RESET_PASSWORD)) {
       return;
     }
 
@@ -114,7 +115,7 @@ export default function ResetPasswordForm({
       summary: tForms('resetPasswordForm.successCancel'),
       detail: tForms('resetPasswordForm.successCancelDetails'),
       life: 3000,
-      actionKey: 'cancel reset password',
+      actionKey: ToastKeysEnum.RESET_PASSWORD,
     });
 
     setModalOpen(false);

@@ -29,10 +29,9 @@ async function bootstrap(): Promise<void> {
     dir: string;
   }) => NextServer;
   const nextApp = next({ dev, dir: frontendDir });
-  console.log('Preparing next...');
   await nextApp.prepare();
-  console.log('Next ready');
   const handle = nextApp.getRequestHandler();
+  let isReady = false;
 
   server.use((req, res, nextMiddleware) => {
     if (req.url.startsWith('/api') || req.url.startsWith('/swagger')) {
@@ -41,9 +40,7 @@ async function bootstrap(): Promise<void> {
     return handle(req, res);
   });
 
-  let isReady = false;
-
-  server.use((req, res, nextFunc) => {
+  server.use((_req, res, nextFunc) => {
     if (!isReady) {
       return res.status(503).send('Server is starting...');
     }
@@ -78,12 +75,7 @@ async function bootstrap(): Promise<void> {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('swagger', app, document);
 
-  console.log('Initializing Nest...');
   await app.init();
-  console.log('Nest ready');
   isReady = true;
-  // server.listen(PORT, '0.0.0.0', () => {
-  //   console.log(`Server + Next ready on port ${PORT}`);
-  // });
 }
 bootstrap();

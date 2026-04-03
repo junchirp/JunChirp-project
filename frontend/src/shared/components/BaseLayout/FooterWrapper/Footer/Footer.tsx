@@ -1,8 +1,7 @@
 'use client';
 
-import { useRouter } from '@/i18n/routing';
+import { Link, useRouter } from '@/i18n/routing';
 import styles from './Footer.module.scss';
-import { Link } from '@/i18n/routing';
 import Image from 'next/image';
 import Button from '@/shared/components/Button/Button';
 import Linkedin from '@/assets/icons/linkedin.svg';

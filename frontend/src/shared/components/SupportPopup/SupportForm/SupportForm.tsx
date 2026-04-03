@@ -17,6 +17,7 @@ import {
 } from '@/shared/forms/schemas/supportSchema';
 import { useLocale, useTranslations } from 'next-intl';
 import { Locale } from '@/i18n/routing';
+import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 
 type FormData = z.infer<typeof supportSchemaStatic>;
 
@@ -59,7 +60,7 @@ export default function SupportForm(props: SupportFormProps): ReactElement {
   }, [user, reset]);
 
   const onSubmit = async (data: FormData): Promise<void> => {
-    if (isActive('support')) {
+    if (isActive(ToastKeysEnum.SUPPORT)) {
       return;
     }
 
@@ -75,7 +76,7 @@ export default function SupportForm(props: SupportFormProps): ReactElement {
         summary: t('supportForm.success'),
         detail: t('supportForm.successDetails'),
         life: 3000,
-        actionKey: 'support',
+        actionKey: ToastKeysEnum.SUPPORT,
       });
     }
 
@@ -85,7 +86,7 @@ export default function SupportForm(props: SupportFormProps): ReactElement {
         summary: t('supportForm.error'),
         detail: t('supportForm.errorDetails'),
         life: 3000,
-        actionKey: 'support',
+        actionKey: ToastKeysEnum.SUPPORT,
       });
     }
   };

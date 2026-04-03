@@ -18,6 +18,7 @@ import { normalizeApostrophes } from '@/shared/utils/normalizeApostrophes';
 import { useGetProjectRolesListQuery } from '@/api/projectRolesApi';
 import MultiSelectWithChips from '@/shared/components/MultiSelectWithChips/MultiSelectWithChips';
 import { useTranslations } from 'next-intl';
+import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 
 type FormData = z.infer<typeof userNameSchemaStatic>;
 
@@ -53,7 +54,7 @@ export default function UserNameForm(props: UserNameFormProps): ReactElement {
   }, [setFocus]);
 
   const onSubmit = async (data: FormData): Promise<void> => {
-    if (isActive('user name')) {
+    if (isActive(ToastKeysEnum.USER_NAME)) {
       return;
     }
 
@@ -63,7 +64,7 @@ export default function UserNameForm(props: UserNameFormProps): ReactElement {
         severity: 'error',
         summary: tForms('userNameForm.error'),
         life: 3000,
-        actionKey: 'user name',
+        actionKey: ToastKeysEnum.USER_NAME,
       });
       return;
     }
@@ -72,7 +73,7 @@ export default function UserNameForm(props: UserNameFormProps): ReactElement {
         severity: 'success',
         summary: tForms('userNameForm.success'),
         life: 3000,
-        actionKey: 'user name',
+        actionKey: ToastKeysEnum.USER_NAME,
       });
       onCancel();
     }

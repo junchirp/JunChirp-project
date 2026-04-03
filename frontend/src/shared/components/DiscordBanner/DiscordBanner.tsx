@@ -1,12 +1,10 @@
 'use client';
 
-import { ReactElement, useEffect } from 'react';
+import { ReactElement } from 'react';
 import styles from './DiscordBanner.module.scss';
 import Image from 'next/image';
 import Button from '@/shared/components/Button/Button';
 import X from '@/assets/icons/x.svg';
-import { useSearchParams } from 'next/navigation';
-import { useToast } from '@/hooks/useToast';
 import { useTranslations } from 'next-intl';
 
 interface DiscordBannerProps {
@@ -23,32 +21,7 @@ export default function DiscordBanner(props: DiscordBannerProps): ReactElement {
     isCancelButton = false,
     withWrapper = false,
   } = props;
-  const searchParams = useSearchParams();
-  const { showToast } = useToast();
   const t = useTranslations('buttons');
-
-  useEffect(() => {
-    const status = searchParams.get('status');
-
-    if (status === 'failure') {
-      showToast({
-        severity: 'error',
-        summary: t('error'),
-        detail: t('errorDetails'),
-        life: 3000,
-        actionKey: 'discord',
-      });
-    }
-
-    if (status === 'success') {
-      showToast({
-        severity: 'success',
-        summary: t('success'),
-        life: 3000,
-        actionKey: 'discord',
-      });
-    }
-  }, [searchParams, showToast]);
 
   const handleDiscordLogin = (): void => {
     const currentPath = window.location.pathname;

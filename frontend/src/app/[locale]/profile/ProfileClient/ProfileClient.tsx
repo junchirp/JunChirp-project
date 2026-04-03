@@ -1,7 +1,6 @@
 'use client';
 
-import AuthGuard from '@/shared/components/AuthGuard/AuthGuard';
-import { ReactElement, Suspense, useEffect, useRef, useState } from 'react';
+import { ReactElement, useEffect, useRef, useState } from 'react';
 import styles from './ProfileClient.module.scss';
 import ProfileBaseInfo from './ProfileBaseInfo/ProfileBaseInfo';
 import authSelector from '@/redux/auth/authSelector';
@@ -43,11 +42,11 @@ import MyInvites from './MyInvites/MyInvites';
 import Button from '@/shared/components/Button/Button';
 import { useTranslations } from 'next-intl';
 import { profileActionTranslationKeys } from '@/shared/constants/profile-action-translation-keys';
-import { usePathname, useRouter } from '@/i18n/routing';
+import { useRouter } from '@/i18n/routing';
+import { ToastKeysEnum } from '../../../../shared/enums/toast-keys.enum';
 
 export default function ProfileClient(): ReactElement {
   const router = useRouter();
-  const pathname = usePathname();
   const [action, setAction] = useState<ProfileActionType>(null);
   const [deletedItem, setDeletedItem] = useState<DeletedItemInterface<
     | SocialInterface
@@ -251,7 +250,7 @@ export default function ProfileClient(): ReactElement {
         severity: 'success',
         summary: tProfile('deleteItem.socials.success'),
         life: 3000,
-        actionKey: 'delete social',
+        actionKey: ToastKeysEnum.DELETE_SOCIAL,
       });
     }
 
@@ -261,7 +260,7 @@ export default function ProfileClient(): ReactElement {
         summary: tProfile('deleteItem.socials.error'),
         detail: tProfile('deleteItem.errorDetails'),
         life: 3000,
-        actionKey: 'delete social',
+        actionKey: ToastKeysEnum.DELETE_SOCIAL,
       });
     }
   };
@@ -277,7 +276,7 @@ export default function ProfileClient(): ReactElement {
         severity: 'success',
         summary: tProfile('deleteItem.educations.success'),
         life: 3000,
-        actionKey: 'delete education',
+        actionKey: ToastKeysEnum.DELETE_EDUCATION,
       });
     }
 
@@ -287,7 +286,7 @@ export default function ProfileClient(): ReactElement {
         summary: tProfile('deleteItem.educations.error'),
         detail: tProfile('deleteItem.errorDetails'),
         life: 3000,
-        actionKey: 'delete education',
+        actionKey: ToastKeysEnum.DELETE_EDUCATION,
       });
     }
   };
@@ -303,7 +302,7 @@ export default function ProfileClient(): ReactElement {
         severity: 'success',
         summary: tProfile('deleteItem.softSkills.success'),
         life: 3000,
-        actionKey: 'delete soft skill',
+        actionKey: ToastKeysEnum.DELETE_SOFT_SKILL,
       });
     }
 
@@ -313,7 +312,7 @@ export default function ProfileClient(): ReactElement {
         summary: tProfile('deleteItem.softSkills.error'),
         detail: tProfile('deleteItem.errorDetails'),
         life: 3000,
-        actionKey: 'delete soft skill',
+        actionKey: ToastKeysEnum.DELETE_SOFT_SKILL,
       });
     }
   };
@@ -329,7 +328,7 @@ export default function ProfileClient(): ReactElement {
         severity: 'success',
         summary: tProfile('deleteItem.hardSkills.success'),
         life: 3000,
-        actionKey: 'delete hard skill',
+        actionKey: ToastKeysEnum.DELETE_HARD_SKILL,
       });
     }
 
@@ -339,7 +338,7 @@ export default function ProfileClient(): ReactElement {
         summary: tProfile('deleteItem.hardSkills.error'),
         detail: tProfile('deleteItem.errorDetails'),
         life: 3000,
-        actionKey: 'delete hard skill',
+        actionKey: ToastKeysEnum.DELETE_HARD_SKILL,
       });
     }
   };
@@ -354,7 +353,7 @@ export default function ProfileClient(): ReactElement {
         severity: 'error',
         summary: tProfile('saveChanges'),
         life: 3000,
-        actionKey: 'view profile',
+        actionKey: ToastKeysEnum.SAVE_CHANGES,
       });
     } else {
       router.push(`/users/${user?.id}`);
@@ -362,10 +361,7 @@ export default function ProfileClient(): ReactElement {
   };
 
   return (
-    <AuthGuard
-      requireVerified
-      redirectTo={`/auth/login?next=${encodeURIComponent(pathname)}`}
-    >
+    <>
       {user && !isLoading && (
         <div className={styles['profile-client']}>
           <div className={styles['profile-client__details']}>
@@ -467,14 +463,12 @@ export default function ProfileClient(): ReactElement {
           loading={isHardSkillLoading}
         />
       )}
-      <Suspense fallback={null}>
-        {isBanner && (
-          <DiscordBanner
-            closeBanner={closeBanner}
-            message={tDiscord('profile')}
-          />
-        )}
-      </Suspense>
-    </AuthGuard>
+      {isBanner && (
+        <DiscordBanner
+          closeBanner={closeBanner}
+          message={tDiscord('profile')}
+        />
+      )}
+    </>
   );
 }

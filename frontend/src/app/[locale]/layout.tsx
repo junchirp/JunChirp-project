@@ -14,8 +14,8 @@ export const metadata: Metadata = {
   alternates: {
     canonical: '/',
     languages: {
-      'en-US': '/en-US',
-      'de-DE': '/de-DE',
+      en: '/en',
+      uk: '/ua',
     },
   },
   title: 'JunChirp',

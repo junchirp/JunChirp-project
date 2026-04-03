@@ -2,10 +2,15 @@
 
 import { useToast } from './useToast';
 import { useTranslations } from 'next-intl';
-import { ToastKeysEnum } from '../shared/enums/toast-keys.enum';
+import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
+
+type Toast429KeysType =
+  | ToastKeysEnum.LOGIN
+  | ToastKeysEnum.EMAIL_CONFIRMATION
+  | ToastKeysEnum.PASSWORD_RESET_CONFIRMATION;
 
 const TOAST_CONFIG: Record<
-  ToastKeysEnum,
+  Toast429KeysType,
   { summaryKey: string; detailKey: string | Record<number, string> }
 > = {
   [ToastKeysEnum.LOGIN]: {
@@ -26,7 +31,7 @@ const TOAST_CONFIG: Record<
   },
 };
 
-function getMessageKey(key: ToastKeysEnum, attempts?: 5 | 10 | 15): string {
+function getMessageKey(key: Toast429KeysType, attempts?: 5 | 10 | 15): string {
   return attempts
     ? TOAST_CONFIG[key].detailKey[attempts]
     : (TOAST_CONFIG[key].detailKey as string);
@@ -35,17 +40,17 @@ function getMessageKey(key: ToastKeysEnum, attempts?: 5 | 10 | 15): string {
 export const useError429Toast = (): {
   showToast: (
     retryAfter: string | Date,
-    actionKey: ToastKeysEnum,
+    actionKey: Toast429KeysType,
     attemptsCount?: 5 | 10 | 15,
   ) => void;
-  isActive: (key: string) => boolean;
+  isActive: (key: Toast429KeysType) => boolean;
 } => {
   const { showToast, isActive } = useToast();
   const t = useTranslations('error429Toast');
 
   const show = (
     retryAfter: string | Date,
-    actionKey: ToastKeysEnum,
+    actionKey: Toast429KeysType,
     attemptsCount?: 5 | 10 | 15,
   ): void => {
     const now = new Date();

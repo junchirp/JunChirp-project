@@ -18,6 +18,7 @@ import Dropdown from '@/shared/components/Dropdown/Dropdown';
 import { RoleWithUserInterface } from '@/shared/interfaces/role-with-user.interface';
 import { useLocale, useTranslations } from 'next-intl';
 import { Locale } from '@/i18n/routing';
+import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 
 type FormData = z.infer<typeof inviteSchemaStatic>;
 
@@ -61,7 +62,7 @@ export default function InviteForm(props: InviteFormProps): ReactElement {
   const allowedRoleTypeIds = user.desiredRoles.map((role) => role.id);
 
   const onSubmit = async (data: FormData): Promise<void> => {
-    if (isActive('invite user')) {
+    if (isActive(ToastKeysEnum.PARTICIPATION_INVITE)) {
       return;
     }
 
@@ -73,7 +74,7 @@ export default function InviteForm(props: InviteFormProps): ReactElement {
         severity: 'success',
         summary: tForm('inviteForm.success'),
         life: 3000,
-        actionKey: 'invite user',
+        actionKey: ToastKeysEnum.PARTICIPATION_INVITE,
       });
     } else if ('error' in result) {
       showToast({
@@ -81,7 +82,7 @@ export default function InviteForm(props: InviteFormProps): ReactElement {
         summary: tForm('inviteForm.error'),
         detail: tForm('inviteForm.errorDetails'),
         life: 3000,
-        actionKey: 'invite user',
+        actionKey: ToastKeysEnum.PARTICIPATION_INVITE,
       });
     }
   };

@@ -1,3 +1,5 @@
+'use client';
+
 import { ReactElement } from 'react';
 import styles from './ParticipationsTable.module.scss';
 import { Link } from '@/i18n/routing';

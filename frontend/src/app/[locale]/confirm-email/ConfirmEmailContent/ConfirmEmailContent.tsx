@@ -13,8 +13,8 @@ import { SerializedError } from '@reduxjs/toolkit';
 import ChangeEmailPopup from './ChangeEmailPopup/ChangeEmailPopup';
 import { useLocale, useTranslations } from 'next-intl';
 import { Locale, useRouter } from '@/i18n/routing';
-import { useError429Toast } from '../../../../hooks/useError429Toast';
-import { ToastKeysEnum } from '../../../../shared/enums/toast-keys.enum';
+import { useError429Toast } from '@/hooks/useError429Toast';
+import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 
 export default function ConfirmEmailContent(): ReactElement {
   const user = useAppSelector(authSelector.selectUser);
@@ -31,7 +31,7 @@ export default function ConfirmEmailContent(): ReactElement {
   const router = useRouter();
 
   const sendConfirmationRequest = async (): Promise<void> => {
-    if (isActive('confirm email')) {
+    if (isActive(ToastKeysEnum.CONFIRM_EMAIL)) {
       return;
     }
 
@@ -45,7 +45,7 @@ export default function ConfirmEmailContent(): ReactElement {
         summary: tConfirmation('success'),
         detail: tConfirmation('successDetails'),
         life: 3000,
-        actionKey: 'confirm email',
+        actionKey: ToastKeysEnum.CONFIRM_EMAIL,
       });
     } else if ('error' in result) {
       const errorData = result.error as

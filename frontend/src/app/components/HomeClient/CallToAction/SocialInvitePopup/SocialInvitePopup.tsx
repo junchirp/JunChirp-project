@@ -13,6 +13,7 @@ import Discord from '@/assets/icons/discord.svg';
 import { PlatformType } from '@/shared/types/platform.type';
 import { useToast } from '@/hooks/useToast';
 import { useLocale, useTranslations } from 'next-intl';
+import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 
 interface SocialInvitePopupProps {
   onClose: () => void;
@@ -61,7 +62,7 @@ export default function SocialInvitePopup(
   };
 
   const handleCopy = async (): Promise<void> => {
-    if (!inputRef.current || isActive('copy')) {
+    if (!inputRef.current || isActive(ToastKeysEnum.COPY)) {
       return;
     }
 
@@ -73,7 +74,7 @@ export default function SocialInvitePopup(
         severity: 'success',
         summary: tPopup('success'),
         life: 1000,
-        actionKey: 'copy',
+        actionKey: ToastKeysEnum.COPY,
       });
     } catch {
       showToast({
@@ -81,7 +82,7 @@ export default function SocialInvitePopup(
         summary: tPopup('error'),
         detail: tPopup('details'),
         life: 1000,
-        actionKey: 'copy',
+        actionKey: ToastKeysEnum.COPY,
       });
     }
   };
