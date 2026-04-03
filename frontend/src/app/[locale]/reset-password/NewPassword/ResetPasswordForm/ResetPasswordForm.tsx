@@ -4,15 +4,17 @@ import React, { ReactElement, useEffect, useMemo, useState } from 'react';
 import styles from './ResetPasswordForm.module.scss';
 import Button from '@/shared/components/Button/Button';
 import Input from '@/shared/components/Input/Input';
-import PasswordStrengthIndicator
-  from '@/shared/components/PasswordStrengthIndicator/PasswordStrengthIndicator';
+import PasswordStrengthIndicator from '@/shared/components/PasswordStrengthIndicator/PasswordStrengthIndicator';
 import { z } from 'zod';
 import { blackListPasswords } from '@/shared/constants/black-list-passwords';
 import { useRouter } from '@/i18n/routing';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { getPasswordStrength } from '@/shared/utils/getPasswordStrength';
-import { useCancelResetPasswordMutation, useResetPasswordMutation, } from '@/api/authApi';
+import {
+  useCancelResetPasswordMutation,
+  useResetPasswordMutation,
+} from '@/api/authApi';
 import { useToast } from '@/hooks/useToast';
 import CancelPasswordPopup from './CancelPasswordPopup/CancelPasswordPopup';
 import { passwordSchemaStatic } from '@/shared/forms/schemas/passwordSchema';

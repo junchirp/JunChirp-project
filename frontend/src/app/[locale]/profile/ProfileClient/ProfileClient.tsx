@@ -14,12 +14,26 @@ import { ProfileActionType } from '@/shared/types/profile-action.type';
 import ProfileActionForm from './ProfileActionForm/ProfileActionForm';
 import { useDeleteSocialMutation, useGetSocialsQuery } from '@/api/socialsApi';
 import DeleteItemPopup from './DeleteItemPopup/DeleteItemPopup';
-import { isEducation, isHardSkill, isSocial, isSoftSkill, } from '@/shared/utils/typeGuards';
+import {
+  isEducation,
+  isHardSkill,
+  isSocial,
+  isSoftSkill,
+} from '@/shared/utils/typeGuards';
 import { DeletedItemInterface } from '@/shared/interfaces/deleted-item.interface';
 import { useToast } from '@/hooks/useToast';
-import { useDeleteEducationMutation, useGetEducationsQuery, } from '@/api/educationsApi';
-import { useDeleteSoftSkillMutation, useGetSoftSkillsQuery, } from '@/api/softSkillsApi';
-import { useDeleteHardSkillMutation, useGetHardSkillsQuery, } from '@/api/hardSkillsApi';
+import {
+  useDeleteEducationMutation,
+  useGetEducationsQuery,
+} from '@/api/educationsApi';
+import {
+  useDeleteSoftSkillMutation,
+  useGetSoftSkillsQuery,
+} from '@/api/softSkillsApi';
+import {
+  useDeleteHardSkillMutation,
+  useGetHardSkillsQuery,
+} from '@/api/hardSkillsApi';
 import { useAppSelector } from '@/hooks/reduxHooks';
 import DiscordBanner from '@/shared/components/DiscordBanner/DiscordBanner';
 import { useGetMyInvitesQuery, useGetMyRequestsQuery } from '@/api/usersApi';

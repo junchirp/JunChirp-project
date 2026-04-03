@@ -5,11 +5,17 @@ import styles from './ProjectForm.module.scss';
 import Button from '@/shared/components/Button/Button';
 import Input from '@/shared/components/Input/Input';
 import Textarea from '@/shared/components/Textarea/Textarea';
-import { useCreateProjectMutation, useGetCategoriesQuery, } from '@/api/projectsApi';
+import {
+  useCreateProjectMutation,
+  useGetCategoriesQuery,
+} from '@/api/projectsApi';
 import { ProjectCategoryInterface } from '@/shared/interfaces/project-category.interface';
 import Dropdown from '@/shared/components/Dropdown/Dropdown';
 import { z } from 'zod';
-import { projectSchema, projectSchemaStatic, } from '@/shared/forms/schemas/projectSchema';
+import {
+  projectSchema,
+  projectSchemaStatic,
+} from '@/shared/forms/schemas/projectSchema';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useGetProjectRolesListQuery } from '@/api/projectRolesApi';
