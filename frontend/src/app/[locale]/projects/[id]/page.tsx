@@ -10,7 +10,7 @@ import { useAppSelector } from '@/hooks/reduxHooks';
 import authSelector from '@/redux/auth/authSelector';
 import { useGetProjectCardByIdQuery } from '@/api/projectsApi';
 import { useGetMyInvitesQuery, useGetMyRequestsQuery } from '@/api/usersApi';
-import ProjectCard from '@/shared/components/ProjectCard/ProjectCard';
+import ProjectCardOld from '../../../../shared/components/ProjectCardOld/ProjectCardOld';
 
 export default function Project(): ReactElement | null {
   const user = useAppSelector(authSelector.selectUser);
@@ -57,7 +57,7 @@ export default function Project(): ReactElement | null {
         </div>
       ) : project ? (
         <div className={styles['project']}>
-          <ProjectCard
+          <ProjectCardOld
             project={project}
             invites={invites}
             requests={requests}
