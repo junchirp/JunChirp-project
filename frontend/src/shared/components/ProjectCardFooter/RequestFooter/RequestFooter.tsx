@@ -2,16 +2,16 @@
 
 import { ReactElement } from 'react';
 import styles from './RequestFooter.module.scss';
-import VacantRoles from '../VacantRoles/VacantRoles';
-import ProjectCardActionsWrapper from '../ProjectCardActionsWrapper/ProjectCardActionsWrapper';
-import Button from '../../Button/Button';
-import { ProjectParticipationInterface } from '../../../interfaces/project-participation.interface';
-import { ProjectRoleInterface } from '../../../interfaces/project-role.interface';
+import VacantRoles from '@/shared/components/VacantRoles/VacantRoles';
+import ProjectCardActionsWrapper from '@/shared/components/ProjectCardActionsWrapper/ProjectCardActionsWrapper';
+import Button from '@/shared/components/Button/Button';
+import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
+import { ProjectRoleInterface } from '@/shared/interfaces/project-role.interface';
 import { useTranslations } from 'next-intl';
-import { ToastKeysEnum } from '../../../enums/toast-keys.enum';
-import { AuthInterface } from '../../../interfaces/auth.interface';
-import { useToast } from '../../../../hooks/useToast';
-import { useCancelRequestMutation } from '../../../../api/participationsApi';
+import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
+import { AuthInterface } from '@/shared/interfaces/auth.interface';
+import { useToast } from '@/hooks/useToast';
+import { useCancelRequestMutation } from '@/api/participationsApi';
 
 interface RequestFooterProps {
   currentRequest: ProjectParticipationInterface;

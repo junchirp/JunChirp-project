@@ -2,8 +2,8 @@
 
 import { Fragment, ReactElement } from 'react';
 import styles from './VacantRoles.module.scss';
-import { ProjectParticipationInterface } from '../../../interfaces/project-participation.interface';
-import { ProjectRoleInterface } from '../../../interfaces/project-role.interface';
+import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
+import { ProjectRoleInterface } from '@/shared/interfaces/project-role.interface';
 import { useTranslations } from 'next-intl';
 
 type VacantRolesProps = {

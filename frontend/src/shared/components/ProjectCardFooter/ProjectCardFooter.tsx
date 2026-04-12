@@ -4,7 +4,7 @@ import { ReactElement } from 'react';
 import { ProjectCardInterface } from '@/shared/interfaces/project-card.interface';
 import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
-import { ProjectRoleInterface } from '../../interfaces/project-role.interface';
+import { ProjectRoleInterface } from '@/shared/interfaces/project-role.interface';
 import ParticipationRequestForm from './ParticipationRequestForm/ParticipationRequestForm';
 import InviteFooter from './InviteFooter/InviteFooter';
 import RequestFooter from './RequestFooter/RequestFooter';

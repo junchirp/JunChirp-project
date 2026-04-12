@@ -2,7 +2,7 @@ import mainApi from './mainApi';
 import { RegistrationInterface } from '@/shared/interfaces/registration.interface';
 import { LoginInterface } from '@/shared/interfaces/login.interface';
 import { MessageInterface } from '@/shared/interfaces/message.interface';
-import { EmailWithLocaleInterface } from '../shared/interfaces/email-with-locale.interface';
+import { EmailWithLocaleInterface } from '@/shared/interfaces/email-with-locale.interface';
 import { ConfirmEmailInterface } from '@/shared/interfaces/confirm-email.interface';
 import { TokenValidationInterface } from '@/shared/interfaces/token-validation.interface';
 import { ResetPasswordInterface } from '@/shared/interfaces/reset-password.interface';
@@ -10,8 +10,8 @@ import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import { UpdateUserInterface } from '@/shared/interfaces/update-user.interface';
 import { LocaleInterface } from '@/shared/interfaces/locale.interface';
 import { ConfirmEmailWithLocaleInterface } from '@/shared/interfaces/confirm-email-with-locale.interface';
-import { EmailWithIdInterface } from '../shared/interfaces/email-with-id.interface';
-import { setUser } from '../redux/auth/authSlice';
+import { EmailWithIdInterface } from '@/shared/interfaces/email-with-id.interface';
+import { setUser } from '@/redux/auth/authSlice';
 
 const USER_RELATED_TAGS = [
   'auth',

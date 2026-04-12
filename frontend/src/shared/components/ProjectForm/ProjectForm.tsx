@@ -27,7 +27,7 @@ import { useAppSelector } from '@/hooks/reduxHooks';
 import authSelector from '@/redux/auth/authSelector';
 import DiscordBanner from '@/shared/components/DiscordBanner/DiscordBanner';
 import { useLocale, useTranslations } from 'next-intl';
-import { ToastKeysEnum } from '../../enums/toast-keys.enum';
+import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 
 type FormData = z.infer<typeof projectSchemaStatic>;
 

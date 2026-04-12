@@ -2,8 +2,8 @@
 
 import { ReactElement } from 'react';
 import styles from './GuestClosedFooter.module.scss';
-import ProjectCardActionsWrapper from '../ProjectCardActionsWrapper/ProjectCardActionsWrapper';
-import Button from '../../Button/Button';
+import ProjectCardActionsWrapper from '@/shared/components/ProjectCardActionsWrapper/ProjectCardActionsWrapper';
+import Button from '@/shared/components/Button/Button';
 import { useTranslations } from 'next-intl';
 
 interface GuestClosedFooterProps {

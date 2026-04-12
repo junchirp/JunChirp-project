@@ -2,16 +2,16 @@
 
 import { ReactElement } from 'react';
 import styles from './ProjectCardLarge.module.scss';
-import { ProjectCardInterface } from '../../../../../shared/interfaces/project-card.interface';
-import { ProjectParticipationInterface } from '../../../../../shared/interfaces/project-participation.interface';
-import { AuthInterface } from '../../../../../shared/interfaces/auth.interface';
-import ProjectCardFooter from '../../../../../shared/components/ProjectCardFooter/ProjectCardFooter';
+import { ProjectCardInterface } from '@/shared/interfaces/project-card.interface';
+import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
+import { AuthInterface } from '@/shared/interfaces/auth.interface';
+import ProjectCardFooter from '@/shared/components/ProjectCardFooter/ProjectCardFooter';
 import Image from 'next/image';
 import { useLocale, useTranslations } from 'next-intl';
-import { Locale } from '../../../../../i18n/routing';
-import { membersPipe } from '../../../../../shared/utils/membersPipe';
-import { datePipe } from '../../../../../shared/utils/datePipe';
-import { projectDurationPipe } from '../../../../../shared/utils/projectDurationPipe';
+import { Locale } from '@/i18n/routing';
+import { membersPipe } from '@/shared/utils/membersPipe';
+import { datePipe } from '@/shared/utils/datePipe';
+import { projectDurationPipe } from '@/shared/utils/projectDurationPipe';
 
 interface ProjectCardProps {
   project: ProjectCardInterface;

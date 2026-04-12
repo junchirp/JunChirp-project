@@ -2,21 +2,21 @@
 
 import { ReactElement, useState } from 'react';
 import styles from './InviteFooter.module.scss';
-import VacantRoles from '../VacantRoles/VacantRoles';
-import ProjectCardActionsWrapper from '../ProjectCardActionsWrapper/ProjectCardActionsWrapper';
-import Button from '../../Button/Button';
-import { ProjectParticipationInterface } from '../../../interfaces/project-participation.interface';
-import { ProjectRoleInterface } from '../../../interfaces/project-role.interface';
-import RejectInvitePopup from '../../RejectInvitePopup/RejectInvitePopup';
-import DiscordBanner from '../../DiscordBanner/DiscordBanner';
+import VacantRoles from '@/shared/components/VacantRoles/VacantRoles';
+import ProjectCardActionsWrapper from '@/shared/components/ProjectCardActionsWrapper/ProjectCardActionsWrapper';
+import Button from '@/shared/components/Button/Button';
+import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
+import { ProjectRoleInterface } from '@/shared/interfaces/project-role.interface';
+import RejectInvitePopup from '@/shared/components/RejectInvitePopup/RejectInvitePopup';
+import DiscordBanner from '@/shared/components/DiscordBanner/DiscordBanner';
 import { useTranslations } from 'next-intl';
-import { useAcceptInviteMutation } from '../../../../api/participationsApi';
-import { ToastKeysEnum } from '../../../enums/toast-keys.enum';
+import { useAcceptInviteMutation } from '@/api/participationsApi';
+import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
-import { AuthInterface } from '../../../interfaces/auth.interface';
-import { useToast } from '../../../../hooks/useToast';
-import { useRouter } from '../../../../i18n/routing';
+import { AuthInterface } from '@/shared/interfaces/auth.interface';
+import { useToast } from '@/hooks/useToast';
+import { useRouter } from '@/i18n/routing';
 
 interface InviteFooterProps {
   currentInvite: ProjectParticipationInterface;

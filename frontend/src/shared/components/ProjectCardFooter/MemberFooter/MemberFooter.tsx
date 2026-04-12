@@ -2,14 +2,14 @@
 
 import { ReactElement } from 'react';
 import styles from './MemberFooter.module.scss';
-import VacantRoles from '../VacantRoles/VacantRoles';
-import ProjectCardActionsWrapper from '../ProjectCardActionsWrapper/ProjectCardActionsWrapper';
-import Button from '../../Button/Button';
-import { ProjectRoleInterface } from '../../../interfaces/project-role.interface';
+import VacantRoles from '@/shared/components/VacantRoles/VacantRoles';
+import ProjectCardActionsWrapper from '@/shared/components/ProjectCardActionsWrapper/ProjectCardActionsWrapper';
+import Button from '@/shared/components/Button/Button';
+import { ProjectRoleInterface } from '@/shared/interfaces/project-role.interface';
 import { useTranslations } from 'next-intl';
-import { useRouter } from '../../../../i18n/routing';
-import { ProjectCardInterface } from '../../../interfaces/project-card.interface';
-import { AuthInterface } from '../../../interfaces/auth.interface';
+import { useRouter } from '@/i18n/routing';
+import { ProjectCardInterface } from '@/shared/interfaces/project-card.interface';
+import { AuthInterface } from '@/shared/interfaces/auth.interface';
 
 interface MemberFooterProps {
   project: ProjectCardInterface;
