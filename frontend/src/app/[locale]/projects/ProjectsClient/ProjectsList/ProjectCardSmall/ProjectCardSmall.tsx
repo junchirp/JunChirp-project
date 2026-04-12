@@ -1,7 +1,7 @@
 'use client';
 
 import { ReactElement } from 'react';
-import styles from './ProjectCard.module.scss';
+import styles from './ProjectCardSmall.module.scss';
 import { ProjectCardInterface } from '@/shared/interfaces/project-card.interface';
 import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
@@ -20,7 +20,7 @@ interface ProjectCardProps {
   user: AuthInterface | null;
 }
 
-export default function ProjectCard({
+export default function ProjectCardSmall({
   project,
   invites,
   requests,
@@ -35,19 +35,18 @@ export default function ProjectCard({
   const tStatus = useTranslations('status');
 
   return (
-    <div className={styles['project-card']}>
-      <div className={styles['project-card__content']}>
-        <div className={styles['project-card__header-wrapper']}>
+    <div className={styles['project-card-small']}>
+      <div className={styles['project-card-small__content']}>
+        <div className={styles['project-card-small__header-wrapper']}>
           <div
             className={`
-              ${styles['project-card__image-wrapper']} 
-              ${!project.logoUrl ? styles['project-card__image-wrapper--empty'] : ''} 
-              ${styles['project-card__image-wrapper--small']}
+              ${styles['project-card-small__image-wrapper']} 
+              ${!project.logoUrl ? styles['project-card-small__image-wrapper--empty'] : ''}
             `}
           >
             {project.logoUrl ? (
               <Image
-                className={styles['project-card__image']}
+                className={styles['project-card-small__image']}
                 src={project.logoUrl}
                 alt="logo"
                 width={180}
@@ -62,11 +61,11 @@ export default function ProjectCard({
               />
             )}
           </div>
-          <div className={styles['project-card__header']}>
+          <div className={styles['project-card-small__header']}>
             <p
               className={`
-                ${styles['project-card__status']} 
-                ${project.status === 'active' ? styles['project-card__status--active'] : styles['project-card__status--done']}
+                ${styles['project-card-small__status']} 
+                ${project.status === 'active' ? styles['project-card-small__status--active'] : styles['project-card-small__status--done']}
               `}
             >
               {project.status === 'active'
@@ -74,7 +73,7 @@ export default function ProjectCard({
                 : tStatus('completed')}
             </p>
             <Link
-              className={styles['project-card__link']}
+              className={styles['project-card-small__link']}
               href={
                 isMyProject
                   ? `/projects/${project.id}/cab`
@@ -85,32 +84,32 @@ export default function ProjectCard({
             </Link>
           </div>
         </div>
-        <p className={styles['project-card__description']}>
+        <p className={styles['project-card-small__description']}>
           {project.description}
         </p>
-        <p className={styles['project-card__category']}>
+        <p className={styles['project-card-small__category']}>
           {project.category.categoryName[locale as Locale]}
         </p>
-        <div className={styles['project-card__team']}>
-          <div className={styles['project-card__members']}>
+        <div className={styles['project-card-small__team']}>
+          <div className={styles['project-card-small__members']}>
             <Image
               src="/images/users-2.svg"
               alt="users"
               width={24}
               height={24}
             />
-            <span className={styles['project-card__team-text']}>
+            <span className={styles['project-card-small__team-text']}>
               {membersPipe(project.participantsCount, tProjectsPage)}
             </span>
           </div>
-          <span className={styles['project-card__team-text']}>
+          <span className={styles['project-card-small__team-text']}>
             {datePipe(project.createdAt.toString(), 'DD/MM/YYYY')}
           </span>
         </div>
         {project.duration !== null && project.status === 'done' && (
-          <p className={styles['project-card__duration']}>
+          <p className={styles['project-card-small__duration']}>
             <span>{tProjectsPage('duration.title')}:</span>
-            <span className={styles['project-card__duration-value']}>
+            <span className={styles['project-card-small__duration-value']}>
               {projectDurationPipe(project.duration, tProjectsPage)}
             </span>
           </p>

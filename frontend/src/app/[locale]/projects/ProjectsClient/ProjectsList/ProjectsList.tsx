@@ -6,7 +6,7 @@ import { ProjectCardInterface } from '@/shared/interfaces/project-card.interface
 import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import { useTranslations } from 'next-intl';
-import ProjectCard from './ProjectCard/ProjectCard';
+import ProjectCardSmall from './ProjectCardSmall/ProjectCardSmall';
 
 interface ProjectsListProps {
   projects: ProjectCardInterface[];
@@ -28,7 +28,7 @@ export default function ProjectsList({
       <h3 className={styles['projects-list__title']}>{t('projectList')}</h3>
       <div className={styles['projects-list__list']}>
         {projects.map((project: ProjectCardInterface) => (
-          <ProjectCard
+          <ProjectCardSmall
             key={project.id}
             project={project}
             invites={invites}
