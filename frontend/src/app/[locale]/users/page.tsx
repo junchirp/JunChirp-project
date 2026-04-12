@@ -13,7 +13,7 @@ import { useToast } from '@/hooks/useToast';
 import Pagination from '@/shared/components/Pagination/Pagination';
 import { useAppSelector } from '@/hooks/reduxHooks';
 import authSelector from '@/redux/auth/authSelector';
-import { ToastKeysEnum } from '../../../shared/enums/toast-keys.enum';
+import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 
 export default function Users(): ReactElement {
   const { filters, updateFilters } = useUsersFilters();

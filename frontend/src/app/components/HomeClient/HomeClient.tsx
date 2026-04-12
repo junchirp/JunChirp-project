@@ -15,7 +15,7 @@ import { useSearchParams } from 'next/navigation';
 import { useToast } from '@/hooks/useToast';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
-import { ToastKeysEnum } from '../../../shared/enums/toast-keys.enum';
+import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 
 export default function HomeClient(): ReactElement {
   const user = useAppSelector(authSelector.selectUser);

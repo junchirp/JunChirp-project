@@ -43,7 +43,7 @@ import Button from '@/shared/components/Button/Button';
 import { useTranslations } from 'next-intl';
 import { profileActionTranslationKeys } from '@/shared/constants/profile-action-translation-keys';
 import { useRouter } from '@/i18n/routing';
-import { ToastKeysEnum } from '../../../../shared/enums/toast-keys.enum';
+import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 
 export default function ProfileClient(): ReactElement {
   const router = useRouter();

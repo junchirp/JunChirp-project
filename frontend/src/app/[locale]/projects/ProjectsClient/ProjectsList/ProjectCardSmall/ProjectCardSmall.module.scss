@@ -1,0 +1,134 @@
+@use '@/assets/styles/variables';
+
+.project-card-small {
+  padding: 40px;
+  border-radius: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  min-width: 0;
+  border: 2px solid variables.$gray-5;
+  background-color: variables.$gray-5;
+
+  &:hover {
+    border: 2px solid variables.$green-5;
+    background-color: variables.$gray-1;
+
+    & .project-card__label {
+      background-color: variables.$gray-5;
+    }
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 24px;
+  }
+
+  &__image-wrapper {
+    position: relative;
+    width: 180px;
+    border-radius: 12px;
+
+    &--empty {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: variables.$gray-3;
+      min-width: 180px;
+      height: 180px;
+    }
+  }
+
+  &__image {
+    height: auto;
+    border-radius: 12px;
+  }
+
+  &__header-wrapper {
+    display: flex;
+    gap: 20px;
+  }
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 20px;
+    width: 100%;
+  }
+
+  &__status {
+    border-radius: 4px;
+    padding: 4px;
+    font-weight: 600;
+    color: variables.$white-2;
+    font-size: 16px;
+    line-height: 1.4;
+    align-self: flex-end;
+
+    &--active {
+      background-color: variables.$green-2;
+    }
+
+    &--done {
+      background-color: variables.$gray-4;
+    }
+  }
+
+  &__link {
+    font-weight: 600;
+    font-size: 28px;
+    line-height: 1.4;
+    color: variables.$black-2;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &__description {
+    line-height: 1.4;
+    font-size: 16px;
+  }
+
+  &__category {
+    font-weight: 500;
+    line-height: 1.4;
+    font-size: 16px;
+  }
+
+  &__team {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  &__members {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  &__team-text {
+    font-size: 14px;
+    line-height: 1.2;
+    color: variables.$gray-4;
+  }
+
+  &__duration {
+    display: flex;
+    gap: 12px;
+    font-weight: 500;
+    line-height: 1.4;
+    font-size: 16px;
+  }
+
+  &__duration-value {
+    font-weight: 400;
+    color: variables.$gray-4;
+  }
+}

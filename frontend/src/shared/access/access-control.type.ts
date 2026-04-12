@@ -1,4 +1,4 @@
-import { AuthInterface } from '../interfaces/auth.interface';
+import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
 

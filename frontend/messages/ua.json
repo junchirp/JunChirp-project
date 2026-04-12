@@ -499,7 +499,7 @@
     "signIn": "Вхід",
     "signUp": "Реєстрація",
     "or": "або",
-    "forgotPassword": "Забули пароль?",
+    "forgotPassword": "Не памʼятаєш пароль?",
     "googleError": "Не вдалося виконати авторизацію через Google.",
     "googleErrorDetails": "Спробуй ще раз або обери інший спосіб входу.",
     "googleSuccess": "Реєстрація успішна.",
@@ -570,8 +570,8 @@
     }
   },
   "requestPasswordReset": {
-    "title": "Password reset request",
-    "description": "To reset your password, enter your email address — if an account with this email exists, we’ll send instructions to restore access."
+    "title": "Запит на відновлення пароля",
+    "description": "Для відновлення пароля введи свою електронну адресу — якщо акаунт з таким e-mail існує, ми надішлемо інструкції для відновлення доступу."
   },
   "resetPasswordConfirmation": {
     "title": "Підтвердження запиту на відновлення пароля",
