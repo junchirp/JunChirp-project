@@ -3,10 +3,10 @@
 import { ReactElement } from 'react';
 import styles from './ProjectsList.module.scss';
 import { ProjectCardInterface } from '@/shared/interfaces/project-card.interface';
-import ProjectCardOld from '../../../../../shared/components/ProjectCardOld/ProjectCardOld';
 import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import { useTranslations } from 'next-intl';
+import ProjectCard from './ProjectCard/ProjectCard';
 
 interface ProjectsListProps {
   projects: ProjectCardInterface[];
@@ -28,7 +28,7 @@ export default function ProjectsList({
       <h3 className={styles['projects-list__title']}>{t('projectList')}</h3>
       <div className={styles['projects-list__list']}>
         {projects.map((project: ProjectCardInterface) => (
-          <ProjectCardOld
+          <ProjectCard
             key={project.id}
             project={project}
             invites={invites}

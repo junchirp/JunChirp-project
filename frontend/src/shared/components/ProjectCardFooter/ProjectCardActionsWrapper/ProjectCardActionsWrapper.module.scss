@@ -1,0 +1,14 @@
+.project-card-actions-wrapper {
+  display: flex;
+  margin-top: 40px;
+
+  &--small {
+    justify-content: center;
+    gap: 20px;
+  }
+
+  &--large {
+    justify-content: flex-start;
+    gap: 32px;
+  }
+}

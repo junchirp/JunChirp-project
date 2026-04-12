@@ -1,0 +1,44 @@
+@use '@/assets/styles/variables';
+
+.vacant-roles {
+  margin-top: 24px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 20px;
+
+  &__label {
+    border-radius: 8px;
+    padding: 4px 8px;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 1.4;
+    white-space: nowrap;
+
+    &--small {
+      background-color: variables.$gray-1;
+    }
+
+    &--large {
+      background-color: variables.$gray-5;
+    }
+  }
+
+  &__roles {
+    padding-top: 6px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  &__role {
+    display: block;
+    font-size: 16px;
+    line-height: 1.2;
+
+    &--green {
+      color: variables.$green-2;
+      font-weight: 600;
+    }
+  }
+}

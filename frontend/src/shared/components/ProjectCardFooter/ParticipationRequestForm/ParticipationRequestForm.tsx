@@ -14,19 +14,20 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { ProjectCardInterface } from '@/shared/interfaces/project-card.interface';
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import { useLocale, useTranslations } from 'next-intl';
-import { ToastKeysEnum } from '../../../enums/toast-keys.enum';
-import { Locale } from '../../../../i18n/routing';
+import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
+import { Locale } from '@/i18n/routing';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
-import DiscordBanner from '../../DiscordBanner/DiscordBanner';
-import { useToast } from '../../../../hooks/useToast';
-import { useCreateRequestMutation } from '../../../../api/participationsApi';
-import { ProjectRoleInterface } from '../../../interfaces/project-role.interface';
+import DiscordBanner from '@/shared/components/DiscordBanner/DiscordBanner';
+import { useToast } from '@/hooks/useToast';
+import { useCreateRequestMutation } from '@/api/participationsApi';
+import { ProjectRoleInterface } from '@/shared/interfaces/project-role.interface';
 
 interface ParticipationRequestFormProps {
   project: ProjectCardInterface;
   user: AuthInterface | null;
-  size?: 'small' | 'large';
+  size: 'small' | 'large';
+  className?: string;
 }
 
 type FormData = z.infer<typeof requestSchemaStatic>;
@@ -34,7 +35,8 @@ type FormData = z.infer<typeof requestSchemaStatic>;
 export default function ParticipationRequestForm({
   project,
   user,
-  size = 'small',
+  size,
+  className,
 }: ParticipationRequestFormProps): ReactElement {
   const tForm = useTranslations('forms');
   const tProjectsPage = useTranslations('projectsPage');
@@ -62,6 +64,15 @@ export default function ParticipationRequestForm({
     .filter((role) => !role.user)
     .map((role) => ({ id: role.id, roleType: role.roleType }));
   const roleTypeIds = user?.desiredRoles.map((role) => role.id) ?? [];
+  const labelClassNames = [
+    styles['participation-request-form__label'],
+    size === 'small'
+      ? styles['participation-request-form__label--small']
+      : styles['participation-request-form__label--large'],
+    className,
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   const closeRequestBanner = (): void => setRequestBanner(false);
 
@@ -120,20 +131,7 @@ export default function ParticipationRequestForm({
         onSubmit={handleSubmit(sendRequest)}
       >
         <div className={styles['participation-request-form__inner']}>
-          {vacantRoles.length ? (
-            <p
-              className={`
-                ${styles['participation-request-form__label']}
-                ${
-                  size === 'small'
-                    ? styles['participation-request-form__label--small']
-                    : styles['participation-request-form__label--large']
-                }
-              `}
-            >
-              {tForm('requestForm.field')}:
-            </p>
-          ) : null}
+          <p className={labelClassNames}>{tForm('requestForm.field')}:</p>
           <Controller
             name="projectRoleId"
             control={control}
@@ -150,7 +148,6 @@ export default function ParticipationRequestForm({
         <div
           className={`
             ${styles['participation-request-form__actions']}
-            ${!vacantRoles.length ? styles['participation-request-form__actions--empty'] : ''}
             ${
               size === 'small'
                 ? styles['participation-request-form__actions--small']

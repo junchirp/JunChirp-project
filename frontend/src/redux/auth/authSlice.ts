@@ -15,7 +15,12 @@ const initialState: AuthState = {
 export const authSlice = createSlice({
   name: 'auth',
   initialState,
-  reducers: {},
+  reducers: {
+    setUser: (state, action) => {
+      state.user = action.payload;
+      state.loadingStatus = 'loaded';
+    },
+  },
   extraReducers: (builder) => {
     builder.addMatcher(authApi.endpoints.register.matchPending, (state) => {
       state.loadingStatus = 'loading';
@@ -34,13 +39,13 @@ export const authSlice = createSlice({
     builder.addMatcher(authApi.endpoints.login.matchPending, (state) => {
       state.loadingStatus = 'loading';
     });
-    builder.addMatcher(
-      authApi.endpoints.login.matchFulfilled,
-      (state, action) => {
-        state.user = action.payload;
-        state.loadingStatus = 'loaded';
-      },
-    );
+    // builder.addMatcher(
+    //   authApi.endpoints.login.matchFulfilled,
+    //   (state, action) => {
+    //     state.user = action.payload;
+    //     state.loadingStatus = 'loaded';
+    //   },
+    // );
     builder.addMatcher(authApi.endpoints.login.matchRejected, (state) => {
       state.user = null;
       state.loadingStatus = 'loaded';
@@ -104,5 +109,5 @@ export const authSlice = createSlice({
   },
 });
 
-// export const {} = authSlice.actions;
+export const { setUser } = authSlice.actions;
 export default authSlice.reducer;

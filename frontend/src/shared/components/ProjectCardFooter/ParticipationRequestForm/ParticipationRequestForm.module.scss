@@ -1,6 +1,7 @@
 @use '@/assets/styles/variables';
 
 .participation-request-form {
+  margin-top: 24px;
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -34,10 +35,6 @@
 
   &__actions {
     display: flex;
-
-    &--empty {
-      margin-top: 24px;
-    }
 
     &--small {
       justify-content: center;

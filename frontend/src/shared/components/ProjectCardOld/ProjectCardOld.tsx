@@ -23,7 +23,7 @@ import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
 import { projectDurationPipe } from '@/shared/utils/projectDurationPipe';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
-import ParticipationRequestForm from './ParticipationRequestForm/ParticipationRequestForm';
+import ParticipationRequestForm from '../ProjectCardFooter/ParticipationRequestForm/ParticipationRequestForm';
 
 interface ProjectCardProps {
   project: ProjectCardInterface;
@@ -477,13 +477,32 @@ export default function ProjectCardOld({
                       </div>
                     </>
                   )}
-                  {!isMyProject && !isInvite && !isRequest && (
-                    <ParticipationRequestForm
-                      project={project}
-                      user={user}
-                      size={size}
-                    />
-                  )}
+                  {!isMyProject &&
+                    !isInvite &&
+                    !isRequest &&
+                    vacantRoles.length && (
+                      <ParticipationRequestForm
+                        project={project}
+                        user={user}
+                        size={size}
+                      />
+                    )}
+                  {!isMyProject &&
+                    !isInvite &&
+                    !isRequest &&
+                    !vacantRoles.length && project.status === 'active' && (
+                      <div
+                        className={`
+                          ${styles['project-card__actions']} 
+                          ${!vacantRoles.length ? styles['project-card__actions--empty'] : ''}
+                          ${size === 'small' ? styles['project-card__actions--small'] : styles['project-card__actions--large']}
+                        `}
+                      >
+                        <Button color="green" disabled>
+                          {tButtons('sendRequest')}
+                        </Button>
+                      </div>
+                    )}
                 </div>
               )}
               {!isMyProject &&
