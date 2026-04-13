@@ -22,6 +22,13 @@ interface FormData {
   password: string;
 }
 
+type ErrorType =
+  | ((FetchBaseQueryError | SerializedError) & {
+      status: number;
+      data: { attemptsCount: number };
+    })
+  | undefined;
+
 export default function LoginForm(): ReactElement {
   const [isError, setError] = useState(false);
   const tForms = useTranslations('forms');
@@ -44,38 +51,24 @@ export default function LoginForm(): ReactElement {
     }
 
     setError(false);
-    const result = await login(data);
 
-    if ('data' in result) {
-      const user = result.data;
-
-      if (user) {
-        const next = searchParams.get('next');
-        const isSafeNext =
-          next && next.startsWith('/') && !next.startsWith('//');
-
-        if (isSafeNext) {
-          router.replace(next);
-        } else if (user.isVerified) {
-          loadRoles(undefined);
-          router.replace('/');
-        } else {
-          router.replace('/confirm-email?type=login');
-        }
+    try {
+      const user = await login(data).unwrap();
+      const next = searchParams.get('next');
+      const isSafeNext = next && next.startsWith('/') && !next.startsWith('//');
+      if (isSafeNext) {
+        router.replace(next);
+      } else if (user.isVerified) {
+        loadRoles(undefined);
+        router.replace('/');
+      } else {
+        router.replace('/confirm-email?type=login');
       }
-    }
-
-    if ('error' in result) {
-      const errorData = result.error as
-        | ((FetchBaseQueryError | SerializedError) & {
-            status: number;
-            data: { attemptsCount: number };
-          })
-        | undefined;
-      const status = errorData?.status;
+    } catch (error) {
+      const status = (error as ErrorType)?.status;
 
       if (status === 429) {
-        const attemptsCount = errorData?.data.attemptsCount ?? 0;
+        const attemptsCount = (error as ErrorType)?.data.attemptsCount ?? 0;
 
         let [summary, detail] = ['', <></>];
         if (attemptsCount === 15) {
@@ -125,10 +118,9 @@ export default function LoginForm(): ReactElement {
           life: 10000,
           actionKey: ToastKeysEnum.LOGIN,
         });
-        return;
+      } else {
+        setError(true);
       }
-
-      setError(true);
     }
   };
 

@@ -50,9 +50,12 @@ export const authApi = mainApi.injectEndpoints({
       }),
       invalidatesTags: USER_RELATED_TAGS,
       async onQueryStarted(_, { dispatch, queryFulfilled }) {
-        const { data } = await queryFulfilled;
-
-        dispatch(setUser(data));
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(setUser(data));
+        } catch {
+          return;
+        }
       },
     }),
     logout: builder.mutation<MessageInterface, undefined>({
