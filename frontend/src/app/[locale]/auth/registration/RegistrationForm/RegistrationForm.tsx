@@ -3,27 +3,27 @@
 import { z } from 'zod';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRegisterMutation } from '@/api/authApi';
+import { useRegisterMutation } from '../../../../../api/authApi';
 import React, { ReactElement, useEffect } from 'react';
-import { useToast } from '@/hooks/useToast';
+import { useToast } from '../../../../../hooks/useToast';
 import styles from './RegistrationForm.module.scss';
-import Input from '@/shared/components/Input/Input';
-import Button from '@/shared/components/Button/Button';
-import { blackListPasswords } from '@/shared/constants/black-list-passwords';
+import Input from '../../../../../shared/components/Input/Input';
+import Button from '../../../../../shared/components/Button/Button';
+import { blackListPasswords } from '../../../../../shared/constants/black-list-passwords';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
-import { Link, Locale, useRouter } from '@/i18n/routing';
-import Checkbox from '@/assets/icons/checkbox-empty.svg';
-import CheckboxChecked from '@/assets/icons/checkbox-checked.svg';
-import PasswordStrengthIndicator from '@/shared/components/PasswordStrengthIndicator/PasswordStrengthIndicator';
-import { getPasswordStrength } from '@/shared/utils/getPasswordStrength';
+import { Link, Locale, useRouter } from '../../../../../i18n/routing';
+import Checkbox from '../../../../../assets/icons/checkbox-empty.svg';
+import CheckboxChecked from '../../../../../assets/icons/checkbox-checked.svg';
+import PasswordStrengthIndicator from '../../../../../shared/components/PasswordStrengthIndicator/PasswordStrengthIndicator';
+import { getPasswordStrength } from '../../../../../shared/utils/getPasswordStrength';
 import {
   registrationSchema,
   registrationSchemaStatic,
-} from '@/shared/forms/schemas/registrationSchema';
-import { normalizeApostrophes } from '@/shared/utils/normalizeApostrophes';
+} from '../../../../../shared/forms/schemas/registrationSchema';
+import { normalizeApostrophes } from '../../../../../shared/utils/normalizeApostrophes';
 import { useLocale, useTranslations } from 'next-intl';
-import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
+import { ToastKeysEnum } from '../../../../../shared/enums/toast-keys.enum';
 
 type FormData = z.infer<typeof registrationSchemaStatic>;
 

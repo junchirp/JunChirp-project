@@ -1,6 +1,11 @@
 import { ReactElement } from 'react';
-import LoginClient from './LoginClient/LoginClient';
+import AuthFormContainer from '@/shared/components/AuthFormContainer/AuthFormContainer';
+import LoginForm from './LoginForm/LoginForm';
 
 export default function Login(): ReactElement {
-  return <LoginClient />;
+  return (
+    <AuthFormContainer>
+      <LoginForm />
+    </AuthFormContainer>
+  );
 }

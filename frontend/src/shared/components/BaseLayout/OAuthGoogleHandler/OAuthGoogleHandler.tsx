@@ -6,13 +6,16 @@ import { useToast } from '@/hooks/useToast';
 import { useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
+import { useAppSelector } from '@/hooks/reduxHooks';
+import authSelector from '@/redux/auth/authSelector';
 
-export default function OAuthDiscordHandler(): null {
+export default function OAuthGoogleHandler(): null {
   const params = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
   const { showToast } = useToast();
-  const t = useTranslations('discord');
+  const loadingStatus = useAppSelector(authSelector.selectLoadingStatus);
+  const t = useTranslations('auth');
   const handledRef = useRef(false);
 
   useEffect(() => {
@@ -20,29 +23,31 @@ export default function OAuthDiscordHandler(): null {
       return;
     }
 
-    const social = params.get('social');
     const status = params.get('status');
+    const error = params.get('error');
+    const authType = params.get('authType');
 
-    if (social !== 'discord') {
+    if (status === 'success' && loadingStatus !== 'loaded') {
       return;
     }
 
-    if (status === 'success') {
+    if (status === 'success' && authType === 'registration') {
       showToast({
         severity: 'success',
-        summary: t('success'),
+        summary: t('googleSuccess'),
+        detail: t('googleSuccessDetails'),
         life: 3000,
-        actionKey: ToastKeysEnum.DISCORD,
+        actionKey: ToastKeysEnum.GOOGLE,
       });
     }
 
-    if (status === 'failure') {
+    if (error) {
       showToast({
         severity: 'error',
-        summary: t('error'),
-        detail: t('errorDetails'),
+        summary: t('googleError'),
+        detail: t('googleErrorDetails'),
         life: 3000,
-        actionKey: ToastKeysEnum.DISCORD,
+        actionKey: ToastKeysEnum.GOOGLE,
       });
     }
 
@@ -51,11 +56,13 @@ export default function OAuthDiscordHandler(): null {
     const newParams = new URLSearchParams(params.toString());
     newParams.delete('social');
     newParams.delete('status');
+    newParams.delete('authType');
     newParams.delete('error');
+
     const newQuery = newParams.toString();
 
     router.replace(newQuery ? `${pathname}?${newQuery}` : pathname);
-  }, [params, pathname, router, showToast]);
+  }, [loadingStatus, params, pathname, router, showToast]);
 
   return null;
 }

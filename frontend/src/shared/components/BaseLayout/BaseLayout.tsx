@@ -13,6 +13,7 @@ import FooterWrapper from './FooterWrapper/FooterWrapper';
 import { SupportProvider } from '@/providers/SupportProvider';
 import { NextIntlClientProvider } from 'next-intl';
 import OAuthDiscordHandler from './OAuthDiscordHandler/OAuthDiscordHandler';
+import OAuthGoogleHandler from './OAuthGoogleHandler/OAuthGoogleHandler';
 
 interface BaseLayoutProps {
   children: ReactNode;
@@ -33,6 +34,7 @@ export default function BaseLayout({
                 <SupportProvider>
                   <DataLoader />
                   <OAuthDiscordHandler />
+                  <OAuthGoogleHandler />
                   <div className={styles.body__container}>
                     <Header />
                     <div className={styles.body__inner}>{children}</div>
