@@ -1,7 +1,7 @@
 'use client';
 
 import styles from './LoginClient.module.scss';
-import LoginForm from './LoginForm/LoginForm';
+import LoginForm from '../LoginForm/LoginForm';
 import { ReactElement } from 'react';
 import SocialButton from '@/shared/components/SocialButton/SocialButton';
 import { useTranslations } from 'next-intl';

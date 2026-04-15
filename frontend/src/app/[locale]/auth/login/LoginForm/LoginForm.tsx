@@ -1,21 +1,21 @@
 'use client';
 
 import styles from './LoginForm.module.scss';
-import Input from '@/shared/components/Input/Input';
-import Button from '@/shared/components/Button/Button';
-import { Link, useRouter } from '@/i18n/routing';
+import Input from '../../../../../shared/components/Input/Input';
+import Button from '../../../../../shared/components/Button/Button';
+import { Link, useRouter } from '../../../../../i18n/routing';
 import { useForm } from 'react-hook-form';
-import { useLoginMutation } from '@/api/authApi';
+import { useLoginMutation } from '../../../../../api/authApi';
 import { useSearchParams } from 'next/navigation';
 import React, { ReactElement, useState } from 'react';
-import { useToast } from '@/hooks/useToast';
+import { useToast } from '../../../../../hooks/useToast';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
-import { useLazyGetProjectRolesListQuery } from '@/api/projectRolesApi';
-import { useSupport } from '@/hooks/useSupport';
+import { useLazyGetProjectRolesListQuery } from '../../../../../api/projectRolesApi';
+import { useSupport } from '../../../../../hooks/useSupport';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
-import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
+import { ToastKeysEnum } from '../../../../../shared/enums/toast-keys.enum';
 
 interface FormData {
   email: string;
