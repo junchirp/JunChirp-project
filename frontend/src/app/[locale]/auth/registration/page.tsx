@@ -1,6 +1,11 @@
 import { ReactElement } from 'react';
-import RegistrationClient from './RegistrationClient/RegistrationClient';
+import AuthFormContainer from '@/shared/components/AuthFormContainer/AuthFormContainer';
+import RegistrationForm from './RegistrationForm/RegistrationForm';
 
 export default function Registration(): ReactElement {
-  return <RegistrationClient />;
+  return (
+    <AuthFormContainer>
+      <RegistrationForm />
+    </AuthFormContainer>
+  );
 }
