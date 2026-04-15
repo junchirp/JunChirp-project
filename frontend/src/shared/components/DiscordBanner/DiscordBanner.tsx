@@ -6,6 +6,7 @@ import Image from 'next/image';
 import Button from '@/shared/components/Button/Button';
 import X from '@/assets/icons/x.svg';
 import { useTranslations } from 'next-intl';
+import { useOAuthRedirect } from '@/hooks/useOAuthRedirect';
 
 interface DiscordBannerProps {
   closeBanner: () => void;
@@ -22,13 +23,9 @@ export default function DiscordBanner(props: DiscordBannerProps): ReactElement {
     withWrapper = false,
   } = props;
   const t = useTranslations('buttons');
+  const { redirectToOAuth } = useOAuthRedirect();
 
-  const handleDiscordLogin = (): void => {
-    const currentPath = window.location.pathname;
-    const returnUrl = encodeURIComponent(currentPath);
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL;
-    window.location.href = `${baseUrl}/auth/discord?returnUrl=${returnUrl}`;
-  };
+  const handleDiscordLogin = (): void => redirectToOAuth('discord');
 
   const content = (
     <>

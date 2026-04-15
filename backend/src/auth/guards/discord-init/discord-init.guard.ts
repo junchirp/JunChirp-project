@@ -15,10 +15,11 @@ export class DiscordInitGuard extends AuthGuard('discord') {
     const user = request.user;
     const state = uuidV4();
     const returnUrl = request.query.returnUrl ?? '/';
+    const locale = request.query.locale ?? 'ua';
 
     await this.redisService.set(
       state,
-      JSON.stringify({ userId: user.id, returnUrl }),
+      JSON.stringify({ userId: user.id, returnUrl, locale }),
       300,
     );
 

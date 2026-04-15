@@ -4,10 +4,12 @@ import styles from './SocialButton.module.scss';
 import { ButtonHTMLAttributes, ReactElement } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
+import { useOAuthRedirect } from '@/hooks/useOAuthRedirect';
+import { SocialProviderType } from '@/shared/types/social-provider.type';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   iconOnly?: boolean;
-  social: 'google' | 'facebook';
+  social: SocialProviderType;
   fullWidth?: boolean;
 }
 
@@ -17,6 +19,7 @@ export default function SocialButton({
   fullWidth = false,
 }: ButtonProps): ReactElement {
   const t = useTranslations('buttons');
+  const { redirectToOAuth } = useOAuthRedirect();
 
   const buttonData = {
     google: {
@@ -26,6 +29,10 @@ export default function SocialButton({
     facebook: {
       text: `${t('continueWith')} Facebook`,
       iconSrc: '/images/google.svg',
+    },
+    discord: {
+      text: '',
+      iconSrc: '',
     },
   };
 
@@ -38,12 +45,7 @@ export default function SocialButton({
     .filter(Boolean)
     .join(' ');
 
-  const handleSocialLogin = (): void => {
-    const currentPath = window.location.pathname;
-    const returnUrl = encodeURIComponent(currentPath);
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL;
-    window.location.href = `${baseUrl}/auth/${social}?returnUrl=${returnUrl}`;
-  };
+  const handleSocialLogin = (): void => redirectToOAuth(social);
 
   return (
     <button className={className} onClick={handleSocialLogin}>

@@ -17,8 +17,13 @@ export class GoogleInitGuard extends AuthGuard('google') {
 
     const state = uuidV4();
     const returnUrl = request.query.returnUrl ?? '/';
+    const locale = request.query.locale ?? 'ua';
 
-    await this.redisService.set(state, JSON.stringify({ returnUrl }), 300);
+    await this.redisService.set(
+      state,
+      JSON.stringify({ returnUrl, locale }),
+      300,
+    );
 
     request.state = state;
 

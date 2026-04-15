@@ -1,7 +1,7 @@
 'use client';
 
 import { ReactElement, ReactNode, useEffect } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import { usePathname, useRouter } from '@/i18n/routing';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { useAppSelector } from '@/hooks/reduxHooks';
@@ -42,6 +42,9 @@ export default function AccessGuard({
   const user = useAppSelector(authSelector.selectUser);
   const status = useAppSelector(authSelector.selectLoadingStatus);
   const access = checkDataAccess?.();
+  const searchParams = useSearchParams();
+  const query = searchParams.toString();
+  const fullUrl = query ? `${pathname}?${query}` : pathname;
 
   const isLoading =
     status !== 'loaded' || (mode === 'member' && access?.isLoading);
@@ -51,7 +54,7 @@ export default function AccessGuard({
   const redirectTo = !isLoading
     ? resolver({
         user,
-        url: pathname,
+        url: fullUrl,
         projectId: params?.id,
         error: access?.error,
       })

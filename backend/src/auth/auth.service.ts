@@ -20,6 +20,7 @@ import { MessageResponseDto } from '../users/dto/message.response-dto';
 import { LoggerService } from '../logger/logger.service';
 import { DiscordService } from '../discord/discord.service';
 import { AuthResponseDto } from '../users/dto/auth.response-dto';
+import { localeArray, LocaleType } from '../shared/types/locale.type';
 
 @Injectable()
 export class AuthService {
@@ -452,7 +453,7 @@ export class AuthService {
     try {
       const data = await this.redisService.get(state);
       if (!data) {
-        const fallbackReturnUrl = this.getSafeReturnUrl('/', {
+        const fallbackReturnUrl = this.getSafeReturnUrl('/', 'ua', {
           social: 'discord',
           status: 'failure',
           error,
@@ -461,7 +462,7 @@ export class AuthService {
         return res.redirect(fallbackRedirect);
       }
 
-      const { userId, returnUrl } = JSON.parse(data);
+      const { userId, returnUrl, locale } = JSON.parse(data);
       const { discordId, accessToken } = req.user as {
         discordId: string;
         accessToken: string;
@@ -472,12 +473,12 @@ export class AuthService {
       await this.redisService.del(state);
 
       const safeReturnUrl = error
-        ? this.getSafeReturnUrl(returnUrl, {
+        ? this.getSafeReturnUrl(returnUrl, locale, {
             social: 'discord',
             status: 'failure',
             error,
           })
-        : this.getSafeReturnUrl(returnUrl, {
+        : this.getSafeReturnUrl(returnUrl, locale, {
             social: 'discord',
             status: 'success',
           });
@@ -489,8 +490,10 @@ export class AuthService {
       return res.redirect(redirectUrl);
     } catch {
       const data = await this.redisService.get(state);
-      const { returnUrl } = data ? JSON.parse(data) : { returnUrl: '/' };
-      const safeReturnUrl = this.getSafeReturnUrl(returnUrl, {
+      const { returnUrl, locale } = data
+        ? JSON.parse(data)
+        : { returnUrl: '/', locale: 'ua' };
+      const safeReturnUrl = this.getSafeReturnUrl(returnUrl, locale, {
         social: 'discord',
         status: 'failure',
         error: error ?? 'discord_auth_failed',
@@ -511,8 +514,10 @@ export class AuthService {
 
     try {
       const data = await this.redisService.get(state);
-      const { returnUrl } = data ? JSON.parse(data) : { returnUrl: '/' };
-      const safeReturnUrl = this.getSafeReturnUrl(returnUrl, {
+      const { returnUrl, locale } = data
+        ? JSON.parse(data)
+        : { returnUrl: '/', locale: 'ua' };
+      const safeReturnUrl = this.getSafeReturnUrl(returnUrl, locale, {
         social: 'discord',
         status: 'cancel',
       });
@@ -540,14 +545,16 @@ export class AuthService {
     try {
       const data = await this.redisService.get(state);
       const authType = await this.googleLogin(ip, req, res);
-      const { returnUrl } = data ? JSON.parse(data) : { returnUrl: '/' };
+      const { returnUrl, locale } = data
+        ? JSON.parse(data)
+        : { returnUrl: '/', locale: 'ua' };
       const safeReturnUrl = error
-        ? this.getSafeReturnUrl(returnUrl, {
+        ? this.getSafeReturnUrl(returnUrl, locale, {
             social: 'google',
             status: 'failure',
             error,
           })
-        : this.getSafeReturnUrl('/', {
+        : this.getSafeReturnUrl(returnUrl, locale, {
             social: 'google',
             status: 'success',
             authType,
@@ -560,8 +567,10 @@ export class AuthService {
       return res.redirect(redirectUrl);
     } catch {
       const data = await this.redisService.get(state);
-      const { returnUrl } = data ? JSON.parse(data) : { returnUrl: '/' };
-      const safeReturnUrl = this.getSafeReturnUrl(returnUrl, {
+      const { returnUrl, locale } = data
+        ? JSON.parse(data)
+        : { returnUrl: '/', locale: 'ua' };
+      const safeReturnUrl = this.getSafeReturnUrl(returnUrl, locale, {
         social: 'google',
         status: 'failure',
         error: error ?? 'google_auth_failed',
@@ -583,8 +592,10 @@ export class AuthService {
 
     try {
       const data = await this.redisService.get(state);
-      const { returnUrl } = data ? JSON.parse(data) : { returnUrl: '/' };
-      const safeReturnUrl = this.getSafeReturnUrl(returnUrl, {
+      const { returnUrl, locale } = data
+        ? JSON.parse(data)
+        : { returnUrl: '/', locale: 'ua' };
+      const safeReturnUrl = this.getSafeReturnUrl(returnUrl, locale, {
         social: 'google',
         status: 'cancel',
       });
@@ -606,6 +617,7 @@ export class AuthService {
 
   private getSafeReturnUrl(
     url: string | undefined,
+    locale: LocaleType | undefined,
     data: {
       social: 'discord' | 'google';
       status: 'success' | 'failure' | 'cancel';
@@ -615,29 +627,69 @@ export class AuthService {
   ): string {
     try {
       const decodedUrl = decodeURIComponent(url ?? '');
-      let params = '';
 
-      if (data.status !== 'cancel') {
-        params = `status=${data.status}&social=${data.social}`;
+      if (!locale || !localeArray.includes(locale)) {
+        locale = 'ua';
       }
 
-      if (data.status === 'success' && data.social === 'google') {
-        params = `${params}&authType=${data.authType}`;
+      if (!decodedUrl.startsWith('/')) {
+        return `/${locale}`;
       }
 
-      if (data.status === 'failure' && data.error) {
-        params = `${params}&error=${data.error}`;
+      const urlObj = new URL(decodedUrl, 'http://dummy');
+
+      let finalPath = '';
+
+      if (data.social === 'google' && data.status === 'success') {
+        const next = urlObj.searchParams.get('next');
+
+        if (next) {
+          const decodedNext = decodeURIComponent(next);
+
+          if (decodedNext.startsWith('/')) {
+            const nextUrlObj = new URL(decodedNext, 'http://dummy');
+
+            this.appendParams(nextUrlObj, data);
+
+            finalPath = `${nextUrlObj.pathname}${nextUrlObj.search}`;
+          }
+        }
       }
 
-      return params
-        ? decodedUrl.startsWith('/')
-          ? `${decodedUrl}?${params}`
-          : `/?${params}`
-        : decodedUrl.startsWith('/')
-          ? `${decodedUrl}`
-          : '/';
+      if (!finalPath) {
+        this.appendParams(urlObj, data);
+
+        finalPath = `${urlObj.pathname}${urlObj.search}`;
+      }
+
+      return `/${locale}${finalPath}`;
     } catch {
-      return '/';
+      return '/ua';
+    }
+  }
+
+  private appendParams(
+    urlObj: URL,
+    data: {
+      social: 'discord' | 'google';
+      status: 'success' | 'failure' | 'cancel';
+      error?: string;
+      authType?: 'login' | 'registration';
+    },
+  ): void {
+    if (data.status !== 'cancel') {
+      urlObj.searchParams.set('status', data.status);
+      urlObj.searchParams.set('social', data.social);
+    }
+
+    if (data.status === 'success' && data.social === 'google') {
+      if (data.authType) {
+        urlObj.searchParams.set('authType', data.authType);
+      }
+    }
+
+    if (data.status === 'failure' && data.error) {
+      urlObj.searchParams.set('error', data.error);
     }
   }
 }

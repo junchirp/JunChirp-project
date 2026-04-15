@@ -2,36 +2,12 @@
 
 import RegistrationForm from './RegistrationForm/RegistrationForm';
 import styles from './RegistrationClient.module.scss';
-import { ReactElement, useEffect, useRef } from 'react';
+import { ReactElement } from 'react';
 import SocialButton from '@/shared/components/SocialButton/SocialButton';
 import { useTranslations } from 'next-intl';
-import { useSearchParams } from 'next/navigation';
-import { useToast } from '@/hooks/useToast';
-import { useRouter } from '@/i18n/routing';
-import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 
 export default function RegistrationClient(): ReactElement {
   const t = useTranslations('auth');
-  const searchParams = useSearchParams();
-  const { showToast } = useToast();
-  const hasShownToast = useRef(false);
-  const router = useRouter();
-
-  useEffect(() => {
-    const error = searchParams.get('error');
-    if (!error || hasShownToast.current) {
-      return;
-    }
-    hasShownToast.current = true;
-    showToast({
-      severity: 'error',
-      summary: t('googleError'),
-      detail: t('googleErrorDetails'),
-      life: 3000,
-      actionKey: ToastKeysEnum.GOOGLE,
-    });
-    router.replace('/auth/registration');
-  }, []);
 
   return (
     <div className={styles['registration-client']}>
