@@ -48,10 +48,7 @@ export class CloudinaryService {
         Readable.from(file.buffer).pipe(stream);
       });
     } catch (error) {
-      if (error instanceof Error) {
-        throw new InternalServerErrorException(error.message);
-      }
-      throw new InternalServerErrorException(String(error));
+      throw new InternalServerErrorException(`Error: ${error.message}`);
     }
   }
 
@@ -76,12 +73,9 @@ export class CloudinaryService {
 
       await cloudinary.api.delete_folder(folderPrefix);
     } catch (error) {
-      if (error instanceof Error) {
-        throw new InternalServerErrorException(
-          `Error deleting project folder: ${error.message}`,
-        );
-      }
-      throw new InternalServerErrorException(String(error));
+      throw new InternalServerErrorException(
+        `Error deleting project folder: ${error.message}`,
+      );
     }
   }
 
@@ -102,12 +96,9 @@ export class CloudinaryService {
         resource_type: 'image',
       });
     } catch (error) {
-      if (error instanceof Error) {
-        throw new InternalServerErrorException(
-          `Error deleting project logo: ${error.message}`,
-        );
-      }
-      throw new InternalServerErrorException(String(error));
+      throw new InternalServerErrorException(
+        `Error deleting project logo: ${error.message}`,
+      );
     }
   }
 }

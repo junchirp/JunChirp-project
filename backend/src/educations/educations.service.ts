@@ -9,7 +9,6 @@ import { UpdateEducationDto } from './dto/update-education.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { EducationResponseDto } from './dto/education.response-dto';
 import { EducationMapper } from '../shared/mappers/education.mapper';
-import { isPrismaError } from '../shared/utils/is-prisma-error';
 
 @Injectable()
 export class EducationsService {
@@ -110,7 +109,7 @@ export class EducationsService {
 
         return EducationMapper.toResponse(education);
       } catch (error) {
-        if (isPrismaError(error) && error.code === 'P2002') {
+        if (error.code === 'P2002') {
           throw new ConflictException('Education is already in list');
         }
         throw error;
@@ -161,17 +160,14 @@ export class EducationsService {
 
         return EducationMapper.toResponse(education);
       } catch (error) {
-        if (isPrismaError(error)) {
-          switch (error.code) {
-            case 'P2025':
-              throw new NotFoundException('Education not found');
-            case 'P2002':
-              throw new ConflictException('Education is already in list');
-            default:
-              throw error;
-          }
+        switch (error.code) {
+          case 'P2025':
+            throw new NotFoundException('Education not found');
+          case 'P2002':
+            throw new ConflictException('Education is already in list');
+          default:
+            throw error;
         }
-        throw error;
       }
     });
   }
@@ -183,7 +179,7 @@ export class EducationsService {
       });
       return id;
     } catch (error) {
-      if (isPrismaError(error) && error.code === 'P2025') {
+      if (error.code === 'P2025') {
         throw new NotFoundException('Education not found');
       }
       throw error;

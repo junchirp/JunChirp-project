@@ -22,7 +22,6 @@ import { Queue } from 'bull';
 import { OAuth2Client } from 'google-auth-library';
 import { RedisService } from '../redis/redis.service';
 import { gmail_v1, google } from 'googleapis';
-import { GaxiosError } from 'gaxios';
 
 @Injectable()
 export class MailService {
@@ -92,11 +91,10 @@ export class MailService {
 
       return response.data;
     } catch (error) {
-      if (error instanceof GaxiosError && error.response?.data) {
+      if (error.response?.data) {
         throw new Error(`Response data: ${error.response.data}`);
       }
-      const message = error instanceof Error ? error.message : String(error);
-      throw Error(message);
+      throw Error(error.message);
     }
   }
 

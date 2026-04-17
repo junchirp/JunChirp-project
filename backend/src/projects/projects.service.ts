@@ -22,7 +22,6 @@ import { DiscordService } from '../discord/discord.service';
 import { UsersService } from '../users/users.service';
 import { ProjectCardResponseDto } from './dto/project-card.response-dto';
 import { ProjectCategoryMapper } from '../shared/mappers/project-category.mapper';
-import { isPrismaError } from '../shared/utils/is-prisma-error';
 
 interface GetProjectsOptionsInterface {
   userId: string;
@@ -212,7 +211,7 @@ export class ProjectsService {
           adminRoleId,
           memberRoleId,
         );
-        if (isPrismaError(error) && error.code === 'P2003') {
+        if (error.code === 'P2003') {
           throw new BadRequestException(
             'Some role type IDs or category ID are invalid',
           );
@@ -269,7 +268,7 @@ export class ProjectsService {
         ? ProjectMapper.toFullResponse(project)
         : ProjectMapper.toCardResponse(project);
     } catch (error) {
-      if (isPrismaError(error) && error.code === 'P2025') {
+      if (error.code === 'P2025') {
         throw new NotFoundException('Project not found');
       }
       throw error;
@@ -319,7 +318,7 @@ export class ProjectsService {
 
       return ProjectMapper.toFullResponse(updatedProject);
     } catch (error) {
-      switch (isPrismaError(error) && error.code) {
+      switch (error.code) {
         case 'P2003':
           throw new BadRequestException('Project category ID not found');
         case 'P2025':
@@ -383,7 +382,7 @@ export class ProjectsService {
 
         return ProjectMapper.toFullResponse(closedProject);
       } catch (error) {
-        if (isPrismaError(error) && error.code === 'P2025') {
+        if (error.code === 'P2025') {
           throw new NotFoundException(
             'Project, role or user in team not found',
           );
@@ -437,7 +436,7 @@ export class ProjectsService {
           deletedProject.discordMemberRoleId,
         );
       } catch (error) {
-        if (isPrismaError(error) && error.code === 'P2025') {
+        if (error.code === 'P2025') {
           throw new NotFoundException('Project or user in team not found');
         }
         throw error;
@@ -478,7 +477,7 @@ export class ProjectsService {
 
       return ProjectMapper.toFullResponse(updatedProject);
     } catch (error) {
-      if (isPrismaError(error) && error.code === 'P2025') {
+      if (error.code === 'P2025') {
         throw new NotFoundException('Project not found');
       }
       throw error;
@@ -516,7 +515,7 @@ export class ProjectsService {
 
       return ProjectMapper.toFullResponse(updatedProject);
     } catch (error) {
-      if (isPrismaError(error) && error.code === 'P2025') {
+      if (error.code === 'P2025') {
         throw new NotFoundException('Project not found');
       }
       throw error;

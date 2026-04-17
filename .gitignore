@@ -1,7 +1,6 @@
 # compiled output
 /backend/dist
 /node_modules
-*.tsbuildinfo
 
 # Logs
 logs
