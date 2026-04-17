@@ -10,6 +10,7 @@ import { TaskStatusResponseDto } from './dto/task-status.response-dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { TaskStatusMapper } from '../shared/mappers/task-status.mapper';
 import { BoardsService } from '../boards/boards.service';
+import { isPrismaError } from '../shared/utils/is-prisma-error';
 
 @Injectable()
 export class TaskStatusesService {
@@ -55,7 +56,7 @@ export class TaskStatusesService {
 
       return TaskStatusMapper.toExpandResponse(status);
     } catch (error) {
-      if (error.code === 'P2002') {
+      if (isPrismaError(error) && error.code === 'P2002') {
         throw new ConflictException('Column name must be unique on the board');
       }
       throw error;
@@ -76,16 +77,19 @@ export class TaskStatusesService {
 
       return TaskStatusMapper.toBaseResponse(status);
     } catch (error) {
-      switch (error.code) {
-        case 'P2025':
-          throw new NotFoundException('Column not found');
-        case 'P2002':
-          throw new ConflictException(
-            'Column name must be unique on the board',
-          );
-        default:
-          throw error;
+      if (isPrismaError(error)) {
+        switch (error.code) {
+          case 'P2025':
+            throw new NotFoundException('Column not found');
+          case 'P2002':
+            throw new ConflictException(
+              'Column name must be unique on the board',
+            );
+          default:
+            throw error;
+        }
       }
+      throw error;
     }
   }
 
@@ -116,7 +120,7 @@ export class TaskStatusesService {
           ),
         );
       } catch (error) {
-        if (error.code === 'P2025') {
+        if (isPrismaError(error) && error.code === 'P2025') {
           throw new NotFoundException('Column not found');
         }
         throw error;
