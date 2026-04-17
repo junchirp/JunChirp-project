@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
 import * as path from 'path';
+import 'multer';
 
 @Injectable()
 export class ParseImageFilePipe implements PipeTransform {
