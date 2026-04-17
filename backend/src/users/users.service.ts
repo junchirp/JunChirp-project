@@ -38,7 +38,6 @@ import * as crypto from 'crypto';
 import { CryptoTokenInterface } from '../shared/interfaces/crypto-token.interface';
 import { LocaleType } from '../shared/types/locale.type';
 import { ConfirmEmailWithLocaleDto } from './dto/confirm-email-with-locale.dto';
-import { isPrismaError } from '../shared/utils/is-prisma-error';
 
 interface GetUsersOptionsInterface {
   activeProjectsCount: number;
@@ -92,7 +91,7 @@ export class UsersService {
 
         return UserMapper.toFullResponse(user, false);
       } catch (error) {
-        if (isPrismaError(error) && error.code === 'P2002') {
+        if (error.code === 'P2002') {
           await this.loggerService.log(
             ip,
             createUserDto.email,
@@ -158,7 +157,7 @@ export class UsersService {
         ? UserMapper.toAuthResponse(user)
         : UserMapper.toFullResponse(user, false);
     } catch (error) {
-      if (isPrismaError(error) && error.code === 'P2025') {
+      if (error.code === 'P2025') {
         throw new NotFoundException('User not found');
       }
       throw error;
@@ -226,7 +225,7 @@ export class UsersService {
         });
       });
     } catch (error) {
-      if (isPrismaError(error) && error.code === 'P2003') {
+      if (error.code === 'P2003') {
         await this.loggerService.log(
           ip,
           user.email,
@@ -363,8 +362,7 @@ export class UsersService {
 
         return { message: 'Email verified successfully' };
       } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        if (isPrismaError(error) && error.code === 'P2025') {
+        if (error.code === 'P2025') {
           await this.loggerService.log(
             ip,
             verificationToken.user.email,
@@ -377,7 +375,7 @@ export class UsersService {
           ip,
           verificationToken.user.email,
           'confirmation email',
-          message,
+          error.message,
         );
         throw error;
       }
@@ -515,10 +513,9 @@ export class UsersService {
 
       return { message: 'Password has been reset successfully.' };
     } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      await this.loggerService.log(ip, '', 'reset password', message);
+      await this.loggerService.log(ip, '', 'reset password', error.message);
 
-      if (isPrismaError(error) && error.code === 'P2025') {
+      if (error.code === 'P2025') {
         throw new BadRequestException('Invalid or expired token');
       }
       throw error;
@@ -604,7 +601,7 @@ export class UsersService {
 
       return UserMapper.toAuthResponse(updatedUser);
     } catch (error) {
-      if (isPrismaError(error) && error.code === 'P2025') {
+      if (error.code === 'P2025') {
         throw new NotFoundException('User not found');
       }
       throw error;
@@ -645,17 +642,14 @@ export class UsersService {
 
       return UserMapper.toAuthResponse(updatedUser);
     } catch (error) {
-      if (isPrismaError(error)) {
-        switch (error.code) {
-          case 'P2025':
-            throw new NotFoundException('User not found');
-          case 'P2002':
-            throw new ConflictException('Email is already in use');
-          default:
-            throw error;
-        }
+      switch (error.code) {
+        case 'P2025':
+          throw new NotFoundException('User not found');
+        case 'P2002':
+          throw new ConflictException('Email is already in use');
+        default:
+          throw error;
       }
-      throw error;
     }
   }
 
@@ -746,7 +740,7 @@ export class UsersService {
         },
       });
     } catch (error) {
-      if (isPrismaError(error) && error.code === 'P2025') {
+      if (error.code === 'P2025') {
         throw new NotFoundException('User not found');
       }
       throw error;
@@ -791,7 +785,7 @@ export class UsersService {
         where: { token: hashedToken },
       });
     } catch (error) {
-      if (isPrismaError(error) && error.code === 'P2025') {
+      if (error.code === 'P2025') {
         throw new NotFoundException('Token not found');
       }
       throw error;
@@ -808,7 +802,7 @@ export class UsersService {
         email: token.email,
       };
     } catch (error) {
-      if (isPrismaError(error) && error.code === 'P2025') {
+      if (error.code === 'P2025') {
         throw new NotFoundException('Token not found');
       }
       throw error;

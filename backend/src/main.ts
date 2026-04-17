@@ -3,13 +3,14 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { CsrfService } from './csrf/csrf.service';
-import express, { NextFunction, Request, Response } from 'express';
-import cookieParser from 'cookie-parser';
+import * as express from 'express';
+import * as cookieParser from 'cookie-parser';
 import * as path from 'path';
 import helmet from 'helmet';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 import nextModule = require('next');
 import { NextServer } from 'next/dist/server/next';
+import { NextFunction, Request, Response } from 'express';
 import { ValidationPipe } from './shared/pipes/validation/validation.pipe';
 
 async function bootstrap(): Promise<void> {
@@ -17,7 +18,9 @@ async function bootstrap(): Promise<void> {
   const server = express();
   server.set('trust proxy', true);
 
-  server.listen(PORT, '0.0.0.0');
+  server.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server started on port ${PORT}`);
+  });
 
   const dev = process.env.NODE_ENV !== 'production';
   const frontendDir = path.resolve(__dirname, '../../frontend');
@@ -74,7 +77,5 @@ async function bootstrap(): Promise<void> {
 
   await app.init();
   isReady = true;
-
-  console.log(`Server started on port ${PORT}`);
 }
 bootstrap();

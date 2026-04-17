@@ -9,7 +9,6 @@ import { UpdateSocialDto } from './dto/update-social.dto';
 import { SocialResponseDto } from './dto/social.response-dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { SocialMapper } from '../shared/mappers/social.mapper';
-import { isPrismaError } from '../shared/utils/is-prisma-error';
 
 @Injectable()
 export class SocialsService {
@@ -41,7 +40,7 @@ export class SocialsService {
 
       return SocialMapper.toResponse(social);
     } catch (error) {
-      if (isPrismaError(error) && error.code === 'P2002') {
+      if (error.code === 'P2002') {
         throw new ConflictException(
           'You have already added a profile in this social network',
         );
@@ -64,19 +63,16 @@ export class SocialsService {
 
       return SocialMapper.toResponse(social);
     } catch (error) {
-      if (isPrismaError(error)) {
-        switch (error.code) {
-          case 'P2025':
-            throw new NotFoundException('Profile not found');
-          case 'P2002':
-            throw new ConflictException(
-              'Profile with this network already exists',
-            );
-          default:
-            throw error;
-        }
+      switch (error.code) {
+        case 'P2025':
+          throw new NotFoundException('Profile not found');
+        case 'P2002':
+          throw new ConflictException(
+            'Profile with this network already exists',
+          );
+        default:
+          throw error;
       }
-      throw error;
     }
   }
 
@@ -87,7 +83,7 @@ export class SocialsService {
       });
       return id;
     } catch (error) {
-      if (isPrismaError(error) && error.code === 'P2025') {
+      if (error.code === 'P2025') {
         throw new NotFoundException('Profile not found');
       }
       throw error;

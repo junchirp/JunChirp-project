@@ -11,7 +11,6 @@ import { PrismaService } from '../prisma/prisma.service';
 import { BoardMapper } from '../shared/mappers/board.mapper';
 import { UpdateColumnsOrderDto } from './dto/update-columns-order.dto';
 import { BoardWithColumnsResponseDto } from './dto/board-with-columns.response-dto';
-import { isPrismaError } from '../shared/utils/is-prisma-error';
 
 @Injectable()
 export class BoardsService {
@@ -61,7 +60,7 @@ export class BoardsService {
       });
       return BoardMapper.toExpandResponse(board);
     } catch (error) {
-      if (isPrismaError(error) && error.code === 'P2002') {
+      if (error.code === 'P2002') {
         throw new ConflictException('Board with this name already exists');
       }
       throw error;
@@ -92,7 +91,7 @@ export class BoardsService {
 
       return BoardMapper.toExpandResponse(board);
     } catch (error) {
-      if (isPrismaError(error) && error.code === 'P2025') {
+      if (error.code === 'P2025') {
         throw new NotFoundException('Board not found');
       }
       throw error;
@@ -126,17 +125,14 @@ export class BoardsService {
 
       return BoardMapper.toExpandResponse(board);
     } catch (error) {
-      if (isPrismaError(error)) {
-        switch (error.code) {
-          case 'P2025':
-            throw new NotFoundException('Board not found');
-          case 'P2002':
-            throw new ConflictException('Board with this name already exists');
-          default:
-            throw error;
-        }
+      switch (error.code) {
+        case 'P2025':
+          throw new NotFoundException('Board not found');
+        case 'P2002':
+          throw new ConflictException('Board with this name already exists');
+        default:
+          throw error;
       }
-      throw error;
     }
   }
 
@@ -146,7 +142,7 @@ export class BoardsService {
         where: { id },
       });
     } catch (error) {
-      if (isPrismaError(error) && error.code === 'P2025') {
+      if (error.code === 'P2025') {
         throw new NotFoundException('Board not found');
       }
       throw error;
