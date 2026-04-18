@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma, PrismaClient, Role } from '@prisma/client';
-import { DefaultArgs } from '@prisma/client/runtime/library';
+import { DefaultArgs } from '@prisma/client/runtime/client';
 
 @Injectable()
 export class RolesService {

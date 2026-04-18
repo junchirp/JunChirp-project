@@ -9,6 +9,7 @@ import { UpdateSoftSkillDto } from './dto/update-soft-skill.dto';
 import { SoftSkillResponseDto } from './dto/soft-skill.response-dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { SoftSkillMapper } from '../shared/mappers/soft-skill.mapper';
+import { isPrismaError } from '../shared/utils/is-prisma-error';
 
 @Injectable()
 export class SoftSkillsService {
@@ -75,7 +76,7 @@ export class SoftSkillsService {
 
         return SoftSkillMapper.toResponse(softSkill);
       } catch (error) {
-        if (error.code === 'P2002') {
+        if (isPrismaError(error) && error.code === 'P2002') {
           throw new ConflictException('Soft skill is already in list');
         }
         throw error;
@@ -97,14 +98,17 @@ export class SoftSkillsService {
 
       return SoftSkillMapper.toResponse(softSkill);
     } catch (error) {
-      switch (error.code) {
-        case 'P2025':
-          throw new NotFoundException('Soft skill not found');
-        case 'P2002':
-          throw new ConflictException('Soft skill is already in list');
-        default:
-          throw error;
+      if (isPrismaError(error)) {
+        switch (error.code) {
+          case 'P2025':
+            throw new NotFoundException('Soft skill not found');
+          case 'P2002':
+            throw new ConflictException('Soft skill is already in list');
+          default:
+            throw error;
+        }
       }
+      throw error;
     }
   }
 
@@ -115,7 +119,7 @@ export class SoftSkillsService {
       });
       return id;
     } catch (error) {
-      if (error.code === 'P2025') {
+      if (isPrismaError(error) && error.code === 'P2025') {
         throw new NotFoundException('Soft skill not found');
       }
       throw error;

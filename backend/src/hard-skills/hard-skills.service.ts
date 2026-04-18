@@ -9,6 +9,7 @@ import { UpdateHardSkillDto } from './dto/update-hard-skill.dto';
 import { HardSkillResponseDto } from './dto/hard-skill.response-dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { HardSkillMapper } from '../shared/mappers/hard-skill.mapper';
+import { isPrismaError } from '../shared/utils/is-prisma-error';
 
 @Injectable()
 export class HardSkillsService {
@@ -75,7 +76,7 @@ export class HardSkillsService {
 
         return HardSkillMapper.toResponse(hardSkill);
       } catch (error) {
-        if (error.code === 'P2002') {
+        if (isPrismaError(error) && error.code === 'P2002') {
           throw new ConflictException('Hard skill is already in list');
         }
         throw error;
@@ -97,14 +98,17 @@ export class HardSkillsService {
 
       return HardSkillMapper.toResponse(hardSkill);
     } catch (error) {
-      switch (error.code) {
-        case 'P2025':
-          throw new NotFoundException('Hard skill not found');
-        case 'P2002':
-          throw new ConflictException('Hard skill is already in list');
-        default:
-          throw error;
+      if (isPrismaError(error)) {
+        switch (error.code) {
+          case 'P2025':
+            throw new NotFoundException('Hard skill not found');
+          case 'P2002':
+            throw new ConflictException('Hard skill is already in list');
+          default:
+            throw error;
+        }
       }
+      throw error;
     }
   }
 
@@ -115,7 +119,7 @@ export class HardSkillsService {
       });
       return id;
     } catch (error) {
-      if (error.code === 'P2025') {
+      if (isPrismaError(error) && error.code === 'P2025') {
         throw new NotFoundException('Hard skill not found');
       }
       throw error;
