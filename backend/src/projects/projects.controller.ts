@@ -46,7 +46,6 @@ import { UserParticipationResponseDto } from '../participations/dto/user-partici
 import { User } from '../auth/decorators/user.decorator';
 import { ProjectCardResponseDto } from './dto/project-card.response-dto';
 import { UUIDParam } from '../shared/decorators/UUID-param.decorator';
-import 'multer';
 
 @User()
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })

@@ -7,7 +7,7 @@ import { CreateSupportDto } from './dto/create-support.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { MailService } from '../mail/mail.service';
 import { MessageResponseDto } from '../users/dto/message.response-dto';
-import sanitizeHtml from 'sanitize-html';
+import * as sanitizeHtml from 'sanitize-html';
 
 @Injectable()
 export class SupportService {
