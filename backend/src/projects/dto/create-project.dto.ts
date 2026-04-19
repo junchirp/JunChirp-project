@@ -1,11 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsNotEmpty, IsString, IsUUID, Length } from 'class-validator';
+import { IsArray, IsNotEmpty, IsString, IsUUID, Length, Matches } from 'class-validator';
 
 export class CreateProjectDto {
   @ApiProperty({ example: 'Project name', description: 'Project name' })
   @IsString({ message: 'Must be a string' })
   @Length(2, 50, { message: 'Must be between 2 and 50 characters' })
   @IsNotEmpty({ message: 'Project name is required' })
+  @Matches(/^(?!.*\.\.)[A-Za-zА-Яа-яІіЇїЄєҐґ0-9 \-_.',()]+$/, {
+    message: 'Project name is incorrect',
+  })
   public readonly projectName: string;
 
   @ApiProperty({
@@ -15,6 +18,9 @@ export class CreateProjectDto {
   @IsString({ message: 'Must be a string' })
   @Length(2, 500, { message: 'Must be between 2 and 500 characters' })
   @IsNotEmpty({ message: 'Project description is required' })
+  @Matches(/^(?!.*\.\.)[A-Za-zА-Яа-яІіЇїЄєҐґ0-9 \-_.',()]+$/, {
+    message: 'Project description is incorrect',
+  })
   public readonly description: string;
 
   @ApiProperty({

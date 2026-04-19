@@ -23,25 +23,25 @@ import CheckboxChecked from '@/assets/icons/checkbox-checked.svg';
 import Checkbox from '@/assets/icons/checkbox-empty.svg';
 import { useToast } from '@/hooks/useToast';
 import { Locale, useRouter } from '@/i18n/routing';
-import { useAppSelector } from '@/hooks/reduxHooks';
-import authSelector from '@/redux/auth/authSelector';
-import DiscordBanner from '@/shared/components/DiscordBanner/DiscordBanner';
 import { useLocale, useTranslations } from 'next-intl';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
+import { normalizeApostrophes } from '@/shared/utils/normalizeApostrophes';
+import CancelCreateProjectPopup from './CancelCreateProjectPopup/CancelCreateProjectPopup';
 
 type FormData = z.infer<typeof projectSchemaStatic>;
 
 export default function ProjectForm(): ReactElement {
   const { data: categories = [] } = useGetCategoriesQuery(undefined);
   const { data: roles = [] } = useGetProjectRolesListQuery(undefined);
-  const t = useTranslations('forms');
+  const tForms = useTranslations('forms');
+  const tButtons = useTranslations('buttons');
   const {
     register,
     handleSubmit,
     control,
     formState: { errors },
   } = useForm<FormData>({
-    resolver: zodResolver(projectSchema(t)),
+    resolver: zodResolver(projectSchema(tForms)),
     mode: 'onChange',
     defaultValues: {
       categoryId: '',
@@ -51,50 +51,38 @@ export default function ProjectForm(): ReactElement {
   const [createProject, { isLoading }] = useCreateProjectMutation();
   const { showToast, isActive } = useToast();
   const router = useRouter();
-  const [isBanner, setBanner] = useState(false);
-  const user = useAppSelector(authSelector.selectUser);
   const locale = useLocale();
-
-  const closeBanner = (): void => {
-    setBanner(false);
-  };
+  const [isOpen, setIsOpen] = useState(false);
 
   const closeForm = (): void => {
     router.replace('/projects');
   };
 
-  const onSubmit = async (data: FormData): Promise<void> => {
-    if (!user?.discordId) {
-      setBanner(true);
-      return;
-    }
+  const openPopap = (): void => setIsOpen(true);
+  const closePopap = (): void => setIsOpen(false);
 
+  const onSubmit = async (data: FormData): Promise<void> => {
     if (isActive(ToastKeysEnum.NEW_PROJECT)) {
       return;
     }
 
-    const result = await createProject(data);
-    if ('error' in result) {
-      showToast({
-        severity: 'error',
-        summary: 'Не вдалося створити проєкт.',
-        detail: 'Досягнуто ліміту активних проєктів.',
-        life: 3000,
-        actionKey: ToastKeysEnum.NEW_PROJECT,
-      });
-      return;
-    }
-
-    if ('data' in result) {
+    try {
+      const project = await createProject(data).unwrap();
       showToast({
         severity: 'success',
-        summary: 'Проєкт успішно створено!',
+        summary: tForms('projectForm.success'),
         life: 3000,
         actionKey: ToastKeysEnum.NEW_PROJECT,
       });
 
-      const projectId = result.data.id;
-      router.replace(`/projects/${projectId}`);
+      router.replace(`/projects/${project.id}`);
+    } catch {
+      showToast({
+        severity: 'error',
+        summary: tForms('projectForm.error'),
+        life: 3000,
+        actionKey: ToastKeysEnum.NEW_PROJECT,
+      });
     }
   };
 
@@ -108,31 +96,54 @@ export default function ProjectForm(): ReactElement {
           className={styles['project-form__fields']}
           disabled={isLoading}
         >
-          <Input
-            label="Назва проєкту"
-            labelSize={20}
-            labelHeight={1.4}
-            labelWeight={600}
-            labelMargin={12}
-            placeholder="Введи назву проєкту"
-            withError
-            errorMessages={
-              errors.projectName?.message && [errors.projectName.message]
-            }
-            {...register('projectName')}
+          <Controller
+            name="projectName"
+            control={control}
+            render={({ field }) => (
+              <Input
+                label={tForms('projectForm.projectName')}
+                labelSize={20}
+                labelHeight={1.4}
+                labelWeight={600}
+                labelMargin={12}
+                placeholder={tForms('projectForm.placeholders.projectName')}
+                withError
+                errorMessages={
+                  errors.projectName?.message && [errors.projectName.message]
+                }
+                {...register('projectName')}
+                {...field}
+                value={field.value ?? ''}
+                onChange={(e) => {
+                  const normalized = normalizeApostrophes(e.target.value);
+                  field.onChange(normalized);
+                }}
+              />
+            )}
           />
-          <Textarea
-            label="Короткий опис проєкту"
-            labelSize={20}
-            labelHeight={1.4}
-            labelWeight={600}
-            labelMargin={12}
-            placeholder="Коротко опиши ідею, мету та цінність проєкту"
-            withError
-            errorMessages={
-              errors.description?.message && [errors.description.message]
-            }
-            {...register('description')}
+          <Controller
+            name="projectName"
+            control={control}
+            render={({ field }) => (
+              <Textarea
+                label={tForms('projectForm.description')}
+                labelSize={20}
+                labelHeight={1.4}
+                labelWeight={600}
+                labelMargin={12}
+                placeholder={tForms('projectForm.placeholders.description')}
+                withError
+                errorMessages={
+                  errors.description?.message && [errors.description.message]
+                }
+                {...field}
+                value={field.value ?? ''}
+                onChange={(e) => {
+                  const normalized = normalizeApostrophes(e.target.value);
+                  field.onChange(normalized);
+                }}
+              />
+            )}
           />
           <Controller
             name="categoryId"
@@ -140,12 +151,12 @@ export default function ProjectForm(): ReactElement {
             render={({ field }) => (
               <Dropdown<ProjectCategoryInterface>
                 options={categories}
-                label="Категорія проєкту"
+                label={tForms('projectForm.category')}
                 labelSize={20}
                 labelHeight={1.4}
                 labelWeight={600}
                 labelMargin={12}
-                placeholder="Будь ласка, вибери категорію проєкту"
+                placeholder={tForms('projectForm.placeholders.category')}
                 {...field}
                 getOptionLabel={(o) => o.categoryName[locale as Locale]}
                 getOptionValue={(o) => o.id}
@@ -162,7 +173,7 @@ export default function ProjectForm(): ReactElement {
             render={({ field }) => (
               <div className={styles['project-form__list-wrapper']}>
                 <p className={styles['project-form__list-label']}>
-                  Обери необхідні ролі для проєкту
+                  {tForms('projectForm.roles')}
                 </p>
                 <div className={styles['project-form__list']}>
                   {roles.map((option) => {
@@ -211,21 +222,16 @@ export default function ProjectForm(): ReactElement {
           />
         </fieldset>
         <div className={styles['project-form__actions']}>
-          <Button variant="secondary-frame" color="green" onClick={closeForm}>
-            Скасувати
+          <Button variant="secondary-frame" color="green" onClick={openPopap}>
+            {tButtons('cancel')}
           </Button>
           <Button color="green" type="submit" loading={isLoading}>
-            Зберегти
+            {tButtons('save')}
           </Button>
         </div>
       </form>
-      {isBanner && (
-        <DiscordBanner
-          closeBanner={closeBanner}
-          message="Щоб створити проєкт, підключи свій Discord. Це потрібно для створення чату проєкту."
-          isCancelButton
-          withWrapper
-        />
+      {isOpen && (
+        <CancelCreateProjectPopup onCancel={closePopap} onConfirm={closeForm} />
       )}
     </>
   );

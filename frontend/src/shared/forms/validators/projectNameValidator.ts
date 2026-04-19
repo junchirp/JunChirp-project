@@ -6,4 +6,8 @@ export const projectNameValidator = (t: (key: string) => string): ZodString =>
     .trim()
     .nonempty(t('errors.nonEmpty'))
     .min(2, t('errors.projectNameLength'))
-    .max(50, t('errors.projectNameLength'));
+    .max(50, t('errors.projectNameLength'))
+    .regex(
+      /^(?!.*\.\.)[A-Za-zА-Яа-яІіЇїЄєҐґ0-9 \-_.',()]+$/,
+      t('errors.projectNameSymbols'),
+    );

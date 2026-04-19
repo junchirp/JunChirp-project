@@ -7,9 +7,9 @@ export const supportRequestValidator = (
     .string()
     .trim()
     .nonempty(t('errors.nonEmpty'))
-    .min(10, t('errors.requestLength'))
-    .max(1000, t('errors.requestLength'))
+    .min(10, t('errors.supportLength'))
+    .max(1000, t('errors.supportLength'))
     .regex(
       /^[0-9a-zA-Zа-яА-ЯґҐіІїЇєЄ'’ .,;:!?()\n\r-]+$/,
-      t('errors.requestSymbols'),
+      t('errors.supportSymbols'),
     );

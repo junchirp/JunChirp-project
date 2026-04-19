@@ -1,12 +1,12 @@
-'use client';
-
 import { ReactElement } from 'react';
 import styles from './page.module.scss';
 import Image from 'next/image';
 import ProjectForm from '@/shared/components/ProjectForm/ProjectForm';
 import AccessGuard from '@/shared/components/AccessGuard/AccessGuard';
+import { getTranslations } from 'next-intl/server';
 
-export default function NewProject(): ReactElement {
+export default async function NewProject(): Promise<ReactElement> {
+  const t = await getTranslations('newProject');
   return (
     <AccessGuard mode="discord">
       <div className={styles['new-project']}>
@@ -18,10 +18,9 @@ export default function NewProject(): ReactElement {
             width={33}
             height={35}
           />
-          <h2 className={styles['new-project__title']}>[Створення проєкту]</h2>
+          <h2 className={styles['new-project__title']}>[{t('title')}]</h2>
           <p className={styles['new-project__description']}>
-            Заповни основну інформацію про свій проєкт, щоб знайти команду
-            однодумців.
+            {t('description')}
           </p>
           <Image
             className={`${styles['new-project__image']} ${styles['new-project__image--last']}`}
