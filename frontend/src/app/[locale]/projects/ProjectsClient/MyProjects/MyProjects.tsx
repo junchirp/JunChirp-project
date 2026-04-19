@@ -23,6 +23,7 @@ export default function MyProjects({
   const [isBanner, setBanner] = useState(false);
   const router = useRouter();
   const tProjects = useTranslations('projectsPage');
+  const tDiscord = useTranslations('discord');
 
   const handleClick = (): void => {
     if (user?.discordId) {
@@ -68,7 +69,7 @@ export default function MyProjects({
       {isBanner && (
         <DiscordBanner
           closeBanner={closeBanner}
-          message="Щоб створити проєкт, підключи свій Discord. Це потрібно для створення чату проєкту."
+          message={tDiscord('newProject')}
           isCancelButton
           withWrapper
         />
