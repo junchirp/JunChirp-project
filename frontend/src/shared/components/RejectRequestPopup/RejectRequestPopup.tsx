@@ -72,12 +72,7 @@ export default function RejectRequestPopup(
           <Button color="green" variant="secondary-frame" onClick={onClose}>
             {t('cancel')}
           </Button>
-          <Button
-            color="green"
-            type="submit"
-            onClick={onSubmit}
-            loading={isLoading}
-          >
+          <Button color="green" onClick={onSubmit} loading={isLoading}>
             {t('decline')}
           </Button>
         </div>

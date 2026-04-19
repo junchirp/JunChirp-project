@@ -22,7 +22,7 @@ export default function MyProjects({
 }: MyProjectsProps): ReactElement {
   const [isBanner, setBanner] = useState(false);
   const router = useRouter();
-  const t = useTranslations('projectsPage');
+  const tProjects = useTranslations('projectsPage');
 
   const handleClick = (): void => {
     if (user?.discordId) {
@@ -39,7 +39,9 @@ export default function MyProjects({
   return (
     <>
       <div className={styles['my-projects']}>
-        <h3 className={styles['my-projects__title']}>{t('myProjects')}</h3>
+        <h3 className={styles['my-projects__title']}>
+          {tProjects('myProjects')}
+        </h3>
         <div className={styles['my-projects__list-wrapper']}>
           <Button
             className={styles['my-projects__button']}
@@ -48,7 +50,7 @@ export default function MyProjects({
             icon={<Plus />}
             onClick={handleClick}
           >
-            {t('createProject')}
+            {tProjects('createProject')}
           </Button>
           {!!myProjects.length && user && (
             <div className={styles['my-projects__list']}>
