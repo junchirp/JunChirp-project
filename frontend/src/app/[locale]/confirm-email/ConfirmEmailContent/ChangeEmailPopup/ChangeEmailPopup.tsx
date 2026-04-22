@@ -1,31 +1,31 @@
 'use client';
 
 import { ReactElement } from 'react';
-import styles from './ChangeEmailPopup.module.scss';
 import ChangeEmailForm from './ChangeEmailForm/ChangeEmailForm';
 import { useTranslations } from 'next-intl';
+import Dialog from '@/shared/components/Dialog/Dialog';
+import DialogHeader from '@/shared/components/Dialog/DialogHeader/DialogHeader';
+import DialogBody from '@/shared/components/Dialog/DialogBody/DialogBody';
+import DialogFooter from '@/shared/components/Dialog/DialogFooter/DialogFooter';
 
 interface ConfirmModalProps {
   onClose: () => void;
+  isOpen: boolean;
 }
 
 export default function ChangeEmailPopup(
   props: ConfirmModalProps,
 ): ReactElement {
-  const { onClose } = props;
+  const { onClose, isOpen } = props;
   const t = useTranslations('changeEmailPopup');
 
   return (
-    <div className={styles['change-email-popup__wrapper']}>
-      <div className={styles['change-email-popup']}>
-        <div className={styles['change-email-popup__content']}>
-          <h3 className={styles['change-email-popup__title']}>{t('title')}</h3>
-          <p className={styles['change-email-popup__text']}>
-            {t('description')}
-          </p>
-        </div>
+    <Dialog isOpen={isOpen} showCloseButton onClose={onClose}>
+      <DialogHeader title={t('title')} />
+      <DialogBody>{t('description')}</DialogBody>
+      <DialogFooter>
         <ChangeEmailForm onClose={onClose} />
-      </div>
-    </div>
+      </DialogFooter>
+    </Dialog>
   );
 }

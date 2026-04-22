@@ -30,7 +30,7 @@ export const SupportProvider = ({
   return (
     <SupportContext.Provider value={{ openSupport, closeSupport }}>
       {children}
-      {isOpen && <SupportPopup isOpen={isOpen} onClose={closeSupport} />}
+      <SupportPopup isOpen={isOpen} onClose={closeSupport} />
     </SupportContext.Provider>
   );
 };

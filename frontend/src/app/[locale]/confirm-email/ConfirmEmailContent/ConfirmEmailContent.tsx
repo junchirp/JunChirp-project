@@ -139,7 +139,7 @@ export default function ConfirmEmailContent(): ReactElement {
           {tButtons('enterAnotherEmail')}
         </Button>
       </div>
-      {isModalOpen && <ChangeEmailPopup onClose={closeModal} />}
+      <ChangeEmailPopup isOpen={isModalOpen} onClose={closeModal} />
     </>
   );
 }
