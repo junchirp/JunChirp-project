@@ -2,7 +2,6 @@
 
 import React, { ReactElement, useEffect, useRef, useState } from 'react';
 import styles from './SocialInvitePopup.module.scss';
-import X from '@/assets/icons/x.svg';
 import Button from '@/shared/components/Button/Button';
 import Input from '@/shared/components/Input/Input';
 import Linkedin from '@/assets/icons/linkedin.svg';
@@ -14,10 +13,15 @@ import { PlatformType } from '@/shared/types/platform.type';
 import { useToast } from '@/hooks/useToast';
 import { useLocale, useTranslations } from 'next-intl';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
+import Dialog from '@/shared/components/Dialog/Dialog';
+import DialogHeader from '@/shared/components/Dialog/DialogHeader/DialogHeader';
+import DialogBody from '@/shared/components/Dialog/DialogBody/DialogBody';
+import DialogFooter from '@/shared/components/Dialog/DialogFooter/DialogFooter';
 
 interface SocialInvitePopupProps {
   onClose: () => void;
   userId: string;
+  isOpen: boolean;
 }
 
 const getShareLink = (platform: PlatformType, url: string): string => {
@@ -38,7 +42,7 @@ const getShareLink = (platform: PlatformType, url: string): string => {
 export default function SocialInvitePopup(
   props: SocialInvitePopupProps,
 ): ReactElement {
-  const { onClose, userId } = props;
+  const { onClose, userId, isOpen } = props;
   const [inviteUrl, setInviteUrl] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
   const { showToast, isActive } = useToast();
@@ -88,68 +92,56 @@ export default function SocialInvitePopup(
   };
 
   return (
-    <div className={styles['social-invite-popup__wrapper']}>
-      <div className={styles['social-invite-popup']}>
-        <Button
-          className={styles['social-invite-popup__close']}
-          icon={<X />}
-          variant="link"
-          color="black"
-          size="md"
-          onClick={onClose}
-        />
-        <div className={styles['social-invite-popup__content']}>
-          <h3 className={styles['social-invite-popup__title']}>
-            {tPopup('title')}
-          </h3>
-          <p className={styles['social-invite-popup__text']}>
-            {tPopup('description')}
-          </p>
+    <Dialog isOpen={isOpen} showCloseButton onClose={onClose}>
+      <DialogHeader title={tPopup('title')} />
+      <DialogBody>{tPopup('description')}</DialogBody>
+      <DialogFooter>
+        <div className={styles['social-invite-popup__footer']}>
+          <div className={styles['social-invite-popup__field']}>
+            <Input
+              className={styles['social-invite-popup__input']}
+              ref={inputRef}
+              value={inviteUrl}
+              readOnly
+            />
+            <Button color="green" onClick={handleCopy}>
+              {tButtons('copy')}
+            </Button>
+          </div>
+          <div className={styles['social-invite-popup__social-buttons']}>
+            <Button
+              variant="secondary-frame"
+              color="green"
+              icon={<Linkedin />}
+              onClick={() => handleClick('linkedin')}
+            />
+            <Button
+              variant="secondary-frame"
+              color="green"
+              icon={<XTwitter />}
+              onClick={() => handleClick('twitter')}
+            />
+            <Button
+              variant="secondary-frame"
+              color="green"
+              icon={<Facebook />}
+              onClick={() => handleClick('facebook')}
+            />
+            <Button
+              variant="secondary-frame"
+              color="green"
+              icon={<Telegram />}
+              onClick={() => handleClick('telegram')}
+            />
+            <Button
+              variant="secondary-frame"
+              color="green"
+              icon={<Discord />}
+              onClick={() => handleClick('discord')}
+            />
+          </div>
         </div>
-        <div className={styles['social-invite-popup__field']}>
-          <Input
-            className={styles['social-invite-popup__input']}
-            ref={inputRef}
-            value={inviteUrl}
-            readOnly
-          />
-          <Button color="green" onClick={handleCopy}>
-            {tButtons('copy')}
-          </Button>
-        </div>
-        <div className={styles['social-invite-popup__social-buttons']}>
-          <Button
-            variant="secondary-frame"
-            color="green"
-            icon={<Linkedin />}
-            onClick={() => handleClick('linkedin')}
-          />
-          <Button
-            variant="secondary-frame"
-            color="green"
-            icon={<XTwitter />}
-            onClick={() => handleClick('twitter')}
-          />
-          <Button
-            variant="secondary-frame"
-            color="green"
-            icon={<Facebook />}
-            onClick={() => handleClick('facebook')}
-          />
-          <Button
-            variant="secondary-frame"
-            color="green"
-            icon={<Telegram />}
-            onClick={() => handleClick('telegram')}
-          />
-          <Button
-            variant="secondary-frame"
-            color="green"
-            icon={<Discord />}
-            onClick={() => handleClick('discord')}
-          />
-        </div>
-      </div>
-    </div>
+      </DialogFooter>
+    </Dialog>
   );
 }

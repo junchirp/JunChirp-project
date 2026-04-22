@@ -10,6 +10,9 @@ import DiscordBanner from '@/shared/components/DiscordBanner/DiscordBanner';
 import { useRouter } from '@/i18n/routing';
 import Plus from '@/assets/icons/plus.svg';
 import { useTranslations } from 'next-intl';
+import { useLazyGetProjectsCountQuery } from '@/api/authApi';
+import { ToastKeysEnum } from '../../../../../shared/enums/toast-keys.enum';
+import { useToast } from '../../../../../hooks/useToast';
 
 interface MyProjectsProps {
   myProjects: ProjectCardInterface[];
@@ -24,10 +27,32 @@ export default function MyProjects({
   const router = useRouter();
   const tProjects = useTranslations('projectsPage');
   const tDiscord = useTranslations('discord');
+  const tForms = useTranslations('forms.projectForm');
+  const [getProjectsCount, { isFetching }] = useLazyGetProjectsCountQuery();
+  const { showToast, isActive } = useToast();
 
-  const handleClick = (): void => {
+  const handleClick = async (): Promise<void> => {
+    if (isActive(ToastKeysEnum.NEW_PROJECT)) {
+      return;
+    }
+
     if (user?.discordId) {
-      router.push('/new-project');
+      try {
+        const result = await getProjectsCount(undefined, true).unwrap();
+
+        if (result.count >= 2) {
+          showToast({
+            severity: 'error',
+            summary: tForms('error'),
+            life: 3000,
+            actionKey: ToastKeysEnum.NEW_PROJECT,
+          });
+        } else {
+          router.push('/new-project');
+        }
+      } catch {
+        return;
+      }
     } else {
       setBanner(true);
     }
@@ -47,6 +72,7 @@ export default function MyProjects({
           <Button
             className={styles['my-projects__button']}
             color="green"
+            loading={isFetching}
             iconPosition="right"
             icon={<Plus />}
             onClick={handleClick}

@@ -76,7 +76,7 @@ export default function ProjectCardSmall({
               className={styles['project-card-small__link']}
               href={
                 isMyProject
-                  ? `/projects/${project.id}/cab`
+                  ? `/projects/${project.id}/dashboard`
                   : `/projects/${project.id}`
               }
             >

@@ -37,7 +37,7 @@ export default function Project(): ReactElement | null {
       );
 
       if (isParticipant) {
-        router.replace(`/projects/${projectId}/cab`);
+        router.replace(`/projects/${projectId}/dashboard`);
       }
     }
   }, [isLoading, project, user, router, projectId]);

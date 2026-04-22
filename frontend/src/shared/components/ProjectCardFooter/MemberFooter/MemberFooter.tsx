@@ -34,7 +34,7 @@ export default function MemberFooter({
 
   const goProject = (): void => {
     if (isMyProject) {
-      router.push(`/projects/${project.id}/cab`);
+      router.push(`/projects/${project.id}/dashboard`);
     } else {
       router.push(`/projects/${project.id}`);
     }

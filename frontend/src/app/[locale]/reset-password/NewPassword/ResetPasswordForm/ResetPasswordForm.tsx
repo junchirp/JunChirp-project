@@ -182,9 +182,11 @@ export default function ResetPasswordForm({
           </Button>
         </div>
       </form>
-      {isModalOpen && (
-        <CancelPasswordPopup onConfirm={cancelReset} onCancel={closeModal} />
-      )}
+      <CancelPasswordPopup
+        isOpen={isModalOpen}
+        onConfirm={cancelReset}
+        onCancel={closeModal}
+      />
     </>
   );
 }

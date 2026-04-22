@@ -9,17 +9,22 @@ import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
 import { useTranslations } from 'next-intl';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
+import Dialog from '@/shared/components/Dialog/Dialog';
+import DialogHeader from '@/shared/components/Dialog/DialogHeader/DialogHeader';
+import DialogBody from '@/shared/components/Dialog/DialogBody/DialogBody';
+import DialogFooter from '@/shared/components/Dialog/DialogFooter/DialogFooter';
 
 interface RejectInvitePopupProps {
   invite: ProjectParticipationInterface;
   onClose: () => void;
   user: AuthInterface;
+  isOpen: boolean;
 }
 
 export default function RejectInvitePopup(
   props: RejectInvitePopupProps,
 ): ReactElement {
-  const { invite, onClose, user } = props;
+  const { invite, onClose, user, isOpen } = props;
   const [rejectInvite, { isLoading }] = useRejectInviteMutation();
   const { showToast, isActive } = useToast();
   const t = useTranslations('rejectInvitePopup');
@@ -51,27 +56,26 @@ export default function RejectInvitePopup(
   };
 
   return (
-    <div className={styles['reject-invite-popup__wrapper']}>
-      <div className={styles['reject-invite-popup']}>
-        <div className={styles['reject-invite-popup__content']}>
-          <h3 className={styles['reject-invite-popup__title']}>{t('title')}</h3>
-          <p className={styles['reject-invite-popup__text']}>
-            {t('firstPart')}
+    <Dialog isOpen={isOpen} onClose={onClose}>
+      <DialogHeader title={t('title')} />
+      <DialogBody>
+        {t.rich('description', {
+          project: (chunks) => (
             <span className={styles['reject-invite-popup__text--green']}>
-              [{invite.projectRole.project.projectName}]
+              [{chunks}]
             </span>
-            {t('secondPart')}
-          </p>
-        </div>
-        <div className={styles['reject-invite-popup__actions']}>
-          <Button color="green" variant="secondary-frame" onClick={onClose}>
-            {t('cancel')}
-          </Button>
-          <Button color="green" onClick={onSubmit} loading={isLoading}>
-            {t('decline')}
-          </Button>
-        </div>
-      </div>
-    </div>
+          ),
+          projectName: invite.projectRole.project.projectName,
+        })}
+      </DialogBody>
+      <DialogFooter>
+        <Button color="green" variant="secondary-frame" onClick={onClose}>
+          {t('cancel')}
+        </Button>
+        <Button color="green" onClick={onSubmit} loading={isLoading}>
+          {t('decline')}
+        </Button>
+      </DialogFooter>
+    </Dialog>
   );
 }

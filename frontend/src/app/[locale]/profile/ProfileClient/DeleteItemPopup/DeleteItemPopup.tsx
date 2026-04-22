@@ -1,9 +1,12 @@
 'use client';
 
 import { ReactElement } from 'react';
-import styles from './DeleteItemPopup.module.scss';
 import Button from '@/shared/components/Button/Button';
 import { useTranslations } from 'next-intl';
+import Dialog from '@/shared/components/Dialog/Dialog';
+import DialogHeader from '@/shared/components/Dialog/DialogHeader/DialogHeader';
+import DialogBody from '@/shared/components/Dialog/DialogBody/DialogBody';
+import DialogFooter from '@/shared/components/Dialog/DialogFooter/DialogFooter';
 
 interface DeleteItemPopupProps<T> {
   item: T;
@@ -12,34 +15,27 @@ interface DeleteItemPopupProps<T> {
   onCancel: () => void;
   loading: boolean;
   onConfirm: (item: T) => void;
+  isOpen: boolean;
 }
 
 export default function DeleteItemPopup<T>(
   props: DeleteItemPopupProps<T>,
 ): ReactElement {
-  const { item, title, message, onCancel, onConfirm, loading } = props;
+  const { item, title, message, onCancel, onConfirm, loading, isOpen } = props;
   const t = useTranslations('buttons');
 
   return (
-    <div className={styles['delete-item-popup__wrapper']}>
-      <div className={styles['delete-item-popup']}>
-        <div className={styles['delete-item-popup__content']}>
-          <h3 className={styles['delete-item-popup__title']}>{title}</h3>
-          {message}
-        </div>
-        <div className={styles['delete-item-popup__actions']}>
-          <Button color="green" variant="secondary-frame" onClick={onCancel}>
-            {t('cancel')}
-          </Button>
-          <Button
-            color="green"
-            loading={loading}
-            onClick={() => onConfirm(item)}
-          >
-            {t('delete')}
-          </Button>
-        </div>
-      </div>
-    </div>
+    <Dialog isOpen={isOpen} onClose={onCancel}>
+      <DialogHeader title={title} />
+      <DialogBody>{message}</DialogBody>
+      <DialogFooter>
+        <Button color="green" variant="secondary-frame" onClick={onCancel}>
+          {t('cancel')}
+        </Button>
+        <Button color="green" loading={loading} onClick={() => onConfirm(item)}>
+          {t('delete')}
+        </Button>
+      </DialogFooter>
+    </Dialog>
   );
 }

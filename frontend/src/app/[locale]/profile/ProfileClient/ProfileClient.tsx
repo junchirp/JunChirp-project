@@ -182,11 +182,14 @@ export default function ProfileClient(): ReactElement {
         title: `${tProfile('deleteItem.socials.title')}`,
         message: (
           <p className={styles['profile-client__message']}>
-            {tProfile('deleteItem.socials.firstPart')}
-            <span className={styles['profile-client__message--green']}>
-              [{item.network}]
-            </span>
-            {tProfile('deleteItem.secondPart')}
+            {tProfile.rich('deleteItem.socials.description', {
+              social: (chunks) => (
+                <span className={styles['profile-client__message--green']}>
+                  [{chunks}]
+                </span>
+              ),
+              socialName: item.network,
+            })}
           </p>
         ),
       });
@@ -200,11 +203,14 @@ export default function ProfileClient(): ReactElement {
         title: `${tProfile('deleteItem.educations.title')}`,
         message: (
           <p className={styles['profile-client__message']}>
-            {tProfile('deleteItem.educations.firstPart')}
-            <span className={styles['profile-client__message--green']}>
-              [{edu}]
-            </span>
-            {tProfile('deleteItem.secondPart')}
+            {tProfile.rich('deleteItem.educations.description', {
+              edu: (chunks) => (
+                <span className={styles['profile-client__message--green']}>
+                  [{chunks}]
+                </span>
+              ),
+              eduRecord: edu,
+            })}
           </p>
         ),
       });
@@ -215,11 +221,14 @@ export default function ProfileClient(): ReactElement {
         title: `${tProfile('deleteItem.hardSkills.title')}`,
         message: (
           <p className={styles['profile-client__message']}>
-            {tProfile('deleteItem.hardSkills.firstPart')}
-            <span className={styles['profile-client__message--green']}>
-              [{item.hardSkillName}]
-            </span>
-            {tProfile('deleteItem.secondPart')}
+            {tProfile.rich('deleteItem.hardSkills.description', {
+              skill: (chunks) => (
+                <span className={styles['profile-client__message--green']}>
+                  [{chunks}]
+                </span>
+              ),
+              skillName: item.hardSkillName,
+            })}
           </p>
         ),
       });
@@ -230,11 +239,14 @@ export default function ProfileClient(): ReactElement {
         title: `${tProfile('deleteItem.softSkills.title')}`,
         message: (
           <p className={styles['profile-client__message']}>
-            {tProfile('deleteItem.softSkills.firstPart')}
-            <span className={styles['profile-client__message--green']}>
-              [{item.softSkillName}]
-            </span>
-            {tProfile('deleteItem.secondPart')}
+            {tProfile.rich('deleteItem.softSkills.description', {
+              skill: (chunks) => (
+                <span className={styles['profile-client__message--green']}>
+                  [{chunks}]
+                </span>
+              ),
+              skillName: item.softSkillName,
+            })}
           </p>
         ),
       });
@@ -423,7 +435,7 @@ export default function ProfileClient(): ReactElement {
           {!!invites.length && <MyInvites invites={invites} user={user} />}
         </div>
       )}
-      {isModalOpen && deletedItem && isSocial(deletedItem.item) && (
+      {deletedItem && isSocial(deletedItem.item) && (
         <DeleteItemPopup<SocialInterface>
           item={deletedItem.item}
           onCancel={closeModal}
@@ -431,9 +443,10 @@ export default function ProfileClient(): ReactElement {
           title={deletedItem.title}
           message={deletedItem.message}
           loading={isSocialLoading}
+          isOpen={isModalOpen}
         />
       )}
-      {isModalOpen && isEducation(deletedItem?.item) && (
+      {isEducation(deletedItem?.item) && (
         <DeleteItemPopup<EducationInterface>
           item={deletedItem.item}
           onCancel={closeModal}
@@ -441,9 +454,10 @@ export default function ProfileClient(): ReactElement {
           title={deletedItem.title}
           message={deletedItem.message}
           loading={isEducationLoading}
+          isOpen={isModalOpen}
         />
       )}
-      {isModalOpen && isSoftSkill(deletedItem?.item) && (
+      {isSoftSkill(deletedItem?.item) && (
         <DeleteItemPopup<SoftSkillInterface>
           item={deletedItem.item}
           onCancel={closeModal}
@@ -451,9 +465,10 @@ export default function ProfileClient(): ReactElement {
           title={deletedItem.title}
           message={deletedItem.message}
           loading={isSoftSkillLoading}
+          isOpen={isModalOpen}
         />
       )}
-      {isModalOpen && isHardSkill(deletedItem?.item) && (
+      {isHardSkill(deletedItem?.item) && (
         <DeleteItemPopup<HardSkillInterface>
           item={deletedItem.item}
           onCancel={closeModal}
@@ -461,6 +476,7 @@ export default function ProfileClient(): ReactElement {
           title={deletedItem.title}
           message={deletedItem.message}
           loading={isHardSkillLoading}
+          isOpen={isModalOpen}
         />
       )}
       {isBanner && (

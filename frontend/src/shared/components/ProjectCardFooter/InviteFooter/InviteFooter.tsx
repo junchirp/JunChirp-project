@@ -53,7 +53,7 @@ export default function InviteFooter({
 
   const goProject = (): void => {
     if (isMyProject) {
-      router.push(`/projects/${project.id}/cab`);
+      router.push(`/projects/${project.id}/dashboard`);
     } else {
       router.push(`/projects/${project.id}`);
     }
@@ -126,8 +126,9 @@ export default function InviteFooter({
           </Button>
         </ProjectCardActionsWrapper>
       </div>
-      {isInvitePopupOpen && currentInvite && user && (
+      {currentInvite && user && (
         <RejectInvitePopup
+          isOpen={isInvitePopupOpen}
           onClose={closeInvitePopup}
           invite={currentInvite}
           user={user}

@@ -47,6 +47,8 @@ import { UUIDParam } from '../shared/decorators/UUID-param.decorator';
 import { LocaleDto } from '../shared/dto/locale.dto';
 import { ConfirmEmailWithLocaleDto } from './dto/confirm-email-with-locale.dto';
 import { CurrentUser } from '../shared/decorators/current-user.decorator';
+import { IdResponseDto } from './dto/id.response-dto';
+import { CountResponseDto } from './dto/count.response-dto';
 
 @Controller('users')
 export class UsersController {
@@ -124,6 +126,17 @@ export class UsersController {
   }
 
   @Auth()
+  @ApiOperation({ summary: `Get current user's active projects count` })
+  @ApiOkResponse({ type: CountResponseDto })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @Get('me/active-projects-count')
+  public async getActiveProjectsCount(
+    @CurrentUser('id') id: string,
+  ): Promise<CountResponseDto> {
+    return this.usersService.getActiveProjectsCount(id);
+  }
+
+  @Auth()
   @ApiOperation({ summary: 'Get current user (base info in edit mode)' })
   @ApiOkResponse({ type: AuthResponseDto })
   @ApiNotFoundResponse({ description: 'User not found' })
@@ -154,7 +167,7 @@ export class UsersController {
   }
 
   @ApiOperation({ summary: 'Send email to reset your password' })
-  @ApiOkResponse({ type: String })
+  @ApiOkResponse({ type: IdResponseDto })
   @ApiTooManyRequestsResponse({
     description: 'You have used up all your attempts. Please try again later.',
   })
@@ -169,7 +182,7 @@ export class UsersController {
   public async sendPasswordResetUrl(
     @Ip() ip: string,
     @Body() body: EmailWithLocaleDto,
-  ): Promise<string> {
+  ): Promise<IdResponseDto> {
     return this.usersService.sendPasswordResetUrl(ip, body);
   }
 

@@ -92,12 +92,14 @@ export const authApi = mainApi.injectEndpoints({
       }),
       invalidatesTags: ['auth', 'users'],
     }),
-    requestPasswordReset: builder.mutation<string, EmailWithLocaleInterface>({
+    requestPasswordReset: builder.mutation<
+      { id: string },
+      EmailWithLocaleInterface
+    >({
       query: (data) => ({
         url: 'users/request-password-reset',
         method: 'POST',
         body: data,
-        responseHandler: (response): Promise<string> => response.text(),
       }),
       invalidatesTags: ['auth'],
     }),
@@ -140,6 +142,11 @@ export const authApi = mainApi.injectEndpoints({
         url: `users/password-reset-token?requestId=${id}`,
       }),
     }),
+    getProjectsCount: builder.query<{ count: number }, undefined>({
+      query: () => ({
+        url: 'users/me/active-projects-count',
+      }),
+    }),
   }),
 });
 
@@ -158,4 +165,5 @@ export const {
   useResetPasswordMutation,
   useCancelResetPasswordMutation,
   useGetPasswordResetTokenQuery,
+  useLazyGetProjectsCountQuery,
 } = authApi;

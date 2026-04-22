@@ -52,6 +52,7 @@ export default function UserRequests({
           onClose={closeModal}
           request={request}
           user={user}
+          isOpen={!!request}
         />
       )}
     </>

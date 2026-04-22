@@ -1,34 +1,35 @@
 'use client';
 
 import { ReactElement } from 'react';
-import styles from './CancelPasswordPopup.module.scss';
 import Button from '@/shared/components/Button/Button';
 import { useTranslations } from 'next-intl';
+import Dialog from '@/shared/components/Dialog/Dialog';
+import DialogHeader from '@/shared/components/Dialog/DialogHeader/DialogHeader';
+import DialogFooter from '@/shared/components/Dialog/DialogFooter/DialogFooter';
 
 interface CancelPasswordPopupProps {
   onCancel: () => void;
   onConfirm: () => void;
+  isOpen: boolean;
 }
 
-export default function CancelPasswordPopup({
-  onCancel,
-  onConfirm,
-}: CancelPasswordPopupProps): ReactElement {
+export default function CancelPasswordPopup(
+  props: CancelPasswordPopupProps,
+): ReactElement {
+  const { onCancel, onConfirm, isOpen } = props;
   const t = useTranslations('cancelPasswordPopup');
 
   return (
-    <div className={styles['cancel-password-popup__wrapper']}>
-      <div className={styles['cancel-password-popup']}>
-        <h3 className={styles['cancel-password-popup__title']}>{t('title')}</h3>
-        <div className={styles['cancel-password-popup__buttons']}>
-          <Button color="red" variant="secondary-frame" onClick={onCancel}>
-            {t('noBtn')}
-          </Button>
-          <Button color="green" onClick={onConfirm}>
-            {t('yesBtn')}
-          </Button>
-        </div>
-      </div>
-    </div>
+    <Dialog isOpen={isOpen} onClose={onCancel}>
+      <DialogHeader title={t('title')} />
+      <DialogFooter>
+        <Button color="red" variant="secondary-frame" onClick={onCancel}>
+          {t('noBtn')}
+        </Button>
+        <Button color="green" onClick={onConfirm}>
+          {t('yesBtn')}
+        </Button>
+      </DialogFooter>
+    </Dialog>
   );
 }

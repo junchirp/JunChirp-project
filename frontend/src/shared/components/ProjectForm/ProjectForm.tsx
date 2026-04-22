@@ -230,9 +230,11 @@ export default function ProjectForm(): ReactElement {
           </Button>
         </div>
       </form>
-      {isOpen && (
-        <CancelCreateProjectPopup onCancel={closePopap} onConfirm={closeForm} />
-      )}
+      <CancelCreateProjectPopup
+        isOpen={isOpen}
+        onCancel={closePopap}
+        onConfirm={closeForm}
+      />
     </>
   );
 }

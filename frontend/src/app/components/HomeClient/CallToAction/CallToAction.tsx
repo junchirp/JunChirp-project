@@ -65,8 +65,12 @@ export default function CallToAction({
           <Image src="/images/bird-4.svg" alt="bird" width={420} height={352} />
         </div>
       </div>
-      {user?.isVerified && isOpen && (
-        <SocialInvitePopup onClose={closePopup} userId={user.id} />
+      {user?.isVerified && (
+        <SocialInvitePopup
+          onClose={closePopup}
+          userId={user.id}
+          isOpen={isOpen}
+        />
       )}
     </>
   );

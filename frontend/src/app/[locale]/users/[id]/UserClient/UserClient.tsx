@@ -144,8 +144,9 @@ export default function UserClient(): ReactElement {
               </div>
             )}
           </div>
-          {!isAuthUser && isModalOpen && (
+          {!isAuthUser && (
             <InvitePopup
+              isOpen={isModalOpen}
               onClose={closeModal}
               user={user}
               myProjects={myProjects}
