@@ -92,12 +92,14 @@ export const authApi = mainApi.injectEndpoints({
       }),
       invalidatesTags: ['auth', 'users'],
     }),
-    requestPasswordReset: builder.mutation<string, EmailWithLocaleInterface>({
+    requestPasswordReset: builder.mutation<
+      { id: string },
+      EmailWithLocaleInterface
+    >({
       query: (data) => ({
         url: 'users/request-password-reset',
         method: 'POST',
         body: data,
-        responseHandler: (response): Promise<string> => response.text(),
       }),
       invalidatesTags: ['auth'],
     }),
