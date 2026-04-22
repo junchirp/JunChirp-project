@@ -114,9 +114,7 @@
   },
   "rejectRequestPopup": {
     "title": "Decline application?",
-    "firstPart": "Are you sure you want to decline the application of user ",
-    "secondPart": " for participation in the project ",
-    "thirdPart": "? This action cannot be undone.",
+    "description": "Are you sure you want to decline the application of user <user>{userName}</user> for participation in the project <project>{projectName}</project>? This action cannot be undone.",
     "cancel": "Cancel",
     "decline": "Decline application",
     "error": "Failed to decline application.",

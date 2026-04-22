@@ -9,17 +9,22 @@ import { UserInterface } from '@/shared/interfaces/user.interface';
 import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
 import { useTranslations } from 'next-intl';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
+import DialogHeader from '../Dialog/DialogHeader/DialogHeader';
+import DialogBody from '../Dialog/DialogBody/DialogBody';
+import DialogFooter from '../Dialog/DialogFooter/DialogFooter';
+import Dialog from '../Dialog/Dialog';
 
 interface RejectRequestPopupProps {
   request: ProjectParticipationInterface;
   onClose: () => void;
   user: UserInterface;
+  isOpen: boolean;
 }
 
 export default function RejectRequestPopup(
   props: RejectRequestPopupProps,
 ): ReactElement {
-  const { request, onClose, user } = props;
+  const { request, onClose, user, isOpen } = props;
   const [rejectRequest, { isLoading }] = useRejectRequestMutation();
   const { showToast, isActive } = useToast();
   const t = useTranslations('rejectRequestPopup');
@@ -51,32 +56,32 @@ export default function RejectRequestPopup(
   };
 
   return (
-    <div className={styles['reject-request-popup__wrapper']}>
-      <div className={styles['reject-request-popup']}>
-        <div className={styles['reject-request-popup__content']}>
-          <h3 className={styles['reject-request-popup__title']}>
-            {t('title')}
-          </h3>
-          <p className={styles['reject-request-popup__text']}>
-            {t('firstPart')}
+    <Dialog isOpen={isOpen} onClose={onClose}>
+      <DialogHeader title={t('title')} />
+      <DialogBody>
+        {t.rich('description', {
+          project: (chunks) => (
             <span className={styles['reject-request-popup__text--green']}>
-              [{user.firstName} {user.lastName}]
+              [{chunks}]
             </span>
-            {t('secondPart')}
+          ),
+          user: (chunks) => (
             <span className={styles['reject-request-popup__text--green']}>
-              [{request.projectRole.project.projectName}]
+              [{chunks}]
             </span>
-          </p>
-        </div>
-        <div className={styles['reject-request-popup__actions']}>
-          <Button color="green" variant="secondary-frame" onClick={onClose}>
-            {t('cancel')}
-          </Button>
-          <Button color="green" onClick={onSubmit} loading={isLoading}>
-            {t('decline')}
-          </Button>
-        </div>
-      </div>
-    </div>
+          ),
+          projectName: request.projectRole.project.projectName,
+          userName: `${user.firstName} ${user.lastName}`,
+        })}
+      </DialogBody>
+      <DialogFooter>
+        <Button color="green" variant="secondary-frame" onClick={onClose}>
+          {t('cancel')}
+        </Button>
+        <Button color="green" onClick={onSubmit} loading={isLoading}>
+          {t('decline')}
+        </Button>
+      </DialogFooter>
+    </Dialog>
   );
 }
