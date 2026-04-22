@@ -20,7 +20,7 @@ export default function ChangeEmailPopup(
   const t = useTranslations('changeEmailPopup');
 
   return (
-    <Dialog isOpen={isOpen} showCloseButton onClose={onClose}>
+    <Dialog isOpen={isOpen} onClose={onClose}>
       <DialogHeader title={t('title')} />
       <DialogBody>{t('description')}</DialogBody>
       <DialogFooter>

@@ -66,29 +66,28 @@
     "deleteItem": {
       "socials": {
         "title": "Delete social network?",
-        "firstPart": "Are you sure you want to delete the social network ",
+        "description": "Are you sure you want to delete the social network <social>{socialName}</social>? This action cannot be undone.",
         "success": "Social network deleted.",
         "error": "Failed to delete social network."
       },
       "educations": {
         "title": "Delete education record?",
-        "firstPart": "Are you sure you want to delete the education record ",
+        "description": "Are you sure you want to delete the education record <edu>{eduRecord}</edu>? This action cannot be undone.",
         "success": "Education record deleted.",
         "error": "Failed to delete education record."
       },
       "softSkills": {
         "title": "Delete skill?",
-        "firstPart": "Are you sure you want to delete the soft skill ",
+        "description": "Are you sure you want to delete the soft skill <skill>{skillName}</skill>? This action cannot be undone.",
         "success": "Soft skill deleted.",
         "error": "Failed to delete soft skill."
       },
       "hardSkills": {
         "title": "Delete skill?",
-        "firstPart": "Are you sure you want to delete the hard skill ",
+        "description": "Are you sure you want to delete the hard skill <skill>{skillName}</skill>? This action cannot be undone.",
         "success": "Hard skill deleted.",
         "error": "Failed to delete hard skill."
       },
-      "secondPart": "? This action cannot be undone.",
       "errorDetails": "Please try again later."
     },
     "saveChanges": "Save your changes before viewing."
