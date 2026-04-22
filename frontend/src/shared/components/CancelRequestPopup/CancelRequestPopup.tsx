@@ -15,7 +15,7 @@ import DialogBody from '../Dialog/DialogBody/DialogBody';
 import DialogFooter from '../Dialog/DialogFooter/DialogFooter';
 
 interface CancelRequestPopupProps {
-  request: ProjectParticipationInterface | null;
+  request: ProjectParticipationInterface;
   onClose: () => void;
   user: AuthInterface;
   isOpen: boolean;
@@ -30,7 +30,7 @@ export default function CancelRequestPopup(
   const t = useTranslations('cancelRequestPopup');
 
   const onSubmit = async (): Promise<void> => {
-    if (isActive(ToastKeysEnum.PARTICIPATION_REQUEST) || !request) {
+    if (isActive(ToastKeysEnum.PARTICIPATION_REQUEST)) {
       return;
     }
 
@@ -65,7 +65,7 @@ export default function CancelRequestPopup(
               [{chunks}]
             </span>
           ),
-          projectName: request?.projectRole.project.projectName ?? '',
+          projectName: request.projectRole.project.projectName,
         })}
       </DialogBody>
       <DialogFooter>

@@ -126,8 +126,9 @@ export default function InviteFooter({
           </Button>
         </ProjectCardActionsWrapper>
       </div>
-      {isInvitePopupOpen && currentInvite && user && (
+      {currentInvite && user && (
         <RejectInvitePopup
+          isOpen={isInvitePopupOpen}
           onClose={closeInvitePopup}
           invite={currentInvite}
           user={user}

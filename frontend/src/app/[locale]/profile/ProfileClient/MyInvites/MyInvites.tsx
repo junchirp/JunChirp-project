@@ -58,7 +58,12 @@ export default function MyInvites({
         />
       </DataContainer>
       {invite && (
-        <RejectInvitePopup onClose={closeModal} invite={invite} user={user} />
+        <RejectInvitePopup
+          onClose={closeModal}
+          invite={invite}
+          user={user}
+          isOpen={!!invite}
+        />
       )}
       {isBanner && (
         <DiscordBanner

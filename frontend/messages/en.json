@@ -105,8 +105,7 @@
   },
   "rejectInvitePopup": {
     "title": "Decline invitation?",
-    "firstPart": "Are you sure you want to decline the invitation to the project ",
-    "secondPart": "? This action cannot be undone.",
+    "description": "Are you sure you want to decline the invitation to the project <project>{projectName}</project>? This action cannot be undone.",
     "cancel": "Cancel",
     "decline": "Decline invitation",
     "error": "Failed to decline invitation.",

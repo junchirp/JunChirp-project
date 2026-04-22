@@ -40,12 +40,14 @@ export default function MyRequests({
           isLoading={false}
         />
       </DataContainer>
-      <CancelRequestPopup
-        onClose={closeModal}
-        request={request}
-        user={user}
-        isOpen={!!request}
-      />
+      {request && (
+        <CancelRequestPopup
+          onClose={closeModal}
+          request={request}
+          user={user}
+          isOpen={!!request}
+        />
+      )}
     </>
   );
 }
