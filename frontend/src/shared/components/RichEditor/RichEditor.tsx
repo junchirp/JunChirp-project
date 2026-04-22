@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactElement, useEffect } from 'react';
+import { ReactElement } from 'react';
 import { Editor, EditorTextChangeEvent } from 'primereact/editor';
 import styles from './RichEditor.module.scss';
 import Image from 'next/image';
@@ -59,13 +59,6 @@ export function RichEditor(props: RichEditorProps): ReactElement {
     const text = e.textValue ?? '';
     onChange(html, text);
   };
-
-  useEffect(() => {
-    const id = requestAnimationFrame(() => {
-      window.dispatchEvent(new Event('resize'));
-    });
-    return (): void => cancelAnimationFrame(id);
-  }, []);
 
   return (
     <div className={styles['rich-editor']}>

@@ -66,7 +66,11 @@ export default function CallToAction({
         </div>
       </div>
       {user?.isVerified && isOpen && (
-        <SocialInvitePopup onClose={closePopup} userId={user.id} />
+        <SocialInvitePopup
+          onClose={closePopup}
+          userId={user.id}
+          isOpen={isOpen}
+        />
       )}
     </>
   );

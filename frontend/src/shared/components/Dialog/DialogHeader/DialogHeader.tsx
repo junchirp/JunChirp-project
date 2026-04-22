@@ -9,7 +9,7 @@ interface HeaderProps {
 }
 
 export default function DialogHeader({ title }: HeaderProps): ReactElement {
-  return <h2 className={styles['dialog-header']}>{title}</h2>;
+  return <h3 className={styles['dialog-header']}>{title}</h3>;
 }
 
 DialogHeader[DIALOG_SLOT] = 'header';
