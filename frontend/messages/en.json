@@ -126,8 +126,7 @@
   },
   "cancelRequestPopup": {
     "title": "Cancel application?",
-    "firstPart": "Are you sure you want to cancel the application for the project ",
-    "secondPart": "? This action cannot be undone.",
+    "description": "Are you sure you want to cancel the application for the project <project>{projectName}</project>? This action cannot be undone.",
     "cancel": "Cancel",
     "delete": "Cancel application",
     "error": "Failed to cancel application.",

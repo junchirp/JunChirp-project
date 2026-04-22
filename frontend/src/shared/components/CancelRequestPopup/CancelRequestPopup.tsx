@@ -9,17 +9,22 @@ import { ProjectParticipationInterface } from '@/shared/interfaces/project-parti
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import { useTranslations } from 'next-intl';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
+import Dialog from '../Dialog/Dialog';
+import DialogHeader from '../Dialog/DialogHeader/DialogHeader';
+import DialogBody from '../Dialog/DialogBody/DialogBody';
+import DialogFooter from '../Dialog/DialogFooter/DialogFooter';
 
 interface CancelRequestPopupProps {
   request: ProjectParticipationInterface;
   onClose: () => void;
   user: AuthInterface;
+  isOpen: boolean;
 }
 
 export default function CancelRequestPopup(
   props: CancelRequestPopupProps,
 ): ReactElement {
-  const { request, onClose, user } = props;
+  const { request, onClose, user, isOpen } = props;
   const [cancelRequest, { isLoading }] = useCancelRequestMutation();
   const { showToast, isActive } = useToast();
   const t = useTranslations('cancelRequestPopup');
@@ -51,34 +56,31 @@ export default function CancelRequestPopup(
   };
 
   return (
-    <div className={styles['cancel-request-popup__wrapper']}>
-      <div className={styles['cancel-request-popup']}>
-        <div className={styles['cancel-request-popup__content']}>
-          <h3 className={styles['cancel-request-popup__title']}>
-            {t('title')}
-          </h3>
-          <p className={styles['cancel-request-popup__text']}>
-            {t('firstPart')}
+    <Dialog isOpen={isOpen} onClose={onClose}>
+      <DialogHeader title={t('title')} />
+      <DialogBody>
+        {t.rich('description', {
+          project: (chunks) => (
             <span className={styles['cancel-request-popup__text--green']}>
-              [{request.projectRole.project.projectName}]
+              [{chunks}]
             </span>
-            {t('secondPart')}
-          </p>
-        </div>
-        <div className={styles['cancel-request-popup__actions']}>
-          <Button color="green" variant="secondary-frame" onClick={onClose}>
-            {t('cancel')}
-          </Button>
-          <Button
-            color="green"
-            type="submit"
-            onClick={onSubmit}
-            loading={isLoading}
-          >
-            {t('delete')}
-          </Button>
-        </div>
-      </div>
-    </div>
+          ),
+          projectName: request.projectRole.project.projectName,
+        })}
+      </DialogBody>
+      <DialogFooter>
+        <Button color="green" variant="secondary-frame" onClick={onClose}>
+          {t('cancel')}
+        </Button>
+        <Button
+          color="green"
+          type="submit"
+          onClick={onSubmit}
+          loading={isLoading}
+        >
+          {t('delete')}
+        </Button>
+      </DialogFooter>
+    </Dialog>
   );
 }
