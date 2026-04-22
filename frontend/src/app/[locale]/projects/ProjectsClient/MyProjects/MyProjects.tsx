@@ -28,7 +28,7 @@ export default function MyProjects({
   const tProjects = useTranslations('projectsPage');
   const tDiscord = useTranslations('discord');
   const tForms = useTranslations('forms.projectForm');
-  const [getProjectsCount] = useLazyGetProjectsCountQuery();
+  const [getProjectsCount, { isFetching }] = useLazyGetProjectsCountQuery();
   const { showToast, isActive } = useToast();
 
   const handleClick = async (): Promise<void> => {
@@ -72,6 +72,7 @@ export default function MyProjects({
           <Button
             className={styles['my-projects__button']}
             color="green"
+            loading={isFetching}
             iconPosition="right"
             icon={<Plus />}
             onClick={handleClick}
