@@ -4,14 +4,14 @@ import ProjectTabs from './ProjectTabs/ProjectTabs';
 import AccessGuard from '@/shared/components/AccessGuard/AccessGuard';
 import { useProjectAccessCheck } from '@/hooks/useProjectAccessCheck';
 
-export default function CabLayout({
+export default function DashboardLayout({
   children,
 }: {
   children: ReactNode;
 }): ReactElement {
   return (
     <AccessGuard mode="member" checkDataAccess={useProjectAccessCheck}>
-      <div className={styles['cab-layout']}>
+      <div className={styles['dashboard-layout']}>
         <ProjectTabs />
         <div>{children}</div>
       </div>

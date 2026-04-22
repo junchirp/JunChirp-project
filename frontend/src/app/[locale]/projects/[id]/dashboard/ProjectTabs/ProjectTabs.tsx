@@ -13,7 +13,7 @@ export default function ProjectTabs(): ReactElement {
   const pathname = usePathname();
   const { id } = useParams<{ id: string }>();
 
-  const basePath = `/projects/${id}/cab`;
+  const basePath = `/projects/${id}/dashboard`;
   const items = [
     {
       label: 'Загальна інформація',
