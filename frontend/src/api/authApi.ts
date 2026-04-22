@@ -142,6 +142,11 @@ export const authApi = mainApi.injectEndpoints({
         url: `users/password-reset-token?requestId=${id}`,
       }),
     }),
+    getProjectsCount: builder.query<{ count: number }, undefined>({
+      query: () => ({
+        url: 'users/me/active-projects-count',
+      }),
+    }),
   }),
 });
 
@@ -160,4 +165,5 @@ export const {
   useResetPasswordMutation,
   useCancelResetPasswordMutation,
   useGetPasswordResetTokenQuery,
+  useLazyGetProjectsCountQuery,
 } = authApi;

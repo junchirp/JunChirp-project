@@ -9,6 +9,7 @@ import {
 import type { FetchArgs, FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { csrfApi } from './csrfApi';
 import csrfSelector from '@/redux/csrf/csrfSelector';
+import { logout } from '@/redux/auth/authSlice';
 
 interface CsrfErrorData {
   code: string;
@@ -112,16 +113,34 @@ const baseQueryWithReauthAndCsrf: BaseQueryFn<
   if (result.error?.status === 401 && !isAuthRequest(args, method)) {
     const token = getCsrfTokenFromStore(api) ?? (await fetchNewCsrfToken(api));
 
-    const refreshResp = await fetch(`${BASE_URL}/auth/refresh-token`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: token ? { 'x-csrf-token': token } : {},
-    });
+    try {
+      const refreshResp = await fetch(`${BASE_URL}/auth/refresh-token`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: token ? { 'x-csrf-token': token } : {},
+      });
 
-    if (refreshResp.ok) {
-      result = await retryRequest();
-    } else {
-      api.dispatch({ type: 'auth/logout' });
+      if (refreshResp.ok) {
+        result = await retryRequest();
+      } else {
+        api.dispatch(logout());
+
+        return {
+          error: {
+            status: 401,
+            data: { message: 'Unauthorized' },
+          },
+        };
+      }
+    } catch {
+      api.dispatch(logout());
+
+      return {
+        error: {
+          status: 401,
+          data: { message: 'Network error' },
+        },
+      };
     }
   }
 

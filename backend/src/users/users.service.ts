@@ -40,6 +40,7 @@ import { LocaleType } from '../shared/types/locale.type';
 import { ConfirmEmailWithLocaleDto } from './dto/confirm-email-with-locale.dto';
 import { isPrismaError } from '../shared/utils/is-prisma-error';
 import { IdResponseDto } from './dto/id.response-dto';
+import { CountResponseDto } from './dto/count.response-dto';
 
 interface GetUsersOptionsInterface {
   activeProjectsCount: number;
@@ -821,5 +822,13 @@ export class UsersService {
     const hashed = crypto.createHash('sha256').update(raw).digest('hex');
     const createdAt = new Date();
     return { raw, hashed, createdAt };
+  }
+
+  public async getActiveProjectsCount(id: string): Promise<CountResponseDto> {
+    const countData = await this.prisma.user.findUnique({
+      where: { id },
+      select: { activeProjectsCount: true },
+    });
+    return { count: countData?.activeProjectsCount ?? 0 };
   }
 }

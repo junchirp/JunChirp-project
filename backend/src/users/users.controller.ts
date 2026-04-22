@@ -48,6 +48,7 @@ import { LocaleDto } from '../shared/dto/locale.dto';
 import { ConfirmEmailWithLocaleDto } from './dto/confirm-email-with-locale.dto';
 import { CurrentUser } from '../shared/decorators/current-user.decorator';
 import { IdResponseDto } from './dto/id.response-dto';
+import { CountResponseDto } from './dto/count.response-dto';
 
 @Controller('users')
 export class UsersController {
@@ -122,6 +123,17 @@ export class UsersController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<MessageResponseDto> {
     return this.usersService.confirmEmail(ip, confirmEmailDto, req, res);
+  }
+
+  @Auth()
+  @ApiOperation({ summary: `Get current user's active projects count` })
+  @ApiOkResponse({ type: CountResponseDto })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @Get('me/active-projects-count')
+  public async getActiveProjectsCount(
+    @CurrentUser('id') id: string,
+  ): Promise<CountResponseDto> {
+    return this.usersService.getActiveProjectsCount(id);
   }
 
   @Auth()

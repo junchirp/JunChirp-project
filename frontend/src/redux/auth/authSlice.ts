@@ -20,6 +20,10 @@ export const authSlice = createSlice({
       state.user = action.payload;
       state.loadingStatus = 'loaded';
     },
+    logout: (state) => {
+      state.user = null;
+      state.loadingStatus = 'loaded';
+    },
   },
   extraReducers: (builder) => {
     builder.addMatcher(authApi.endpoints.register.matchPending, (state) => {
@@ -109,5 +113,5 @@ export const authSlice = createSlice({
   },
 });
 
-export const { setUser } = authSlice.actions;
+export const { setUser, logout } = authSlice.actions;
 export default authSlice.reducer;
