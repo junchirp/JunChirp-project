@@ -9,10 +9,10 @@ import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
 import { useTranslations } from 'next-intl';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
-import Dialog from '../Dialog/Dialog';
-import DialogHeader from '../Dialog/DialogHeader/DialogHeader';
-import DialogBody from '../Dialog/DialogBody/DialogBody';
-import DialogFooter from '../Dialog/DialogFooter/DialogFooter';
+import Dialog from '@/shared/components/Dialog/Dialog';
+import DialogHeader from '@/shared/components/Dialog/DialogHeader/DialogHeader';
+import DialogBody from '@/shared/components/Dialog/DialogBody/DialogBody';
+import DialogFooter from '@/shared/components/Dialog/DialogFooter/DialogFooter';
 
 interface RejectInvitePopupProps {
   invite: ProjectParticipationInterface;
@@ -61,7 +61,7 @@ export default function RejectInvitePopup(
       <DialogBody>
         {t.rich('description', {
           project: (chunks) => (
-            <span className={styles['cancel-request-popup__text--green']}>
+            <span className={styles['reject-invite-popup__text--green']}>
               [{chunks}]
             </span>
           ),

@@ -9,10 +9,10 @@ import { UserInterface } from '@/shared/interfaces/user.interface';
 import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
 import { useTranslations } from 'next-intl';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
-import DialogHeader from '../Dialog/DialogHeader/DialogHeader';
-import DialogBody from '../Dialog/DialogBody/DialogBody';
-import DialogFooter from '../Dialog/DialogFooter/DialogFooter';
-import Dialog from '../Dialog/Dialog';
+import DialogHeader from '@/shared/components/Dialog/DialogHeader/DialogHeader';
+import DialogBody from '@/shared/components/Dialog/DialogBody/DialogBody';
+import DialogFooter from '@/shared/components/Dialog/DialogFooter/DialogFooter';
+import Dialog from '@/shared/components/Dialog/Dialog';
 
 interface RejectRequestPopupProps {
   request: ProjectParticipationInterface;

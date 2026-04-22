@@ -5,9 +5,9 @@ import InviteForm from '@/shared/components/InvitePopup/InviteForm/InviteForm';
 import { UserCardInterface } from '@/shared/interfaces/user-card.interface';
 import { ProjectCardInterface } from '@/shared/interfaces/project-card.interface';
 import { useTranslations } from 'next-intl';
-import Dialog from '../Dialog/Dialog';
-import DialogHeader from '../Dialog/DialogHeader/DialogHeader';
-import DialogFooter from '../Dialog/DialogFooter/DialogFooter';
+import Dialog from '@/shared/components/Dialog/Dialog';
+import DialogHeader from '@/shared/components/Dialog/DialogHeader/DialogHeader';
+import DialogFooter from '@/shared/components/Dialog/DialogFooter/DialogFooter';
 
 interface InvitePopupProps {
   user: UserCardInterface;
