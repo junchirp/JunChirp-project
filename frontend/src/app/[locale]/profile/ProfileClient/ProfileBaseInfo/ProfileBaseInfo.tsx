@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import Button from '@/shared/components/Button/Button';
 import Edit from '@/assets/icons/edit.svg';
+import { useTranslations } from 'next-intl';
 
 interface ProfileBaseInfoProps {
   user: AuthInterface;
@@ -16,6 +17,7 @@ export default function ProfileBaseInfo(
   props: ProfileBaseInfoProps,
 ): ReactElement {
   const { user, handleEditName } = props;
+  const t = useTranslations('profile');
 
   return (
     <div className={styles['profile-base-info']}>
@@ -40,18 +42,30 @@ export default function ProfileBaseInfo(
             />
           </div>
           <p className={styles['profile-base-info__email']}>{user.email}</p>
-          <p>
-            {user.desiredRoles.map((role, index) => (
-              <Fragment key={index}>
-                {index !== 0 && (
-                  <span className={styles['profile-base-info__role']}> / </span>
-                )}
-                <span className={styles['profile-base-info__role']}>
-                  {role.roleName}
-                </span>
-              </Fragment>
-            ))}
-          </p>
+          <div className={styles['profile-base-info__roles']}>
+            <h3
+              className={`
+                ${styles['profile-base-info__roles-title']} 
+                ${!user.desiredRoles.length ? styles['profile-base-info__roles-title--empty'] : ''}
+              `}
+            >
+              {t('role')}
+            </h3>
+            {user.desiredRoles.length ? (
+              <p className={styles['profile-base-info__role']}>
+                {user.desiredRoles.map((role, index) => (
+                  <Fragment key={index}>
+                    {index !== 0 && <span> / </span>}
+                    <span>{role.roleName}</span>
+                  </Fragment>
+                ))}
+              </p>
+            ) : (
+              <p className={styles['profile-base-info__empty-role']}>
+                {t('emptyRoles')}
+              </p>
+            )}
+          </div>
         </div>
       </div>
     </div>

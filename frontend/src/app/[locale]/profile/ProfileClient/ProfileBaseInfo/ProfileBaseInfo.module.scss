@@ -20,7 +20,7 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 16px;
   }
 
   &__name-wrapper {
@@ -41,7 +41,39 @@
     box-shadow: 0 0 0 4px variables.$green-4;
   }
 
+  &__roles-title {
+    font-weight: 600;
+    font-size: 28px;
+    line-height: 1.4;
+
+    &--empty {
+      &::after {
+        content: "*";
+        position: relative;
+        left: 4px;
+        color: variables.$red-2;
+      }
+    }
+  }
+
+  &__roles {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__empty-role {
+    font-size: 16px;
+    line-height: 1.4;
+  }
+
   &__role {
+    font-size: 20px;
+    line-height: 1.4;
+  }
+
+  &__email {
     font-size: 20px;
     line-height: 1.4;
   }
