@@ -422,6 +422,18 @@ export class UsersService {
     email: string,
     token: CryptoTokenInterface,
   ): Promise<ResetPasswordToken> {
+    const user = await this.getUserByEmail(email, false);
+
+    if (!user) {
+      await this.loggerService.log(
+        ip,
+        email,
+        'reset password',
+        'User with this email not found',
+      );
+      throw new NotFoundException('User not found');
+    }
+
     const attempts = await this.prisma.resetPasswordAttempt.findMany({
       where: { ip },
       orderBy: { createdAt: 'asc' },
