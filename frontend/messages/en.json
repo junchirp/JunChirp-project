@@ -53,6 +53,8 @@
       }
     },
     "userName": "Name and surename",
+    "role": "Role",
+    "emptyRoles": "Add your desired role to be able to participate in projects.",
     "socials": "Social media",
     "educations": "Education",
     "softSkills": "Soft skills",

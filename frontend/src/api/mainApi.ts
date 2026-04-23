@@ -9,7 +9,6 @@ import {
 import type { FetchArgs, FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { csrfApi } from './csrfApi';
 import csrfSelector from '@/redux/csrf/csrfSelector';
-import { logout } from '@/redux/auth/authSlice';
 
 interface CsrfErrorData {
   code: string;
@@ -123,7 +122,7 @@ const baseQueryWithReauthAndCsrf: BaseQueryFn<
       if (refreshResp.ok) {
         result = await retryRequest();
       } else {
-        api.dispatch(logout());
+        api.dispatch({ type: 'auth/logout' });
 
         return {
           error: {
@@ -133,7 +132,7 @@ const baseQueryWithReauthAndCsrf: BaseQueryFn<
         };
       }
     } catch {
-      api.dispatch(logout());
+      api.dispatch({ type: 'auth/logout' });
 
       return {
         error: {
