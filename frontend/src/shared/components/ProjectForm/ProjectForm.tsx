@@ -58,8 +58,8 @@ export default function ProjectForm(): ReactElement {
     router.replace('/projects');
   };
 
-  const openPopap = (): void => setIsOpen(true);
-  const closePopap = (): void => setIsOpen(false);
+  const openPopup = (): void => setIsOpen(true);
+  const closePopup = (): void => setIsOpen(false);
 
   const onSubmit = async (data: FormData): Promise<void> => {
     if (isActive(ToastKeysEnum.NEW_PROJECT)) {
@@ -122,7 +122,7 @@ export default function ProjectForm(): ReactElement {
             )}
           />
           <Controller
-            name="projectName"
+            name="description"
             control={control}
             render={({ field }) => (
               <Textarea
@@ -222,7 +222,7 @@ export default function ProjectForm(): ReactElement {
           />
         </fieldset>
         <div className={styles['project-form__actions']}>
-          <Button variant="secondary-frame" color="green" onClick={openPopap}>
+          <Button variant="secondary-frame" color="green" onClick={openPopup}>
             {tButtons('cancel')}
           </Button>
           <Button color="green" type="submit" loading={isLoading}>
@@ -232,7 +232,7 @@ export default function ProjectForm(): ReactElement {
       </form>
       <CancelCreateProjectPopup
         isOpen={isOpen}
-        onCancel={closePopap}
+        onCancel={closePopup}
         onConfirm={closeForm}
       />
     </>

@@ -19,8 +19,8 @@ export default function UserProjectCard({
   userId,
 }: UserProjectCardProps): ReactElement {
   const userRoleName =
-    project.roles.find((role) => role.user?.id === userId)?.roleType.roleName ??
-    '';
+    project.roles.find((role) => role.users.some((user) => user.id === userId))
+      ?.roleType.roleName ?? '';
   const router = useRouter();
   const cardClassName =
     project.status === 'active'
@@ -35,8 +35,8 @@ export default function UserProjectCard({
       ? `${styles['user-project-card__status']} ${styles['user-project-card__status--active']}`
       : `${styles['user-project-card__status']} ${styles['user-project-card__status--done']}`;
   const user = useAppSelector(authSelector.selectUser);
-  const isMember = project.roles.some(
-    (role) => role.user && role.user.id === user?.id,
+  const isMember = project.roles.some((role) =>
+    role.users.some((u) => u.id === user?.id),
   );
 
   const handleRedirect = (): void => {

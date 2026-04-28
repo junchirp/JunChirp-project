@@ -28,9 +28,9 @@ export default function MemberFooter({
 }: MemberFooterProps): ReactElement {
   const tButtons = useTranslations('buttons');
   const router = useRouter();
-  const isMyProject = project.roles
-    .map((role) => role.user)
-    .some((member) => member && member.id === user?.id);
+  const isMyProject = project.roles.some((role) =>
+    role.users.some((u) => u.id === user?.id),
+  );
 
   const goProject = (): void => {
     if (isMyProject) {

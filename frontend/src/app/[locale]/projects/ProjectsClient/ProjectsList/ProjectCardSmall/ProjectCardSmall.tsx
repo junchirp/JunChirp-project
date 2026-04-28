@@ -26,9 +26,9 @@ export default function ProjectCardSmall({
   requests,
   user,
 }: ProjectCardProps): ReactElement {
-  const isMyProject = project.roles
-    .map((role) => role.user)
-    .some((member) => member && member.id === user?.id);
+  const isMyProject = project.roles.some((role) =>
+    role.users.some((u) => u.id === user?.id),
+  );
   const locale = useLocale();
 
   const tProjectsPage = useTranslations('projectsPage');

@@ -121,16 +121,15 @@ model Document {
 
 model ProjectRole {
   id                   String                 @id @default(dbgenerated("gen_random_uuid()"))
+  slots                Int                    @default(1)
   projectId            String                 @map("project_id")
   roleTypeId           String                 @map("role_type_id")
-  project              Project                @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  roleType             ProjectRoleType        @relation(fields: [roleTypeId], references: [id], onDelete: Cascade)
-  userId               String?                @map("user_id")
-  user                 User?                  @relation(fields: [userId], references: [id], onDelete: SetNull)
-  participationInvite  ParticipationInvite[]
-  participationRequest ParticipationRequest[]
+  project              Project                @relation(fields: [projectId], references: [id])
+  roleType             ProjectRoleType        @relation(fields: [roleTypeId], references: [id])
+  users                User[]
+  ParticipationInvite  ParticipationInvite[]
+  ParticipationRequest ParticipationRequest[]
 
-  @@unique([userId, projectId])
   @@map("project_roles")
 }
 
@@ -289,11 +288,13 @@ model Specialization {
 model ParticipationInvite {
   id            String      @id @default(dbgenerated("gen_random_uuid()"))
   userId        String      @map("user_id")
+  projectId     String      @map("project_id")
   projectRoleId String      @map("project_role_id")
   user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   projectRole   ProjectRole @relation(fields: [projectRoleId], references: [id], onDelete: Cascade)
   createdAt     DateTime    @default(now()) @map("created_at")
 
+  @@unique([userId, projectId])
   @@unique([userId, projectRoleId])
   @@map("participation_invites")
 }
@@ -301,11 +302,13 @@ model ParticipationInvite {
 model ParticipationRequest {
   id            String      @id @default(dbgenerated("gen_random_uuid()"))
   userId        String      @map("user_id")
+  projectId     String      @map("project_id")
   projectRoleId String      @map("project_role_id")
   user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   projectRole   ProjectRole @relation(fields: [projectRoleId], references: [id], onDelete: Cascade)
   createdAt     DateTime    @default(now()) @map("created_at")
 
+  @@unique([userId, projectId])
   @@unique([userId, projectRoleId])
   @@map("participation_requests")
 }

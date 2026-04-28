@@ -8,6 +8,12 @@ export class ProjectRoleResponseDto {
   })
   public readonly id: string;
 
+  @ApiProperty({
+    example: 2,
+    description: 'Number of slots',
+  })
+  public readonly slots: number;
+
   @ApiProperty({ type: () => ProjectRoleTypeResponseDto })
   public readonly roleType: ProjectRoleTypeResponseDto;
 }

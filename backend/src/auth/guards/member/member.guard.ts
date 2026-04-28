@@ -47,7 +47,11 @@ export class MemberGuard implements CanActivate {
             id: resourceId,
             roles: {
               some: {
-                userId: user.id,
+                users: {
+                  some: {
+                    id: user.id,
+                  },
+                },
               },
             },
           },
@@ -60,7 +64,11 @@ export class MemberGuard implements CanActivate {
             project: {
               roles: {
                 some: {
-                  userId: user.id,
+                  users: {
+                    some: {
+                      id: user.id,
+                    },
+                  },
                 },
               },
             },
@@ -76,7 +84,11 @@ export class MemberGuard implements CanActivate {
                 project: {
                   roles: {
                     some: {
-                      userId: user.id,
+                      users: {
+                        some: {
+                          id: user.id,
+                        },
+                      },
                     },
                   },
                 },
@@ -93,7 +105,11 @@ export class MemberGuard implements CanActivate {
               project: {
                 roles: {
                   some: {
-                    userId: user.id,
+                    users: {
+                      some: {
+                        id: user.id,
+                      },
+                    },
                   },
                 },
               },
@@ -105,26 +121,37 @@ export class MemberGuard implements CanActivate {
         !!(await this.prisma.projectRole.findFirst({
           where: {
             id: resourceId,
-            userId: user.id,
+            users: {
+              some: {
+                id: user.id,
+              },
+            },
           },
         })),
     };
 
     const check = checkMembershipMap[model];
     if (!check) {
-      throw new BadRequestException(`Unsupported model: ${model}`);
+      throw new BadRequestException({
+        message: `Unsupported model: ${model}`,
+        code: 'GUARD_ERROR',
+      });
     }
 
     const exists = await this.resourceExists(model, resourceId);
     if (!exists) {
-      throw new NotFoundException('Resource not found');
+      throw new NotFoundException({
+        message: 'Resource not found',
+        code: 'GUARD_ERROR',
+      });
     }
 
     const isParticipant = await check();
     if (!isParticipant) {
-      throw new ForbiddenException(
-        'Access denied: you are not a participant of this project',
-      );
+      throw new ForbiddenException({
+        message: 'Access denied: you are not a participant of this project',
+        code: 'GUARD_ERROR',
+      });
     }
 
     return true;

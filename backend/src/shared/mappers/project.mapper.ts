@@ -22,11 +22,7 @@ export class ProjectMapper {
       };
       roles: (ProjectRole & {
         roleType: ProjectRoleType;
-        user:
-          | (User & {
-              desiredRoles: ProjectRoleType[];
-            })
-          | null;
+        users: (User & { desiredRoles: ProjectRoleType[] })[];
       })[];
     },
   ): ProjectCardResponseDto {
@@ -60,11 +56,7 @@ export class ProjectMapper {
       };
       roles: (ProjectRole & {
         roleType: ProjectRoleType;
-        user:
-          | (User & {
-              desiredRoles: ProjectRoleType[];
-            })
-          | null;
+        users: (User & { desiredRoles: ProjectRoleType[] })[];
       })[];
       documents: Document[];
       boards: Board[];

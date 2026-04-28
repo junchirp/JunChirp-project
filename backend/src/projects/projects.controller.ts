@@ -107,7 +107,9 @@ export class ProjectsController {
     description:
       'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Invalid CSRF token',
   })
-  @ApiBadRequestResponse({ description: 'Project category ID not found' })
+  @ApiBadRequestResponse({
+    description: 'Some role type IDs or category ID are invalid',
+  })
   @ApiHeader({
     name: 'x-csrf-token',
     description: 'CSRF token for the request',

@@ -49,7 +49,7 @@ export const ACCESS_RESOLVERS: Record<ModeType, AccessResolverType> = {
       return `/projects/${projectId}`;
     }
 
-    if (error && 'status' in error && error.status === 403) {
+    if (error && 'code' in error && error.code === 'GUARD_ERROR') {
       return `/projects/${projectId}`;
     }
 

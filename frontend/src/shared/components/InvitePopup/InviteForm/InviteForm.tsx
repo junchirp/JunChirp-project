@@ -58,7 +58,9 @@ export default function InviteForm(props: InviteFormProps): ReactElement {
   const selectedProject = myProjects.find(
     (item) => item.id === selectedProjectId,
   );
-  const roleOptions = selectedProject?.roles.filter((role) => !role.user) ?? [];
+  const roleOptions =
+    selectedProject?.roles.filter((role) => role.users.length < role.slots) ??
+    [];
   const allowedRoleTypeIds = user.desiredRoles.map((role) => role.id);
 
   const onSubmit = async (data: FormData): Promise<void> => {

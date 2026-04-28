@@ -19,6 +19,7 @@ export class ProjectRoleMapper {
     return {
       id: role.id,
       roleType: role.roleType,
+      slots: role.slots,
     };
   }
 
@@ -31,11 +32,7 @@ export class ProjectRoleMapper {
         };
         roles: (ProjectRole & {
           roleType: ProjectRoleType;
-          user:
-            | (User & {
-                desiredRoles: ProjectRoleType[];
-              })
-            | null;
+          users: (User & { desiredRoles: ProjectRoleType[] })[];
         })[];
       };
     },
@@ -43,6 +40,7 @@ export class ProjectRoleMapper {
     return {
       id: role.id,
       roleType: role.roleType,
+      slots: role.slots,
       project: ProjectMapper.toCardResponse(role.project),
     };
   }
@@ -50,17 +48,14 @@ export class ProjectRoleMapper {
   public static toUserResponse(
     role: ProjectRole & {
       roleType: ProjectRoleType;
-      user:
-        | (User & {
-            desiredRoles: ProjectRoleType[];
-          })
-        | null;
+      users: (User & { desiredRoles: ProjectRoleType[] })[];
     },
   ): ProjectRoleWithUserResponseDto {
     return {
       id: role.id,
       roleType: role.roleType,
-      user: role.user ? UserMapper.toCardResponse(role.user) : null,
+      slots: role.slots,
+      users: role.users.map((user) => UserMapper.toCardResponse(user)),
     };
   }
 }
