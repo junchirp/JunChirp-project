@@ -203,19 +203,9 @@ export class ProjectsService {
           },
         });
 
-        const ownerRole = await prisma.projectRole.create({
-          data: {
-            roleTypeId: ownerRoleType.id,
-            projectId: project.id,
-          },
-        });
-
         await prisma.user.update({
           where: { id: userId },
           data: {
-            projectRoles: {
-              connect: { id: ownerRole.id },
-            },
             activeProjectsCount: { increment: 1 },
           },
         });

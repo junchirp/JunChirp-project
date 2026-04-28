@@ -21,11 +21,9 @@ export class ProjectParticipationMapper {
           };
           roles: (ProjectRole & {
             roleType: ProjectRoleType;
-            user:
-              | (User & {
-                  desiredRoles: ProjectRoleType[];
-                })
-              | null;
+            users: (User & {
+              desiredRoles: ProjectRoleType[];
+            })[];
           })[];
         };
       };

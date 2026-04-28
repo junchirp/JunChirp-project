@@ -44,11 +44,15 @@ export default function ProjectCardFooter({
     (req) => req.projectRole.project.id === project.id,
   );
   const vacantRoles: ProjectRoleInterface[] = project.roles
-    .filter((role) => !role.user)
-    .map((role) => ({ id: role.id, roleType: role.roleType }));
-  const isMyProject = project.roles
-    .map((role) => role.user)
-    .some((member) => member && member.id === user?.id);
+    .filter((role) => role.users.length === role.slots)
+    .map((role) => ({
+      id: role.id,
+      roleType: role.roleType,
+      slots: role.slots,
+    }));
+  const isMyProject = project.roles.some((role) =>
+    role.users.some((u) => u.id === user?.id),
+  );
 
   const assertNever = (): never => {
     throw new Error('Unexpected variant');

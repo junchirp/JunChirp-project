@@ -151,11 +151,9 @@ export class MailService {
           category: ProjectCategory;
           roles: (ProjectRole & {
             roleType: ProjectRoleType;
-            user:
-              | (User & {
-                  desiredRoles: ProjectRoleType[];
-                })
-              | null;
+            users: (User & {
+              desiredRoles: ProjectRoleType[];
+            })[];
           })[];
         };
       };

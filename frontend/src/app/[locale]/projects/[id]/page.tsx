@@ -32,8 +32,8 @@ export default function Project(): ReactElement | null {
 
   useEffect(() => {
     if (!isLoading && project && user) {
-      const isParticipant = project.roles?.some(
-        (role) => role.user?.id === user.id,
+      const isParticipant = project.roles.some((role) =>
+        role.users.some((u) => u.id === user.id),
       );
 
       if (isParticipant) {
@@ -43,7 +43,9 @@ export default function Project(): ReactElement | null {
   }, [isLoading, project, user, router, projectId]);
 
   const isParticipant =
-    project && user && project.roles?.some((r) => r.user?.id === user.id);
+    project &&
+    user &&
+    project.roles.some((role) => role.users.some((u) => u.id === user.id));
 
   if (isParticipant) {
     return null;
