@@ -42,9 +42,9 @@ export default function InviteFooter({
     useAcceptInviteMutation();
   const { showToast, isActive } = useToast();
   const project = currentInvite.projectRole.project;
-  const isMyProject = project.roles
-    .map((role) => role.user)
-    .some((member) => member && member.id === user?.id);
+  const isMyProject = project.roles.some((role) =>
+    role.users.some((u) => u.id === user?.id),
+  );
   const router = useRouter();
 
   const closeInvitePopup = (): void => setInvitePopupOpen(false);

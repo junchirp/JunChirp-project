@@ -61,8 +61,12 @@ export default function ParticipationRequestForm({
   const [createRequest, { isLoading: requestLoading }] =
     useCreateRequestMutation();
   const vacantRoles: ProjectRoleInterface[] = project.roles
-    .filter((role) => !role.user)
-    .map((role) => ({ id: role.id, roleType: role.roleType }));
+    .filter((role) => role.users.length === role.slots)
+    .map((role) => ({
+      id: role.id,
+      roleType: role.roleType,
+      slots: role.slots,
+    }));
   const roleTypeIds = user?.desiredRoles.map((role) => role.id) ?? [];
   const labelClassNames = [
     styles['participation-request-form__label'],
