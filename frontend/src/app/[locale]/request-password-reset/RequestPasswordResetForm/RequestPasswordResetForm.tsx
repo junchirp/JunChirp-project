@@ -60,7 +60,7 @@ export default function RequestPasswordResetForm(): ReactElement {
         setError(true);
       }
     } else if ('data' in result) {
-      router.replace(`/confirm-password-reset?requestId=${result.data}`);
+      router.replace(`/confirm-password-reset?requestId=${result.data.id}`);
     }
   };
 
