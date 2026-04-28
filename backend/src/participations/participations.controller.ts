@@ -49,7 +49,8 @@ export class ParticipationsController {
       'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Invalid CSRF token',
   })
   @ApiBadRequestResponse({
-    description: 'User cannot have more than 2 active projects',
+    description:
+      'User cannot have more than 2 active projects / The role has no empty slots / Invalid project/role combination',
   })
   @ApiHeader({
     name: 'x-csrf-token',
@@ -66,7 +67,7 @@ export class ParticipationsController {
   @User('discord')
   @ApiOperation({ summary: 'Create request (user)' })
   @ApiCreatedResponse({ type: ProjectParticipationResponseDto })
-  @ApiNotFoundResponse({ description: 'Role not found' })
+  @ApiNotFoundResponse({ description: 'Project role not found' })
   @ApiConflictResponse({
     description:
       'You are already in the project team / You have already been invited to this project / You have already sent a request to this project',
@@ -76,7 +77,8 @@ export class ParticipationsController {
       'Access denied: email not confirmed / Access denied: discord not confirmed / Invalid CSRF token',
   })
   @ApiBadRequestResponse({
-    description: 'User cannot have more than 2 active projects',
+    description:
+      'User cannot have more than 2 active projects / The role has no empty slots / Invalid project/role combination',
   })
   @ApiHeader({
     name: 'x-csrf-token',
@@ -97,9 +99,7 @@ export class ParticipationsController {
   @ApiOperation({ summary: 'Accept invite (user)' })
   @ApiNoContentResponse()
   @ApiNotFoundResponse({ description: 'Invite not found' })
-  @ApiConflictResponse({
-    description: 'The role is already occupied by another user',
-  })
+  @ApiConflictResponse({ description: 'The role has no empty slots' })
   @ApiForbiddenResponse({
     description:
       'Access denied: email not confirmed / Access denied: discord not confirmed / Invalid CSRF token',
@@ -149,9 +149,7 @@ export class ParticipationsController {
   @ApiOperation({ summary: 'Accept request (owner)' })
   @ApiNoContentResponse()
   @ApiNotFoundResponse({ description: 'Request not found' })
-  @ApiConflictResponse({
-    description: 'The role is already occupied by another user',
-  })
+  @ApiConflictResponse({ description: 'The role has no empty slots' })
   @ApiForbiddenResponse({
     description:
       'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Invalid CSRF token',

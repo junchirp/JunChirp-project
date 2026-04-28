@@ -31,11 +31,7 @@ export class ProjectRoleMapper {
         };
         roles: (ProjectRole & {
           roleType: ProjectRoleType;
-          user:
-            | (User & {
-                desiredRoles: ProjectRoleType[];
-              })
-            | null;
+          users: (User & { desiredRoles: ProjectRoleType[] })[];
         })[];
       };
     },
@@ -50,17 +46,14 @@ export class ProjectRoleMapper {
   public static toUserResponse(
     role: ProjectRole & {
       roleType: ProjectRoleType;
-      user:
-        | (User & {
-            desiredRoles: ProjectRoleType[];
-          })
-        | null;
+      users: (User & { desiredRoles: ProjectRoleType[] })[];
     },
   ): ProjectRoleWithUserResponseDto {
     return {
       id: role.id,
       roleType: role.roleType,
-      user: role.user ? UserMapper.toCardResponse(role.user) : null,
+      // user: role.user ? UserMapper.toCardResponse(role.user) : null,
+      users: role.users.map((user) => UserMapper.toCardResponse(user)),
     };
   }
 }

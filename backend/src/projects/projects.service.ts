@@ -87,7 +87,11 @@ export class ProjectsService {
       ...(userId && {
         roles: {
           some: {
-            userId,
+            users: {
+              some: {
+                id: userId,
+              },
+            },
           },
         },
       }),
@@ -107,7 +111,7 @@ export class ProjectsService {
           roles: {
             include: {
               roleType: true,
-              user: {
+              users: {
                 include: {
                   desiredRoles: true,
                 },
@@ -147,6 +151,9 @@ export class ProjectsService {
 
     const newProject = await this.prisma.$transaction(async (prisma) => {
       try {
+        const ownerRoleType =
+          await this.projectRolesService.findOrCreateRole('Project owner');
+
         const project = await prisma.project.create({
           data: {
             ownerId: userId,
@@ -157,11 +164,21 @@ export class ProjectsService {
             discordAdminRoleId: adminRoleId,
             discordMemberRoleId: memberRoleId,
             roles: {
-              create: createProjectDto.rolesIds.map((roleTypeId) => ({
-                roleType: {
-                  connect: { id: roleTypeId },
+              create: [
+                {
+                  roleType: {
+                    connect: { id: ownerRoleType.id },
+                  },
+                  users: {
+                    connect: { id: userId },
+                  },
                 },
-              })),
+                ...createProjectDto.rolesIds.map((roleTypeId) => ({
+                  roleType: {
+                    connect: { id: roleTypeId },
+                  },
+                })),
+              ],
             },
           },
           include: {
@@ -173,7 +190,7 @@ export class ProjectsService {
             roles: {
               include: {
                 roleType: true,
-                user: {
+                users: {
                   include: {
                     desiredRoles: true,
                   },
@@ -186,8 +203,6 @@ export class ProjectsService {
           },
         });
 
-        const ownerRoleType =
-          await this.projectRolesService.findOrCreateRole('Project owner');
         const ownerRole = await prisma.projectRole.create({
           data: {
             roleTypeId: ownerRoleType.id,
@@ -252,7 +267,7 @@ export class ProjectsService {
           roles: {
             include: {
               roleType: true,
-              user: {
+              users: {
                 include: {
                   desiredRoles: true,
                 },
@@ -304,7 +319,7 @@ export class ProjectsService {
           roles: {
             include: {
               roleType: true,
-              user: {
+              users: {
                 include: {
                   desiredRoles: true,
                 },
@@ -321,7 +336,9 @@ export class ProjectsService {
     } catch (error) {
       switch (isPrismaError(error) && error.code) {
         case 'P2003':
-          throw new BadRequestException('Project category ID not found');
+          throw new BadRequestException(
+            'Some role type IDs or category ID are invalid',
+          );
         case 'P2025':
           throw new NotFoundException('Project not found');
         default:
@@ -336,7 +353,9 @@ export class ProjectsService {
         await prisma.projectRole.deleteMany({
           where: {
             projectId: id,
-            userId: null,
+            users: {
+              none: {},
+            },
           },
         });
 
@@ -352,7 +371,7 @@ export class ProjectsService {
             roles: {
               include: {
                 roleType: true,
-                user: {
+                users: {
                   include: {
                     desiredRoles: true,
                   },
@@ -365,9 +384,9 @@ export class ProjectsService {
           },
         });
 
-        const usersIds: string[] = closedProject.roles
-          .map((role) => role.userId)
-          .filter((userId) => userId !== null);
+        const usersIds: string[] = closedProject.roles.flatMap((role) =>
+          role.users.map((user) => user.id),
+        );
 
         if (usersIds.length) {
           await prisma.user.updateMany({
@@ -399,7 +418,7 @@ export class ProjectsService {
     });
 
     if (!project) {
-      throw new NotFoundException('Project not found');
+      throw new NotFoundException('Project or user in team not found');
     }
 
     if (project.status === ProjectStatus.done) {
@@ -411,13 +430,17 @@ export class ProjectsService {
         const deletedProject = await prisma.project.delete({
           where: { id },
           include: {
-            roles: true,
+            roles: {
+              include: {
+                users: true,
+              },
+            },
           },
         });
 
-        const usersIds: string[] = deletedProject.roles
-          .map((role) => role.userId)
-          .filter((userId) => userId !== null);
+        const usersIds: string[] = deletedProject.roles.flatMap((role) =>
+          role.users.map((user) => user.id),
+        );
 
         if (usersIds.length) {
           await prisma.user.updateMany({
@@ -463,7 +486,7 @@ export class ProjectsService {
           roles: {
             include: {
               roleType: true,
-              user: {
+              users: {
                 include: {
                   desiredRoles: true,
                 },
@@ -499,7 +522,7 @@ export class ProjectsService {
           roles: {
             include: {
               roleType: true,
-              user: {
+              users: {
                 include: {
                   desiredRoles: true,
                 },

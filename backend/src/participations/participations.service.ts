@@ -47,27 +47,43 @@ export class ParticipationsService {
     }
 
     return this.prisma.$transaction(async (prisma) => {
-      const [existingParticipation, existingRequest, existingInvite] =
-        await Promise.all([
-          prisma.projectRole.findFirst({
-            where: {
-              projectId: createInviteDto.projectId,
-              userId: createInviteDto.userId,
+      const [
+        existingParticipation,
+        existingRequest,
+        existingInvite,
+        currentRole,
+      ] = await Promise.all([
+        prisma.projectRole.findFirst({
+          where: {
+            projectId: createInviteDto.projectId,
+            users: {
+              some: {
+                id: createInviteDto.userId,
+              },
             },
-          }),
-          prisma.participationRequest.findFirst({
-            where: {
-              userId: createInviteDto.userId,
-              projectRole: { projectId: createInviteDto.projectId },
-            },
-          }),
-          prisma.participationInvite.findFirst({
-            where: {
-              userId: createInviteDto.userId,
-              projectRole: { projectId: createInviteDto.projectId },
-            },
-          }),
-        ]);
+          },
+        }),
+        prisma.participationRequest.findFirst({
+          where: {
+            userId: createInviteDto.userId,
+            projectRole: { projectId: createInviteDto.projectId },
+          },
+        }),
+        prisma.participationInvite.findFirst({
+          where: {
+            userId: createInviteDto.userId,
+            projectRole: { projectId: createInviteDto.projectId },
+          },
+        }),
+        prisma.projectRole.findUnique({
+          where: {
+            id: createInviteDto.projectRoleId,
+          },
+          include: {
+            users: true,
+          },
+        }),
+      ]);
 
       if (existingParticipation) {
         throw new ConflictException('User is already in the project team');
@@ -85,11 +101,20 @@ export class ParticipationsService {
         );
       }
 
+      if (currentRole && currentRole.users.length === currentRole.slots) {
+        throw new BadRequestException('The role has no empty slots');
+      }
+
+      if (currentRole && currentRole.projectId !== createInviteDto.projectId) {
+        throw new BadRequestException('Invalid project/role combination');
+      }
+
       try {
         const invite = await prisma.participationInvite.create({
           data: {
             userId: createInviteDto.userId,
             projectRoleId: createInviteDto.projectRoleId,
+            projectId: createInviteDto.projectId,
           },
           include: {
             projectRole: {
@@ -105,7 +130,7 @@ export class ParticipationsService {
                     roles: {
                       include: {
                         roleType: true,
-                        user: {
+                        users: {
                           include: {
                             desiredRoles: true,
                           },
@@ -121,7 +146,7 @@ export class ParticipationsService {
         });
 
         await this.mailService.sendParticipationInvite(
-          `${this.configService.get<string>('BASE_FRONTEND_URL')}/project/${invite.projectRole.projectId}`,
+          `${this.configService.get<string>('BASE_FRONTEND_URL')}/project/${invite.projectId}`,
           invite,
           user,
           createInviteDto.locale,
@@ -135,7 +160,7 @@ export class ParticipationsService {
               throw new NotFoundException('User or project role not found');
             case 'P2002':
               throw new ConflictException(
-                'User has already been invited to this role',
+                'User has already been invited to this project',
               );
             default:
               throw error;
@@ -159,31 +184,47 @@ export class ParticipationsService {
     }
 
     return this.prisma.$transaction(async (prisma) => {
-      const [existingParticipation, existingInvite, existingRequest] =
-        await Promise.all([
-          prisma.projectRole.findFirst({
-            where: {
+      const [
+        existingParticipation,
+        existingInvite,
+        existingRequest,
+        currentRole,
+      ] = await Promise.all([
+        prisma.projectRole.findFirst({
+          where: {
+            projectId: createRequestDto.projectId,
+            users: {
+              some: {
+                id: userId,
+              },
+            },
+          },
+        }),
+        prisma.participationInvite.findFirst({
+          where: {
+            userId,
+            projectRole: {
               projectId: createRequestDto.projectId,
-              userId,
             },
-          }),
-          prisma.participationInvite.findFirst({
-            where: {
-              userId,
-              projectRole: {
-                projectId: createRequestDto.projectId,
-              },
+          },
+        }),
+        prisma.participationRequest.findFirst({
+          where: {
+            userId,
+            projectRole: {
+              projectId: createRequestDto.projectId,
             },
-          }),
-          prisma.participationRequest.findFirst({
-            where: {
-              userId,
-              projectRole: {
-                projectId: createRequestDto.projectId,
-              },
-            },
-          }),
-        ]);
+          },
+        }),
+        prisma.projectRole.findUnique({
+          where: {
+            id: createRequestDto.projectRoleId,
+          },
+          include: {
+            users: true,
+          },
+        }),
+      ]);
 
       if (existingParticipation) {
         throw new ConflictException('You are already in the project team');
@@ -201,11 +242,20 @@ export class ParticipationsService {
         );
       }
 
+      if (currentRole && currentRole.users.length === currentRole.slots) {
+        throw new BadRequestException('The role has no empty slots');
+      }
+
+      if (currentRole && currentRole.projectId !== createRequestDto.projectId) {
+        throw new BadRequestException('Invalid project/role combination');
+      }
+
       try {
         const request = await prisma.participationRequest.create({
           data: {
             userId,
             projectRoleId: createRequestDto.projectRoleId,
+            projectId: createRequestDto.projectId,
           },
           include: {
             projectRole: {
@@ -221,7 +271,7 @@ export class ParticipationsService {
                     roles: {
                       include: {
                         roleType: true,
-                        user: {
+                        users: {
                           include: {
                             desiredRoles: true,
                           },
@@ -250,7 +300,7 @@ export class ParticipationsService {
               throw new NotFoundException('Project role not found');
             case 'P2002':
               throw new ConflictException(
-                'You have already sent a request to this role',
+                'You have already sent a request to this project',
               );
             default:
               throw error;
@@ -273,6 +323,7 @@ export class ParticipationsService {
             projectRole: {
               include: {
                 project: true,
+                users: true,
               },
             },
             user: true,
@@ -285,16 +336,14 @@ export class ParticipationsService {
           );
         }
 
-        if (invite.projectRole.userId !== null) {
-          throw new ConflictException(
-            'The role is already occupied by another user',
-          );
+        if (invite.projectRole.users.length === invite.projectRole.slots) {
+          throw new ConflictException('The role has no empty slots');
         }
 
         await prisma.projectRole.update({
           where: { id: invite.projectRoleId },
           data: {
-            user: {
+            users: {
               connect: { id: invite.userId },
             },
           },
@@ -364,16 +413,15 @@ export class ParticipationsService {
             projectRole: {
               include: {
                 project: true,
+                users: true,
               },
             },
             user: true,
           },
         });
 
-        if (request.projectRole.userId !== null) {
-          throw new ConflictException(
-            'The role is already occupied by another user',
-          );
+        if (request.projectRole.users.length === request.projectRole.slots) {
+          throw new ConflictException('The role has no empty slots');
         }
 
         if (request.user.activeProjectsCount >= 2) {
@@ -385,7 +433,7 @@ export class ParticipationsService {
         await prisma.projectRole.update({
           where: { id: request.projectRoleId },
           data: {
-            user: {
+            users: {
               connect: { id: request.userId },
             },
           },
@@ -496,7 +544,7 @@ export class ParticipationsService {
                 roles: {
                   include: {
                     roleType: true,
-                    user: {
+                    users: {
                       include: {
                         desiredRoles: true,
                       },
@@ -544,7 +592,7 @@ export class ParticipationsService {
                 roles: {
                   include: {
                     roleType: true,
-                    user: {
+                    users: {
                       include: {
                         desiredRoles: true,
                       },
