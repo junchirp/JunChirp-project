@@ -6,6 +6,7 @@ import Up from '@/assets/icons/chevron-up.svg';
 import Down from '@/assets/icons/chevron-down.svg';
 import styles from './Dropdown.module.scss';
 import Image from 'next/image';
+import { useClickOutside } from '../../../hooks/useClickOutside';
 
 interface DropdownProps<T> extends Partial<ControllerRenderProps> {
   label?: string;
@@ -79,16 +80,14 @@ export default function Dropdown<T>(props: DropdownProps<T>): ReactElement {
     setSelectedLabel(selected ? labelFn(selected) : null);
   }, [currentValue, options]);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent): void => {
-      if (ref.current && !ref.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return (): void =>
-      document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  useClickOutside({
+    isOpen,
+    onOutside: () => setIsOpen(false),
+    isOutside: (e) => {
+      const target = e.target as Node;
+      return !!ref.current && !ref.current.contains(target);
+    },
+  });
 
   const handleSelect = (option: T): void => {
     const newValue = valueFn(option);

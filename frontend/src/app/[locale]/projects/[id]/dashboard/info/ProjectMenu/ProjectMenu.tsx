@@ -1,10 +1,11 @@
 'use client';
 
-import { ReactElement, useEffect, useRef, useState } from 'react';
+import { ReactElement, useRef, useState } from 'react';
 import styles from './ProjectMenu.module.scss';
 import Image from 'next/image';
 import Settings from '@/assets/icons/settings.svg';
 import Button from '@/shared/components/Button/Button';
+import { useClickOutside } from '@/hooks/useClickOutside';
 
 interface ProjectMenuProps {
   projectId: string;
@@ -22,28 +23,19 @@ export default function ProjectMenu({
   const toggleMenu = (): void => setIsOpen((prev) => !prev);
   const closeMenu = (): void => setIsOpen(false);
 
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent): void => {
+  useClickOutside({
+    isOpen,
+    onOutside: closeMenu,
+    isOutside: (e) => {
       const target = e.target as Node;
-
-      if (
-        menuRef.current &&
+      return (
+        !!menuRef.current &&
         !menuRef.current.contains(target) &&
-        buttonRef.current &&
+        !!buttonRef.current &&
         !buttonRef.current.contains(target)
-      ) {
-        closeMenu();
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return (): void => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isOpen]);
+      );
+    },
+  });
 
   return (
     <div className={styles['project-menu']}>
