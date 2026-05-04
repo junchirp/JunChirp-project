@@ -44,7 +44,7 @@ export default function ProjectCardFooter({
     (req) => req.projectRole.project.id === project.id,
   );
   const vacantRoles: ProjectRoleInterface[] = project.roles
-    .filter((role) => role.users.length === role.slots)
+    .filter((role) => role.users.length < role.slots)
     .map((role) => ({
       id: role.id,
       roleType: role.roleType,
@@ -104,6 +104,7 @@ export default function ProjectCardFooter({
       return (
         <ParticipationRequestForm
           project={project}
+          vacantRoles={vacantRoles}
           user={user}
           className={className}
           size={size}

@@ -83,4 +83,5 @@ export const {
   useGetProjectCardByIdQuery,
   useGetProjectByIdQuery,
   useCreateProjectMutation,
+  useUpdateProjectMutation,
 } = projectsApi;

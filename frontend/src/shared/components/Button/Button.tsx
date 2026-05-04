@@ -54,6 +54,7 @@ function ButtonComponent(
     isLoader = false,
     className,
     type = 'button',
+    ...rest
   }: ButtonProps,
   ref: ForwardedRef<HTMLButtonElement>,
 ): ReactElement {
@@ -96,6 +97,7 @@ function ButtonComponent(
 
   return (
     <button
+      {...rest}
       ref={ref}
       type={type}
       className={classNames}

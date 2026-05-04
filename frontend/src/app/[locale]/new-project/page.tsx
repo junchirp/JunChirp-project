@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
 import styles from './page.module.scss';
 import Image from 'next/image';
-import ProjectForm from '@/shared/components/ProjectForm/ProjectForm';
+import NewProjectForm from './NewProjectForm/NewProjectForm';
 import AccessGuard from '@/shared/components/AccessGuard/AccessGuard';
 import { getTranslations } from 'next-intl/server';
 
@@ -30,7 +30,7 @@ export default async function NewProject(): Promise<ReactElement> {
             height={35}
           />
         </div>
-        <ProjectForm />
+        <NewProjectForm />
       </div>
     </AccessGuard>
   );

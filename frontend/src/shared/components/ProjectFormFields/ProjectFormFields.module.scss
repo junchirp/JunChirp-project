@@ -1,28 +1,10 @@
 @use '@/assets/styles/variables';
 
-.project-form {
-  max-width: 790px;
-  width: 100%;
+.project-form-fields {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 80px;
-
-  &__fields {
-    background-color: variables.$gray-1;
-    border-radius: 32px;
-    padding: 40px;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
-  }
-
-  &__actions {
-    display: flex;
-    justify-content: center;
-    gap: 32px;
-  }
+  gap: 8px;
 
   &__checkbox {
     display: none;
@@ -53,15 +35,25 @@
     width: fit-content;
 
     &:hover {
-      & .project-form__icon {
+      .project-form-fields__icon {
         color: variables.$green-2;
       }
     }
 
     &:active {
-      & .project-form__icon {
+      .project-form-fields__icon {
         box-shadow: 0 0 0 4px variables.$green-4;
         color: variables.$green-2;
+      }
+    }
+
+    &--disabled {
+      color: variables.$gray-7;
+
+      &:active {
+        .project-form-fields__icon {
+          box-shadow: none;
+        }
       }
     }
   }

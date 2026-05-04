@@ -27,6 +27,7 @@ interface ParticipationRequestFormProps {
   project: ProjectCardInterface;
   user: AuthInterface | null;
   size: 'small' | 'large';
+  vacantRoles: ProjectRoleInterface[];
   className?: string;
 }
 
@@ -36,6 +37,7 @@ export default function ParticipationRequestForm({
   project,
   user,
   size,
+  vacantRoles,
   className,
 }: ParticipationRequestFormProps): ReactElement {
   const tForm = useTranslations('forms');
@@ -60,13 +62,6 @@ export default function ParticipationRequestForm({
   const locale = useLocale();
   const [createRequest, { isLoading: requestLoading }] =
     useCreateRequestMutation();
-  const vacantRoles: ProjectRoleInterface[] = project.roles
-    .filter((role) => role.users.length === role.slots)
-    .map((role) => ({
-      id: role.id,
-      roleType: role.roleType,
-      slots: role.slots,
-    }));
   const roleTypeIds = user?.desiredRoles.map((role) => role.id) ?? [];
   const labelClassNames = [
     styles['participation-request-form__label'],
