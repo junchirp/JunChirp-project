@@ -47,7 +47,7 @@ export default function ProjectsClient(): ReactElement {
 
   return (
     <div className={styles['projects-client']}>
-      <div className={styles.projects__banner}>
+      <div className={styles['projects-client__banner']}>
         <Image
           className={`${styles['projects-client__image']} ${styles['projects-client__image--first']}`}
           src="/images/star.svg"
