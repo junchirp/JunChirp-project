@@ -14,6 +14,7 @@ import Image from 'next/image';
 import styles from './LocaleSwitcher.module.scss';
 import Up from '@/assets/icons/chevron-up.svg';
 import Down from '@/assets/icons/chevron-down.svg';
+import { useClickOutside } from '../../../../../hooks/useClickOutside';
 
 export default function LocaleSwitcher(): ReactElement {
   const router = useRouter();
@@ -41,16 +42,14 @@ export default function LocaleSwitcher(): ReactElement {
     setSelectedLabel(selected ? labelFn(selected) : null);
   }, [currentLocale, options]);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent): void => {
-      if (ref.current && !ref.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return (): void =>
-      document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  useClickOutside({
+    isOpen,
+    onOutside: () => setIsOpen(false),
+    isOutside: (e) => {
+      const target = e.target as Node;
+      return !!ref.current && !ref.current.contains(target);
+    },
+  });
 
   const onSelectChange = (nextLocale: Locale): void => {
     setLocale(nextLocale);

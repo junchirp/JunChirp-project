@@ -1,6 +1,7 @@
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
+import { ProjectInterface } from '../interfaces/project.interface';
 
 export type ModeType =
   | 'no-auth'
@@ -13,6 +14,7 @@ export interface AccessContextInterface {
   user: AuthInterface | null;
   url: string;
   projectId?: string;
+  data?: ProjectInterface;
   error?: FetchBaseQueryError | SerializedError;
 }
 

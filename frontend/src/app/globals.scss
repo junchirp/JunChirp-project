@@ -104,6 +104,10 @@ select {
     font-weight: 700;
     justify-content: center;
   }
+
+  &.p-tabmenu .p-tabmenu-nav .p-tabmenuitem.p-highlight.p-disabled {
+    opacity: 1;
+  }
 }
 
 .p-toast {

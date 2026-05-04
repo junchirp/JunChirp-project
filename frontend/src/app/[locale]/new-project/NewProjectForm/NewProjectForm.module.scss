@@ -1,0 +1,19 @@
+@use '@/assets/styles/variables';
+
+.new-project-form {
+  background-color: variables.$gray-1;
+  border-radius: 32px;
+  padding: 40px;
+  max-width: 790px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 80px;
+
+  &__actions {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+  }
+}

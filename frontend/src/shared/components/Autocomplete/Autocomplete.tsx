@@ -14,6 +14,7 @@ import {
 import Input from '@/shared/components/Input/Input';
 import styles from './Autocomplete.module.scss';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
+import { useClickOutside } from '../../../hooks/useClickOutside';
 
 interface AutocompleteProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -115,19 +116,14 @@ function AutocompleteComponent(
     };
   }, [debouncedValue, isOpen, minLength]);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent): void => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(event.target as Node)
-      ) {
-        setIsOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return (): void =>
-      document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  useClickOutside({
+    isOpen,
+    onOutside: () => setIsOpen(false),
+    isOutside: (e) => {
+      const target = e.target as Node;
+      return !!containerRef.current && !containerRef.current.contains(target);
+    },
+  });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const val = e.target.value;

@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactElement, useEffect, useRef, useState } from 'react';
+import { ReactElement, useRef, useState } from 'react';
 import styles from './BurgerMenu.module.scss';
 import Menu from '@/assets/icons/menu.svg';
 import X from '@/assets/icons/x.svg';
@@ -11,6 +11,7 @@ import { useTranslations } from 'next-intl';
 import { useSelector } from 'react-redux';
 import authSelector from '@/redux/auth/authSelector';
 import DiscordBanner from '@/shared/components/DiscordBanner/DiscordBanner';
+import { useClickOutside } from '../../../../../hooks/useClickOutside';
 
 export default function BurgerMenu(): ReactElement {
   const router = useRouter();
@@ -37,28 +38,19 @@ export default function BurgerMenu(): ReactElement {
     window.open('https://discord.gg/x2rdtS2Vbz', '_blank');
   };
 
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent): void => {
+  useClickOutside({
+    isOpen,
+    onOutside: closeMenu,
+    isOutside: (e) => {
       const target = e.target as Node;
-
-      if (
-        menuRef.current &&
+      return (
+        !!menuRef.current &&
         !menuRef.current.contains(target) &&
-        buttonRef.current &&
+        !!buttonRef.current &&
         !buttonRef.current.contains(target)
-      ) {
-        closeMenu();
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return (): void => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isOpen]);
+      );
+    },
+  });
 
   const handleRedirect = (path: string): void => {
     router.push(path);

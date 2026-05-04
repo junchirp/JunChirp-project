@@ -9,6 +9,7 @@ import authSelector from '@/redux/auth/authSelector';
 import { SerializedError } from '@reduxjs/toolkit';
 import { ModeType } from '@/shared/access/access-control.type';
 import { ACCESS_RESOLVERS } from '@/shared/access/access-control.config';
+import { ProjectInterface } from '../../interfaces/project.interface';
 
 type AccessGuardProps =
   | {
@@ -22,7 +23,7 @@ type AccessGuardProps =
       mode: 'member';
       checkDataAccess: () =>
         | {
-            data?: unknown;
+            data?: ProjectInterface;
             error?: FetchBaseQueryError | SerializedError;
             isLoading?: boolean;
           }
@@ -56,6 +57,7 @@ export default function AccessGuard({
         user,
         url: fullUrl,
         projectId: params?.id,
+        data: access?.data,
         error: access?.error,
       })
     : null;

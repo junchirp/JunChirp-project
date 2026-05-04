@@ -305,8 +305,10 @@
         "description": "Briefly describe the idea, goal, and value of the project",
         "category": "Please select a project category"
       },
-      "success": "Project successfully created.",
-      "error": "Maximum number of active projects reached (2)."
+      "createSuccess": "Project successfully created.",
+      "createError": "Maximum number of active projects reached (2).",
+      "updateSuccess": "Project info updated.",
+      "updateError": "Failed to save changes."
     }
   },
   "page404": {
@@ -640,5 +642,19 @@
   "cancelCreateProjectPopup": {
     "title": "Cancel project creation?",
     "description": "Are you sure you want to cancel project creation? This action cannot be undone."
+  },
+  "dashboardMenu": {
+    "info": "Overview",
+    "docs": "Documentation",
+    "members": "Team",
+    "boards": "Task Board",
+    "chat": "Chat"
+  },
+  "projectMenu": {
+    "edit": "Edit project",
+    "ownership": "Transfer ownership",
+    "complete": "Complete project",
+    "delete": "Delete project",
+    "exit": "Leave project"
   }
 }

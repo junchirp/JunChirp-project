@@ -8,6 +8,7 @@ import styles from './MultiSelect.module.scss';
 import CheckboxChecked from '@/assets/icons/checkbox-checked.svg';
 import Checkbox from '@/assets/icons/checkbox-empty.svg';
 import Image from 'next/image';
+import { useClickOutside } from '../../../hooks/useClickOutside';
 
 interface MultiSelectProps<T> extends Partial<ControllerRenderProps> {
   label?: string;
@@ -73,16 +74,14 @@ export default function MultiSelect<T>(
     }
   }, [autoFocus]);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent): void => {
-      if (ref.current && !ref.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return (): void =>
-      document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  useClickOutside({
+    isOpen,
+    onOutside: () => setIsOpen(false),
+    isOutside: (e) => {
+      const target = e.target as Node;
+      return !!ref.current && !ref.current.contains(target);
+    },
+  });
 
   const toggleSelect = (option: T): void => {
     const optionValue = valueFn(option);

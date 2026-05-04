@@ -23,7 +23,7 @@ export default function CancelPasswordPopup(
     <Dialog isOpen={isOpen} onClose={onCancel}>
       <DialogHeader title={t('title')} />
       <DialogFooter>
-        <Button color="red" variant="secondary-frame" onClick={onCancel}>
+        <Button color="green" variant="secondary-frame" onClick={onCancel}>
           {t('noBtn')}
         </Button>
         <Button color="green" onClick={onConfirm}>
