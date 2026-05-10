@@ -83,7 +83,7 @@ model Project {
   status              ProjectStatus   @default(active)
   createdAt           DateTime        @default(now()) @map("created_at")
   finishedAt          DateTime?       @map("finished_at")
-  logoUrl             String?         @map("logo_url")
+  logo                ProjectLogo?
   participantsCount   Int             @default(1) @map("participiants_count")
   ownerId             String          @map("owner_id")
   categoryId          String          @map("category_id")
@@ -106,6 +106,17 @@ model Project {
   @@index([categoryId])
   @@index([participantsCount])
   @@map("projects")
+}
+
+model ProjectLogo {
+  id        String  @id @default(dbgenerated("gen_random_uuid()"))
+  url       String
+  width     Int
+  height    Int
+  projectId String  @unique @map("project_id")
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("project_logos")
 }
 
 model Document {

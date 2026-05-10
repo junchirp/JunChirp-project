@@ -4,7 +4,7 @@ import { CreateEducationInterface } from '@/shared/interfaces/create-education.i
 
 export const educationsApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({
-    getEducations: builder.query<EducationInterface[], undefined>({
+    getEducations: builder.query<EducationInterface[], void>({
       query: () => ({
         url: 'educations',
       }),

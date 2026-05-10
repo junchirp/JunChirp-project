@@ -4,6 +4,7 @@ import { ProjectsListInterface } from '@/shared/interfaces/projects-list.interfa
 import { ProjectsFiltersInterface } from '@/shared/interfaces/projects-filters.interface';
 import { ProjectInterface } from '@/shared/interfaces/project.interface';
 import { CreateProjectInterface } from '@/shared/interfaces/create-project.interface';
+import { ProjectLogoInterface } from '@/shared/interfaces/project-logo.interface';
 
 export const projectsApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -26,7 +27,7 @@ export const projectsApi = mainApi.injectEndpoints({
         providesTags: [{ type: 'projects', id: 'LIST' }],
       },
     ),
-    getCategories: builder.query<ProjectCategoryInterface[], undefined>({
+    getCategories: builder.query<ProjectCategoryInterface[], void>({
       query: () => {
         return {
           url: '/projects/categories',
@@ -40,7 +41,7 @@ export const projectsApi = mainApi.injectEndpoints({
           url: `/projects/${id}/card`,
         };
       },
-      providesTags: (result, error, id) => [{ type: 'projects', id }],
+      providesTags: (_result, _error, id) => [{ type: 'projects', id }],
     }),
     getProjectById: builder.query<ProjectInterface, string>({
       query: (id) => {
@@ -48,7 +49,7 @@ export const projectsApi = mainApi.injectEndpoints({
           url: `/projects/${id}`,
         };
       },
-      providesTags: (result, error, id) => [{ type: 'projects', id }],
+      providesTags: (_result, _error, id) => [{ type: 'projects', id }],
     }),
     createProject: builder.mutation<ProjectInterface, CreateProjectInterface>({
       query: (data) => ({
@@ -67,7 +68,39 @@ export const projectsApi = mainApi.injectEndpoints({
         method: 'PUT',
         body: data,
       }),
-      invalidatesTags: (result, error, { id }) => [
+      invalidatesTags: (_result, _error, { id }) => [
+        { type: 'projects', id: 'LIST' },
+        { type: 'projects', id },
+        'my-projects',
+      ],
+    }),
+    updateProjectLogo: builder.mutation<
+      ProjectLogoInterface,
+      { id: string; file: File }
+    >({
+      query: ({ id, file }) => {
+        const formData = new FormData();
+
+        formData.append('file', file);
+
+        return {
+          url: `/projects/${id}/logo`,
+          method: 'PUT',
+          body: formData,
+        };
+      },
+      invalidatesTags: (_result, _error, { id }) => [
+        { type: 'projects', id: 'LIST' },
+        { type: 'projects', id },
+        'my-projects',
+      ],
+    }),
+    deleteProjectLogo: builder.mutation<void, { id: string }>({
+      query: ({ id }) => ({
+        url: `projects/${id}/logo`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: (_result, _error, { id }) => [
         { type: 'projects', id: 'LIST' },
         { type: 'projects', id },
         'my-projects',
@@ -84,4 +117,6 @@ export const {
   useGetProjectByIdQuery,
   useCreateProjectMutation,
   useUpdateProjectMutation,
+  useUpdateProjectLogoMutation,
+  useDeleteProjectLogoMutation,
 } = projectsApi;

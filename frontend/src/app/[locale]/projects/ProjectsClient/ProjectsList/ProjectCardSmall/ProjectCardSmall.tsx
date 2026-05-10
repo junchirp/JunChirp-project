@@ -41,16 +41,16 @@ export default function ProjectCardSmall({
           <div
             className={`
               ${styles['project-card-small__image-wrapper']} 
-              ${!project.logoUrl ? styles['project-card-small__image-wrapper--empty'] : ''}
+              ${!project.logo ? styles['project-card-small__image-wrapper--empty'] : ''}
             `}
           >
-            {project.logoUrl ? (
+            {project.logo ? (
               <Image
                 className={styles['project-card-small__image']}
-                src={project.logoUrl}
+                src={project.logo.url}
                 alt="logo"
-                width={180}
-                height={0}
+                width={project.logo.width}
+                height={project.logo.height}
               />
             ) : (
               <Image

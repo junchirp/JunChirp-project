@@ -21,7 +21,9 @@
     "enterAnotherEmail": "Ввести інший e-mail",
     "changeEmail": "Змінити e-mail",
     "send": "Відправити",
-    "confirm": "Підтвердити"
+    "confirm": "Підтвердити",
+    "edit": "Редагувати",
+    "add": "Додати"
   },
   "discord": {
     "profile": "Підключи Discord, щоб мати змогу приєднуватися до проєктів та отримати доступ до проєктних чатів.",
@@ -656,5 +658,25 @@
     "complete": "Завершити проєкт",
     "delete": "Видалити проєкт",
     "exit": "Вийти з проєкту"
+  },
+  "projectImage": {
+    "label": "Зображення проєкту",
+    "description": "Завантажити обкладинку проєкту",
+    "rules": [
+      "1. Максимальний розмір 5 МБ.",
+      "2. Формати: PNG, JPEG, WEBP."
+    ],
+    "fileTypeError": "Непідтримуваний формат.",
+    "fileTypeErrorDetails": "Дозволені: JPEG, PNG, WEBP.",
+    "fileSizeError": "Перевищено розмір файлу.",
+    "fileSizeErrorDetails": "Максимальний розмір 5 МБ.",
+    "imageUpdateSuccess": "Зображення оновлено.",
+    "imageUpdateError": "Не вдалося оновити зображення.",
+    "imageDeleteSuccess": "Зображення видалено.",
+    "imageDeleteError": "Не вдалося видалити зображення."
+  },
+  "deleteProjectLogoPopup": {
+    "title": "Видалити зображення проєкту",
+    "description": "Ти дійсно хочеш видалити зображення?"
   }
 }

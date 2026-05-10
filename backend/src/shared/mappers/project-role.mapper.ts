@@ -2,6 +2,7 @@ import {
   Project,
   ProjectCategory,
   ProjectCategoryTranslation,
+  ProjectLogo,
   ProjectRole,
   ProjectRoleType,
   User,
@@ -27,6 +28,7 @@ export class ProjectRoleMapper {
     role: ProjectRole & {
       roleType: ProjectRoleType;
       project: Project & {
+        logo: ProjectLogo | null;
         category: ProjectCategory & {
           translations: ProjectCategoryTranslation[];
         };

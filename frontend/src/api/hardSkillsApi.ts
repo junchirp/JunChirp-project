@@ -4,7 +4,7 @@ import { CreateHardSkillInterface } from '@/shared/interfaces/create-hard-skill.
 
 export const hardSkillsApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({
-    getHardSkills: builder.query<HardSkillInterface[], undefined>({
+    getHardSkills: builder.query<HardSkillInterface[], void>({
       query: () => ({
         url: 'hard-skills',
       }),

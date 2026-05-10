@@ -7,16 +7,19 @@ import {
   ProjectRoleType,
   User,
   ProjectCategoryTranslation,
+  ProjectLogo,
 } from '@prisma/client';
 import { ProjectResponseDto } from '../../projects/dto/project.response-dto';
 import { ProjectRoleMapper } from './project-role.mapper';
 import { ProjectCardResponseDto } from '../../projects/dto/project-card.response-dto';
 import { BoardMapper } from './board.mapper';
 import { ProjectCategoryMapper } from './project-category.mapper';
+import { ProjectLogoMapper } from './project-logo.mapper';
 
 export class ProjectMapper {
   public static toCardResponse(
     project: Project & {
+      logo: ProjectLogo | null;
       category: ProjectCategory & {
         translations: ProjectCategoryTranslation[];
       };
@@ -41,7 +44,7 @@ export class ProjectMapper {
           )
         : null,
       category: ProjectCategoryMapper.toResponse(project.category),
-      logoUrl: project.logoUrl,
+      logo: project.logo ? ProjectLogoMapper.toResponse(project.logo) : null,
       publicUrl: project.publicUrl,
       roles: project.roles.map((role) =>
         ProjectRoleMapper.toUserResponse(role),
@@ -51,6 +54,7 @@ export class ProjectMapper {
 
   public static toFullResponse(
     project: Project & {
+      logo: ProjectLogo | null;
       category: ProjectCategory & {
         translations: ProjectCategoryTranslation[];
       };
@@ -78,7 +82,7 @@ export class ProjectMapper {
         : null,
       category: ProjectCategoryMapper.toResponse(project.category),
       discordUrl: project.discordUrl,
-      logoUrl: project.logoUrl,
+      logo: project.logo ? ProjectLogoMapper.toResponse(project.logo) : null,
       publicUrl: project.publicUrl,
       documents: project.documents,
       roles: project.roles.map((role) =>

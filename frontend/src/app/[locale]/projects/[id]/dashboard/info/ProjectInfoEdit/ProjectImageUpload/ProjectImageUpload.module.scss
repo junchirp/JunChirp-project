@@ -54,5 +54,22 @@
     line-height: 1.2;
     color: variables.$gray-6;
   }
+
+  &__image-wrapper {
+    width: 298px;
+    border-radius: 8px;
+  }
+
+  &__image {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+
+  &__actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
 }
 

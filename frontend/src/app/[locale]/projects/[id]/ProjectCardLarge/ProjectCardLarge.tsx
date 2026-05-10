@@ -36,16 +36,16 @@ export default function ProjectCardLarge({
       <div
         className={`
               ${styles['project-card-large__image-wrapper']} 
-              ${!project.logoUrl ? styles['project-card-large__image-wrapper--empty'] : ''}
+              ${!project.logo ? styles['project-card-large__image-wrapper--empty'] : ''}
             `}
       >
-        {project.logoUrl ? (
+        {project.logo ? (
           <Image
             className={styles['project-card-large__image']}
-            src={project.logoUrl}
+            src={project.logo.url}
             alt="logo"
-            width={236}
-            height={0}
+            width={project.logo.width}
+            height={project.logo.height}
           />
         ) : (
           <Image

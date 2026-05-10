@@ -4,17 +4,27 @@ import {
   Injectable,
   PipeTransform,
 } from '@nestjs/common';
-import { validate as uuidValidate, version as uuidVersion } from 'uuid';
+
+const UUID_V4_REGEX =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 @Injectable()
 export class ParseUUIDv4Pipe implements PipeTransform {
-  public transform(value: string, metadata: ArgumentMetadata): string {
-    if (!uuidValidate(value) || uuidVersion(value) !== 4) {
+  public transform(value: unknown, metadata: ArgumentMetadata): string {
+    if (typeof value !== 'string') {
       throw new BadRequestException(
-        `${metadata.data} - Must be a string in UUIDv4 format`,
+        `${metadata.data} - Must be a string`,
         'Validation Error',
       );
     }
+
+    if (!UUID_V4_REGEX.test(value)) {
+      throw new BadRequestException(
+        `${metadata.data} - Must be a valid UUIDv4`,
+        'Validation Error',
+      );
+    }
+
     return value;
   }
 }

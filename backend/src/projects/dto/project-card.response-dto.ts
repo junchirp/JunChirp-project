@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { ProjectStatus } from '@prisma/client';
 import { ProjectCategoryResponseDto } from './project-category.response-dto';
 import { ProjectRoleResponseDto } from '../../project-roles/dto/project-role.response-dto';
+import { ProjectLogoResponseDto } from './project-logo.response-dto';
 
 export class ProjectCardResponseDto {
   @ApiProperty({
@@ -43,12 +44,8 @@ export class ProjectCardResponseDto {
   })
   public readonly ownerId: string;
 
-  @ApiProperty({
-    example: 'logo-url',
-    description: 'Project logo url',
-    type: String,
-  })
-  public readonly logoUrl: string | null;
+  @ApiProperty({ type: () => ProjectLogoResponseDto })
+  public readonly logo: ProjectLogoResponseDto | null;
 
   @ApiProperty({
     example: 'www.project-public-url.com',

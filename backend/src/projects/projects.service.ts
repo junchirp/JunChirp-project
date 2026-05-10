@@ -23,6 +23,9 @@ import { UsersService } from '../users/users.service';
 import { ProjectCardResponseDto } from './dto/project-card.response-dto';
 import { ProjectCategoryMapper } from '../shared/mappers/project-category.mapper';
 import { isPrismaError } from '../shared/utils/is-prisma-error';
+import imageSize from 'image-size';
+import { ProjectLogoResponseDto } from './dto/project-logo.response-dto';
+import { ProjectLogoMapper } from '../shared/mappers/project-logo.mapper';
 
 interface GetProjectsOptionsInterface {
   userId: string;
@@ -103,6 +106,7 @@ export class ProjectsService {
         skip,
         take: limit,
         include: {
+          logo: true,
           category: {
             include: {
               translations: true,
@@ -182,6 +186,7 @@ export class ProjectsService {
             },
           },
           include: {
+            logo: true,
             category: {
               include: {
                 translations: true,
@@ -249,6 +254,7 @@ export class ProjectsService {
       const project = await this.prisma.project.findUniqueOrThrow({
         where: { id },
         include: {
+          logo: true,
           category: {
             include: {
               translations: true,
@@ -301,6 +307,7 @@ export class ProjectsService {
           },
         },
         include: {
+          logo: true,
           category: {
             include: {
               translations: true,
@@ -353,6 +360,7 @@ export class ProjectsService {
           where: { id },
           data: { status: 'done', finishedAt: new Date() },
           include: {
+            logo: true,
             category: {
               include: {
                 translations: true,
@@ -461,78 +469,63 @@ export class ProjectsService {
   public async updateProjectLogo(
     id: string,
     file: Express.Multer.File,
-  ): Promise<ProjectResponseDto> {
-    try {
-      const logoUrl = await this.cloudinaryService.uploadProjectLogo(file, id);
-      const updatedProject = await this.prisma.project.update({
-        where: { id },
-        data: { logoUrl },
-        include: {
-          category: {
-            include: {
-              translations: true,
-            },
-          },
-          roles: {
-            include: {
-              roleType: true,
-              users: {
-                include: {
-                  desiredRoles: true,
-                },
-              },
-            },
-          },
-          documents: true,
-          owner: true,
-          boards: true,
-        },
-      });
+  ): Promise<ProjectLogoResponseDto> {
+    const project = await this.prisma.project.findUnique({
+      where: { id },
+    });
 
-      return ProjectMapper.toFullResponse(updatedProject);
-    } catch (error) {
-      if (isPrismaError(error) && error.code === 'P2025') {
-        throw new NotFoundException('Project not found');
-      }
-      throw error;
+    if (!project) {
+      throw new NotFoundException('Project not found');
     }
+
+    const dimensions = imageSize(file.buffer);
+
+    if (!dimensions?.width || !dimensions?.height) {
+      throw new BadRequestException('Invalid image file');
+    }
+
+    const { width, height } = dimensions;
+    const logoUrl = await this.cloudinaryService.uploadProjectLogo(file, id);
+
+    const logo = await this.prisma.projectLogo.upsert({
+      where: {
+        projectId: id,
+      },
+      update: {
+        url: logoUrl,
+        width,
+        height,
+      },
+      create: {
+        projectId: id,
+        url: logoUrl,
+        width,
+        height,
+      },
+    });
+
+    return ProjectLogoMapper.toResponse(logo);
   }
 
-  public async deleteProjectLogo(id: string): Promise<ProjectResponseDto> {
-    try {
-      const updatedProject = await this.prisma.project.update({
-        where: { id },
-        data: { logoUrl: null },
-        include: {
-          category: {
-            include: {
-              translations: true,
-            },
-          },
-          roles: {
-            include: {
-              roleType: true,
-              users: {
-                include: {
-                  desiredRoles: true,
-                },
-              },
-            },
-          },
-          documents: true,
-          owner: true,
-          boards: true,
-        },
-      });
+  public async deleteProjectLogo(id: string): Promise<void> {
+    const project = await this.prisma.project.findUnique({
+      where: { id },
+    });
 
+    if (!project) {
+      throw new NotFoundException('Project not found');
+    }
+
+    const projectLogo = await this.prisma.projectLogo.findUnique({
+      where: { projectId: id },
+    });
+
+    if (projectLogo) {
       await this.cloudinaryService.deleteProjectLogo(id);
 
-      return ProjectMapper.toFullResponse(updatedProject);
-    } catch (error) {
-      if (isPrismaError(error) && error.code === 'P2025') {
-        throw new NotFoundException('Project not found');
-      }
-      throw error;
+      await this.prisma.projectLogo.delete({
+        where: { projectId: id },
+      });
     }
   }
 

@@ -20,6 +20,7 @@ export default function ProjectInfoView({
   isOwner,
 }: ProjectInfoViewProps): ReactElement {
   const tProjectsPage = useTranslations('projectsPage');
+  const tStatus = useTranslations('status');
   const locale = useLocale();
 
   return (
@@ -29,16 +30,16 @@ export default function ProjectInfoView({
           <div
             className={`
               ${styles['project-info-view__image-wrapper']} 
-              ${!project.logoUrl ? styles['project-info-view__image-wrapper--empty'] : ''}
+              ${!project.logo ? styles['project-info-view__image-wrapper--empty'] : ''}
             `}
           >
-            {project.logoUrl ? (
+            {project.logo ? (
               <Image
                 className={styles['project-info-view__image']}
-                src={project.logoUrl}
+                src={project.logo.url}
                 alt="logo"
-                width={276}
-                height={0}
+                width={project.logo.width}
+                height={project.logo.height}
               />
             ) : (
               <Image
@@ -54,11 +55,13 @@ export default function ProjectInfoView({
               <div className={styles['project-info-view__status-wrapper']}>
                 <p
                   className={`
-                    ${styles['project-info-view__status']}
-                    ${project.status === 'active' ? styles['project-info-view__status--active'] : styles['project-info-view__status--done']}
-                `}
+                ${styles['project-info-view__status']} 
+                ${project.status === 'active' ? styles['project-info-view__status--active'] : styles['project-info-view__status--done']}
+              `}
                 >
-                  {project.status === 'active' ? 'Активний' : 'Завершений'}
+                  {project.status === 'active'
+                    ? tStatus('active')
+                    : tStatus('completed')}
                 </p>
                 {project.status === 'active' && (
                   <ProjectMenu projectId={project.id} isOwner={isOwner} />
