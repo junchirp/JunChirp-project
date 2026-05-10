@@ -17,17 +17,17 @@ export default function Info(): ReactElement | null {
   const isEdit = searchParams.get('mode') === 'edit';
   const router = useRouter();
 
+  const isOwner = !!project && !!user && project.ownerId === user.id;
+
+  useEffect(() => {
+    if (project && user && isEdit && !isOwner) {
+      router.replace(`/projects/${id}/dashboard/info`);
+    }
+  }, [project, user, isEdit, router, isOwner, id]);
+
   if (!project || !user) {
     return null;
   }
-
-  const isOwner = project.ownerId === user.id;
-
-  useEffect(() => {
-    if (isEdit && !isOwner) {
-      router.replace(`/projects/${id}/dashboard/info`);
-    }
-  }, [isEdit, router, isOwner, id]);
 
   return (
     <>

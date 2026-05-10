@@ -4,7 +4,7 @@ import { CreateSoftSkillInterface } from '@/shared/interfaces/create-soft-skill.
 
 export const softSkillsApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({
-    getSoftSkills: builder.query<SoftSkillInterface[], undefined>({
+    getSoftSkills: builder.query<SoftSkillInterface[], void>({
       query: () => ({
         url: 'soft-skills',
       }),

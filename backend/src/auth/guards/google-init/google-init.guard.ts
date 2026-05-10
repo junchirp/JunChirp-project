@@ -1,6 +1,6 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { v4 as uuidV4 } from 'uuid';
+import { randomUUID } from 'crypto';
 import { RedisService } from '../../../redis/redis.service';
 
 @Injectable()
@@ -15,7 +15,7 @@ export class GoogleInitGuard extends AuthGuard('google') {
   public async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
 
-    const state = uuidV4();
+    const state = randomUUID();
     const returnUrl = request.query.returnUrl ?? '/';
     const locale = request.query.locale ?? 'ua';
 

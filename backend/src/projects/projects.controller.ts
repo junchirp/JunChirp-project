@@ -46,6 +46,7 @@ import { UserParticipationResponseDto } from '../participations/dto/user-partici
 import { User } from '../auth/decorators/user.decorator';
 import { ProjectCardResponseDto } from './dto/project-card.response-dto';
 import { UUIDParam } from '../shared/decorators/UUID-param.decorator';
+import { ProjectLogoResponseDto } from './dto/project-logo.response-dto';
 
 @User()
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
@@ -169,8 +170,9 @@ export class ProjectsController {
 
   @Owner()
   @ApiOperation({ summary: 'Update project logo' })
-  @ApiOkResponse({ type: ProjectResponseDto })
+  @ApiOkResponse({ type: ProjectLogoResponseDto })
   @ApiNotFoundResponse({ description: 'Project not found' })
+  @ApiBadRequestResponse({ description: 'Invalid image file' })
   @UseInterceptors(FileInterceptor('file'))
   @ApiConsumes('multipart/form-data')
   @ApiForbiddenResponse({
@@ -197,13 +199,13 @@ export class ProjectsController {
   public async updateProjectLogo(
     @UUIDParam('id') id: string,
     @UploadedFile(ParseImageFilePipe) file: Express.Multer.File,
-  ): Promise<ProjectResponseDto> {
+  ): Promise<ProjectLogoResponseDto> {
     return this.projectsService.updateProjectLogo(id, file);
   }
 
   @Owner()
   @ApiOperation({ summary: 'Delete project logo' })
-  @ApiOkResponse({ type: ProjectResponseDto })
+  @ApiNoContentResponse()
   @ApiNotFoundResponse({ description: 'Project not found' })
   @ApiForbiddenResponse({
     description:
@@ -214,10 +216,9 @@ export class ProjectsController {
     description: 'CSRF token for the request',
     required: true,
   })
+  @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id/logo')
-  public async deleteProjectLogo(
-    @UUIDParam('id') id: string,
-  ): Promise<ProjectResponseDto> {
+  public async deleteProjectLogo(@UUIDParam('id') id: string): Promise<void> {
     return this.projectsService.deleteProjectLogo(id);
   }
 

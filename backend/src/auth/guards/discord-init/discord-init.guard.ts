@@ -1,6 +1,6 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { v4 as uuidV4 } from 'uuid';
+import { randomUUID } from 'crypto';
 import { RedisService } from '../../../redis/redis.service';
 
 @Injectable()
@@ -13,7 +13,7 @@ export class DiscordInitGuard extends AuthGuard('discord') {
     const request = context.switchToHttp().getRequest();
 
     const user = request.user;
-    const state = uuidV4();
+    const state = randomUUID();
     const returnUrl = request.query.returnUrl ?? '/';
     const locale = request.query.locale ?? 'ua';
 

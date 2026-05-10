@@ -78,7 +78,7 @@ export default function Dropdown<T>(props: DropdownProps<T>): ReactElement {
     const selected = options.find((opt) => valueFn(opt) === currentValue);
 
     setSelectedLabel(selected ? labelFn(selected) : null);
-  }, [currentValue, options]);
+  }, [currentValue, options, labelFn, valueFn]);
 
   useClickOutside({
     isOpen,

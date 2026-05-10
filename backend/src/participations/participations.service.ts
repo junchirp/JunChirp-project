@@ -122,6 +122,7 @@ export class ParticipationsService {
                 roleType: true,
                 project: {
                   include: {
+                    logo: true,
                     category: {
                       include: {
                         translations: true,
@@ -263,6 +264,7 @@ export class ParticipationsService {
                 roleType: true,
                 project: {
                   include: {
+                    logo: true,
                     category: {
                       include: {
                         translations: true,
@@ -536,6 +538,7 @@ export class ParticipationsService {
             roleType: true,
             project: {
               include: {
+                logo: true,
                 category: {
                   include: {
                     translations: true,
@@ -584,6 +587,7 @@ export class ParticipationsService {
             roleType: true,
             project: {
               include: {
+                logo: true,
                 category: {
                   include: {
                     translations: true,

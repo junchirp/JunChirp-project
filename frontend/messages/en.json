@@ -21,7 +21,9 @@
     "enterAnotherEmail": "Enter another email",
     "changeEmail": "Change email",
     "send": "Send",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "edit": "Edit",
+    "add": "Add"
   },
   "discord": {
     "profile": "Connect Discord to join projects and gain access to project chats.",
@@ -656,5 +658,25 @@
     "complete": "Complete project",
     "delete": "Delete project",
     "exit": "Leave project"
+  },
+  "projectImage": {
+    "label": "Project image",
+    "description": "Upload project cover",
+    "rules": [
+      "1. Max size 5MB.",
+      "2. Formats: PNG, JPEG, WEBP."
+    ],
+    "fileTypeError": "Unsupported image format.",
+    "fileTypeErrorDetails": "Allowed: JPEG, PNG, WEBP.",
+    "fileSizeError": "File size exceeded.",
+    "fileSizeErrorDetails": "Maximum size 5 MB.",
+    "imageUpdateSuccess": "Image updated.",
+    "imageUpdateError": "Failed to update image.",
+    "imageDeleteSuccess": "Image deleted.",
+    "imageDeleteError": "Failed to delete image."
+  },
+  "deleteProjectLogoPopup": {
+    "title": "Delete project image",
+    "description": "Do you really want to delete the image?"
   }
 }

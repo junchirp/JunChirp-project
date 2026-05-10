@@ -4,7 +4,7 @@ import { CreateSocialInterface } from '@/shared/interfaces/create-social.interfa
 
 export const socialsApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({
-    getSocials: builder.query<SocialInterface[], undefined>({
+    getSocials: builder.query<SocialInterface[], void>({
       query: () => ({
         url: 'socials',
       }),

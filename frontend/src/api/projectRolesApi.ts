@@ -3,7 +3,7 @@ import { ProjectRoleTypeInterface } from '@/shared/interfaces/project-role-type.
 
 export const projectRolesApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({
-    getProjectRolesList: builder.query<ProjectRoleTypeInterface[], undefined>({
+    getProjectRolesList: builder.query<ProjectRoleTypeInterface[], void>({
       query: () => ({
         url: 'project-roles/list',
       }),

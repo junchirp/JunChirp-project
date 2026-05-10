@@ -24,4 +24,5 @@ export enum ToastKeysEnum {
   SAVE_CHANGES = 'save changes',
   USERS = 'users',
   COPY = 'copy',
+  UPLOAD_IMAGE = 'upload image',
 }

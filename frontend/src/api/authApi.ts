@@ -58,7 +58,7 @@ export const authApi = mainApi.injectEndpoints({
         }
       },
     }),
-    logout: builder.mutation<MessageInterface, undefined>({
+    logout: builder.mutation<MessageInterface, void>({
       query: () => ({
         url: 'auth/logout',
         method: 'POST',
@@ -142,7 +142,7 @@ export const authApi = mainApi.injectEndpoints({
         url: `users/password-reset-token?requestId=${id}`,
       }),
     }),
-    getProjectsCount: builder.query<{ count: number }, undefined>({
+    getProjectsCount: builder.query<{ count: number }, void>({
       query: () => ({
         url: 'users/me/active-projects-count',
       }),

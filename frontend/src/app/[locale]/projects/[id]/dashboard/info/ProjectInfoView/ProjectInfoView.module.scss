@@ -21,6 +21,7 @@
   }
 
   &__image {
+    width: 100%;
     height: auto;
     border-radius: 32px;
   }
@@ -70,7 +71,8 @@
     padding: 40px;
     background-color: variables.$gray-1;
     border-radius: 32px;
-    width: 100%;
+    flex: 1;
+    min-width: 0;
   }
 
   &__description {
