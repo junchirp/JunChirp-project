@@ -94,8 +94,8 @@ export class TaskStatusesService {
   }
 
   public async deleteTaskStatus(id: string): Promise<void> {
-    await this.prisma.$transaction(async (prisma) => {
-      try {
+    try {
+      await this.prisma.$transaction(async (prisma) => {
         const deletedColumn = await prisma.taskStatus.delete({
           where: { id },
           select: {
@@ -107,24 +107,29 @@ export class TaskStatusesService {
         const columnsToUpdate = await prisma.taskStatus.findMany({
           where: {
             boardId: deletedColumn.boardId,
-            columnIndex: { gt: deletedColumn.columnIndex },
+            columnIndex: {
+              gt: deletedColumn.columnIndex,
+            },
           },
         });
 
         await Promise.all(
-          columnsToUpdate.map((c) =>
+          columnsToUpdate.map((column) =>
             prisma.taskStatus.update({
-              where: { id: c.id },
-              data: { columnIndex: c.columnIndex - 1 },
+              where: { id: column.id },
+              data: {
+                columnIndex: column.columnIndex - 1,
+              },
             }),
           ),
         );
-      } catch (error) {
-        if (isPrismaError(error) && error.code === 'P2025') {
-          throw new NotFoundException('Column not found');
-        }
-        throw error;
+      });
+    } catch (error) {
+      if (isPrismaError(error) && error.code === 'P2025') {
+        throw new NotFoundException('Column not found');
       }
-    });
+
+      throw error;
+    }
   }
 }

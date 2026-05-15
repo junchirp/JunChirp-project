@@ -1,6 +1,6 @@
 import { ConfirmEmailInterface } from './confirm-email.interface';
-import { Locale } from '@/i18n/routing';
+import { SystemLocaleType } from '../types/system-locale.type';
 
 export interface ConfirmEmailWithLocaleInterface extends ConfirmEmailInterface {
-  locale: Locale;
+  locale: SystemLocaleType;
 }

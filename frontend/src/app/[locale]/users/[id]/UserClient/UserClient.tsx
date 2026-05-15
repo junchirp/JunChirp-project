@@ -8,7 +8,9 @@ import UserBaseInfo from './UserBaseInfo/UserBaseInfo';
 import { useParams } from 'next/navigation';
 import {
   useGetInvitesInMyProjectsQuery,
+  useGetMyInvitesQuery,
   useGetMyProjectsQuery,
+  useGetMyRequestsQuery,
   useGetRequestsInMyProjectsQuery,
   useGetUserByIdQuery,
   useGetUserProjectsQuery,
@@ -29,20 +31,17 @@ import UserInvites from './UserInvites/UserInvites';
 export default function UserClient(): ReactElement {
   const params = useParams();
   const userId = params.id as string;
-  const authUser = useAppSelector(authSelector.selectUser);
-  const isAuthUser = userId === authUser?.id;
+  const authUser = useAppSelector(authSelector.selectRequiredUser);
+  const isAuthUser = userId === authUser.id;
   const [projectsFilter, setProjectsFilter] = useState<
     null | 'active' | 'done'
   >(null);
   const [isModalOpen, setModalOpen] = useState(false);
   const { data: user, isLoading: userLoading } = useGetUserByIdQuery(userId);
-  const { data: myProjectsList } = useGetMyProjectsQuery(
-    authUser ? { userId: authUser.id } : undefined,
-    { skip: !authUser },
-  );
+  const { data: myProjectsList } = useGetMyProjectsQuery(authUser.id);
   const myProjects =
     myProjectsList?.projects.filter(
-      (project) => project.ownerId === authUser?.id,
+      (project) => project.ownerId === authUser.id,
     ) ?? [];
   const { data: list, isLoading: projectsLoading } = useGetUserProjectsQuery({
     id: userId,
@@ -52,15 +51,24 @@ export default function UserClient(): ReactElement {
       status: 'active',
     },
   });
+  const { data: myRequests = [], isLoading: myRequestsLoading } =
+    useGetMyRequestsQuery(authUser.id);
+  const { data: myInvites = [], isLoading: myInvitesLoading } =
+    useGetMyInvitesQuery(authUser.id);
   const { data: requests = [], isLoading: requestsLoading } =
     useGetRequestsInMyProjectsQuery(userId);
   const { data: invites = [], isLoading: invitesLoading } =
     useGetInvitesInMyProjectsQuery(userId);
   const isLoading =
-    projectsLoading || userLoading || requestsLoading || invitesLoading;
+    projectsLoading ||
+    userLoading ||
+    requestsLoading ||
+    invitesLoading ||
+    myRequestsLoading ||
+    myInvitesLoading;
   const usersActiveProjects = list?.projects ?? [];
   const usersActiveProjectsWithMeOwner = usersActiveProjects.filter(
-    (project) => project.ownerId === authUser?.id,
+    (project) => project.ownerId === authUser.id,
   );
 
   const isButtonVisible =
@@ -121,7 +129,13 @@ export default function UserClient(): ReactElement {
                   active={projectsFilter === 'done'}
                   onClick={() => toggleFilter('done')}
                 />
-                <UserProjectsList userId={user.id} filter={projectsFilter} />
+                <UserProjectsList
+                  userId={user.id}
+                  filter={projectsFilter}
+                  invites={myInvites}
+                  requests={myRequests}
+                  authUser={authUser}
+                />
               </div>
             </div>
             {!isAuthUser && requests.length !== 0 && (

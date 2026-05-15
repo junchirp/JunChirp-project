@@ -46,71 +46,74 @@ export class ParticipationsService {
       );
     }
 
-    return this.prisma.$transaction(async (prisma) => {
-      const [
-        existingParticipation,
-        existingRequest,
-        existingInvite,
-        currentRole,
-      ] = await Promise.all([
-        prisma.projectRole.findFirst({
-          where: {
-            projectId: createInviteDto.projectId,
-            users: {
-              some: {
-                id: createInviteDto.userId,
+    try {
+      const invite = await this.prisma.$transaction(async (prisma) => {
+        const [
+          existingParticipation,
+          existingRequest,
+          existingInvite,
+          currentRole,
+        ] = await Promise.all([
+          prisma.projectRole.findFirst({
+            where: {
+              projectId: createInviteDto.projectId,
+              users: {
+                some: {
+                  id: createInviteDto.userId,
+                },
               },
             },
-          },
-        }),
-        prisma.participationRequest.findFirst({
-          where: {
-            userId: createInviteDto.userId,
-            projectRole: { projectId: createInviteDto.projectId },
-          },
-        }),
-        prisma.participationInvite.findFirst({
-          where: {
-            userId: createInviteDto.userId,
-            projectRole: { projectId: createInviteDto.projectId },
-          },
-        }),
-        prisma.projectRole.findUnique({
-          where: {
-            id: createInviteDto.projectRoleId,
-          },
-          include: {
-            users: true,
-          },
-        }),
-      ]);
+          }),
+          prisma.participationRequest.findFirst({
+            where: {
+              userId: createInviteDto.userId,
+              projectRole: { projectId: createInviteDto.projectId },
+            },
+          }),
+          prisma.participationInvite.findFirst({
+            where: {
+              userId: createInviteDto.userId,
+              projectRole: { projectId: createInviteDto.projectId },
+            },
+          }),
+          prisma.projectRole.findUnique({
+            where: {
+              id: createInviteDto.projectRoleId,
+            },
+            include: {
+              users: true,
+            },
+          }),
+        ]);
 
-      if (existingParticipation) {
-        throw new ConflictException('User is already in the project team');
-      }
+        if (existingParticipation) {
+          throw new ConflictException('User is already in the project team');
+        }
 
-      if (existingRequest) {
-        throw new ConflictException(
-          'User has already requested participation in this project',
-        );
-      }
+        if (existingRequest) {
+          throw new ConflictException(
+            'User has already requested participation in this project',
+          );
+        }
 
-      if (existingInvite) {
-        throw new ConflictException(
-          'User has already been invited to this project',
-        );
-      }
+        if (existingInvite) {
+          throw new ConflictException(
+            'User has already been invited to this project',
+          );
+        }
 
-      if (currentRole && currentRole.users.length === currentRole.slots) {
-        throw new BadRequestException('The role has no empty slots');
-      }
+        if (currentRole && currentRole.users.length === currentRole.slots) {
+          throw new BadRequestException('The role has no empty slots');
+        }
 
-      if (currentRole && currentRole.projectId !== createInviteDto.projectId) {
-        throw new BadRequestException('Invalid project/role combination');
-      }
+        if (
+          currentRole &&
+          currentRole.projectId !== createInviteDto.projectId
+        ) {
+          throw new BadRequestException('Invalid project/role combination');
+        }
 
-      try {
-        const invite = await prisma.participationInvite.create({
+        return prisma.participationInvite.create({
           data: {
             userId: createInviteDto.userId,
             projectRoleId: createInviteDto.projectRoleId,
@@ -145,31 +148,33 @@ export class ParticipationsService {
             },
           },
         });
+      });
 
-        await this.mailService.sendParticipationInvite(
-          `${this.configService.get<string>('BASE_FRONTEND_URL')}/project/${invite.projectId}`,
-          invite,
-          user,
-          createInviteDto.locale,
-        );
+      await this.mailService.sendParticipationInvite(
+        `${this.configService.get<string>(
+          'BASE_FRONTEND_URL',
+        )}/project/${invite.projectId}`,
+        invite,
+        user,
+        createInviteDto.locale,
+      );
 
-        return ProjectParticipationMapper.toResponse(invite);
-      } catch (error) {
-        if (isPrismaError(error)) {
-          switch (error.code) {
-            case 'P2003':
-              throw new NotFoundException('User or project role not found');
-            case 'P2002':
-              throw new ConflictException(
-                'User has already been invited to this project',
-              );
-            default:
-              throw error;
-          }
+      return ProjectParticipationMapper.toResponse(invite);
+    } catch (error) {
+      if (isPrismaError(error)) {
+        switch (error.code) {
+          case 'P2003':
+            throw new NotFoundException('User or project role not found');
+          case 'P2002':
+            throw new ConflictException(
+              'User has already been invited to this project',
+            );
+          default:
+            throw error;
         }
-        throw error;
       }
-    });
+      throw error;
+    }
   }
 
   public async createRequest(
@@ -184,75 +189,74 @@ export class ParticipationsService {
       );
     }
 
-    return this.prisma.$transaction(async (prisma) => {
-      const [
-        existingParticipation,
-        existingInvite,
-        existingRequest,
-        currentRole,
-      ] = await Promise.all([
-        prisma.projectRole.findFirst({
-          where: {
-            projectId: createRequestDto.projectId,
-            users: {
-              some: {
-                id: userId,
+    try {
+      const request = await this.prisma.$transaction(async (prisma) => {
+        const [
+          existingParticipation,
+          existingInvite,
+          existingRequest,
+          currentRole,
+        ] = await Promise.all([
+          prisma.projectRole.findFirst({
+            where: {
+              projectId: createRequestDto.projectId,
+              users: {
+                some: {
+                  id: userId,
+                },
               },
             },
-          },
-        }),
-        prisma.participationInvite.findFirst({
-          where: {
-            userId,
-            projectRole: {
-              projectId: createRequestDto.projectId,
+          }),
+          prisma.participationInvite.findFirst({
+            where: {
+              userId,
+              projectRole: { projectId: createRequestDto.projectId },
             },
-          },
-        }),
-        prisma.participationRequest.findFirst({
-          where: {
-            userId,
-            projectRole: {
-              projectId: createRequestDto.projectId,
+          }),
+          prisma.participationRequest.findFirst({
+            where: {
+              userId,
+              projectRole: { projectId: createRequestDto.projectId },
             },
-          },
-        }),
-        prisma.projectRole.findUnique({
-          where: {
-            id: createRequestDto.projectRoleId,
-          },
-          include: {
-            users: true,
-          },
-        }),
-      ]);
+          }),
+          prisma.projectRole.findUnique({
+            where: {
+              id: createRequestDto.projectRoleId,
+            },
+            include: {
+              users: true,
+            },
+          }),
+        ]);
 
-      if (existingParticipation) {
-        throw new ConflictException('You are already in the project team');
-      }
+        if (existingParticipation) {
+          throw new ConflictException('You are already in the project team');
+        }
 
-      if (existingInvite) {
-        throw new ConflictException(
-          'You have already been invited to this project',
-        );
-      }
+        if (existingInvite) {
+          throw new ConflictException(
+            'You have already been invited to this project',
+          );
+        }
 
-      if (existingRequest) {
-        throw new ConflictException(
-          'You have already sent a request to this project',
-        );
-      }
+        if (existingRequest) {
+          throw new ConflictException(
+            'You have already sent a request to this project',
+          );
+        }
 
-      if (currentRole && currentRole.users.length === currentRole.slots) {
-        throw new BadRequestException('The role has no empty slots');
-      }
+        if (currentRole && currentRole.users.length === currentRole.slots) {
+          throw new BadRequestException('The role has no empty slots');
+        }
 
-      if (currentRole && currentRole.projectId !== createRequestDto.projectId) {
-        throw new BadRequestException('Invalid project/role combination');
-      }
+        if (
+          currentRole &&
+          currentRole.projectId !== createRequestDto.projectId
+        ) {
+          throw new BadRequestException('Invalid project/role combination');
+        }
 
-      try {
-        const request = await prisma.participationRequest.create({
+        return prisma.participationRequest.create({
           data: {
             userId,
             projectRoleId: createRequestDto.projectRoleId,
@@ -287,110 +291,117 @@ export class ParticipationsService {
             },
           },
         });
+      });
 
-        await this.mailService.sendParticipationRequest(
-          `${this.configService.get<string>('BASE_FRONTEND_URL')}/users/${request.userId}`,
-          request,
-          createRequestDto.locale,
-        );
+      await this.mailService.sendParticipationRequest(
+        `${this.configService.get<string>(
+          'BASE_FRONTEND_URL',
+        )}/users/${request.userId}`,
+        request,
+        createRequestDto.locale,
+      );
 
-        return ProjectParticipationMapper.toResponse(request);
-      } catch (error) {
-        if (isPrismaError(error)) {
-          switch (error.code) {
-            case 'P2003':
-              throw new NotFoundException('Project role not found');
-            case 'P2002':
-              throw new ConflictException(
-                'You have already sent a request to this project',
-              );
-            default:
-              throw error;
-          }
+      return ProjectParticipationMapper.toResponse(request);
+    } catch (error) {
+      if (isPrismaError(error)) {
+        switch (error.code) {
+          case 'P2003':
+            throw new NotFoundException('Project role not found');
+          case 'P2002':
+            throw new ConflictException(
+              'You have already sent a request to this project',
+            );
+          default:
+            throw error;
         }
-        throw error;
       }
-    });
+      throw error;
+    }
   }
 
   public async acceptInvite(
     id: string,
     userId: string,
   ): Promise<UserCardResponseDto> {
-    return this.prisma.$transaction(async (prisma) => {
-      try {
-        const invite = await prisma.participationInvite.findUniqueOrThrow({
-          where: { id, userId },
-          include: {
-            projectRole: {
-              include: {
-                project: true,
-                users: true,
+    try {
+      const { user, discordId, discordMemberRoleId } =
+        await this.prisma.$transaction(async (prisma) => {
+          const invite = await prisma.participationInvite.findUniqueOrThrow({
+            where: { id, userId },
+            include: {
+              projectRole: {
+                include: {
+                  project: true,
+                  users: true,
+                },
+              },
+              user: true,
+            },
+          });
+          if (invite.user.activeProjectsCount >= 2) {
+            throw new BadRequestException(
+              'User cannot have more than 2 active projects',
+            );
+          }
+
+          if (invite.projectRole.users.length === invite.projectRole.slots) {
+            throw new ConflictException('The role has no empty slots');
+          }
+
+          await prisma.projectRole.update({
+            where: { id: invite.projectRoleId },
+            data: {
+              users: {
+                connect: { id: invite.userId },
               },
             },
-            user: true,
-          },
-        });
+          });
 
-        if (invite.user.activeProjectsCount >= 2) {
-          throw new BadRequestException(
-            'User cannot have more than 2 active projects',
-          );
-        }
-
-        if (invite.projectRole.users.length === invite.projectRole.slots) {
-          throw new ConflictException('The role has no empty slots');
-        }
-
-        await prisma.projectRole.update({
-          where: { id: invite.projectRoleId },
-          data: {
-            users: {
-              connect: { id: invite.userId },
+          await prisma.project.update({
+            where: {
+              id: invite.projectRole.projectId,
             },
-          },
-        });
-
-        await prisma.project.update({
-          where: { id: invite.projectRole.projectId },
-          data: {
-            participantsCount: {
-              increment: 1,
+            data: {
+              participantsCount: {
+                increment: 1,
+              },
             },
-          },
-        });
+          });
 
-        const user = await prisma.user.update({
-          where: { id: userId },
-          data: {
-            activeProjectsCount: {
-              increment: 1,
+          const updatedUser = await prisma.user.update({
+            where: { id: userId },
+            data: {
+              activeProjectsCount: {
+                increment: 1,
+              },
             },
-          },
-          include: {
-            desiredRoles: true,
-          },
+            include: {
+              desiredRoles: true,
+            },
+          });
+
+          await prisma.participationInvite.delete({
+            where: { id },
+          });
+
+          return {
+            user: updatedUser,
+            discordId: invite.user.discordId,
+            discordMemberRoleId: invite.projectRole.project.discordMemberRoleId,
+          };
         });
 
-        await prisma.participationInvite.delete({
-          where: { id },
-        });
-
-        if (invite.user?.discordId) {
-          await this.discordService.addRoleToUser(
-            invite.user.discordId,
-            invite.projectRole.project.discordMemberRoleId,
-          );
-        }
-
-        return UserMapper.toCardResponse(user);
-      } catch (error) {
-        if (isPrismaError(error) && error.code === 'P2025') {
-          throw new NotFoundException('Invite not found');
-        }
-        throw error;
+      if (discordId) {
+        await this.discordService.addRoleToUser(discordId, discordMemberRoleId);
       }
-    });
+
+      return UserMapper.toCardResponse(user);
+    } catch (error) {
+      if (isPrismaError(error) && error.code === 'P2025') {
+        throw new NotFoundException('Invite not found');
+      }
+      throw error;
+    }
   }
 
   public async declineInvite(id: string, userId: string): Promise<void> {
@@ -407,75 +418,81 @@ export class ParticipationsService {
   }
 
   public async acceptRequest(id: string): Promise<void> {
-    await this.prisma.$transaction(async (prisma) => {
-      try {
-        const request = await prisma.participationRequest.findUniqueOrThrow({
-          where: { id },
-          include: {
-            projectRole: {
-              include: {
-                project: true,
-                users: true,
+    try {
+      const { discordId, discordMemberRoleId } = await this.prisma.$transaction(
+        async (prisma) => {
+          const request = await prisma.participationRequest.findUniqueOrThrow({
+            where: { id },
+            include: {
+              projectRole: {
+                include: {
+                  project: true,
+                  users: true,
+                },
+              },
+              user: true,
+            },
+          });
+
+          if (request.projectRole.users.length === request.projectRole.slots) {
+            throw new ConflictException('The role has no empty slots');
+          }
+
+          if (request.user.activeProjectsCount >= 2) {
+            throw new BadRequestException(
+              'User cannot have more than 2 active projects',
+            );
+          }
+
+          await prisma.projectRole.update({
+            where: { id: request.projectRoleId },
+            data: {
+              users: {
+                connect: { id: request.userId },
               },
             },
-            user: true,
-          },
-        });
+          });
 
-        if (request.projectRole.users.length === request.projectRole.slots) {
-          throw new ConflictException('The role has no empty slots');
-        }
-
-        if (request.user.activeProjectsCount >= 2) {
-          throw new BadRequestException(
-            'User cannot have more than 2 active projects',
-          );
-        }
-
-        await prisma.projectRole.update({
-          where: { id: request.projectRoleId },
-          data: {
-            users: {
-              connect: { id: request.userId },
+          await prisma.project.update({
+            where: { id: request.projectRole.projectId },
+            data: {
+              participantsCount: {
+                increment: 1,
+              },
             },
-          },
-        });
+          });
 
-        await prisma.project.update({
-          where: { id: request.projectRole.projectId },
-          data: {
-            participantsCount: {
-              increment: 1,
+          await prisma.user.update({
+            where: { id: request.userId },
+            data: {
+              activeProjectsCount: {
+                increment: 1,
+              },
             },
-          },
-        });
+          });
 
-        await prisma.user.update({
-          where: { id: request.userId },
-          data: {
-            activeProjectsCount: {
-              increment: 1,
-            },
-          },
-        });
+          await prisma.participationRequest.delete({
+            where: { id },
+          });
 
-        await prisma.participationRequest.delete({
-          where: { id },
-        });
+          return {
+            discordId: request.user.discordId,
+            discordMemberRoleId:
+              request.projectRole.project.discordMemberRoleId,
+          };
+        },
+      );
 
-        if (request.user?.discordId) {
-          await this.discordService.addRoleToUser(
-            request.user.discordId,
-            request.projectRole.project.discordMemberRoleId,
-          );
-        }
-      } catch (error) {
-        if (isPrismaError(error) && error.code === 'P2025') {
-          throw new NotFoundException('Request not found');
-        }
-        throw error;
+      if (discordId) {
+        await this.discordService.addRoleToUser(discordId, discordMemberRoleId);
       }
-    });
+    } catch (error) {
+      if (isPrismaError(error) && error.code === 'P2025') {
+        throw new NotFoundException('Request not found');
+      }
+
+      throw error;
+    }
   }
 
   public async declineRequest(id: string): Promise<void> {

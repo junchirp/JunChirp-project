@@ -10,9 +10,9 @@ import {
 } from 'react';
 import styles from './Dialog.module.scss';
 import { createPortal } from 'react-dom';
-import Button from '../Button/Button';
+import Button from '@/shared/components/Button/Button';
 import X from '@/assets/icons/x.svg';
-import { DIALOG_SLOT } from '../../constants/dialog-slot';
+import { DIALOG_SLOT } from '@/shared/constants/dialog-slot';
 
 type DialogSlot = 'header' | 'body' | 'footer';
 

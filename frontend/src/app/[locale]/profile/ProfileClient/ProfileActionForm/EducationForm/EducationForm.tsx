@@ -143,9 +143,7 @@ export default function EducationForm(props: EducationFormProps): ReactElement {
               placeholder={tForms('educationForm.placeholders.institution')}
               fetcher={(query) => getInstitutions(query)}
               onSelectOption={() => {}}
-              errorMessages={
-                errors.institution?.message && [errors.institution.message]
-              }
+              errorMessage={errors.institution?.message}
               withError
             />
           )}
@@ -160,11 +158,7 @@ export default function EducationForm(props: EducationFormProps): ReactElement {
               placeholder={tForms('educationForm.placeholders.specialization')}
               fetcher={(query) => getSpecializations(query)}
               onSelectOption={() => {}}
-              errorMessages={
-                errors.specialization?.message && [
-                  errors.specialization.message,
-                ]
-              }
+              errorMessage={errors.specialization?.message}
               withError
             />
           )}

@@ -1,3 +1,5 @@
+'use client';
+
 import { ReactElement } from 'react';
 import styles from './RadioGroup.module.scss';
 import { ProjectRoleInterface } from '@/shared/interfaces/project-role.interface';

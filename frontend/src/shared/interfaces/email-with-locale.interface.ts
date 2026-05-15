@@ -1,6 +1,6 @@
-import { Locale } from '@/i18n/routing';
+import { SystemLocaleType } from '../types/system-locale.type';
 
 export interface EmailWithLocaleInterface {
   email: string;
-  locale: Locale;
+  locale: SystemLocaleType;
 }

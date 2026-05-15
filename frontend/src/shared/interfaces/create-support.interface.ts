@@ -1,8 +1,8 @@
-import { Locale } from '@/i18n/routing';
+import { SystemLocaleType } from '../types/system-locale.type';
 
 export interface CreateSupportInterface {
   email: string;
   requestText: string;
   requestHtml: string;
-  locale: Locale;
+  locale: SystemLocaleType;
 }

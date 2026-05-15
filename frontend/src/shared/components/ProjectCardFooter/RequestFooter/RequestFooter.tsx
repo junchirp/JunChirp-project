@@ -16,7 +16,7 @@ import { useCancelRequestMutation } from '@/api/participationsApi';
 interface RequestFooterProps {
   currentRequest: ProjectParticipationInterface;
   vacantRoles: ProjectRoleInterface[];
-  user: AuthInterface | null;
+  user: AuthInterface;
   size: 'small' | 'large';
   className?: string;
 }
@@ -41,7 +41,7 @@ export default function RequestFooter({
 
       const result = await cancelRequest({
         id: currentRequest.id,
-        userId: user?.id ?? '',
+        userId: user.id,
       });
 
       if ('error' in result) {

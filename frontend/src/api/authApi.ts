@@ -36,7 +36,7 @@ export const authApi = mainApi.injectEndpoints({
       }),
       invalidatesTags: USER_RELATED_TAGS,
     }),
-    getMe: builder.query<AuthInterface, undefined>({
+    getMe: builder.query<AuthInterface, void>({
       query: () => ({
         url: 'users/me',
       }),

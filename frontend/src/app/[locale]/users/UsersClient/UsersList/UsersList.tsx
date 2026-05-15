@@ -16,12 +16,8 @@ interface UsersListProps {
 export default function UsersList({
   users,
   myProjects,
-}: UsersListProps): ReactElement | null {
-  const currentUser = useAppSelector(authSelector.selectUser);
-
-  if (!currentUser) {
-    return null;
-  }
+}: UsersListProps): ReactElement {
+  const currentUser = useAppSelector(authSelector.selectRequiredUser);
 
   return (
     <div className={styles['users-list']}>

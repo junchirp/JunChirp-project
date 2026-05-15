@@ -9,10 +9,11 @@ import Dropdown from '@/shared/components/Dropdown/Dropdown';
 import { ProjectCategoryInterface } from '@/shared/interfaces/project-category.interface';
 import { ParticipantsOptionsInterface } from '@/shared/interfaces/participants-options.interface';
 import { SelectOptionsInterface } from '@/shared/interfaces/select-options.interface';
-import { useLocale, useTranslations } from 'next-intl';
-import { Locale } from '@/i18n/routing';
+import { useTranslations } from 'next-intl';
 import { useProjectParticipantsOptions } from '@/hooks/useProjectParticipantsOptions';
 import { useProjectStatusOptions } from '@/hooks/useProjectStatusOptions';
+import { useSystemLocale } from '@/hooks/useSystemLocale';
+import { SystemLocaleType } from '@/shared/types/system-locale.type';
 
 interface FormData {
   status: 'active' | 'done' | null;
@@ -22,15 +23,15 @@ interface FormData {
 
 export default function ProjectsFiltersForm(): ReactElement {
   const { filters, updateFilters } = useProjectsFilters();
-  const { data = [] } = useGetCategoriesQuery(undefined);
+  const { data = [] } = useGetCategoriesQuery();
   const t = useTranslations('projectsPage');
-  const locale = useLocale();
+  const locale = useSystemLocale();
   const categories = [
     {
       id: '',
       categoryName: {
         [locale]: t('all'),
-      } as Record<Locale, string>,
+      } as Record<SystemLocaleType, string>,
     },
     ...data,
   ];
@@ -74,7 +75,7 @@ export default function ProjectsFiltersForm(): ReactElement {
                 labelWeight={600}
                 labelMargin={12}
                 placeholder="Всі"
-                getOptionLabel={(o) => o.categoryName[locale as Locale]}
+                getOptionLabel={(o) => o.categoryName[locale]}
                 getOptionValue={(o) => o.id}
                 onChange={(value) => {
                   field.onChange(value);

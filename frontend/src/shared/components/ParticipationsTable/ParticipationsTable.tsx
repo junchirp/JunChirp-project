@@ -3,10 +3,9 @@
 import { ReactElement } from 'react';
 import styles from './ParticipationsTable.module.scss';
 import { Link } from '@/i18n/routing';
-import { datePipe } from '@/shared/utils/datePipe';
 import Button from '@/shared/components/Button/Button';
 import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
-import { useTranslations } from 'next-intl';
+import { useFormatter, useTranslations } from 'next-intl';
 
 interface ParticipationsTableProps {
   items: ProjectParticipationInterface[];
@@ -25,6 +24,7 @@ export default function ParticipationsTable(
   const tTable = useTranslations('participationsTable');
   const tButtons = useTranslations('buttons');
   const cancelEvent = openModal ?? cancel;
+  const format = useFormatter();
 
   return (
     <table className={styles['participations-table']}>
@@ -66,72 +66,80 @@ export default function ParticipationsTable(
         </tr>
       </thead>
       <tbody>
-        {items.map((item, index) => (
-          <tr key={item.id} className={styles['participations-table__row']}>
-            <td
-              className={`${styles['participations-table__cell']} ${styles['participations-table__cell--body']}`}
-            >
-              {index < 9 ? `0${index + 1}` : `${index + 1}`}
-            </td>
-            <td
-              className={`${styles['participations-table__cell']} ${styles['participations-table__cell--body']}`}
-            >
-              <Link
-                className={styles['participations-table__link']}
-                href={`/projects/${item.projectRole.project.id}`}
+        {items.map((item, index) => {
+          const formattedDate = format.dateTime(new Date(item.createdAt), {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+          });
+
+          return (
+            <tr key={item.id} className={styles['participations-table__row']}>
+              <td
+                className={`${styles['participations-table__cell']} ${styles['participations-table__cell--body']}`}
               >
-                {item.projectRole.project.projectName}
-              </Link>
-            </td>
-            <td
-              className={`${styles['participations-table__cell']} ${styles['participations-table__cell--body']}`}
-            >
-              {item.projectRole.roleType.roleName}
-            </td>
-            <td
-              className={`${styles['participations-table__cell']} ${styles['participations-table__cell--body']}`}
-            >
-              {datePipe(item.createdAt.toString(), 'DD.MM.YYYY')}
-            </td>
-            <td
-              className={`${styles['participations-table__cell']} ${styles['participations-table__cell--body']}`}
-            >
-              <div className={styles['participations-table__actions']}>
-                {accept ? (
-                  <>
+                {index < 9 ? `0${index + 1}` : `${index + 1}`}
+              </td>
+              <td
+                className={`${styles['participations-table__cell']} ${styles['participations-table__cell--body']}`}
+              >
+                <Link
+                  className={styles['participations-table__link']}
+                  href={`/projects/${item.projectRole.project.id}`}
+                >
+                  {item.projectRole.project.projectName}
+                </Link>
+              </td>
+              <td
+                className={`${styles['participations-table__cell']} ${styles['participations-table__cell--body']}`}
+              >
+                {item.projectRole.roleType.roleName}
+              </td>
+              <td
+                className={`${styles['participations-table__cell']} ${styles['participations-table__cell--body']}`}
+              >
+                {formattedDate}
+              </td>
+              <td
+                className={`${styles['participations-table__cell']} ${styles['participations-table__cell--body']}`}
+              >
+                <div className={styles['participations-table__actions']}>
+                  {accept ? (
+                    <>
+                      <Button
+                        variant="link"
+                        size="ssm"
+                        color="gray-2"
+                        onClick={() => cancelEvent?.(item)}
+                      >
+                        {tButtons('decline')}
+                      </Button>{' '}
+                      /{' '}
+                      <Button
+                        variant="link"
+                        size="ssm"
+                        color="green"
+                        loading={isLoading}
+                        onClick={() => accept(item.id)}
+                      >
+                        {tButtons('accept')}
+                      </Button>
+                    </>
+                  ) : (
                     <Button
                       variant="link"
                       size="ssm"
                       color="gray-2"
                       onClick={() => cancelEvent?.(item)}
                     >
-                      {tButtons('decline')}
-                    </Button>{' '}
-                    /{' '}
-                    <Button
-                      variant="link"
-                      size="ssm"
-                      color="green"
-                      loading={isLoading}
-                      onClick={() => accept(item.id)}
-                    >
-                      {tButtons('accept')}
+                      {tButtons('cancel')}
                     </Button>
-                  </>
-                ) : (
-                  <Button
-                    variant="link"
-                    size="ssm"
-                    color="gray-2"
-                    onClick={() => cancelEvent?.(item)}
-                  >
-                    {tButtons('cancel')}
-                  </Button>
-                )}
-              </div>
-            </td>
-          </tr>
-        ))}
+                  )}
+                </div>
+              </td>
+            </tr>
+          );
+        })}
       </tbody>
     </table>
   );

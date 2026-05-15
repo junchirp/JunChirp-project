@@ -67,10 +67,10 @@ export class UsersService {
     createUserDto: CreateUserDto,
     ip: string,
   ): Promise<UserResponseDto> {
-    return this.prisma.$transaction(async (prisma) => {
-      const role = await this.rolesService.findOrCreateRole('user', prisma);
+    try {
+      return await this.prisma.$transaction(async (prisma) => {
+        const role = await this.rolesService.findOrCreateRole('user', prisma);
 
-      try {
         const user = await prisma.user.create({
           data: {
             firstName: createUserDto.firstName,
@@ -79,7 +79,9 @@ export class UsersService {
             password: createUserDto.password,
             avatarUrl: this.cloudinaryService.getUrl('avatars/avatar_beta'),
             role: {
-              connect: { id: role.id },
+              connect: {
+                id: role.id,
+              },
             },
           },
           include: {
@@ -93,27 +95,28 @@ export class UsersService {
         });
 
         return UserMapper.toFullResponse(user, false);
-      } catch (error) {
-        if (isPrismaError(error) && error.code === 'P2002') {
-          await this.loggerService.log(
-            ip,
-            createUserDto.email,
-            'registration',
-            'User with this email already exists',
-          );
-          throw new ConflictException('User with this email already exists');
-        }
-
+      });
+    } catch (error) {
+      if (isPrismaError(error) && error.code === 'P2002') {
         await this.loggerService.log(
           ip,
           createUserDto.email,
           'registration',
-          'Something went wrong. Please try again later',
+          'User with this email already exists',
         );
 
-        throw error;
+        throw new ConflictException('User with this email already exists');
       }
-    });
+
+      await this.loggerService.log(
+        ip,
+        createUserDto.email,
+        'registration',
+        'Something went wrong. Please try again later',
+      );
+
+      throw error;
+    }
   }
 
   public async getUserByEmail(
@@ -171,14 +174,16 @@ export class UsersService {
     ip: string,
     user: AuthResponseDto,
     token: CryptoTokenInterface,
+    px?: Prisma.TransactionClient,
   ): Promise<void> {
+    const prisma = px ?? this.prisma;
     if (user.isVerified) {
       throw new BadRequestException('Email is confirmed');
     }
 
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
 
-    const recentTokens = await this.prisma.verificationToken.findMany({
+    const recentTokens = await prisma.verificationToken.findMany({
       where: {
         userId: user.id,
         createdAt: { gte: oneHourAgo },
@@ -208,8 +213,8 @@ export class UsersService {
     }
 
     try {
-      await this.prisma.$transaction(async (prisma) => {
-        await prisma.verificationToken.updateMany({
+      await prisma.$transaction(async (pr) => {
+        await pr.verificationToken.updateMany({
           where: {
             userId: user.id,
             used: false,
@@ -219,7 +224,7 @@ export class UsersService {
           },
         });
 
-        await prisma.verificationToken.create({
+        await pr.verificationToken.create({
           data: {
             userId: user.id,
             token: token.hashed,
@@ -630,45 +635,66 @@ export class UsersService {
     ip: string,
     emailDto: EmailWithLocaleDto,
   ): Promise<AuthResponseDto> {
+    const user = await this.getUserById(id, 'edit');
+
+    if (user.isVerified) {
+      throw new BadRequestException('Email is verified');
+    }
+
+    const token = this.createCryptoToken();
+
     try {
-      const user = await this.getUserById(id, 'edit');
-      const updatedUser = await this.prisma.user.update({
-        where: { id },
-        data: { email: emailDto.email },
-        include: {
-          role: true,
-          desiredRoles: true,
-        },
+      const newUser = await this.prisma.$transaction(async (prisma) => {
+        const updatedUser = await prisma.user.update({
+          where: { id },
+          data: {
+            email: emailDto.email,
+          },
+          include: {
+            role: true,
+            desiredRoles: true,
+          },
+        });
+
+        if (user.email !== updatedUser.email) {
+          await this.createVerificationEmailRecords(
+            ip,
+            updatedUser,
+            token,
+            prisma,
+          );
+        }
+
+        return UserMapper.toAuthResponse(updatedUser);
       });
 
-      if (user.email !== updatedUser.email) {
-        const token = this.createCryptoToken();
-        await this.createVerificationEmailRecords(ip, updatedUser, token);
-        const params = new URLSearchParams({
-          token: token.raw,
-          email: updatedUser.email,
-        });
-        const url = `${this.configService.get('BASE_FRONTEND_URL')}/verify-email?${params.toString()}`;
+      const params = new URLSearchParams({
+        token: token.raw,
+        email: newUser.email,
+      });
 
-        await this.mailService.sendVerificationMail(
-          updatedUser.email,
-          url,
-          emailDto.locale,
-        );
-      }
+      const url = `${this.configService.get(
+        'BASE_FRONTEND_URL',
+      )}/verify-email?${params.toString()}`;
 
-      return UserMapper.toAuthResponse(updatedUser);
+      await this.mailService.sendVerificationMail(
+        newUser.email,
+        url,
+        emailDto.locale,
+      );
+
+      return newUser;
     } catch (error) {
       if (isPrismaError(error)) {
         switch (error.code) {
           case 'P2025':
             throw new NotFoundException('User not found');
+
           case 'P2002':
             throw new ConflictException('Email is already in use');
-          default:
-            throw error;
         }
       }
+
       throw error;
     }
   }
@@ -712,12 +738,10 @@ export class UsersService {
         : {}),
     };
 
-    const [users, total] = await this.prisma.$transaction([
+    const [users, total] = await Promise.all([
       this.prisma.user.findMany({
         where,
-        include: {
-          desiredRoles: true,
-        },
+        include: { desiredRoles: true },
         skip,
         take: limit,
         orderBy: { createdAt: 'desc' },

@@ -11,13 +11,14 @@ import { useSendConfirmationEmailMutation } from '@/api/authApi';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
 import ChangeEmailPopup from './ChangeEmailPopup/ChangeEmailPopup';
-import { useLocale, useTranslations } from 'next-intl';
-import { Locale, useRouter } from '@/i18n/routing';
+import { useTranslations } from 'next-intl';
+import { useRouter } from '@/i18n/routing';
 import { useError429Toast } from '@/hooks/useError429Toast';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
+import { useSystemLocale } from '@/hooks/useSystemLocale';
 
 export default function ConfirmEmailContent(): ReactElement {
-  const user = useAppSelector(authSelector.selectUser);
+  const user = useAppSelector(authSelector.selectRequiredUser);
   const searchParams = useSearchParams();
   const authType = searchParams.get('type');
   const { showToast, isActive } = useToast();
@@ -27,7 +28,7 @@ export default function ConfirmEmailContent(): ReactElement {
   const tConfirmation = useTranslations('emailConfirmation');
   const tButtons = useTranslations('buttons');
   const tInfo: string[] = tConfirmation.raw('information');
-  const locale = useLocale();
+  const locale = useSystemLocale();
   const router = useRouter();
 
   const sendConfirmationRequest = async (): Promise<void> => {
@@ -36,7 +37,7 @@ export default function ConfirmEmailContent(): ReactElement {
     }
 
     const result = await sendEmail({
-      locale: locale as Locale,
+      locale,
     });
 
     if ('data' in result) {
@@ -86,7 +87,7 @@ export default function ConfirmEmailContent(): ReactElement {
                     {chunks}
                   </span>
                 ),
-                userEmail: user?.email ?? '',
+                userEmail: user.email,
               })}
             </div>
           ) : (
@@ -97,7 +98,7 @@ export default function ConfirmEmailContent(): ReactElement {
                     {chunks}
                   </span>
                 ),
-                userEmail: user?.email ?? '',
+                userEmail: user.email,
                 button: (chunks) => (
                   <Button
                     className={styles['confirm-email-content__inline-button']}

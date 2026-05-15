@@ -1,9 +1,9 @@
-import { Locale } from '@/i18n/routing';
+import { SystemLocaleType } from '../types/system-locale.type';
 
 export interface RegistrationInterface {
   firstName: string;
   lastName: string;
   email: string;
   password: string;
-  locale: Locale;
+  locale: SystemLocaleType;
 }

@@ -1,7 +1,7 @@
-import { Locale } from '@/i18n/routing';
+import { SystemLocaleType } from '../types/system-locale.type';
 
 export interface CreateRequestInterface {
   projectId: string;
   projectRoleId: string;
-  locale: Locale;
+  locale: SystemLocaleType;
 }

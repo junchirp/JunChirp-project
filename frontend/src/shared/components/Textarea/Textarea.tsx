@@ -18,7 +18,7 @@ interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   labelWeight?: number;
   labelMargin?: number;
   placeholder?: string;
-  errorMessages?: string[] | string;
+  errorMessage?: string;
   className?: string;
   withError?: boolean;
 }
@@ -34,10 +34,10 @@ function TextareaComponent(
     labelWeight = 500,
     labelMargin = 4,
     placeholder,
-    errorMessages,
+    errorMessage,
     value,
     className,
-    withError,
+    withError = false,
     ...rest
   } = props;
   const id = useId();
@@ -48,7 +48,7 @@ function TextareaComponent(
 
   const textAreaClassNames = [
     styles['textarea__textarea'],
-    errorMessages?.length && styles['textarea__textarea--invalid'],
+    withError && !!errorMessage && styles['textarea__textarea--invalid'],
   ]
     .filter(Boolean)
     .join(' ');
@@ -81,7 +81,7 @@ function TextareaComponent(
         placeholder={placeholder}
       />
       {withError ? (
-        errorMessages?.length ? (
+        errorMessage ? (
           <p className={styles.textarea__error}>
             <Image
               src="/images/alert-circle.svg"
@@ -89,7 +89,7 @@ function TextareaComponent(
               width={12}
               height={12}
             />
-            {errorMessages[0]}
+            {errorMessage}
           </p>
         ) : (
           <p className={styles.textarea__error}></p>

@@ -65,29 +65,21 @@ export default function ProfileClient(): ReactElement {
   const { showToast } = useToast();
   const [isModalOpen, setModalOpen] = useState(false);
   const formRef = useRef<HTMLDivElement | null>(null);
-  const user = useAppSelector(authSelector.selectUser);
+  const user = useAppSelector(authSelector.selectRequiredUser);
   const { data: requests = [], isLoading: requestsLoading } =
-    useGetMyRequestsQuery(undefined);
+    useGetMyRequestsQuery(user.id);
   const { data: invites = [], isLoading: invitesLoading } =
-    useGetMyInvitesQuery(undefined);
-  const { data: socials = [], isLoading: socialsLoading } = useGetSocialsQuery(
-    undefined,
-    { skip: !user },
-  );
+    useGetMyInvitesQuery(user.id);
+  const { data: socials = [], isLoading: socialsLoading } =
+    useGetSocialsQuery();
   const { data: educations = [], isLoading: educationsLoading } =
-    useGetEducationsQuery(undefined, {
-      skip: !user,
-    });
+    useGetEducationsQuery();
   const { data: softSkills = [], isLoading: softSkillsLoading } =
-    useGetSoftSkillsQuery(undefined, {
-      skip: !user,
-    });
+    useGetSoftSkillsQuery();
   const { data: hardSkills = [], isLoading: hardSkillsLoading } =
-    useGetHardSkillsQuery(undefined, {
-      skip: !user,
-    });
+    useGetHardSkillsQuery();
   const [isBanner, setBanner] = useState(false);
-  const desiredRoles = user?.desiredRoles ?? [];
+  const desiredRoles = user.desiredRoles;
   const isLoading =
     socialsLoading ||
     softSkillsLoading ||
@@ -111,7 +103,7 @@ export default function ProfileClient(): ReactElement {
   }, [action]);
 
   useEffect(() => {
-    if (user && !user.discordId) {
+    if (!user.discordId) {
       setBanner(true);
     }
   }, [user]);
@@ -374,7 +366,7 @@ export default function ProfileClient(): ReactElement {
 
   return (
     <>
-      {user && !isLoading && (
+      {!isLoading && (
         <div className={styles['profile-client']}>
           <div className={styles['profile-client__details']}>
             <div className={styles['profile-client__view']}>
@@ -429,9 +421,7 @@ export default function ProfileClient(): ReactElement {
               onCancel={handleCancel}
             />
           </div>
-          {!!requests.length && user && (
-            <MyRequests requests={requests} user={user} />
-          )}
+          {!!requests.length && <MyRequests requests={requests} user={user} />}
           {!!invites.length && <MyInvites invites={invites} user={user} />}
         </div>
       )}

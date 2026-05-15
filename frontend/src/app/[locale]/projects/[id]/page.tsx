@@ -1,75 +1,12 @@
-'use client';
-
-import { ReactElement, useEffect } from 'react';
-import styles from './page.module.scss';
-import { useRouter } from '@/i18n/routing';
-import { useParams } from 'next/navigation';
-import Page404 from '@/shared/components/Page404/Page404';
+import { ReactElement } from 'react';
 import AccessGuard from '@/shared/components/AccessGuard/AccessGuard';
-import { useAppSelector } from '@/hooks/reduxHooks';
-import authSelector from '@/redux/auth/authSelector';
-import { useGetProjectCardByIdQuery } from '@/api/projectsApi';
-import { useGetMyInvitesQuery, useGetMyRequestsQuery } from '@/api/usersApi';
-import ProjectCardLarge from './ProjectCardLarge/ProjectCardLarge';
+import { useProjectCardAccessCheck } from '@/hooks/useProjecCardAccessCheck';
+import ProjectClient from './ProjectClient/ProjectClient';
 
-export default function Project(): ReactElement | null {
-  const user = useAppSelector(authSelector.selectUser);
-  const params = useParams();
-  const router = useRouter();
-  const projectId = params.id as string;
-  const { data: project, isLoading: projectLoading } =
-    useGetProjectCardByIdQuery(projectId, { skip: !user });
-
-  const { data: requests = [], isLoading: requestsLoading } =
-    useGetMyRequestsQuery(user ? { userId: user.id } : undefined, {
-      skip: !user,
-    });
-  const { data: invites = [], isLoading: invitesLoading } =
-    useGetMyInvitesQuery(user ? { userId: user.id } : undefined, {
-      skip: !user,
-    });
-  const isLoading = projectLoading || requestsLoading || invitesLoading;
-
-  useEffect(() => {
-    if (!isLoading && project && user) {
-      const isParticipant = project.roles.some((role) =>
-        role.users.some((u) => u.id === user.id),
-      );
-
-      if (isParticipant) {
-        router.replace(`/projects/${projectId}/dashboard`);
-      }
-    }
-  }, [isLoading, project, user, router, projectId]);
-
-  const isParticipant =
-    project &&
-    user &&
-    project.roles.some((role) => role.users.some((u) => u.id === user.id));
-
-  if (isParticipant) {
-    return null;
-  }
-
+export default function Project(): ReactElement {
   return (
-    <AccessGuard mode="verified">
-      {isLoading ? (
-        <div className={styles.project}>
-          <div className={styles.project__skeleton} />
-        </div>
-      ) : project ? (
-        <div className={styles.project}>
-          <ProjectCardLarge
-            project={project}
-            invites={invites}
-            requests={requests}
-            user={user}
-            size="large"
-          />
-        </div>
-      ) : (
-        <Page404 />
-      )}
+    <AccessGuard mode="no-member" checkDataAccess={useProjectCardAccessCheck}>
+      <ProjectClient />
     </AccessGuard>
   );
 }

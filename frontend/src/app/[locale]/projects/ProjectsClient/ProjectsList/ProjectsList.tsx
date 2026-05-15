@@ -6,13 +6,13 @@ import { ProjectCardInterface } from '@/shared/interfaces/project-card.interface
 import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import { useTranslations } from 'next-intl';
-import ProjectCardSmall from './ProjectCardSmall/ProjectCardSmall';
+import ProjectCardSmall from '@/shared/components/ProjectCardSmall/ProjectCardSmall';
 
 interface ProjectsListProps {
   projects: ProjectCardInterface[];
   invites: ProjectParticipationInterface[];
   requests: ProjectParticipationInterface[];
-  user: AuthInterface | null;
+  user: AuthInterface;
 }
 
 export default function ProjectsList({

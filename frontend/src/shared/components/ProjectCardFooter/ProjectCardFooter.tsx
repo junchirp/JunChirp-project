@@ -24,7 +24,7 @@ interface ProjectCardFooterProps {
   project: ProjectCardInterface;
   invites: ProjectParticipationInterface[];
   requests: ProjectParticipationInterface[];
-  user: AuthInterface | null;
+  user: AuthInterface;
   size: 'small' | 'large';
   className?: string;
 }
@@ -51,7 +51,7 @@ export default function ProjectCardFooter({
       slots: role.slots,
     }));
   const isMyProject = project.roles.some((role) =>
-    role.users.some((u) => u.id === user?.id),
+    role.users.some((u) => u.id === user.id),
   );
 
   const assertNever = (): never => {

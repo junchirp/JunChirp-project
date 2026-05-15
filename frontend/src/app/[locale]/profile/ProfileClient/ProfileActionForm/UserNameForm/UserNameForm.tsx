@@ -102,9 +102,7 @@ export default function UserNameForm(props: UserNameFormProps): ReactElement {
                 field.onChange(normalized);
               }}
               withError
-              errorMessages={
-                errors.firstName?.message && [errors.firstName.message]
-              }
+              errorMessage={errors.firstName?.message}
             />
           )}
         />
@@ -122,9 +120,7 @@ export default function UserNameForm(props: UserNameFormProps): ReactElement {
                 field.onChange(normalized);
               }}
               withError
-              errorMessages={
-                errors.lastName?.message && [errors.lastName.message]
-              }
+              errorMessage={errors.lastName?.message}
             />
           )}
         />
@@ -140,11 +136,7 @@ export default function UserNameForm(props: UserNameFormProps): ReactElement {
               getOptionLabel={(o) => o.roleName}
               getOptionValue={(o) => o.id}
               withError
-              errorMessages={
-                errors.desiredRolesIds?.message && [
-                  errors.desiredRolesIds.message,
-                ]
-              }
+              errorMessage={errors.desiredRolesIds?.message}
             />
           )}
         />

@@ -48,7 +48,7 @@ export const participationsApi = mainApi.injectEndpoints({
           dispatch(
             usersApi.util.updateQueryData(
               'getMyRequests',
-              { userId: arg.userId },
+              arg.userId,
               (draft: ProjectParticipationInterface[]) => {
                 draft.push(newRequest);
               },
@@ -74,7 +74,7 @@ export const participationsApi = mainApi.injectEndpoints({
           dispatch(
             usersApi.util.updateQueryData(
               'getMyInvites',
-              { userId },
+              userId,
               (draft: ProjectParticipationInterface[]) => {
                 const index = draft.findIndex(
                   (invite) => invite.id === inviteId,
@@ -181,7 +181,7 @@ export const participationsApi = mainApi.injectEndpoints({
           dispatch(
             usersApi.util.updateQueryData(
               'getMyRequests',
-              { userId },
+              userId,
               (draft: ProjectParticipationInterface[]) => {
                 const index = draft.findIndex(
                   (request) => request.id === requestId,

@@ -4,19 +4,27 @@ import { ReactElement, useEffect, useMemo, useState } from 'react';
 import { ProjectCardInterface } from '@/shared/interfaces/project-card.interface';
 import { useGetUserProjectsQuery } from '@/api/usersApi';
 import styles from './UserProjectsList.module.scss';
-import UserProjectCard from '@/shared/components/UserProjectCard/UserProjectCard';
 import Button from '@/shared/components/Button/Button';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
+import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
+import ProjectCardSmall from '@/shared/components/ProjectCardSmall/ProjectCardSmall';
+import { AuthInterface } from '@/shared/interfaces/auth.interface';
 
 interface UserProjectsListProps {
   userId: string;
   filter: null | 'active' | 'done';
+  invites: ProjectParticipationInterface[];
+  requests: ProjectParticipationInterface[];
+  authUser: AuthInterface;
 }
 
 export default function UserProjectsList({
   userId,
   filter,
+  invites,
+  requests,
+  authUser,
 }: UserProjectsListProps): ReactElement {
   const [page, setPage] = useState(1);
   const [allProjects, setAllProjects] = useState<ProjectCardInterface[]>([]);
@@ -113,7 +121,13 @@ export default function UserProjectsList({
   return (
     <div className={styles['user-projects-list']}>
       {allProjects.map((project) => (
-        <UserProjectCard key={project.id} project={project} userId={userId} />
+        <ProjectCardSmall
+          key={project.id}
+          project={project}
+          invites={invites}
+          requests={requests}
+          user={authUser}
+        />
       ))}
       {hasMoreProjects && (
         <div className={styles['user-projects-list__more']}>
