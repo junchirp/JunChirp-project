@@ -8,12 +8,16 @@ import Image from 'next/image';
 import { usePathname, useRouter } from '@/i18n/routing';
 import { useLogoutMutation } from '@/api/authApi';
 import { useTranslations } from 'next-intl';
-import { useSelector } from 'react-redux';
-import authSelector from '@/redux/auth/authSelector';
 import DiscordBanner from '@/shared/components/DiscordBanner/DiscordBanner';
-import { useClickOutside } from '../../../../../hooks/useClickOutside';
+import { useClickOutside } from '@/hooks/useClickOutside';
 
-export default function BurgerMenu(): ReactElement {
+interface BurgerMenuProps {
+  isDiscord: boolean;
+}
+
+export default function BurgerMenu({
+  isDiscord,
+}: BurgerMenuProps): ReactElement {
   const router = useRouter();
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -22,7 +26,6 @@ export default function BurgerMenu(): ReactElement {
   const [logoutMutation] = useLogoutMutation();
   const tMenu = useTranslations('burgerMenu');
   const tDiscord = useTranslations('discord');
-  const user = useSelector(authSelector.selectUser);
   const [isBanner, setBanner] = useState(false);
 
   const toggleMenu = (): void => setIsOpen((prev) => !prev);
@@ -115,7 +118,7 @@ export default function BurgerMenu(): ReactElement {
               />
               <span>{tMenu('users')}</span>
             </button>
-            {user?.discordId ? (
+            {isDiscord ? (
               <button
                 className={styles['burger-menu__menu-item']}
                 onClick={openDiscordChat}

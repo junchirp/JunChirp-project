@@ -1,6 +1,6 @@
-import { Locale } from '@/i18n/routing';
+import { SystemLocaleType } from '../types/system-locale.type';
 
 export interface ProjectCategoryInterface {
   id: string;
-  categoryName: Record<Locale, string>;
+  categoryName: Record<SystemLocaleType, string>;
 }

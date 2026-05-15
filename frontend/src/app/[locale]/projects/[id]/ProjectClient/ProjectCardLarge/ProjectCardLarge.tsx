@@ -7,18 +7,16 @@ import { ProjectParticipationInterface } from '@/shared/interfaces/project-parti
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import ProjectCardFooter from '@/shared/components/ProjectCardFooter/ProjectCardFooter';
 import Image from 'next/image';
-import { useLocale, useTranslations } from 'next-intl';
-import { Locale } from '@/i18n/routing';
+import { useFormatter, useTranslations } from 'next-intl';
 import { membersPipe } from '@/shared/utils/membersPipe';
-import { datePipe } from '@/shared/utils/datePipe';
 import { projectDurationPipe } from '@/shared/utils/projectDurationPipe';
+import { useSystemLocale } from '@/hooks/useSystemLocale';
 
-interface ProjectCardProps {
+interface ProjectCardLargeProps {
   project: ProjectCardInterface;
   invites: ProjectParticipationInterface[];
   requests: ProjectParticipationInterface[];
-  user: AuthInterface | null;
-  size?: 'small' | 'large';
+  user: AuthInterface;
 }
 
 export default function ProjectCardLarge({
@@ -26,10 +24,16 @@ export default function ProjectCardLarge({
   invites,
   requests,
   user,
-}: ProjectCardProps): ReactElement {
+}: ProjectCardLargeProps): ReactElement {
   const tStatus = useTranslations('status');
   const tProjectsPage = useTranslations('projectsPage');
-  const locale = useLocale();
+  const locale = useSystemLocale();
+  const format = useFormatter();
+  const formattedDate = format.dateTime(new Date(project.createdAt), {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  });
 
   return (
     <div className={styles['project-card-large']}>
@@ -81,7 +85,7 @@ export default function ProjectCardLarge({
             {project.description}
           </p>
           <p className={styles['project-card-large__category']}>
-            {project.category.categoryName[locale as Locale]}
+            {project.category.categoryName[locale]}
           </p>
           <div className={styles['project-card-large__team']}>
             <div className={styles['project-card-large__members']}>
@@ -96,7 +100,7 @@ export default function ProjectCardLarge({
               </span>
             </div>
             <span className={styles['project-card-large__team-text']}>
-              {datePipe(project.createdAt.toString(), 'DD/MM/YYYY')}
+              {formattedDate}
             </span>
           </div>
           {project.duration !== null && project.status === 'done' && (

@@ -4,11 +4,10 @@ import { ReactElement } from 'react';
 import styles from './ProjectInfoView.module.scss';
 import Image from 'next/image';
 import { membersPipe } from '@/shared/utils/membersPipe';
-import { datePipe } from '@/shared/utils/datePipe';
 import ProjectMenu from './ProjectMenu/ProjectMenu';
-import { useLocale, useTranslations } from 'next-intl';
-import { Locale } from '@/i18n/routing';
+import { useFormatter, useTranslations } from 'next-intl';
 import { ProjectInterface } from '@/shared/interfaces/project.interface';
+import { useSystemLocale } from '@/hooks/useSystemLocale';
 
 interface ProjectInfoViewProps {
   project: ProjectInterface;
@@ -21,7 +20,13 @@ export default function ProjectInfoView({
 }: ProjectInfoViewProps): ReactElement {
   const tProjectsPage = useTranslations('projectsPage');
   const tStatus = useTranslations('status');
-  const locale = useLocale();
+  const locale = useSystemLocale();
+  const format = useFormatter();
+  const formattedDate = format.dateTime(new Date(project.createdAt), {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  });
 
   return (
     <>
@@ -75,7 +80,7 @@ export default function ProjectInfoView({
               {project.description}
             </p>
             <p className={styles['project-info-view__category']}>
-              {project.category.categoryName[locale as Locale]}
+              {project.category.categoryName[locale]}
             </p>
             <div className={styles['project-info-view__team']}>
               <div className={styles['project-info-view__members']}>
@@ -90,7 +95,7 @@ export default function ProjectInfoView({
                 </span>
               </div>
               <span className={styles['project-info-view__team-text']}>
-                {datePipe(project.createdAt.toString(), 'DD/MM/YYYY')}
+                {formattedDate}
               </span>
             </div>
           </div>

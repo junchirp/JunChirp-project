@@ -12,20 +12,20 @@ import { useRouter } from '@/i18n/routing';
 export default function Info(): ReactElement | null {
   const { id } = useParams<{ id: string }>();
   const { data: project } = useGetProjectByIdQuery(id);
-  const user = useAppSelector(authSelector.selectUser);
+  const user = useAppSelector(authSelector.selectRequiredUser);
   const searchParams = useSearchParams();
   const isEdit = searchParams.get('mode') === 'edit';
   const router = useRouter();
 
-  const isOwner = !!project && !!user && project.ownerId === user.id;
+  const isOwner = project?.ownerId === user.id;
 
   useEffect(() => {
-    if (project && user && isEdit && !isOwner) {
+    if (project && isEdit && !isOwner) {
       router.replace(`/projects/${id}/dashboard/info`);
     }
-  }, [project, user, isEdit, router, isOwner, id]);
+  }, [project, isEdit, router, isOwner, id]);
 
-  if (!project || !user) {
+  if (!project) {
     return null;
   }
 

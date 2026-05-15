@@ -3,7 +3,6 @@
 import { ReactElement, useState } from 'react';
 import styles from './MyProjects.module.scss';
 import Button from '@/shared/components/Button/Button';
-import UserProjectCard from '@/shared/components/UserProjectCard/UserProjectCard';
 import { ProjectCardInterface } from '@/shared/interfaces/project-card.interface';
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import DiscordBanner from '@/shared/components/DiscordBanner/DiscordBanner';
@@ -11,17 +10,23 @@ import { useRouter } from '@/i18n/routing';
 import Plus from '@/assets/icons/plus.svg';
 import { useTranslations } from 'next-intl';
 import { useLazyGetProjectsCountQuery } from '@/api/authApi';
-import { ToastKeysEnum } from '../../../../../shared/enums/toast-keys.enum';
-import { useToast } from '../../../../../hooks/useToast';
+import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
+import { useToast } from '@/hooks/useToast';
+import ProjectCardSmall from '@/shared/components/ProjectCardSmall/ProjectCardSmall';
+import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
 
 interface MyProjectsProps {
   myProjects: ProjectCardInterface[];
-  user: AuthInterface | null;
+  user: AuthInterface;
+  invites: ProjectParticipationInterface[];
+  requests: ProjectParticipationInterface[];
 }
 
 export default function MyProjects({
   myProjects,
   user,
+  invites,
+  requests,
 }: MyProjectsProps): ReactElement {
   const [isBanner, setBanner] = useState(false);
   const router = useRouter();
@@ -36,7 +41,7 @@ export default function MyProjects({
       return;
     }
 
-    if (user?.discordId) {
+    if (user.discordId) {
       try {
         const result = await getProjectsCount(undefined, true).unwrap();
 
@@ -82,10 +87,12 @@ export default function MyProjects({
           {!!myProjects.length && user && (
             <div className={styles['my-projects__list']}>
               {myProjects.map((project) => (
-                <UserProjectCard
+                <ProjectCardSmall
                   key={project.id}
                   project={project}
-                  userId={user.id}
+                  invites={invites}
+                  requests={requests}
+                  user={user}
                 />
               ))}
             </div>

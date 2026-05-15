@@ -13,7 +13,7 @@ import { AuthInterface } from '@/shared/interfaces/auth.interface';
 
 interface MemberFooterProps {
   project: ProjectCardInterface;
-  user: AuthInterface | null;
+  user: AuthInterface;
   vacantRoles: ProjectRoleInterface[];
   size: 'small' | 'large';
   className?: string;
@@ -29,7 +29,7 @@ export default function MemberFooter({
   const tButtons = useTranslations('buttons');
   const router = useRouter();
   const isMyProject = project.roles.some((role) =>
-    role.users.some((u) => u.id === user?.id),
+    role.users.some((u) => u.id === user.id),
   );
 
   const goProject = (): void => {

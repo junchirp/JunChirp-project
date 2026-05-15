@@ -19,7 +19,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   labelWeight?: number;
   labelMargin?: number;
   placeholder?: string;
-  errorMessages?: string[] | string;
+  errorMessage?: string;
   className?: string;
   withError?: boolean;
 }
@@ -35,11 +35,11 @@ function InputComponent(
     labelWeight = 500,
     labelMargin = 4,
     placeholder,
-    errorMessages,
+    errorMessage,
     value,
     type = 'text',
     className,
-    withError,
+    withError = false,
     ...rest
   } = props;
   const [showPassword, setShowPassword] = useState(false);
@@ -58,7 +58,7 @@ function InputComponent(
 
   const inputClassNames = [
     styles.input__input,
-    errorMessages?.length && styles['input__input--invalid'],
+    withError && !!errorMessage && styles['input__input--invalid'],
     isPasswordField && styles['input__input--password'],
   ]
     .filter(Boolean)
@@ -105,7 +105,7 @@ function InputComponent(
         )}
       </div>
       {withError ? (
-        errorMessages?.length ? (
+        errorMessage ? (
           <p className={styles.input__error}>
             <Image
               src="/images/alert-circle.svg"
@@ -113,7 +113,7 @@ function InputComponent(
               width={12}
               height={12}
             />
-            {errorMessages[0]}
+            {errorMessage}
           </p>
         ) : (
           <p className={styles.input__error}></p>

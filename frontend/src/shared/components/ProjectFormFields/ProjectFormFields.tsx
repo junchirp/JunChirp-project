@@ -3,20 +3,19 @@
 import React, { ReactElement } from 'react';
 import styles from './ProjectFormFields.module.scss';
 import { Controller, UseFormReturn } from 'react-hook-form';
-import Input from '../Input/Input';
-import { normalizeApostrophes } from '../../utils/normalizeApostrophes';
-import Textarea from '../Textarea/Textarea';
-import Dropdown from '../Dropdown/Dropdown';
-import { ProjectCategoryInterface } from '../../interfaces/project-category.interface';
-import { Locale } from '../../../i18n/routing';
-import CheckboxChecked from '../../../assets/icons/checkbox-checked.svg';
-import CheckboxCheckedDisabled from '../../../assets/icons/checkbox-checked-disbaled.svg';
-import Checkbox from '../../../assets/icons/checkbox-empty.svg';
+import Input from '@/shared/components/Input/Input';
+import { normalizeApostrophes } from '@/shared/utils/normalizeApostrophes';
+import Textarea from '@/shared/components/Textarea/Textarea';
+import Dropdown from '@/shared/components/Dropdown/Dropdown';
+import { ProjectCategoryInterface } from '@/shared/interfaces/project-category.interface';
+import CheckboxChecked from '@/assets/icons/checkbox-checked.svg';
+import CheckboxCheckedDisabled from '@/assets/icons/checkbox-checked-disbaled.svg';
+import Checkbox from '@/assets/icons/checkbox-empty.svg';
 import { z } from 'zod';
 import { projectSchemaStatic } from '@/shared/forms/schemas/projectSchema';
 import { ProjectRoleTypeInterface } from '@/shared/interfaces/project-role-type.interface';
 import { ProjectInterface } from '@/shared/interfaces/project.interface';
-import { useLocale } from 'next-intl';
+import { useSystemLocale } from '@/hooks/useSystemLocale';
 
 type FormData = z.infer<typeof projectSchemaStatic>;
 
@@ -40,7 +39,7 @@ export default function ProjectFormFields(
   const existingRoleIds = new Set(
     project?.roles.map((r) => r.roleType.id) ?? [],
   );
-  const locale = useLocale();
+  const locale = useSystemLocale();
 
   return (
     <fieldset className={styles['project-form-fields']} disabled={disabled}>
@@ -56,9 +55,7 @@ export default function ProjectFormFields(
             labelMargin={12}
             placeholder={tForms('projectForm.placeholders.projectName')}
             withError
-            errorMessages={
-              errors.projectName?.message && [errors.projectName.message]
-            }
+            errorMessage={errors.projectName?.message}
             {...field}
             onChange={(e) => {
               const normalized = normalizeApostrophes(e.target.value);
@@ -79,9 +76,7 @@ export default function ProjectFormFields(
             labelMargin={12}
             placeholder={tForms('projectForm.placeholders.description')}
             withError
-            errorMessages={
-              errors.description?.message && [errors.description.message]
-            }
+            errorMessage={errors.description?.message}
             {...field}
             onChange={(e) => {
               const normalized = normalizeApostrophes(e.target.value);
@@ -103,12 +98,10 @@ export default function ProjectFormFields(
             labelMargin={12}
             placeholder={tForms('projectForm.placeholders.category')}
             {...field}
-            getOptionLabel={(o) => o.categoryName[locale as Locale]}
+            getOptionLabel={(o) => o.categoryName[locale]}
             getOptionValue={(o) => o.id}
             withError
-            errorMessages={
-              errors.categoryId?.message && [errors.categoryId.message]
-            }
+            errorMessage={errors.categoryId?.message}
           />
         )}
       />

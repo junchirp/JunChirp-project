@@ -16,9 +16,9 @@ import {
 } from '@/shared/forms/schemas/inviteSchema';
 import Dropdown from '@/shared/components/Dropdown/Dropdown';
 import { RoleWithUserInterface } from '@/shared/interfaces/role-with-user.interface';
-import { useLocale, useTranslations } from 'next-intl';
-import { Locale } from '@/i18n/routing';
+import { useTranslations } from 'next-intl';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
+import { useSystemLocale } from '@/hooks/useSystemLocale';
 
 type FormData = z.infer<typeof inviteSchemaStatic>;
 
@@ -32,7 +32,7 @@ export default function InviteForm(props: InviteFormProps): ReactElement {
   const { user, onClose, myProjects } = props;
   const [inviteUser, { isLoading }] = useInviteUserMutation();
   const { showToast, isActive } = useToast();
-  const locale = useLocale();
+  const locale = useSystemLocale();
   const tForm = useTranslations('forms');
   const tButtons = useTranslations('buttons');
 
@@ -68,7 +68,7 @@ export default function InviteForm(props: InviteFormProps): ReactElement {
       return;
     }
 
-    const result = await inviteUser({ ...data, locale: locale as Locale });
+    const result = await inviteUser({ ...data, locale });
 
     if ('data' in result) {
       onClose();

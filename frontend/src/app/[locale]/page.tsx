@@ -21,12 +21,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: t('title'),
       description: t('description'),
       siteName: 'JunChirp',
-      locale: locale === 'ua' ? 'uk_UA' : 'en_US',
+      locale: locale === 'uk-UA' ? 'uk_UA' : 'en_US',
       type: 'website',
       images: [
         {
           url:
-            locale === 'ua'
+            locale === 'uk-UA'
               ? '/images/invitation-banner_ua.jpg'
               : '/images/invitation-banner_en.jpg',
           width: 1200,
@@ -40,7 +40,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: t('title'),
       description: t('description'),
       images:
-        locale === 'ua'
+        locale === 'uk-UA'
           ? ['/images/invitation-banner_ua.jpg']
           : ['/images/invitation-banner_en.jpg'],
     },

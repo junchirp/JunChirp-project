@@ -13,19 +13,19 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ProjectCardInterface } from '@/shared/interfaces/project-card.interface';
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
-import { useLocale, useTranslations } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
-import { Locale } from '@/i18n/routing';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
 import DiscordBanner from '@/shared/components/DiscordBanner/DiscordBanner';
 import { useToast } from '@/hooks/useToast';
 import { useCreateRequestMutation } from '@/api/participationsApi';
 import { ProjectRoleInterface } from '@/shared/interfaces/project-role.interface';
+import { useSystemLocale } from '@/hooks/useSystemLocale';
 
 interface ParticipationRequestFormProps {
   project: ProjectCardInterface;
-  user: AuthInterface | null;
+  user: AuthInterface;
   size: 'small' | 'large';
   vacantRoles: ProjectRoleInterface[];
   className?: string;
@@ -54,15 +54,15 @@ export default function ParticipationRequestForm({
     defaultValues: {
       projectId: project.id,
       projectRoleId: '',
-      userId: user?.id ?? '',
+      userId: user.id,
     },
   });
   const [isRequestBanner, setRequestBanner] = useState(false);
   const { showToast, isActive } = useToast();
-  const locale = useLocale();
+  const locale = useSystemLocale();
   const [createRequest, { isLoading: requestLoading }] =
     useCreateRequestMutation();
-  const roleTypeIds = user?.desiredRoles.map((role) => role.id) ?? [];
+  const roleTypeIds = user.desiredRoles.map((role) => role.id);
   const labelClassNames = [
     styles['participation-request-form__label'],
     size === 'small'
@@ -76,7 +76,7 @@ export default function ParticipationRequestForm({
   const closeRequestBanner = (): void => setRequestBanner(false);
 
   const sendRequest = async (data: FormData): Promise<void> => {
-    if (!user?.discordId) {
+    if (!user.discordId) {
       setRequestBanner(true);
       return;
     }
@@ -85,7 +85,7 @@ export default function ParticipationRequestForm({
       return;
     }
 
-    const result = await createRequest({ ...data, locale: locale as Locale });
+    const result = await createRequest({ ...data, locale });
 
     if ('error' in result) {
       const errorData = result.error as

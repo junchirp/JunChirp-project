@@ -47,6 +47,7 @@ import { User } from '../auth/decorators/user.decorator';
 import { ProjectCardResponseDto } from './dto/project-card.response-dto';
 import { UUIDParam } from '../shared/decorators/UUID-param.decorator';
 import { ProjectLogoResponseDto } from './dto/project-logo.response-dto';
+import { NoMember } from '../auth/decorators/no-member.decorator';
 
 @User()
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
@@ -128,7 +129,11 @@ export class ProjectsController {
   @ApiOperation({ summary: 'Close project' })
   @ApiCreatedResponse({ type: ProjectResponseDto })
   @ApiNotFoundResponse({
-    description: 'Project, role or user in team not found',
+    description:
+      'Project, role or user in team not found / Project roles not found or already removed',
+  })
+  @ApiBadRequestResponse({
+    description: 'Cannot update or delete roles due to related constraints',
   })
   @ApiForbiddenResponse({
     description:
@@ -254,6 +259,7 @@ export class ProjectsController {
     return this.projectsService.getRequests(id);
   }
 
+  @NoMember()
   @ApiOperation({ summary: 'Get project card by project id' })
   @ApiOkResponse({ type: ProjectCardResponseDto })
   @ApiNotFoundResponse({ description: 'Project not found' })

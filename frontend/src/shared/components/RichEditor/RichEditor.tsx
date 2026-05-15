@@ -14,7 +14,7 @@ interface RichEditorProps {
   labelWeight?: number;
   labelMargin?: number;
   placeholder?: string;
-  errorMessages?: string[] | string;
+  errorMessage?: string;
   withError?: boolean;
 }
 
@@ -28,8 +28,8 @@ export function RichEditor(props: RichEditorProps): ReactElement {
     labelWeight = 500,
     labelMargin = 4,
     placeholder,
-    errorMessages,
-    withError,
+    errorMessage,
+    withError = false,
   } = props;
   const header = (
     <div className={styles['rich-editor__header']}>
@@ -49,7 +49,7 @@ export function RichEditor(props: RichEditorProps): ReactElement {
 
   const editorClassNames = [
     styles['rich-editor__editor'],
-    errorMessages?.length && styles['rich-editor__editor--invalid'],
+    withError && !!errorMessage && styles['rich-editor__editor--invalid'],
   ]
     .filter(Boolean)
     .join(' ');
@@ -75,7 +75,7 @@ export function RichEditor(props: RichEditorProps): ReactElement {
         onTextChange={handleTextChange}
       />
       {withError ? (
-        errorMessages?.length ? (
+        errorMessage ? (
           <p className={styles['rich-editor__error']}>
             <Image
               src="/images/alert-circle.svg"
@@ -83,7 +83,7 @@ export function RichEditor(props: RichEditorProps): ReactElement {
               width={16}
               height={16}
             />
-            {errorMessages[0]}
+            {errorMessage}
           </p>
         ) : (
           <p className={styles['rich-editor__error']} />

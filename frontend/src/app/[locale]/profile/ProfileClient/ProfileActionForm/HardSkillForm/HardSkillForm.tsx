@@ -110,9 +110,7 @@ export default function HardSkillForm(props: HardSkillFormProps): ReactElement {
               placeholder={tForms('hardSkillForm.placeholders.hardSkillName')}
               fetcher={(query) => getSkills(query)}
               onSelectOption={() => {}}
-              errorMessages={
-                errors.hardSkillName?.message && [errors.hardSkillName.message]
-              }
+              errorMessage={errors.hardSkillName?.message}
               withError
             />
           )}

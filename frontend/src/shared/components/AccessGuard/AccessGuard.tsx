@@ -9,18 +9,18 @@ import authSelector from '@/redux/auth/authSelector';
 import { SerializedError } from '@reduxjs/toolkit';
 import { ModeType } from '@/shared/access/access-control.type';
 import { ACCESS_RESOLVERS } from '@/shared/access/access-control.config';
-import { ProjectInterface } from '../../interfaces/project.interface';
+import { ProjectInterface } from '@/shared/interfaces/project.interface';
 
 type AccessGuardProps =
   | {
       children: ReactNode;
-      mode: Exclude<ModeType, 'member'>;
+      mode: Exclude<ModeType, 'member' | 'no-member'>;
       checkDataAccess?: never;
       loadingFallback?: ReactNode;
     }
   | {
       children: ReactNode;
-      mode: 'member';
+      mode: 'member' | 'no-member';
       checkDataAccess: () =>
         | {
             data?: ProjectInterface;

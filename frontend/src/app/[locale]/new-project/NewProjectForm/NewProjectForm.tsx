@@ -1,6 +1,6 @@
 'use client';
 
-import React, { ReactElement, useState } from 'react';
+import { ReactElement, useState } from 'react';
 import styles from './NewProjectForm.module.scss';
 import Button from '@/shared/components/Button/Button';
 import {
@@ -25,8 +25,8 @@ import ProjectFormFields from '@/shared/components/ProjectFormFields/ProjectForm
 type FormData = z.infer<typeof projectSchemaStatic>;
 
 export default function NewProjectForm(): ReactElement {
-  const { data: categories = [] } = useGetCategoriesQuery(undefined);
-  const { data: roles = [] } = useGetProjectRolesListQuery(undefined);
+  const { data: categories = [] } = useGetCategoriesQuery();
+  const { data: roles = [] } = useGetProjectRolesListQuery();
   const tForms = useTranslations('forms');
   const tButtons = useTranslations('buttons');
   const form = useForm<FormData>({

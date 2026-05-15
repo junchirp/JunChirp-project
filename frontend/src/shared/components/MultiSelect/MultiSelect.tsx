@@ -8,7 +8,7 @@ import styles from './MultiSelect.module.scss';
 import CheckboxChecked from '@/assets/icons/checkbox-checked.svg';
 import Checkbox from '@/assets/icons/checkbox-empty.svg';
 import Image from 'next/image';
-import { useClickOutside } from '../../../hooks/useClickOutside';
+import { useClickOutside } from '@/hooks/useClickOutside';
 
 interface MultiSelectProps<T> extends Partial<ControllerRenderProps> {
   label?: string;
@@ -23,7 +23,7 @@ interface MultiSelectProps<T> extends Partial<ControllerRenderProps> {
   getOptionValue?: (option: T) => string | number;
   isOptionDisabled?: (option: T) => boolean;
   withError?: boolean;
-  errorMessages?: string[] | string;
+  errorMessage?: string;
   autoFocus?: boolean;
 }
 
@@ -45,8 +45,8 @@ export default function MultiSelect<T>(
     getOptionLabel,
     getOptionValue,
     isOptionDisabled,
-    withError,
-    errorMessages,
+    withError = false,
+    errorMessage,
     autoFocus = false,
   } = props;
 
@@ -102,7 +102,7 @@ export default function MultiSelect<T>(
   const buttonClassNames = [
     styles['multi-select__button'],
     isOpen && styles['multi-select__button--focused'],
-    withError && errorMessages ? styles['multi-select__button--invalid'] : '',
+    withError && errorMessage && styles['multi-select__button--invalid'],
   ]
     .filter(Boolean)
     .join(' ');
@@ -150,7 +150,7 @@ export default function MultiSelect<T>(
       </div>
 
       {withError ? (
-        errorMessages?.length ? (
+        errorMessage ? (
           <p className={styles['multi-select__error']}>
             <Image
               src="/images/alert-circle.svg"
@@ -158,7 +158,7 @@ export default function MultiSelect<T>(
               width={12}
               height={12}
             />
-            {errorMessages[0]}
+            {errorMessage}
           </p>
         ) : (
           <p className={styles['multi-select__error']}></p>

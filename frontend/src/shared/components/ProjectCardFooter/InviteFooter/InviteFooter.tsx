@@ -22,7 +22,7 @@ interface InviteFooterProps {
   currentInvite: ProjectParticipationInterface;
   vacantRoles: ProjectRoleInterface[];
   size: 'small' | 'large';
-  user: AuthInterface | null;
+  user: AuthInterface;
   className?: string;
 }
 
@@ -60,7 +60,7 @@ export default function InviteFooter({
   };
 
   const handleAccept = async (): Promise<void> => {
-    if (!user?.discordId) {
+    if (!user.discordId) {
       setInviteBanner(true);
       return;
     }
@@ -126,7 +126,7 @@ export default function InviteFooter({
           </Button>
         </ProjectCardActionsWrapper>
       </div>
-      {currentInvite && user && (
+      {currentInvite && (
         <RejectInvitePopup
           isOpen={isInvitePopupOpen}
           onClose={closeInvitePopup}

@@ -1,5 +1,5 @@
-import { Locale } from '@/i18n/routing';
+import { SystemLocaleType } from '../types/system-locale.type';
 
 export interface LocaleInterface {
-  locale: Locale;
+  locale: SystemLocaleType;
 }

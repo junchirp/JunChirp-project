@@ -101,7 +101,7 @@ export default function ProjectImageUpload({
     }
 
     try {
-      await deleteLogo({ id: project.id });
+      await deleteLogo(project.id);
       closeModal();
       showToast({
         severity: 'success',

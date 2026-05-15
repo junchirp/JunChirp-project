@@ -180,19 +180,10 @@ export class AuthService {
     req: Request,
     res: Response,
   ): Promise<AuthResponseDto> {
-    const user: UserWithPasswordResponseDto =
-      req.user as UserWithPasswordResponseDto;
+    const user: AuthResponseDto = req.user as AuthResponseDto;
     const { accessToken, refreshToken } = this.createTokens(user.id);
     this.addRefreshTokenToResponse(res, refreshToken);
     this.addAccessTokenToResponse(res, accessToken);
-    const {
-      password,
-      educations,
-      socials,
-      hardSkills,
-      softSkills,
-      ...baseUserInfo
-    } = user;
 
     await this.loggerService.log(
       ip,
@@ -201,7 +192,7 @@ export class AuthService {
       'User login successfully',
     );
 
-    return baseUserInfo;
+    return user;
   }
 
   public async registration(

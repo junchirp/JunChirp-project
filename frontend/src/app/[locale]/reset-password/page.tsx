@@ -6,15 +6,16 @@ import { useRouter } from '@/i18n/routing';
 import { useValidateTokenQuery } from '@/api/authApi';
 import NewPassword from './NewPassword/NewPassword';
 import { RecoveryPasswordInterface } from '@/shared/interfaces/recovery-password.interface';
+import { skipToken } from '@reduxjs/toolkit/query';
 
 export default function ResetPassword(): ReactElement | null {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get('token') ?? '';
 
-  const { data, isLoading, isError } = useValidateTokenQuery(token, {
-    skip: !token,
-  });
+  const { data, isLoading, isError } = useValidateTokenQuery(
+    token ?? skipToken,
+  );
 
   useEffect(() => {
     if (!token) {

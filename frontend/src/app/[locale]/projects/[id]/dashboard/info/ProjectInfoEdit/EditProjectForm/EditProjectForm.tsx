@@ -30,8 +30,8 @@ interface EditProjectFormProps {
 export default function EditProjectForm({
   project,
 }: EditProjectFormProps): ReactElement {
-  const { data: categories = [] } = useGetCategoriesQuery(undefined);
-  const { data: roles = [] } = useGetProjectRolesListQuery(undefined);
+  const { data: categories = [] } = useGetCategoriesQuery();
+  const { data: roles = [] } = useGetProjectRolesListQuery();
   const tForms = useTranslations('forms');
   const form = useForm<FormData>({
     resolver: zodResolver(projectSchema(tForms)),

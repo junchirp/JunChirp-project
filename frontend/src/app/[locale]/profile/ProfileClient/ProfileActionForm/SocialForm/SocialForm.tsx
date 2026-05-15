@@ -192,9 +192,7 @@ export default function SocialForm(props: SocialFormProps): ReactElement {
               getOptionLabel={(o) => o.network}
               getOptionValue={(o) => o.network}
               withError
-              errorMessages={
-                errors.network?.message && [errors.network.message]
-              }
+              errorMessage={errors.network?.message}
               autoFocus
             />
           )}
@@ -204,7 +202,7 @@ export default function SocialForm(props: SocialFormProps): ReactElement {
           label={tForms('socialForm.url')}
           placeholder={tForms('socialForm.placeholders.url')}
           withError
-          errorMessages={errors.url?.message && [errors.url.message]}
+          errorMessage={errors.url?.message}
         />
       </fieldset>
       <div className={styles['social-form__actions']}>

@@ -21,7 +21,7 @@ import { useTranslations } from 'next-intl';
 
 export default function ProjectsClient(): ReactElement {
   const { filters, updateFilters } = useProjectsFilters();
-  const user = useAppSelector(authSelector.selectUser);
+  const user = useAppSelector(authSelector.selectRequiredUser);
   const t = useTranslations('projectsPage');
 
   const onPageChange = (page: number): void => {
@@ -30,17 +30,11 @@ export default function ProjectsClient(): ReactElement {
 
   const { data: list, isLoading: listLoading } = useGetProjectsQuery(filters);
   const { data: requests = [], isLoading: requestsLoading } =
-    useGetMyRequestsQuery(user ? { userId: user.id } : undefined, {
-      skip: !user,
-    });
+    useGetMyRequestsQuery(user.id);
   const { data: invites = [], isLoading: invitesLoading } =
-    useGetMyInvitesQuery(user ? { userId: user.id } : undefined, {
-      skip: !user,
-    });
+    useGetMyInvitesQuery(user.id);
   const { data: myProjectsList, isLoading: myProjectsLoading } =
-    useGetMyProjectsQuery(user ? { userId: user.id } : undefined, {
-      skip: !user,
-    });
+    useGetMyProjectsQuery(user.id);
 
   const isLoading =
     listLoading || requestsLoading || invitesLoading || myProjectsLoading;
@@ -70,8 +64,13 @@ export default function ProjectsClient(): ReactElement {
         <ProjectsFilters />
         {myProjectsLoading ? (
           <ListSkeleton height={341} />
-        ) : myProjectsList && user ? (
-          <MyProjects myProjects={myProjectsList.projects} user={user} />
+        ) : myProjectsList ? (
+          <MyProjects
+            myProjects={myProjectsList.projects}
+            user={user}
+            invites={invites}
+            requests={requests}
+          />
         ) : null}
         {isLoading ? (
           <ListSkeleton height={562} lines={10} />

@@ -95,12 +95,12 @@ export const projectsApi = mainApi.injectEndpoints({
         'my-projects',
       ],
     }),
-    deleteProjectLogo: builder.mutation<void, { id: string }>({
-      query: ({ id }) => ({
+    deleteProjectLogo: builder.mutation<void, string>({
+      query: (id) => ({
         url: `projects/${id}/logo`,
         method: 'DELETE',
       }),
-      invalidatesTags: (_result, _error, { id }) => [
+      invalidatesTags: (_result, _error, id) => [
         { type: 'projects', id: 'LIST' },
         { type: 'projects', id },
         'my-projects',

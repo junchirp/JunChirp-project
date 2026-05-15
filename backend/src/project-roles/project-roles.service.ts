@@ -1,7 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { ProjectRoleType } from '@prisma/client';
+import { Prisma, ProjectRoleType } from '@prisma/client';
 import { ProjectRoleTypeResponseDto } from './dto/project-role-type.response-dto';
+import { isPrismaError } from 'src/shared/utils/is-prisma-error';
 
 @Injectable()
 export class ProjectRolesService {
@@ -199,4 +204,64 @@ export class ProjectRolesService {
   // public exitFromProject(roleId: string, userId: string): Promise<void> {
   //   return this.handleUserRemovalFromProject(roleId, userId, false);
   // }
+
+  public async clearSlots(
+    projectId: string,
+    px: Prisma.TransactionClient,
+  ): Promise<void> {
+    try {
+      const roles = await px.projectRole.findMany({
+        where: { projectId },
+        select: {
+          id: true,
+          _count: {
+            select: { users: true },
+          },
+        },
+      });
+
+      const rolesToDelete: string[] = [];
+      const rolesToUpdate: { id: string; slots: number }[] = [];
+
+      for (const role of roles) {
+        const usersCount = role._count.users;
+
+        if (usersCount === 0) {
+          rolesToDelete.push(role.id);
+        } else {
+          rolesToUpdate.push({
+            id: role.id,
+            slots: usersCount,
+          });
+        }
+      }
+
+      if (rolesToDelete.length) {
+        await px.projectRole.deleteMany({
+          where: { id: { in: rolesToDelete } },
+        });
+      }
+
+      for (const role of rolesToUpdate) {
+        await px.projectRole.update({
+          where: { id: role.id },
+          data: { slots: role.slots },
+        });
+      }
+    } catch (error) {
+      if (isPrismaError(error)) {
+        switch (error.code) {
+          case 'P2025':
+            throw new NotFoundException(
+              'Project roles not found or already removed',
+            );
+          case 'P2003':
+            throw new BadRequestException(
+              'Cannot update or delete roles due to related constraints',
+            );
+        }
+      }
+      throw error;
+    }
+  }
 }

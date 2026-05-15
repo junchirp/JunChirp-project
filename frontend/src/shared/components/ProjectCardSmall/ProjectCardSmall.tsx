@@ -6,18 +6,18 @@ import { ProjectCardInterface } from '@/shared/interfaces/project-card.interface
 import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import Image from 'next/image';
-import { Link, Locale } from '@/i18n/routing';
-import { useLocale, useTranslations } from 'next-intl';
+import { Link } from '@/i18n/routing';
+import { useFormatter, useTranslations } from 'next-intl';
 import { membersPipe } from '@/shared/utils/membersPipe';
-import { datePipe } from '@/shared/utils/datePipe';
 import { projectDurationPipe } from '@/shared/utils/projectDurationPipe';
 import ProjectCardFooter from '@/shared/components/ProjectCardFooter/ProjectCardFooter';
+import { useSystemLocale } from '@/hooks/useSystemLocale';
 
-interface ProjectCardProps {
+interface ProjectCardSmallProps {
   project: ProjectCardInterface;
   invites: ProjectParticipationInterface[];
   requests: ProjectParticipationInterface[];
-  user: AuthInterface | null;
+  user: AuthInterface;
 }
 
 export default function ProjectCardSmall({
@@ -25,11 +25,17 @@ export default function ProjectCardSmall({
   invites,
   requests,
   user,
-}: ProjectCardProps): ReactElement {
+}: ProjectCardSmallProps): ReactElement {
   const isMyProject = project.roles.some((role) =>
-    role.users.some((u) => u.id === user?.id),
+    role.users.some((u) => u.id === user.id),
   );
-  const locale = useLocale();
+  const locale = useSystemLocale();
+  const format = useFormatter();
+  const formattedDate = format.dateTime(new Date(project.createdAt), {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  });
 
   const tProjectsPage = useTranslations('projectsPage');
   const tStatus = useTranslations('status');
@@ -88,7 +94,7 @@ export default function ProjectCardSmall({
           {project.description}
         </p>
         <p className={styles['project-card-small__category']}>
-          {project.category.categoryName[locale as Locale]}
+          {project.category.categoryName[locale]}
         </p>
         <div className={styles['project-card-small__team']}>
           <div className={styles['project-card-small__members']}>
@@ -103,7 +109,7 @@ export default function ProjectCardSmall({
             </span>
           </div>
           <span className={styles['project-card-small__team-text']}>
-            {datePipe(project.createdAt.toString(), 'DD/MM/YYYY')}
+            {formattedDate}
           </span>
         </div>
         {project.duration !== null && project.status === 'done' && (

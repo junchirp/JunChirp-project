@@ -10,7 +10,7 @@ import Checkbox from '@/assets/icons/checkbox-empty.svg';
 import Image from 'next/image';
 import Button from '@/shared/components/Button/Button';
 import X from '@/assets/icons/x.svg';
-import { useClickOutside } from '../../../hooks/useClickOutside';
+import { useClickOutside } from '@/hooks/useClickOutside';
 
 interface MultiSelectWithChipsProps<T> extends Partial<ControllerRenderProps> {
   label?: string;
@@ -24,7 +24,7 @@ interface MultiSelectWithChipsProps<T> extends Partial<ControllerRenderProps> {
   getOptionValue?: (option: T) => string | number;
   isOptionDisabled?: (option: T) => boolean;
   withError?: boolean;
-  errorMessages?: string[] | string;
+  errorMessage?: string;
   autoFocus?: boolean;
 }
 
@@ -45,8 +45,8 @@ export default function MultiSelectWithChips<T>(
     getOptionLabel,
     getOptionValue,
     isOptionDisabled,
-    withError,
-    errorMessages,
+    withError = false,
+    errorMessage,
     autoFocus = false,
   } = props;
 
@@ -104,9 +104,7 @@ export default function MultiSelectWithChips<T>(
   const buttonClassNames = [
     styles['multi-select-with-chips__button'],
     isOpen && styles['multi-select-with-chips__button--focused'],
-    withError && errorMessages
-      ? styles['multi-select-with-chips__button--invalid']
-      : '',
+    withError && errorMessage && styles['multi-select-with-chips__button--invalid'],
   ]
     .filter(Boolean)
     .join(' ');
@@ -171,7 +169,7 @@ export default function MultiSelectWithChips<T>(
       </div>
 
       {withError ? (
-        errorMessages?.length ? (
+        errorMessage ? (
           <p className={styles['multi-select-with-chips__error']}>
             <Image
               src="/images/alert-circle.svg"
@@ -179,7 +177,7 @@ export default function MultiSelectWithChips<T>(
               width={12}
               height={12}
             />
-            {errorMessages[0]}
+            {errorMessage}
           </p>
         ) : (
           <p className={styles['multi-select-with-chips__error']}></p>

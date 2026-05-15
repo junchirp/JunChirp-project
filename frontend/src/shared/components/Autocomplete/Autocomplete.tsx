@@ -14,7 +14,7 @@ import {
 import Input from '@/shared/components/Input/Input';
 import styles from './Autocomplete.module.scss';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
-import { useClickOutside } from '../../../hooks/useClickOutside';
+import { useClickOutside } from '@/hooks/useClickOutside';
 
 interface AutocompleteProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -22,7 +22,7 @@ interface AutocompleteProps extends InputHTMLAttributes<HTMLInputElement> {
   labelHeight?: number;
   labelWeight?: number;
   labelMargin?: number;
-  errorMessages?: string[] | string;
+  errorMessage?: string;
   withError?: boolean;
   placeholder?: string;
   onSelectOption?: (value: string | null) => void;
@@ -41,8 +41,8 @@ function AutocompleteComponent(
     labelHeight = 1,
     labelWeight = 500,
     labelMargin = 4,
-    errorMessages,
-    withError,
+    errorMessage,
+    withError = false,
     placeholder,
     onSelectOption,
     options,
@@ -159,7 +159,7 @@ function AutocompleteComponent(
         onChange={handleChange}
         onBlur={onBlur}
         withError={withError}
-        errorMessages={errorMessages}
+        errorMessage={errorMessage}
       />
       {isOpen && filtered.length > 0 && (
         <ul className={styles.autocomplete__list}>

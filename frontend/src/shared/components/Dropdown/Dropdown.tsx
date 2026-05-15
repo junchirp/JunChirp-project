@@ -6,7 +6,7 @@ import Up from '@/assets/icons/chevron-up.svg';
 import Down from '@/assets/icons/chevron-down.svg';
 import styles from './Dropdown.module.scss';
 import Image from 'next/image';
-import { useClickOutside } from '../../../hooks/useClickOutside';
+import { useClickOutside } from '@/hooks/useClickOutside';
 
 interface DropdownProps<T> extends Partial<ControllerRenderProps> {
   label?: string;
@@ -20,7 +20,7 @@ interface DropdownProps<T> extends Partial<ControllerRenderProps> {
   getOptionValue?: (option: T) => string | number | null;
   isOptionDisabled?: (option: T) => boolean;
   withError?: boolean;
-  errorMessages?: string[] | string;
+  errorMessage?: string;
   autoFocus?: boolean;
   defaultValue?: string | number | null;
   onValueChange?: (value: string | number | null) => void;
@@ -41,8 +41,8 @@ export default function Dropdown<T>(props: DropdownProps<T>): ReactElement {
     getOptionLabel,
     getOptionValue,
     isOptionDisabled,
-    withError,
-    errorMessages,
+    withError = false,
+    errorMessage,
     autoFocus = false,
     defaultValue,
     onValueChange,
@@ -104,7 +104,7 @@ export default function Dropdown<T>(props: DropdownProps<T>): ReactElement {
 
   const dropdownClassNames = [
     styles.dropdown__button,
-    errorMessages?.length && styles['dropdown__button--invalid'],
+    withError && !!errorMessage && styles['dropdown__button--invalid'],
   ]
     .filter(Boolean)
     .join(' ');
@@ -150,7 +150,7 @@ export default function Dropdown<T>(props: DropdownProps<T>): ReactElement {
         </button>
       </div>
       {withError ? (
-        errorMessages?.length ? (
+        errorMessage ? (
           <p className={styles.dropdown__error}>
             <Image
               src="/images/alert-circle.svg"
@@ -158,7 +158,7 @@ export default function Dropdown<T>(props: DropdownProps<T>): ReactElement {
               width={12}
               height={12}
             />
-            {errorMessages[0]}
+            {errorMessage}
           </p>
         ) : (
           <p className={styles.dropdown__error}></p>

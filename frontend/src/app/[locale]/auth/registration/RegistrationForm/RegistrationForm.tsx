@@ -3,27 +3,28 @@
 import { z } from 'zod';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRegisterMutation } from '../../../../../api/authApi';
+import { useRegisterMutation } from '@/api/authApi';
 import React, { ReactElement, useEffect } from 'react';
-import { useToast } from '../../../../../hooks/useToast';
+import { useToast } from '@/hooks/useToast';
 import styles from './RegistrationForm.module.scss';
-import Input from '../../../../../shared/components/Input/Input';
-import Button from '../../../../../shared/components/Button/Button';
-import { blackListPasswords } from '../../../../../shared/constants/black-list-passwords';
+import Input from '@/shared/components/Input/Input';
+import Button from '@/shared/components/Button/Button';
+import { blackListPasswords } from '@/shared/constants/black-list-passwords';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
-import { Link, Locale, useRouter } from '../../../../../i18n/routing';
-import Checkbox from '../../../../../assets/icons/checkbox-empty.svg';
-import CheckboxChecked from '../../../../../assets/icons/checkbox-checked.svg';
-import PasswordStrengthIndicator from '../../../../../shared/components/PasswordStrengthIndicator/PasswordStrengthIndicator';
-import { getPasswordStrength } from '../../../../../shared/utils/getPasswordStrength';
+import { Link, useRouter } from '@/i18n/routing';
+import Checkbox from '@/assets/icons/checkbox-empty.svg';
+import CheckboxChecked from '@/assets/icons/checkbox-checked.svg';
+import PasswordStrengthIndicator from '@/shared/components/PasswordStrengthIndicator/PasswordStrengthIndicator';
+import { getPasswordStrength } from '@/shared/utils/getPasswordStrength';
 import {
   registrationSchema,
   registrationSchemaStatic,
-} from '../../../../../shared/forms/schemas/registrationSchema';
-import { normalizeApostrophes } from '../../../../../shared/utils/normalizeApostrophes';
-import { useLocale, useTranslations } from 'next-intl';
-import { ToastKeysEnum } from '../../../../../shared/enums/toast-keys.enum';
+} from '@/shared/forms/schemas/registrationSchema';
+import { normalizeApostrophes } from '@/shared/utils/normalizeApostrophes';
+import { useTranslations } from 'next-intl';
+import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
+import { useSystemLocale } from '@/hooks/useSystemLocale';
 
 type FormData = z.infer<typeof registrationSchemaStatic>;
 
@@ -74,10 +75,10 @@ export default function RegistrationForm(): ReactElement {
   const router = useRouter();
   const [registration, { isLoading }] = useRegisterMutation();
   const { showToast, isActive } = useToast();
-  const locale = useLocale();
+  const locale = useSystemLocale();
 
   const onSubmit = async (data: FormData): Promise<void> => {
-    if (errors.email?.message || isActive(ToastKeysEnum.REGISTRATION)) {
+    if (isActive(ToastKeysEnum.REGISTRATION)) {
       return;
     }
 
@@ -86,7 +87,7 @@ export default function RegistrationForm(): ReactElement {
       lastName: data.lastName.trim(),
       email: data.email.trim(),
       password: data.password,
-      locale: locale as Locale,
+      locale,
     };
     const result = await registration(trimmedData);
 
@@ -143,9 +144,7 @@ export default function RegistrationForm(): ReactElement {
                 field.onChange(normalized);
               }}
               withError
-              errorMessages={
-                errors.firstName?.message && [errors.firstName.message]
-              }
+              errorMessage={errors.firstName?.message}
             />
           )}
         />
@@ -162,9 +161,7 @@ export default function RegistrationForm(): ReactElement {
                 field.onChange(normalized);
               }}
               withError
-              errorMessages={
-                errors.lastName?.message && [errors.lastName.message]
-              }
+              errorMessage={errors.lastName?.message}
             />
           )}
         />
@@ -174,7 +171,7 @@ export default function RegistrationForm(): ReactElement {
           type="email"
           {...register('email')}
           withError
-          errorMessages={errors.email?.message && [errors.email.message]}
+          errorMessage={errors.email?.message}
         />
         <Input
           autoComplete="new-password"
@@ -183,11 +180,9 @@ export default function RegistrationForm(): ReactElement {
           type="password"
           {...register('password')}
           withError
-          errorMessages={
-            errors.password &&
-            (dirtyFields.password || isSubmitted) &&
-            errors.password.message
-              ? [errors.password.message]
+          errorMessage={
+            (dirtyFields.password || isSubmitted) && errors.password?.message
+              ? errors.password?.message
               : undefined
           }
         />
@@ -198,11 +193,10 @@ export default function RegistrationForm(): ReactElement {
           type="password"
           {...register('confirmPassword')}
           withError
-          errorMessages={
-            errors.confirmPassword &&
+          errorMessage={
             (dirtyFields.confirmPassword || isSubmitted) &&
-            errors.confirmPassword.message
-              ? [errors.confirmPassword.message]
+            errors.confirmPassword?.message
+              ? errors.confirmPassword?.message
               : undefined
           }
         />

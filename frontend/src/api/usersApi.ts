@@ -30,10 +30,7 @@ export const usersApi = mainApi.injectEndpoints({
       },
       providesTags: ['users'],
     }),
-    getMyProjects: builder.query<
-      ProjectsListInterface,
-      { userId: string } | undefined
-    >({
+    getMyProjects: builder.query<ProjectsListInterface, string>({
       query: () => {
         return {
           url: '/users/me/projects?status=active',
@@ -68,10 +65,7 @@ export const usersApi = mainApi.injectEndpoints({
       },
       providesTags: [{ type: 'user-projects', id: 'LIST' }],
     }),
-    getMyInvites: builder.query<
-      ProjectParticipationInterface[],
-      { userId: string } | undefined
-    >({
+    getMyInvites: builder.query<ProjectParticipationInterface[], string>({
       query: () => {
         return {
           url: 'users/me/invites',
@@ -79,10 +73,7 @@ export const usersApi = mainApi.injectEndpoints({
       },
       providesTags: ['invites-me-in-projects'],
     }),
-    getMyRequests: builder.query<
-      ProjectParticipationInterface[],
-      { userId: string } | undefined
-    >({
+    getMyRequests: builder.query<ProjectParticipationInterface[], string>({
       query: () => {
         return {
           url: 'users/me/requests',

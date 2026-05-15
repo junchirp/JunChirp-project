@@ -153,8 +153,8 @@ export class ProjectsService {
         createProjectDto.projectName,
       );
 
-    const newProject = await this.prisma.$transaction(async (prisma) => {
-      try {
+    try {
+      const newProject = await this.prisma.$transaction(async (prisma) => {
         const ownerRoleType =
           await this.projectRolesService.findOrCreateRole('Project owner');
 
@@ -211,34 +211,38 @@ export class ProjectsService {
         await prisma.user.update({
           where: { id: userId },
           data: {
-            activeProjectsCount: { increment: 1 },
+            activeProjectsCount: {
+              increment: 1,
+            },
           },
         });
 
         return project;
-      } catch (error) {
-        await this.discordService.deleteProjectChannel(
-          channelId,
+      });
+
+      if (newProject.owner.discordId) {
+        await this.discordService.addRoleToUser(
+          newProject.owner.discordId,
           adminRoleId,
-          memberRoleId,
         );
-        if (isPrismaError(error) && error.code === 'P2003') {
-          throw new BadRequestException(
-            'Some role type IDs or category ID are invalid',
-          );
-        }
-        throw error;
       }
-    });
 
-    if (newProject.owner.discordId) {
-      await this.discordService.addRoleToUser(
-        newProject.owner.discordId,
+      return ProjectMapper.toFullResponse(newProject);
+    } catch (error) {
+      await this.discordService.deleteProjectChannel(
+        channelId,
         adminRoleId,
+        memberRoleId,
       );
-    }
 
-    return ProjectMapper.toFullResponse(newProject);
+      if (isPrismaError(error) && error.code === 'P2003') {
+        throw new BadRequestException(
+          'Some role type IDs or category ID are invalid',
+        );
+      }
+
+      throw error;
+    }
   }
 
   public async getProjectById<T extends boolean>(
@@ -345,20 +349,16 @@ export class ProjectsService {
   }
 
   public async closeProject(id: string): Promise<ProjectResponseDto> {
-    return this.prisma.$transaction(async (prisma) => {
-      try {
-        await prisma.projectRole.deleteMany({
-          where: {
-            projectId: id,
-            users: {
-              none: {},
-            },
-          },
-        });
+    try {
+      const closedProject = await this.prisma.$transaction(async (prisma) => {
+        await this.projectRolesService.clearSlots(id, prisma);
 
-        const closedProject = await prisma.project.update({
+        const project = await prisma.project.update({
           where: { id },
-          data: { status: 'done', finishedAt: new Date() },
+          data: {
+            status: 'done',
+            finishedAt: new Date(),
+          },
           include: {
             logo: true,
             category: {
@@ -382,7 +382,7 @@ export class ProjectsService {
           },
         });
 
-        const usersIds: string[] = closedProject.roles.flatMap((role) =>
+        const usersIds: string[] = project.roles.flatMap((role) =>
           role.users.map((user) => user.id),
         );
 
@@ -392,22 +392,27 @@ export class ProjectsService {
               id: { in: usersIds },
             },
             data: {
-              activeProjectsCount: { decrement: 1 },
-              doneProjectsCount: { increment: 1 },
+              activeProjectsCount: {
+                decrement: 1,
+              },
+              doneProjectsCount: {
+                increment: 1,
+              },
             },
           });
         }
 
-        return ProjectMapper.toFullResponse(closedProject);
-      } catch (error) {
-        if (isPrismaError(error) && error.code === 'P2025') {
-          throw new NotFoundException(
-            'Project, role or user in team not found',
-          );
-        }
-        throw error;
+        return project;
+      });
+
+      return ProjectMapper.toFullResponse(closedProject);
+    } catch (error) {
+      if (isPrismaError(error) && error.code === 'P2025') {
+        throw new NotFoundException('Project, role or user in team not found');
       }
-    });
+
+      throw error;
+    }
   }
 
   public async deleteProject(id: string): Promise<void> {
@@ -423,9 +428,9 @@ export class ProjectsService {
       throw new MethodNotAllowedException('Cannot delete a completed project');
     }
 
-    await this.prisma.$transaction(async (prisma) => {
-      try {
-        const deletedProject = await prisma.project.delete({
+    try {
+      const deletedProject = await this.prisma.$transaction(async (prisma) => {
+        const projectToDelete = await prisma.project.delete({
           where: { id },
           include: {
             roles: {
@@ -436,7 +441,7 @@ export class ProjectsService {
           },
         });
 
-        const usersIds: string[] = deletedProject.roles.flatMap((role) =>
+        const usersIds: string[] = projectToDelete.roles.flatMap((role) =>
           role.users.map((user) => user.id),
         );
 
@@ -451,19 +456,22 @@ export class ProjectsService {
           });
         }
 
-        await this.cloudinaryService.deleteProjectFolder(id);
-        await this.discordService.deleteProjectChannel(
-          deletedProject.discordChannelId,
-          deletedProject.discordAdminRoleId,
-          deletedProject.discordMemberRoleId,
-        );
-      } catch (error) {
-        if (isPrismaError(error) && error.code === 'P2025') {
-          throw new NotFoundException('Project or user in team not found');
-        }
-        throw error;
+        return projectToDelete;
+      });
+
+      await this.cloudinaryService.deleteProjectFolder(id);
+
+      await this.discordService.deleteProjectChannel(
+        deletedProject.discordChannelId,
+        deletedProject.discordAdminRoleId,
+        deletedProject.discordMemberRoleId,
+      );
+    } catch (error) {
+      if (isPrismaError(error) && error.code === 'P2025') {
+        throw new NotFoundException('Project or user in team not found');
       }
-    });
+      throw error;
+    }
   }
 
   public async updateProjectLogo(

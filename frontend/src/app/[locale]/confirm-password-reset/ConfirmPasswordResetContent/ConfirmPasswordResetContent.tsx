@@ -7,28 +7,29 @@ import {
   useGetPasswordResetTokenQuery,
   useRequestPasswordResetMutation,
 } from '@/api/authApi';
-import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
+import { FetchBaseQueryError, skipToken } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
 import { useToast } from '@/hooks/useToast';
-import { Locale, useRouter } from '@/i18n/routing';
-import { useLocale, useTranslations } from 'next-intl';
+import { useRouter } from '@/i18n/routing';
+import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 import { useError429Toast } from '@/hooks/useError429Toast';
+import { useSystemLocale } from '@/hooks/useSystemLocale';
 
 export default function ConfirmPasswordResetContent(): ReactElement | null {
   const [reqResetPassword, { isLoading }] = useRequestPasswordResetMutation();
   const { showToast, isActive } = useToast();
   const { showToast: showError } = useError429Toast();
   const router = useRouter();
-  const locale = useLocale();
+  const locale = useSystemLocale();
   const t = useTranslations('resetPasswordConfirmation');
   const tInfo: string[] = t.raw('information');
   const searchParams = useSearchParams();
   const requestId = searchParams.get('requestId') ?? '';
-  const { data: token, isError } = useGetPasswordResetTokenQuery(requestId, {
-    skip: !requestId,
-  });
+  const { data: token, isError } = useGetPasswordResetTokenQuery(
+    requestId ?? skipToken,
+  );
 
   useEffect(() => {
     if (!requestId) {
@@ -49,7 +50,7 @@ export default function ConfirmPasswordResetContent(): ReactElement | null {
 
     const result = await reqResetPassword({
       email: token.email,
-      locale: locale as Locale,
+      locale: locale,
     });
 
     if ('data' in result) {

@@ -15,9 +15,9 @@ import {
   supportSchema,
   supportSchemaStatic,
 } from '@/shared/forms/schemas/supportSchema';
-import { useLocale, useTranslations } from 'next-intl';
-import { Locale } from '@/i18n/routing';
+import { useTranslations } from 'next-intl';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
+import { useSystemLocale } from '@/hooks/useSystemLocale';
 
 type FormData = z.infer<typeof supportSchemaStatic>;
 
@@ -31,7 +31,7 @@ export default function SupportForm(props: SupportFormProps): ReactElement {
   const { showToast, isActive } = useToast();
   const { user, onClose } = props;
   const t = useTranslations('forms');
-  const locale = useLocale();
+  const locale = useSystemLocale();
   const {
     control,
     register,
@@ -66,7 +66,7 @@ export default function SupportForm(props: SupportFormProps): ReactElement {
 
     const result = await sendSupportRequest({
       ...data,
-      locale: locale as Locale,
+      locale,
     });
     onClose();
 
@@ -110,9 +110,7 @@ export default function SupportForm(props: SupportFormProps): ReactElement {
               label={t('supportForm.requestText')}
               placeholder={t('supportForm.placeholders.requestText')}
               withError
-              errorMessages={
-                errors.requestText?.message && [errors.requestText.message]
-              }
+              errorMessage={errors.requestText?.message}
             />
           )}
         />
@@ -129,7 +127,7 @@ export default function SupportForm(props: SupportFormProps): ReactElement {
               type="email"
               {...register('email')}
               withError
-              errorMessages={errors.email?.message && [errors.email.message]}
+              errorMessage={errors.email?.message}
             />
           </fieldset>
         )}

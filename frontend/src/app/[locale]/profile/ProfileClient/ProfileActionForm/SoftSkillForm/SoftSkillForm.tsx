@@ -110,9 +110,7 @@ export default function SoftSkillForm(props: SoftSkillFormProps): ReactElement {
               placeholder={tForms('softSkillForm.placeholders.softSkillName')}
               fetcher={(query) => getSkills(query)}
               onSelectOption={() => {}}
-              errorMessages={
-                errors.softSkillName?.message && [errors.softSkillName.message]
-              }
+              errorMessage={errors.softSkillName?.message}
               withError
             />
           )}
