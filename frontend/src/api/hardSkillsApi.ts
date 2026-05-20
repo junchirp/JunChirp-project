@@ -8,7 +8,7 @@ export const hardSkillsApi = mainApi.injectEndpoints({
       query: () => ({
         url: 'hard-skills',
       }),
-      providesTags: ['hard-skills'],
+      providesTags: [{ type: 'hard-skills', id: 'LIST' }],
     }),
     addHardSkill: builder.mutation<
       HardSkillInterface,
@@ -19,7 +19,7 @@ export const hardSkillsApi = mainApi.injectEndpoints({
         method: 'POST',
         body: data,
       }),
-      invalidatesTags: ['hard-skills'],
+      invalidatesTags: [{ type: 'hard-skills', id: 'LIST' }],
     }),
     deleteHardSkill: builder.mutation<string, string>({
       query: (id) => ({
@@ -27,7 +27,7 @@ export const hardSkillsApi = mainApi.injectEndpoints({
         method: 'DELETE',
         responseHandler: (response): Promise<string> => response.text(),
       }),
-      invalidatesTags: ['hard-skills'],
+      invalidatesTags: [{ type: 'hard-skills', id: 'LIST' }],
     }),
     getHardSkillsList: builder.query<string[], string>({
       query: (fragment) => ({

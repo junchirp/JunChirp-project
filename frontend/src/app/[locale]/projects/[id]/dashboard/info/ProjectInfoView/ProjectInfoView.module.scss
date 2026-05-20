@@ -61,6 +61,7 @@
     font-weight: 600;
     font-size: 32px;
     line-height: 1.2;
+    overflow-wrap: anywhere;
   }
 
   &__details {
@@ -78,6 +79,7 @@
   &__description {
     line-height: 1.4;
     font-size: 20px;
+    overflow-wrap: anywhere;
   }
 
   &__category {

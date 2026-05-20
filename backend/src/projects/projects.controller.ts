@@ -48,6 +48,7 @@ import { ProjectCardResponseDto } from './dto/project-card.response-dto';
 import { UUIDParam } from '../shared/decorators/UUID-param.decorator';
 import { ProjectLogoResponseDto } from './dto/project-logo.response-dto';
 import { NoMember } from '../auth/decorators/no-member.decorator';
+import { CurrentUser } from '../shared/decorators/current-user.decorator';
 
 @User()
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
@@ -287,5 +288,70 @@ export class ProjectsController {
     @Param('id', ParseUUIDv4Pipe) id: string,
   ): Promise<ProjectResponseDto> {
     return this.projectsService.getProjectById(id, true);
+  }
+
+  @Member()
+  @ApiOperation({ summary: 'User leaves project' })
+  @ApiNoContentResponse()
+  @ApiNotFoundResponse({
+    description: 'User is not in the team / User not found',
+  })
+  @ApiForbiddenResponse({
+    description:
+      'Access denied: you are not a participant of this project / Access denied: email not confirmed / Access denied: discord not confirmed / Invalid CSRF token',
+  })
+  @ApiMethodNotAllowedResponse({
+    description: 'You cannot leave the project',
+  })
+  @ApiBadRequestResponse({
+    description: 'User is no longer part of this project',
+  })
+  @ApiHeader({
+    name: 'x-csrf-token',
+    description: 'CSRF token for the request',
+    required: true,
+  })
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Delete(':id/leave')
+  public async leaveProject(
+    @UUIDParam('id') id: string,
+    @CurrentUser('id') userId: string,
+  ): Promise<void> {
+    return this.projectsService.handleUserRemovalFromProject(
+      id,
+      userId,
+      'leave',
+    );
+  }
+
+  @Owner()
+  @ApiOperation({ summary: 'Remove user from project team' })
+  @ApiNoContentResponse()
+  @ApiNotFoundResponse({
+    description: 'User is not in the team / User not found',
+  })
+  @ApiForbiddenResponse({
+    description:
+      'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Invalid CSRF token',
+  })
+  @ApiMethodNotAllowedResponse({
+    description: 'You cannot delete the project owner',
+  })
+  @ApiHeader({
+    name: 'x-csrf-token',
+    description: 'CSRF token for the request',
+    required: true,
+  })
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Delete(':id/users/:userId')
+  public async removeUserFromProject(
+    @UUIDParam('id') id: string,
+    @UUIDParam('userId') userId: string,
+  ): Promise<void> {
+    return this.projectsService.handleUserRemovalFromProject(
+      id,
+      userId,
+      'remove',
+    );
   }
 }

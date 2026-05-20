@@ -12,12 +12,11 @@ import { useTranslations } from 'next-intl';
 interface ProjectMenuProps {
   projectId: string;
   isOwner: boolean;
+  onLeave: () => void;
 }
 
-export default function ProjectMenu({
-  projectId,
-  isOwner,
-}: ProjectMenuProps): ReactElement {
+export default function ProjectMenu(props: ProjectMenuProps): ReactElement {
+  const { projectId, isOwner, onLeave } = props;
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const buttonRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLElement>(null);
@@ -26,6 +25,11 @@ export default function ProjectMenu({
 
   const toggleMenu = (): void => setIsOpen((prev) => !prev);
   const closeMenu = (): void => setIsOpen(false);
+
+  const leaveProject = (): void => {
+    closeMenu();
+    onLeave();
+  };
 
   useClickOutside({
     isOpen,
@@ -42,6 +46,7 @@ export default function ProjectMenu({
   });
 
   const handleEdit = (): void => {
+    closeMenu();
     router.push(`/projects/${projectId}/dashboard/info?mode=edit`);
   };
 
@@ -110,7 +115,10 @@ export default function ProjectMenu({
               </button>
             </>
           ) : (
-            <button className={styles['project-menu__item']}>
+            <button
+              className={styles['project-menu__item']}
+              onClick={leaveProject}
+            >
               <Image
                 src="/images/trash.svg"
                 alt="trash"

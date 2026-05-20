@@ -24,7 +24,7 @@ export const projectsApi = mainApi.injectEndpoints({
             url: `/projects?${query.toString()}`,
           };
         },
-        providesTags: [{ type: 'projects', id: 'LIST' }],
+        providesTags: [{ type: 'project-cards', id: 'LIST' }],
       },
     ),
     getCategories: builder.query<ProjectCategoryInterface[], void>({
@@ -41,7 +41,7 @@ export const projectsApi = mainApi.injectEndpoints({
           url: `/projects/${id}/card`,
         };
       },
-      providesTags: (_result, _error, id) => [{ type: 'projects', id }],
+      providesTags: (_result, _error, id) => [{ type: 'project-cards', id }],
     }),
     getProjectById: builder.query<ProjectInterface, string>({
       query: (id) => {
@@ -57,7 +57,10 @@ export const projectsApi = mainApi.injectEndpoints({
         method: 'POST',
         body: data,
       }),
-      invalidatesTags: [{ type: 'projects', id: 'LIST' }, 'my-projects'],
+      invalidatesTags: [
+        { type: 'project-cards', id: 'LIST' },
+        { type: 'my-projects', id: 'LIST' },
+      ],
     }),
     updateProject: builder.mutation<
       ProjectInterface,
@@ -69,9 +72,10 @@ export const projectsApi = mainApi.injectEndpoints({
         body: data,
       }),
       invalidatesTags: (_result, _error, { id }) => [
-        { type: 'projects', id: 'LIST' },
+        { type: 'project-cards', id: 'LIST' },
+        { type: 'project-cards', id },
         { type: 'projects', id },
-        'my-projects',
+        { type: 'my-projects', id: 'LIST' },
       ],
     }),
     updateProjectLogo: builder.mutation<
@@ -90,9 +94,10 @@ export const projectsApi = mainApi.injectEndpoints({
         };
       },
       invalidatesTags: (_result, _error, { id }) => [
-        { type: 'projects', id: 'LIST' },
+        { type: 'project-cards', id: 'LIST' },
+        { type: 'project-cards', id },
         { type: 'projects', id },
-        'my-projects',
+        { type: 'my-projects', id: 'LIST' },
       ],
     }),
     deleteProjectLogo: builder.mutation<void, string>({
@@ -101,9 +106,22 @@ export const projectsApi = mainApi.injectEndpoints({
         method: 'DELETE',
       }),
       invalidatesTags: (_result, _error, id) => [
-        { type: 'projects', id: 'LIST' },
+        { type: 'project-cards', id: 'LIST' },
+        { type: 'project-cards', id },
         { type: 'projects', id },
-        'my-projects',
+        { type: 'my-projects', id: 'LIST' },
+      ],
+    }),
+    leaveProject: builder.mutation<void, string>({
+      query: (id) => ({
+        url: `projects/${id}/leave`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: (_result, _error, id) => [
+        { type: 'project-cards', id: 'LIST' },
+        { type: 'project-cards', id },
+        { type: 'my-projects', id: 'LIST' },
+        { type: 'auth', id: 'CURRENT' },
       ],
     }),
   }),
@@ -119,4 +137,5 @@ export const {
   useUpdateProjectMutation,
   useUpdateProjectLogoMutation,
   useDeleteProjectLogoMutation,
+  useLeaveProjectMutation,
 } = projectsApi;

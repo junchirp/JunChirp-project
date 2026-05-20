@@ -8,7 +8,7 @@ import {
   GatewayIntentBits,
   Guild,
   ChannelType,
-  PermissionResolvable,
+  PermissionResolvable, TextChannel,
 } from 'discord.js';
 import axios from 'axios';
 import { ConfigService } from '@nestjs/config';
@@ -216,5 +216,20 @@ export class DiscordService implements OnModuleInit {
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
+  }
+
+  public async renameProjectChannel(
+    channelId: string,
+    projectName: string,
+  ): Promise<void> {
+    const channel = await this.guild.channels.fetch(channelId);
+
+    if (!(channel instanceof TextChannel)) {
+      throw new Error('Invalid channel type');
+    }
+
+    await channel.edit({
+      name: projectName,
+    });
   }
 }

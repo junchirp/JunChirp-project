@@ -48,47 +48,47 @@ export class ParticipationsService {
 
     try {
       const invite = await this.prisma.$transaction(async (prisma) => {
-        const [
-          existingParticipation,
-          existingRequest,
-          existingInvite,
-          currentRole,
-        ] = await Promise.all([
-          prisma.projectRole.findFirst({
-            where: {
-              projectId: createInviteDto.projectId,
-              users: {
-                some: {
-                  id: createInviteDto.userId,
-                },
+        const currentRole = await prisma.projectRole.findUnique({
+          where: {
+            id: createInviteDto.projectRoleId,
+          },
+          include: {
+            users: true,
+          },
+        });
+
+        if (
+          currentRole &&
+          currentRole.projectId !== createInviteDto.projectId
+        ) {
+          throw new BadRequestException('Invalid project/role combination');
+        }
+
+        if (currentRole && currentRole.users.length >= currentRole.slots) {
+          throw new BadRequestException('The role has no empty slots');
+        }
+
+        const isMember = await prisma.projectRole.findFirst({
+          where: {
+            projectId: createInviteDto.projectId,
+            users: {
+              some: {
+                id: createInviteDto.userId,
               },
             },
-          }),
-          prisma.participationRequest.findFirst({
-            where: {
-              userId: createInviteDto.userId,
-              projectRole: { projectId: createInviteDto.projectId },
-            },
-          }),
-          prisma.participationInvite.findFirst({
-            where: {
-              userId: createInviteDto.userId,
-              projectRole: { projectId: createInviteDto.projectId },
-            },
-          }),
-          prisma.projectRole.findUnique({
-            where: {
-              id: createInviteDto.projectRoleId,
-            },
-            include: {
-              users: true,
-            },
-          }),
-        ]);
+          },
+        });
 
-        if (existingParticipation) {
+        if (isMember) {
           throw new ConflictException('User is already in the project team');
         }
+
+        const existingRequest = await prisma.participationRequest.findFirst({
+          where: {
+            userId: createInviteDto.userId,
+            projectRole: { projectId: createInviteDto.projectId },
+          },
+        });
 
         if (existingRequest) {
           throw new ConflictException(
@@ -96,21 +96,17 @@ export class ParticipationsService {
           );
         }
 
+        const existingInvite = await prisma.participationInvite.findFirst({
+          where: {
+            userId: createInviteDto.userId,
+            projectRole: { projectId: createInviteDto.projectId },
+          },
+        });
+
         if (existingInvite) {
           throw new ConflictException(
             'User has already been invited to this project',
           );
-        }
-
-        if (currentRole && currentRole.users.length === currentRole.slots) {
-          throw new BadRequestException('The role has no empty slots');
-        }
-
-        if (
-          currentRole &&
-          currentRole.projectId !== createInviteDto.projectId
-        ) {
-          throw new BadRequestException('Invalid project/role combination');
         }
 
         return prisma.participationInvite.create({
@@ -191,47 +187,47 @@ export class ParticipationsService {
 
     try {
       const request = await this.prisma.$transaction(async (prisma) => {
-        const [
-          existingParticipation,
-          existingInvite,
-          existingRequest,
-          currentRole,
-        ] = await Promise.all([
-          prisma.projectRole.findFirst({
-            where: {
-              projectId: createRequestDto.projectId,
-              users: {
-                some: {
-                  id: userId,
-                },
+        const currentRole = await prisma.projectRole.findUnique({
+          where: {
+            id: createRequestDto.projectRoleId,
+          },
+          include: {
+            users: true,
+          },
+        });
+
+        if (
+          currentRole &&
+          currentRole.projectId !== createRequestDto.projectId
+        ) {
+          throw new BadRequestException('Invalid project/role combination');
+        }
+
+        if (currentRole && currentRole.users.length >= currentRole.slots) {
+          throw new BadRequestException('The role has no empty slots');
+        }
+
+        const isMember = await prisma.projectRole.findFirst({
+          where: {
+            projectId: createRequestDto.projectId,
+            users: {
+              some: {
+                id: userId,
               },
             },
-          }),
-          prisma.participationInvite.findFirst({
-            where: {
-              userId,
-              projectRole: { projectId: createRequestDto.projectId },
-            },
-          }),
-          prisma.participationRequest.findFirst({
-            where: {
-              userId,
-              projectRole: { projectId: createRequestDto.projectId },
-            },
-          }),
-          prisma.projectRole.findUnique({
-            where: {
-              id: createRequestDto.projectRoleId,
-            },
-            include: {
-              users: true,
-            },
-          }),
-        ]);
+          },
+        });
 
-        if (existingParticipation) {
+        if (isMember) {
           throw new ConflictException('You are already in the project team');
         }
+
+        const existingInvite = await prisma.participationInvite.findFirst({
+          where: {
+            userId,
+            projectRole: { projectId: createRequestDto.projectId },
+          },
+        });
 
         if (existingInvite) {
           throw new ConflictException(
@@ -239,21 +235,17 @@ export class ParticipationsService {
           );
         }
 
+        const existingRequest = await prisma.participationRequest.findFirst({
+          where: {
+            userId,
+            projectRole: { projectId: createRequestDto.projectId },
+          },
+        });
+
         if (existingRequest) {
           throw new ConflictException(
             'You have already sent a request to this project',
           );
-        }
-
-        if (currentRole && currentRole.users.length === currentRole.slots) {
-          throw new BadRequestException('The role has no empty slots');
-        }
-
-        if (
-          currentRole &&
-          currentRole.projectId !== createRequestDto.projectId
-        ) {
-          throw new BadRequestException('Invalid project/role combination');
         }
 
         return prisma.participationRequest.create({

@@ -150,20 +150,33 @@ const mainApi = createApi({
   reducerPath: 'mainApi',
   baseQuery: baseQueryWithReauthAndCsrf,
   tagTypes: [
-    'auth',
+    // current user
+    'auth', // CURRENT
+
+    // reference lists
     'soft-skills',
     'hard-skills',
     'educations',
     'socials',
-    'users',
-    'my-projects',
-    'invites-me-in-projects',
-    'invites-in-my-projects',
-    'my-requests-in-projects',
-    'requests-in-my-projects',
-    'projects',
-    'user-projects',
-    'user',
+
+    // user entities
+    'users', // LIST | userId
+
+    // project collections
+    'my-projects', // LIST
+    'user-projects', // userId
+    'project-cards', // LIST | projectId
+
+    // project entities
+    'projects', // projectId
+
+    // invitations
+    'invites-me-in-projects', // LIST
+    'invites-in-my-projects', // LIST
+
+    // requests
+    'my-requests-in-projects', // LIST
+    'requests-in-my-projects', // LIST
   ],
   endpoints: () => ({}),
 });
