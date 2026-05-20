@@ -8,7 +8,7 @@ export const educationsApi = mainApi.injectEndpoints({
       query: () => ({
         url: 'educations',
       }),
-      providesTags: ['educations'],
+      providesTags: [{ type: 'educations', id: 'LIST' }],
     }),
     getInstitutions: builder.query<string[], string>({
       query: (fragment) => ({
@@ -29,7 +29,7 @@ export const educationsApi = mainApi.injectEndpoints({
         method: 'POST',
         body: data,
       }),
-      invalidatesTags: ['educations'],
+      invalidatesTags: [{ type: 'educations', id: 'LIST' }],
     }),
     updateEducation: builder.mutation<
       EducationInterface,
@@ -40,7 +40,7 @@ export const educationsApi = mainApi.injectEndpoints({
         method: 'PUT',
         body: data,
       }),
-      invalidatesTags: ['educations'],
+      invalidatesTags: [{ type: 'educations', id: 'LIST' }],
     }),
     deleteEducation: builder.mutation<string, string>({
       query: (id) => ({
@@ -48,7 +48,7 @@ export const educationsApi = mainApi.injectEndpoints({
         method: 'DELETE',
         responseHandler: (response): Promise<string> => response.text(),
       }),
-      invalidatesTags: ['educations'],
+      invalidatesTags: [{ type: 'educations', id: 'LIST' }],
     }),
   }),
 });

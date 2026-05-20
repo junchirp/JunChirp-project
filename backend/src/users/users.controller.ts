@@ -282,9 +282,7 @@ export class UsersController {
   }
 
   @User()
-  @ApiOperation({
-    summary: 'Get user projects',
-  })
+  @ApiOperation({ summary: 'Get user projects' })
   @ApiOkResponse({ type: ProjectsListResponseDto })
   @ApiForbiddenResponse({ description: 'Access denied: email not confirmed' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })

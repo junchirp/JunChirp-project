@@ -1,18 +1,22 @@
 import {
   BadRequestException,
   Injectable,
+  MethodNotAllowedException,
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma, ProjectRoleType } from '@prisma/client';
 import { ProjectRoleTypeResponseDto } from './dto/project-role-type.response-dto';
 import { isPrismaError } from 'src/shared/utils/is-prisma-error';
+import { ProjectRoleWithUserResponseDto } from './dto/project-role-with-user.response-dto';
+import { DiscordService } from '../discord/discord.service';
+import { ProjectRoleMapper } from '../shared/mappers/project-role.mapper';
 
 @Injectable()
 export class ProjectRolesService {
   public constructor(
     private prisma: PrismaService,
-    // private discordService: DiscordService,
+    private discordService: DiscordService,
   ) {}
 
   public async getProjectRoleTypes(): Promise<ProjectRoleTypeResponseDto[]> {
@@ -93,116 +97,6 @@ export class ProjectRolesService {
   //       throw error;
   //     }
   //   });
-  // }
-  //
-  // private async handleUserRemovalFromProject(
-  //   roleId: string,
-  //   userId: string,
-  //   returnUpdated: true,
-  // ): Promise<ProjectRoleWithUserResponseDto>;
-  //
-  // private async handleUserRemovalFromProject(
-  //   roleId: string,
-  //   userId: string,
-  //   returnUpdated: false,
-  // ): Promise<void>;
-  //
-  // private async handleUserRemovalFromProject(
-  //   roleId: string,
-  //   userId: string,
-  //   returnUpdated: boolean,
-  // ): Promise<ProjectRoleWithUserResponseDto | void> {
-  //   return this.prisma.$transaction(async (prisma) => {
-  //     const role = await prisma.projectRole.findFirst({
-  //       where: {
-  //         id: roleId,
-  //         userId,
-  //       },
-  //       include: {
-  //         user: true,
-  //         roleType: true,
-  //         project: true,
-  //       },
-  //     });
-  //
-  //     if (!role) {
-  //       throw new NotFoundException('User is not assigned to this role');
-  //     }
-  //
-  //     if (role.project.ownerId === userId) {
-  //       if (returnUpdated) {
-  //         throw new MethodNotAllowedException(
-  //           'You cannot delete the project owner',
-  //         );
-  //       } else {
-  //         throw new MethodNotAllowedException(
-  //           'You cannot exit from the project',
-  //         );
-  //       }
-  //     }
-  //
-  //     const user = await prisma.user.update({
-  //       where: { id: userId },
-  //       data: {
-  //         projectRoles: {
-  //           disconnect: { id: role.id },
-  //         },
-  //         activeProjectsCount: {
-  //           decrement: 1,
-  //         },
-  //       },
-  //     });
-  //
-  //     if (user.discordId && role.project.discordMemberRoleId) {
-  //       await this.discordService.removeRoleFromUser(
-  //         user.discordId,
-  //         role.project.discordMemberRoleId,
-  //       );
-  //     }
-  //
-  //     try {
-  //       const updatedRole = await prisma.projectRole.findUniqueOrThrow({
-  //         where: { id: role.id },
-  //         include: {
-  //           roleType: true,
-  //           user: {
-  //             include: {
-  //               desiredRoles: true,
-  //             },
-  //           },
-  //         },
-  //       });
-  //
-  //       await prisma.project.update({
-  //         where: { id: role.projectId },
-  //         data: {
-  //           participantsCount: {
-  //             decrement: 1,
-  //           },
-  //         },
-  //       });
-  //
-  //       if (returnUpdated) {
-  //         return ProjectRoleMapper.toUserResponse(updatedRole);
-  //       }
-  //     } catch (error) {
-  //       if (isPrismaError(error) && error.code === 'P2025') {
-  //         throw new NotFoundException('Role not found');
-  //       }
-  //       throw error;
-  //     }
-  //   });
-  // }
-  //
-  // public removeUserFromProject(
-  //   roleId: string,
-  //   userId: string,
-  // ): Promise<ProjectRoleWithUserResponseDto> {
-  //   return this.handleUserRemovalFromProject(roleId, userId, true);
-  // }
-  //
-  // public exitFromProject(roleId: string, userId: string): Promise<void> {
-  //   return this.handleUserRemovalFromProject(roleId, userId, false);
   // }
 
   public async clearSlots(

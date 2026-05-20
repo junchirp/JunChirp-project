@@ -28,7 +28,7 @@ export const usersApi = mainApi.injectEndpoints({
           url: `/users?${query.toString()}`,
         };
       },
-      providesTags: ['users'],
+      providesTags: [{ type: 'users', id: 'LIST' }],
     }),
     getMyProjects: builder.query<ProjectsListInterface, string>({
       query: () => {
@@ -36,7 +36,7 @@ export const usersApi = mainApi.injectEndpoints({
           url: '/users/me/projects?status=active',
         };
       },
-      providesTags: ['my-projects'],
+      providesTags: [{ type: 'my-projects', id: 'LIST' }],
     }),
     getUserById: builder.query<UserInterface, string>({
       query: (id: string) => {
@@ -44,7 +44,7 @@ export const usersApi = mainApi.injectEndpoints({
           url: `/users/${id}`,
         };
       },
-      providesTags: ['user'],
+      providesTags: (_result, _error, id) => [{ type: 'users', id }],
     }),
     getUserProjects: builder.query<
       ProjectsListInterface,
@@ -63,7 +63,9 @@ export const usersApi = mainApi.injectEndpoints({
           url: `/users/${id}/projects?${query.toString()}`,
         };
       },
-      providesTags: [{ type: 'user-projects', id: 'LIST' }],
+      providesTags: (_result, _error, { id }) => [
+        { type: 'user-projects', id },
+      ],
     }),
     getMyInvites: builder.query<ProjectParticipationInterface[], string>({
       query: () => {
@@ -71,7 +73,7 @@ export const usersApi = mainApi.injectEndpoints({
           url: 'users/me/invites',
         };
       },
-      providesTags: ['invites-me-in-projects'],
+      providesTags: [{ type: 'invites-me-in-projects', id: 'LIST' }],
     }),
     getMyRequests: builder.query<ProjectParticipationInterface[], string>({
       query: () => {
@@ -79,7 +81,7 @@ export const usersApi = mainApi.injectEndpoints({
           url: 'users/me/requests',
         };
       },
-      providesTags: ['my-requests-in-projects'],
+      providesTags: [{ type: 'my-requests-in-projects', id: 'LIST' }],
     }),
     getRequestsInMyProjects: builder.query<
       ProjectParticipationInterface[],
@@ -90,7 +92,7 @@ export const usersApi = mainApi.injectEndpoints({
           url: `users/${id}/requests`,
         };
       },
-      providesTags: ['requests-in-my-projects'],
+      providesTags: [{ type: 'requests-in-my-projects', id: 'LIST' }],
     }),
     getInvitesInMyProjects: builder.query<
       ProjectParticipationInterface[],
@@ -101,7 +103,7 @@ export const usersApi = mainApi.injectEndpoints({
           url: `users/${id}/invites`,
         };
       },
-      providesTags: ['invites-in-my-projects'],
+      providesTags: [{ type: 'invites-in-my-projects', id: 'LIST' }],
     }),
   }),
 });

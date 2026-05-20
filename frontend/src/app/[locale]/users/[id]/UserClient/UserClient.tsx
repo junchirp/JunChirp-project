@@ -37,7 +37,9 @@ export default function UserClient(): ReactElement {
     null | 'active' | 'done'
   >(null);
   const [isModalOpen, setModalOpen] = useState(false);
-  const { data: user, isLoading: userLoading } = useGetUserByIdQuery(userId);
+  const { data: user, isLoading: userLoading } = useGetUserByIdQuery(userId, {
+    refetchOnMountOrArgChange: true,
+  });
   const { data: myProjectsList } = useGetMyProjectsQuery(authUser.id);
   const myProjects =
     myProjectsList?.projects.filter(

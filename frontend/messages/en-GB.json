@@ -23,7 +23,8 @@
     "send": "Send",
     "confirm": "Confirm",
     "edit": "Edit",
-    "add": "Add"
+    "add": "Add",
+    "leave": "Leave"
   },
   "discord": {
     "profile": "Connect Discord to join projects and gain access to project chats.",
@@ -678,5 +679,11 @@
   "deleteProjectLogoPopup": {
     "title": "Delete project image",
     "description": "Do you really want to delete the image?"
+  },
+  "leaveProjectPopup": {
+    "title": "Leave project",
+    "description": "Do you really want to leave the project <project>{projectName}</project>? After leaving, you will lose access to tasks, chat, and other information.",
+    "success": "Your participation in the project is complete.",
+    "error": "Failed to leave project."
   }
 }

@@ -14,16 +14,16 @@ import { EmailWithIdInterface } from '@/shared/interfaces/email-with-id.interfac
 import { setUser } from '@/redux/auth/authSlice';
 
 const USER_RELATED_TAGS = [
-  'auth',
-  'soft-skills',
-  'hard-skills',
-  'educations',
-  'socials',
-  'my-projects',
-  'invites-me-in-projects',
-  'invites-in-my-projects',
-  'my-requests-in-projects',
-  'requests-in-my-projects',
+  { type: 'auth', id: 'CURRENT' },
+  { type: 'soft-skills', id: 'LIST' },
+  { type: 'hard-skills', id: 'LIST' },
+  { type: 'educations', id: 'LIST' },
+  { type: 'socials', id: 'LIST' },
+  { type: 'my-projects', id: 'LIST' },
+  { type: 'invites-me-in-projects', id: 'LIST' },
+  { type: 'invites-in-my-projects', id: 'LIST' },
+  { type: 'my-requests-in-projects', id: 'LIST' },
+  { type: 'requests-in-my-projects', id: 'LIST' },
 ] as const;
 
 export const authApi = mainApi.injectEndpoints({
@@ -40,7 +40,7 @@ export const authApi = mainApi.injectEndpoints({
       query: () => ({
         url: 'users/me',
       }),
-      providesTags: ['auth'],
+      providesTags: [{ type: 'auth', id: 'CURRENT' }],
     }),
     login: builder.mutation<AuthInterface, LoginInterface>({
       query: (credentials) => ({
@@ -63,7 +63,7 @@ export const authApi = mainApi.injectEndpoints({
         url: 'auth/logout',
         method: 'POST',
       }),
-      invalidatesTags: ['auth'],
+      invalidatesTags: [{ type: 'auth', id: 'CURRENT' }],
     }),
     sendConfirmationEmail: builder.mutation<MessageInterface, LocaleInterface>({
       query: (data) => ({
@@ -71,7 +71,7 @@ export const authApi = mainApi.injectEndpoints({
         method: 'POST',
         body: data,
       }),
-      invalidatesTags: ['auth'],
+      invalidatesTags: [{ type: 'auth', id: 'CURRENT' }],
     }),
     resendConfirmationEmail: builder.mutation<
       MessageInterface,
@@ -82,7 +82,7 @@ export const authApi = mainApi.injectEndpoints({
         method: 'POST',
         body: data,
       }),
-      invalidatesTags: ['auth'],
+      invalidatesTags: [{ type: 'auth', id: 'CURRENT' }],
     }),
     confirmEmail: builder.mutation<MessageInterface, ConfirmEmailInterface>({
       query: (data) => ({
@@ -90,7 +90,10 @@ export const authApi = mainApi.injectEndpoints({
         method: 'POST',
         body: data,
       }),
-      invalidatesTags: ['auth', 'users'],
+      invalidatesTags: [
+        { type: 'auth', id: 'CURRENT' },
+        { type: 'users', id: 'LIST' },
+      ],
     }),
     requestPasswordReset: builder.mutation<
       { id: string },
@@ -101,7 +104,7 @@ export const authApi = mainApi.injectEndpoints({
         method: 'POST',
         body: data,
       }),
-      invalidatesTags: ['auth'],
+      invalidatesTags: [{ type: 'auth', id: 'CURRENT' }],
     }),
     updateUser: builder.mutation<AuthInterface, UpdateUserInterface>({
       query: (data) => ({
@@ -109,7 +112,10 @@ export const authApi = mainApi.injectEndpoints({
         method: 'PATCH',
         body: data,
       }),
-      invalidatesTags: ['auth', 'users'],
+      invalidatesTags: [
+        { type: 'auth', id: 'CURRENT' },
+        { type: 'users', id: 'LIST' },
+      ],
     }),
     updateEmail: builder.mutation<AuthInterface, EmailWithLocaleInterface>({
       query: (data) => ({
@@ -117,7 +123,7 @@ export const authApi = mainApi.injectEndpoints({
         method: 'PATCH',
         body: data,
       }),
-      invalidatesTags: ['auth'],
+      invalidatesTags: [{ type: 'auth', id: 'CURRENT' }],
     }),
     validateToken: builder.query<TokenValidationInterface, string>({
       query: (token) => ({

@@ -8,7 +8,7 @@ export const softSkillsApi = mainApi.injectEndpoints({
       query: () => ({
         url: 'soft-skills',
       }),
-      providesTags: ['soft-skills'],
+      providesTags: [{ type: 'soft-skills', id: 'LIST' }],
     }),
     addSoftSkill: builder.mutation<
       SoftSkillInterface,
@@ -19,7 +19,7 @@ export const softSkillsApi = mainApi.injectEndpoints({
         method: 'POST',
         body: data,
       }),
-      invalidatesTags: ['soft-skills'],
+      invalidatesTags: [{ type: 'soft-skills', id: 'LIST' }],
     }),
     deleteSoftSkill: builder.mutation<string, string>({
       query: (id) => ({
@@ -27,7 +27,7 @@ export const softSkillsApi = mainApi.injectEndpoints({
         method: 'DELETE',
         responseHandler: (response): Promise<string> => response.text(),
       }),
-      invalidatesTags: ['soft-skills'],
+      invalidatesTags: [{ type: 'soft-skills', id: 'LIST' }],
     }),
     getSoftSkillsList: builder.query<string[], string>({
       query: (fragment) => ({

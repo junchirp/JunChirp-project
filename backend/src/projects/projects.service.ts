@@ -296,6 +296,14 @@ export class ProjectsService {
     dto: UpdateProjectDto,
   ): Promise<ProjectResponseDto> {
     try {
+      const currentProject = await this.prisma.project.findUniqueOrThrow({
+        where: { id },
+        select: {
+          projectName: true,
+          discordChannelId: true,
+        },
+      });
+
       const updatedProject = await this.prisma.project.update({
         where: { id },
         data: {
@@ -332,6 +340,16 @@ export class ProjectsService {
           boards: true,
         },
       });
+
+      if (
+        currentProject.projectName !== dto.projectName &&
+        currentProject.discordChannelId
+      ) {
+        await this.discordService.renameProjectChannel(
+          updatedProject.discordChannelId,
+          updatedProject.projectName,
+        );
+      }
 
       return ProjectMapper.toFullResponse(updatedProject);
     } catch (error) {
@@ -547,5 +565,90 @@ export class ProjectsService {
     projectId: string,
   ): Promise<UserParticipationResponseDto[]> {
     return this.participationsService.getRequestsWithUsers(projectId);
+  }
+
+  public async handleUserRemovalFromProject(
+    projectId: string,
+    userId: string,
+    context: 'leave' | 'remove',
+  ): Promise<void> {
+    try {
+      const result = await this.prisma.$transaction(async (prisma) => {
+        const role = await prisma.projectRole.findFirst({
+          where: {
+            projectId: projectId,
+            users: {
+              some: {
+                id: userId,
+              },
+            },
+          },
+          include: {
+            users: true,
+            roleType: true,
+            project: true,
+          },
+        });
+
+        if (!role) {
+          throw new NotFoundException('User is not in the team');
+        }
+
+        if (role.project.ownerId === userId) {
+          if (context === 'remove') {
+            throw new MethodNotAllowedException(
+              'You cannot delete the project owner',
+            );
+          } else {
+            throw new MethodNotAllowedException('You cannot leave the project');
+          }
+        }
+
+        const user = await prisma.user.update({
+          where: { id: userId },
+          data: {
+            projectRoles: {
+              disconnect: { id: role.id },
+            },
+            activeProjectsCount: {
+              decrement: 1,
+            },
+          },
+        });
+
+        await prisma.project.update({
+          where: { id: role.projectId },
+          data: {
+            participantsCount: {
+              decrement: 1,
+            },
+          },
+        });
+
+        return {
+          discordId: user.discordId,
+          discordRoleId: role.project.discordMemberRoleId,
+        };
+      });
+
+      if (result.discordId && result.discordRoleId) {
+        await this.discordService.removeRoleFromUser(
+          result.discordId,
+          result.discordRoleId,
+        );
+      }
+    } catch (error) {
+      if (isPrismaError(error)) {
+        switch (error.code) {
+          case 'P2025':
+            throw new NotFoundException('User not found');
+          case 'P2003':
+            throw new BadRequestException(
+              'User is no longer part of this project',
+            );
+        }
+      }
+      throw error;
+    }
   }
 }
