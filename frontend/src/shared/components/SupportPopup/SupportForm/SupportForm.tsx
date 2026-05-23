@@ -18,6 +18,7 @@ import {
 import { useTranslations } from 'next-intl';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 import { useSystemLocale } from '@/hooks/useSystemLocale';
+import { normalizeInputValue } from '@/shared/utils/normalizeInputValue';
 
 type FormData = z.infer<typeof supportSchemaStatic>;
 
@@ -104,7 +105,8 @@ export default function SupportForm(props: SupportFormProps): ReactElement {
             <RichEditor
               value={field.value ?? ''}
               onChange={(html, text) => {
-                field.onChange(text);
+                const normalized = normalizeInputValue(text);
+                field.onChange(normalized);
                 setValue('requestHtml', html, { shouldValidate: true });
               }}
               label={t('supportForm.requestText')}

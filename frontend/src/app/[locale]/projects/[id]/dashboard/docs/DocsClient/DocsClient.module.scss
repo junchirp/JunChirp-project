@@ -1,0 +1,12 @@
+.docs-client {
+  display: flex;
+  flex-direction: column;
+  gap: 80px;
+
+  &__actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
+    gap: 32px;
+  }
+}

@@ -1,0 +1,65 @@
+@use '@/assets/styles/variables';
+
+.docs-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 32px;
+
+  &__header {
+    grid-column: span 2;
+    border-radius: 32px;
+    padding: 40px;
+    background-color: variables.$gray-1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+  }
+
+  &__list {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-auto-rows: auto;
+    gap: 32px;
+  }
+
+  &__text {
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 1.4;
+  }
+
+  &__count {
+    font-size: 28px;
+    line-height: 1.2;
+  }
+
+  &__total {
+    color: variables.$gray-4;
+  }
+
+  &__button {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    padding: 40px;
+    border-radius: 32px;
+    border: 2px solid variables.$gray-1;
+    background-color: transparent;
+
+    &:hover {
+      border: 2px solid variables.$green-5;
+      cursor: pointer;
+    }
+  }
+
+  &__button-text {
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 1.4;
+  }
+}

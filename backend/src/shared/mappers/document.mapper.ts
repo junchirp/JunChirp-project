@@ -7,6 +7,7 @@ export class DocumentMapper {
       id: doc.id,
       documentName: doc.documentName,
       url: doc.url,
+      projectId: doc.projectId,
     };
   }
 }

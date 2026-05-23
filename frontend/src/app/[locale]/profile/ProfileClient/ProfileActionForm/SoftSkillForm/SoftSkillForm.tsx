@@ -20,6 +20,7 @@ import {
 import { useTranslations } from 'next-intl';
 import Autocomplete from '@/shared/components/Autocomplete/Autocomplete';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
+import { normalizeInputValue } from '@/shared/utils/normalizeInputValue';
 
 type FormData = z.infer<typeof softSkillSchemaStatic>;
 
@@ -110,6 +111,10 @@ export default function SoftSkillForm(props: SoftSkillFormProps): ReactElement {
               placeholder={tForms('softSkillForm.placeholders.softSkillName')}
               fetcher={(query) => getSkills(query)}
               onSelectOption={() => {}}
+              onChange={(e) => {
+                const normalized = normalizeInputValue(e.target.value);
+                field.onChange(normalized);
+              }}
               errorMessage={errors.softSkillName?.message}
               withError
             />

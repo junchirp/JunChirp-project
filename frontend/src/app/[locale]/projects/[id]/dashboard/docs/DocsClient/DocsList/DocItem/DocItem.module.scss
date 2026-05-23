@@ -1,0 +1,68 @@
+@use '@/assets/styles/variables';
+
+.doc-item {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 40px;
+  border-radius: 32px;
+  border: 2px solid variables.$gray-1;
+  background-color: variables.$gray-1;
+
+  &:hover {
+    border: 2px solid variables.$green-5;
+
+    .doc-item__image {
+      &--default {
+        opacity: 0;
+      }
+
+      &--hover {
+        opacity: 1;
+      }
+    }
+  }
+
+  &__image-wrapper {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: variables.$white-2;
+    border-radius: 8px;
+  }
+
+  &__image {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    &--default {
+      opacity: 1;
+    }
+
+    &--hover {
+      opacity: 0;
+    }
+  }
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 32px;
+  }
+
+  &__link {
+    font-size: 16px;
+    line-height: 1.4;
+    color: variables.$black-2;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

@@ -42,13 +42,14 @@ export default function UserDetailsItem<T>({
           ) : (
             <div className={styles['user-details-item__no-icon']}></div>
           )}
-          <Link
+          <a
             className={styles['user-details-item__link']}
             href={item.url}
             target="_blank"
+            rel="noopener noreferrer"
           >
             {item.network}
-          </Link>
+          </a>
         </div>
       );
     } else if (isEmailWithId(item)) {
@@ -61,12 +62,12 @@ export default function UserDetailsItem<T>({
             width={20}
             height={20}
           />
-          <Link
+          <a
             className={styles['user-details-item__link']}
             href={`mailto:${item.email}`}
           >
             {item.email}
-          </Link>
+          </a>
         </div>
       );
     }

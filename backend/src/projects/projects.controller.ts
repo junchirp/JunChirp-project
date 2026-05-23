@@ -49,6 +49,7 @@ import { UUIDParam } from '../shared/decorators/UUID-param.decorator';
 import { ProjectLogoResponseDto } from './dto/project-logo.response-dto';
 import { NoMember } from '../auth/decorators/no-member.decorator';
 import { CurrentUser } from '../shared/decorators/current-user.decorator';
+import { DocumentResponseDto } from '../documents/dto/document.response-dto';
 
 @User()
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
@@ -353,5 +354,19 @@ export class ProjectsController {
       userId,
       'remove',
     );
+  }
+
+  @Member()
+  @ApiOperation({ summary: 'Get documents list by project id' })
+  @ApiOkResponse({ type: [DocumentResponseDto] })
+  @ApiForbiddenResponse({
+    description:
+      'Access denied: you are not a participant of this project / Access denied: email not confirmed / Access denied: discord not confirmed / Invalid CSRF token',
+  })
+  @Get(':id/documents')
+  public async getDocumentsList(
+    @UUIDParam('id') id: string,
+  ): Promise<DocumentResponseDto[]> {
+    return this.projectsService.getDocumentsList(id);
   }
 }

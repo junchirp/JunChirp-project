@@ -177,6 +177,9 @@ const mainApi = createApi({
     // requests
     'my-requests-in-projects', // LIST
     'requests-in-my-projects', // LIST
+
+    // documents
+    'docs', // projectId
   ],
   endpoints: () => ({}),
 });

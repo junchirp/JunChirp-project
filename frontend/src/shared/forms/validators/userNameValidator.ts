@@ -7,4 +7,4 @@ export const userNameValidator = (t: (key: string) => string): ZodString =>
     .nonempty(t('errors.nonEmpty'))
     .min(2, t('errors.nameLength'))
     .max(50, t('errors.nameLength'))
-    .regex(/^[a-zA-Zа-яА-ЯґҐіІїЇєЄ'’ -]+$/, t('errors.nameSymbols'));
+    .regex(/^[a-zA-Zа-яА-ЯґҐіІїЇєЄ' -]+$/, t('errors.nameSymbols'));

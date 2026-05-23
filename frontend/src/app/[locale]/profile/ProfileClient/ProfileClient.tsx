@@ -9,7 +9,7 @@ import { SocialInterface } from '@/shared/interfaces/social.interface';
 import { EducationInterface } from '@/shared/interfaces/education.interface';
 import { HardSkillInterface } from '@/shared/interfaces/hard-skill.interface';
 import { SoftSkillInterface } from '@/shared/interfaces/soft-skill.interface';
-import ProfileAction from './ProfileAction/ProfileAction';
+import ActionDescription from '@/shared/components/ActionDescription/ActionDescription';
 import { ProfileActionType } from '@/shared/types/profile-action.type';
 import ProfileActionForm from './ProfileActionForm/ProfileActionForm';
 import { useDeleteSocialMutation, useGetSocialsQuery } from '@/api/socialsApi';
@@ -413,7 +413,7 @@ export default function ProfileClient(): ReactElement {
             />
           </div>
           <div className={styles['profile-client__actions']} ref={formRef}>
-            <ProfileAction action={action} />
+            <ActionDescription actionKey={action?.key} namespace="profile" />
             <ProfileActionForm
               user={user}
               action={action}

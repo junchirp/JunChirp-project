@@ -8,6 +8,7 @@ import DialogFooter from '@/shared/components/Dialog/DialogFooter/DialogFooter';
 import Button from '@/shared/components/Button/Button';
 import { ProjectInterface } from '@/shared/interfaces/project.interface';
 import { useTranslations } from 'next-intl';
+import styles from './LeaveProjectPopup.module.scss';
 
 interface LeaveProjectPopupProps {
   project: ProjectInterface;
@@ -29,7 +30,11 @@ export default function LeaveProjectPopup(
       <DialogHeader title={tPopup('title')} />
       <DialogBody>
         {tPopup.rich('description', {
-          project: (chunks) => <span>{chunks}</span>,
+          project: (chunks) => (
+            <span className={styles['leave-project-popup__description']}>
+              [{chunks}]
+            </span>
+          ),
           projectName: project.projectName,
         })}
       </DialogBody>

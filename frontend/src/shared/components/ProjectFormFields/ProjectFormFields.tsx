@@ -4,7 +4,7 @@ import React, { ReactElement } from 'react';
 import styles from './ProjectFormFields.module.scss';
 import { Controller, UseFormReturn } from 'react-hook-form';
 import Input from '@/shared/components/Input/Input';
-import { normalizeApostrophes } from '@/shared/utils/normalizeApostrophes';
+import { normalizeInputValue } from '@/shared/utils/normalizeInputValue';
 import Textarea from '@/shared/components/Textarea/Textarea';
 import Dropdown from '@/shared/components/Dropdown/Dropdown';
 import { ProjectCategoryInterface } from '@/shared/interfaces/project-category.interface';
@@ -58,7 +58,7 @@ export default function ProjectFormFields(
             errorMessage={errors.projectName?.message}
             {...field}
             onChange={(e) => {
-              const normalized = normalizeApostrophes(e.target.value);
+              const normalized = normalizeInputValue(e.target.value);
               field.onChange(normalized);
             }}
           />
@@ -79,7 +79,7 @@ export default function ProjectFormFields(
             errorMessage={errors.description?.message}
             {...field}
             onChange={(e) => {
-              const normalized = normalizeApostrophes(e.target.value);
+              const normalized = normalizeInputValue(e.target.value);
               field.onChange(normalized);
             }}
           />

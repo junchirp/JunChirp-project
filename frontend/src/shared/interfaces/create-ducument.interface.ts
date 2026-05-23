@@ -1,5 +1,4 @@
-export interface DocumentInterface {
-  id: string;
+export interface CreateDocumentInterface {
   documentName: string;
   url: string;
   projectId: string;

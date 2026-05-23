@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, Length, Matches } from 'class-validator';
+import { IsNotEmpty, IsString, IsUrl, Length, Matches } from 'class-validator';
 import { IsValidSocialNetworkUrl } from '../../shared/validators/is-valid-social-network-url.validator';
 
 export class CreateSocialDto {
@@ -25,6 +25,10 @@ export class CreateSocialDto {
     message: 'Profile url is incorrect',
   })
   @IsNotEmpty({ message: 'Profile url is required' })
+  @IsUrl(
+    { require_protocol: true },
+    { message: 'URL must include protocol (http/https)' },
+  )
   @IsValidSocialNetworkUrl()
   public readonly url: string;
 }

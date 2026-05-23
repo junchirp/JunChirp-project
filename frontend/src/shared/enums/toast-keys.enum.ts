@@ -26,4 +26,5 @@ export enum ToastKeysEnum {
   COPY = 'copy',
   UPLOAD_IMAGE = 'upload image',
   LEAVE_PROJECT = 'leave project',
+  DOCUMENT = 'document',
 }

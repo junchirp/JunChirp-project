@@ -132,13 +132,14 @@ export default function Developers(): ReactElement {
                         width={16}
                         height={16}
                       />
-                      <Link
+                      <a
                         className={styles['developers__linkedin-link']}
                         href={item.linkedinUrl}
                         target="_blank"
+                        rel="noopener noreferrer"
                       >
                         LinkedIn
-                      </Link>
+                      </a>
                     </div>
                   </div>
                   <div className={styles.developers__description}>
