@@ -6,7 +6,7 @@ export class CreateDocumentDto {
   @IsString({ message: 'Must be a string' })
   @Length(2, 100, { message: 'Must be between 2 and 100 characters' })
   @IsNotEmpty({ message: 'Document name is required' })
-  @Matches(/^[A-Za-zА-Яа-яІіЇїЄєҐґ0-9 \-.,_()/+]+$/, {
+  @Matches(/^[A-Za-zА-Яа-яІіЇїЄєҐґ0-9 \-'.,_()/+]+$/, {
     message: 'Document name is incorrect',
   })
   public readonly documentName: string;
