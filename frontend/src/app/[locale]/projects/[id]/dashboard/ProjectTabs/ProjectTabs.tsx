@@ -17,7 +17,7 @@ export default function ProjectTabs(): ReactElement {
 
   const basePath = `/projects/${id}/dashboard`;
 
-  const activeIndex = pathname.includes('/info')
+  const activeIndex = pathname.includes('/overview')
     ? 0
     : pathname.endsWith('/docs')
       ? 1
@@ -32,7 +32,7 @@ export default function ProjectTabs(): ReactElement {
       label: t('info'),
       disabled: activeIndex === 0,
       command: (): void => {
-        router.push(`${basePath}/info`);
+        router.push(`${basePath}/overview`);
       },
     },
     {

@@ -71,7 +71,7 @@ export default function EditProjectForm({
         actionKey: ToastKeysEnum.NEW_PROJECT,
       });
 
-      router.replace(`/projects/${newProject.id}/dashboard/info`);
+      router.replace(`/projects/${newProject.id}/dashboard/overview`);
     } catch {
       showToast({
         severity: 'error',

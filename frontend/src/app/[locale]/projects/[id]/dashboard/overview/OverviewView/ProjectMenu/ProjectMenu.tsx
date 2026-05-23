@@ -47,7 +47,7 @@ export default function ProjectMenu(props: ProjectMenuProps): ReactElement {
 
   const handleEdit = (): void => {
     closeMenu();
-    router.push(`/projects/${projectId}/dashboard/info?mode=edit`);
+    router.push(`/projects/${projectId}/dashboard/overview?mode=edit`);
   };
 
   return (

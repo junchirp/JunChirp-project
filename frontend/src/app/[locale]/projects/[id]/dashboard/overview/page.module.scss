@@ -1,0 +1,32 @@
+@use '@/assets/styles/variables';
+
+.overview {
+  display: flex;
+  gap: 32px;
+  width: 100%;
+  height: calc(100vh - 372px);
+
+  &__image {
+    width: 276px;
+    flex-shrink: 0;
+    border-radius: 32px;
+    background-color: variables.$gray-1;
+    animation: pulse 1.2s ease-in-out infinite;
+  }
+
+  &__description {
+    width: 100%;
+    border-radius: 32px;
+    background-color: variables.$gray-1;
+    animation: pulse 1.2s ease-in-out infinite;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}

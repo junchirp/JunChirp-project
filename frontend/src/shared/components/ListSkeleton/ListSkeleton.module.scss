@@ -1,10 +1,8 @@
 @use '@/assets/styles/variables';
 
 .list-skeleton {
-  padding: 40px;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 24px;
+  gap: 32px;
 
   &__item {
     border-radius: 32px;

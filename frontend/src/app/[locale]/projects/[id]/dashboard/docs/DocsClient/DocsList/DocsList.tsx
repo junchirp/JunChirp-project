@@ -15,21 +15,31 @@ interface DocsListProps {
   deleteDoc: (doc: DocumentInterface) => void;
 }
 
+const MAX_DOCS_COUNT = 20;
+
 export default function DocsList(props: DocsListProps): ReactElement {
   const { docs, isOwner, addDoc, editDoc, deleteDoc } = props;
   const t = useTranslations('documents');
+
+  const handleClick = (): void => {
+    if (docs.length >= MAX_DOCS_COUNT) {
+      return;
+    }
+    addDoc();
+  };
 
   return (
     <div className={styles['docs-list']}>
       <div className={styles['docs-list__header']}>
         <p className={styles['docs-list__text']}>{t('description')}</p>
         <p className={styles['docs-list__count']}>
-          {docs.length} <span className={styles['docs-list__total']}>/ 20</span>
+          {docs.length}{' '}
+          <span className={styles['docs-list__total']}>/ {MAX_DOCS_COUNT}</span>
         </p>
       </div>
       <div className={styles['docs-list__list']}>
         {isOwner && (
-          <button className={styles['docs-list__button']} onClick={addDoc}>
+          <button className={styles['docs-list__button']} onClick={handleClick}>
             <Image
               src="/images/add-doc.svg"
               alt="add-doc"
