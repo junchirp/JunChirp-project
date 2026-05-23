@@ -1,0 +1,7 @@
+@use '@/assets/styles/variables';
+
+.leave-project-popup {
+  &__description {
+    color: variables.$green-2;
+  }
+}

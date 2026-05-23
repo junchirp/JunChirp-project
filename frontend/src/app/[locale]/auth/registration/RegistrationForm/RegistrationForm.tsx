@@ -21,7 +21,7 @@ import {
   registrationSchema,
   registrationSchemaStatic,
 } from '@/shared/forms/schemas/registrationSchema';
-import { normalizeApostrophes } from '@/shared/utils/normalizeApostrophes';
+import { normalizeInputValue } from '@/shared/utils/normalizeInputValue';
 import { useTranslations } from 'next-intl';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 import { useSystemLocale } from '@/hooks/useSystemLocale';
@@ -140,7 +140,7 @@ export default function RegistrationForm(): ReactElement {
               placeholder={tForms('registrationForm.placeholders.firstName')}
               {...field}
               onChange={(e) => {
-                const normalized = normalizeApostrophes(e.target.value);
+                const normalized = normalizeInputValue(e.target.value);
                 field.onChange(normalized);
               }}
               withError
@@ -157,7 +157,7 @@ export default function RegistrationForm(): ReactElement {
               placeholder={tForms('registrationForm.placeholders.lastName')}
               {...field}
               onChange={(e) => {
-                const normalized = normalizeApostrophes(e.target.value);
+                const normalized = normalizeInputValue(e.target.value);
                 field.onChange(normalized);
               }}
               withError

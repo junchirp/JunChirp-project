@@ -18,4 +18,10 @@ export class DocumentResponseDto {
     description: 'Document url',
   })
   public readonly url: string;
+
+  @ApiProperty({
+    example: '6446ff53-d993-46b3-a837-25d55fac1392',
+    description: 'Project ID',
+  })
+  public readonly projectId: string;
 }

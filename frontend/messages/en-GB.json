@@ -166,8 +166,11 @@
       "projectDescriptionSymbols": "Invalid characters in the description",
       "projectNameLength": "The name must be between 2 and 50 characters",
       "projectNameSymbols": "Invalid characters in the name",
-      "supportLength": "Enter a description between 10 and 1000 characters.",
-      "supportSymbols": "Invalid characters in the description"
+      "supportLength": "Enter a description between 10 and 1000 characters",
+      "supportSymbols": "Invalid characters in the description",
+      "documentNameLength": "The name must be between 2 and 100 characters",
+      "documentNameSymbols": "Invalid characters in the name",
+      "documentUrlLength": "Enter between 10 and 500 characters"
     },
     "userNameForm": {
       "firstName": "First name",
@@ -312,6 +315,17 @@
       "createError": "Maximum number of active projects reached (2).",
       "updateSuccess": "Project info updated.",
       "updateError": "Failed to save changes."
+    },
+    "documentForm": {
+      "documentName": "Document name",
+      "url": "Link",
+      "placeholders": {
+        "documentName": "Enter document name",
+        "url": "Document link"
+      },
+      "error": "Failed to save document.",
+      "error409": "A document with this link already exists.",
+      "success": "Document saved."
     }
   },
   "page404": {
@@ -685,5 +699,20 @@
     "description": "Do you really want to leave the project <project>{projectName}</project>? After leaving, you will lose access to tasks, chat, and other information.",
     "success": "Your participation in the project is complete.",
     "error": "Failed to leave project."
+  },
+  "documents": {
+    "description": "Added documents",
+    "button": "Add document",
+    "actions": {
+      "edit": "Edit document",
+      "add": "Add document"
+    }
+  },
+  "deleteDocumentPopup": {
+    "title": "Delete document",
+    "warning": "This action is irreversible. Once deleted, the document cannot be restored.",
+    "description": "Do you really want to delete <doc>{documentName}</doc>? This action cannot be undone.",
+    "success": "Document deleted.",
+    "error": "Failed to delete document."
   }
 }

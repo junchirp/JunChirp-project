@@ -124,6 +124,28 @@ export const projectsApi = mainApi.injectEndpoints({
         { type: 'auth', id: 'CURRENT' },
       ],
     }),
+    deleteProject: builder.mutation<void, string>({
+      query: (id) => ({
+        url: `projects/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: [
+        { type: 'project-cards', id: 'LIST' },
+        { type: 'my-projects', id: 'LIST' },
+      ],
+    }),
+    closeProject: builder.mutation<ProjectInterface, string>({
+      query: (id) => ({
+        url: `projects/${id}/leave`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: (_result, _error, id) => [
+        { type: 'project-cards', id: 'LIST' },
+        { type: 'project-cards', id },
+        { type: 'my-projects', id: 'LIST' },
+        { type: 'auth', id: 'CURRENT' },
+      ],
+    }),
   }),
 });
 

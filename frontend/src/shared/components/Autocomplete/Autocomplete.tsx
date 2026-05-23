@@ -114,7 +114,7 @@ function AutocompleteComponent(
     return (): void => {
       cancelled = true;
     };
-  }, [debouncedValue, isOpen, minLength]);
+  }, [debouncedValue, isOpen, minLength, options, fetcher]);
 
   useClickOutside({
     isOpen,

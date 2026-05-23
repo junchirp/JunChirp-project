@@ -14,7 +14,7 @@ import {
   userNameSchema,
   userNameSchemaStatic,
 } from '@/shared/forms/schemas/userNameSchema';
-import { normalizeApostrophes } from '@/shared/utils/normalizeApostrophes';
+import { normalizeInputValue } from '@/shared/utils/normalizeInputValue';
 import { useGetProjectRolesListQuery } from '@/api/projectRolesApi';
 import MultiSelectWithChips from '@/shared/components/MultiSelectWithChips/MultiSelectWithChips';
 import { useTranslations } from 'next-intl';
@@ -98,7 +98,7 @@ export default function UserNameForm(props: UserNameFormProps): ReactElement {
               {...field}
               value={field.value ?? ''}
               onChange={(e) => {
-                const normalized = normalizeApostrophes(e.target.value);
+                const normalized = normalizeInputValue(e.target.value);
                 field.onChange(normalized);
               }}
               withError
@@ -116,7 +116,7 @@ export default function UserNameForm(props: UserNameFormProps): ReactElement {
               {...field}
               value={field.value ?? ''}
               onChange={(e) => {
-                const normalized = normalizeApostrophes(e.target.value);
+                const normalized = normalizeInputValue(e.target.value);
                 field.onChange(normalized);
               }}
               withError

@@ -26,6 +26,8 @@ import { isPrismaError } from '../shared/utils/is-prisma-error';
 import imageSize from 'image-size';
 import { ProjectLogoResponseDto } from './dto/project-logo.response-dto';
 import { ProjectLogoMapper } from '../shared/mappers/project-logo.mapper';
+import { DocumentResponseDto } from '../documents/dto/document.response-dto';
+import { DocumentMapper } from '../shared/mappers/document.mapper';
 
 interface GetProjectsOptionsInterface {
   userId: string;
@@ -650,5 +652,15 @@ export class ProjectsService {
       }
       throw error;
     }
+  }
+
+  public async getDocumentsList(
+    projectId: string,
+  ): Promise<DocumentResponseDto[]> {
+    const docs = await this.prisma.document.findMany({
+      where: { projectId },
+    });
+
+    return docs.map((doc) => DocumentMapper.toResponse(doc));
   }
 }

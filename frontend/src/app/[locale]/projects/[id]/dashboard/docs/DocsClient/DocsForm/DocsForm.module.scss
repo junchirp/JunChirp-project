@@ -1,0 +1,33 @@
+@use '@/assets/styles/variables';
+
+.docs-form {
+  display: flex;
+  align-items: center;
+  background-color: variables.$gray-1;
+  border-radius: 32px;
+  padding: 40px;
+  min-width: 0;
+
+  &__form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    gap: 40px;
+    min-width: 0;
+  }
+
+  &__fieldset {
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    gap: 20px;
+    min-width: 0;
+  }
+
+  &__actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+}
