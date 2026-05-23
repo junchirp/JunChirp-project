@@ -1,7 +1,7 @@
 'use client';
 
 import React, { ReactElement } from 'react';
-import styles from './ProjectInfoEdit.module.scss';
+import styles from './OverviewEdit.module.scss';
 import { ProjectInterface } from '@/shared/interfaces/project.interface';
 import EditProjectForm from './EditProjectForm/EditProjectForm';
 import { useFormatter, useTranslations } from 'next-intl';
@@ -11,13 +11,13 @@ import Button from '@/shared/components/Button/Button';
 import { useRouter } from '@/i18n/routing';
 import ProjectImageUpload from './ProjectImageUpload/ProjectImageUpload';
 
-interface ProjectInfoEditProps {
+interface OverviewEditProps {
   project: ProjectInterface;
 }
 
-export default function ProjectInfoEdit({
+export default function OverviewEdit({
   project,
-}: ProjectInfoEditProps): ReactElement {
+}: OverviewEditProps): ReactElement {
   const tStatus = useTranslations('status');
   const tProjectsPage = useTranslations('projectsPage');
   const tButtons = useTranslations('buttons');
@@ -30,21 +30,21 @@ export default function ProjectInfoEdit({
   });
 
   const cancelEditProject = (): void => {
-    router.replace(`/projects/${project.id}/dashboard/info`);
+    router.replace(`/projects/${project.id}/dashboard/overview`);
   };
 
   return (
-    <div className={styles['project-info-edit']}>
-      <div className={styles['project-info-edit__content']}>
+    <div className={styles['overview-edit']}>
+      <div className={styles['overview-edit__content']}>
         <ProjectImageUpload project={project} />
-        <div className={styles['project-info-edit__form']}>
+        <div className={styles['overview-edit__form']}>
           <p
             className={`
-                ${styles['project-info-edit__status']} 
+                ${styles['overview-edit__status']} 
                 ${
                   project.status === 'active'
-                    ? styles['project-info-edit__status--active']
-                    : styles['project-info-edit__status--done']
+                    ? styles['overview-edit__status--active']
+                    : styles['overview-edit__status--done']
                 }
             `}
           >
@@ -53,25 +53,25 @@ export default function ProjectInfoEdit({
               : tStatus('completed')}
           </p>
           <EditProjectForm project={project} />
-          <div className={styles['project-info-edit__team']}>
-            <div className={styles['project-info-edit__members']}>
+          <div className={styles['overview-edit__team']}>
+            <div className={styles['overview-edit__members']}>
               <Image
                 src="/images/users-2.svg"
                 alt="users"
                 width={24}
                 height={24}
               />
-              <span className={styles['project-info-edit__team-text']}>
+              <span className={styles['overview-edit__team-text']}>
                 {membersPipe(project.participantsCount, tProjectsPage)}
               </span>
             </div>
-            <span className={styles['project-info-edit__team-text']}>
+            <span className={styles['overview-edit__team-text']}>
               {formattedDate}
             </span>
           </div>
         </div>
       </div>
-      <div className={styles['project-info-edit__actions']}>
+      <div className={styles['overview-edit__actions']}>
         <Button
           color="green"
           variant="secondary-frame"

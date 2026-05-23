@@ -3,7 +3,10 @@
 import { ReactElement, useEffect, useRef, useState } from 'react';
 import styles from './DocsClient.module.scss';
 import DocsList from './DocsList/DocsList';
-import { useDeleteDocumentMutation, useGetDocumentsQuery } from '@/api/documentsApi';
+import {
+  useDeleteDocumentMutation,
+  useGetDocumentsQuery,
+} from '@/api/documentsApi';
 import { useParams } from 'next/navigation';
 import { useAppSelector } from '@/hooks/reduxHooks';
 import authSelector from '@/redux/auth/authSelector';
@@ -17,10 +20,11 @@ import DeleteDocumentPopup from './DeleteDocumentPopup/DeleteDocumentPopup';
 import { useToast } from '@/hooks/useToast';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 import { useTranslations } from 'next-intl';
+import DocsListSkeleton from './DocsListSkeleton/DocsListSkeleton';
 
 export default function DocsClient(): ReactElement {
   const { id } = useParams<{ id: string }>();
-  const { data = [] } = useGetDocumentsQuery(id);
+  const { data = [], isLoading: listLoading } = useGetDocumentsQuery(id);
   const user = useAppSelector(authSelector.selectRequiredUser);
   const { data: project } = useGetProjectByIdQuery(id);
   const isOwner = user.id === project?.ownerId;
@@ -83,7 +87,9 @@ export default function DocsClient(): ReactElement {
     }
   };
 
-  return (
+  return listLoading ? (
+    <DocsListSkeleton />
+  ) : (
     <>
       <div className={styles['docs-client']}>
         <DocsList

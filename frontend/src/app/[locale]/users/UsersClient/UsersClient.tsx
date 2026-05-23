@@ -83,7 +83,7 @@ export default function UsersClient(): ReactElement {
       <div className={styles['users-client__container']}>
         <UsersFilters />
         {usersLoading || myProjectsLoading ? (
-          <ListSkeleton height={288} lines={10} />
+          <ListSkeleton height={288} rows={10} />
         ) : usersList?.users.length ? (
           <UsersList users={usersList.users} myProjects={myProjects} />
         ) : null}

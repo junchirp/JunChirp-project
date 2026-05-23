@@ -63,7 +63,7 @@ export default function ProjectsClient(): ReactElement {
       <div className={styles['projects-client__container']}>
         <ProjectsFilters />
         {myProjectsLoading ? (
-          <ListSkeleton height={341} />
+          <ListSkeleton height={562} />
         ) : myProjectsList ? (
           <MyProjects
             myProjects={myProjectsList.projects}
@@ -73,7 +73,7 @@ export default function ProjectsClient(): ReactElement {
           />
         ) : null}
         {isLoading ? (
-          <ListSkeleton height={562} lines={10} />
+          <ListSkeleton height={562} rows={10} />
         ) : list?.projects.length ? (
           <ProjectsList
             projects={list.projects}

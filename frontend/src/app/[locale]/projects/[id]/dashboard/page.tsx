@@ -9,7 +9,7 @@ export default function Dashboard(): null {
   const { id } = useParams<{ id: string }>();
 
   useEffect(() => {
-    router.replace(`/projects/${id}/dashboard/info`);
+    router.replace(`/projects/${id}/dashboard/overview`);
   }, [router]);
 
   return null;

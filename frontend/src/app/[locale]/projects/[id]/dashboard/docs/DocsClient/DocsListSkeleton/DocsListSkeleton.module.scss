@@ -1,0 +1,28 @@
+@use '@/assets/styles/variables';
+
+.docs-list-skeleton {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 120px auto;
+  gap: 32px;
+
+  &__header {
+    grid-column: span 2;
+    border-radius: 32px;
+    background-color: variables.$gray-1;
+    animation: pulse 1.2s ease-in-out infinite;
+  }
+
+  &__list {
+    grid-column: 1 / -1;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
