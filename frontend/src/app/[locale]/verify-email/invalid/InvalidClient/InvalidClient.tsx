@@ -29,9 +29,8 @@ export default function InvalidClient(): ReactElement {
       return;
     }
 
-    const result = await resendEmail({ token, locale });
-
-    if ('data' in result) {
+    try {
+      await resendEmail({ token, locale }).unwrap();
       showToast({
         severity: 'success',
         summary: t('success'),
@@ -39,11 +38,8 @@ export default function InvalidClient(): ReactElement {
         life: 3000,
         actionKey: ToastKeysEnum.CONFIRM_EMAIL,
       });
-    } else if ('error' in result) {
-      const errorData = result.error as (
-        | FetchBaseQueryError
-        | SerializedError
-      ) & {
+    } catch (error) {
+      const errorData = error as (FetchBaseQueryError | SerializedError) & {
         status?: number;
         data: {
           retryAfter: string;
@@ -52,7 +48,7 @@ export default function InvalidClient(): ReactElement {
       const resStatus = errorData.status;
       if (resStatus === 429) {
         showError(
-          errorData?.data.retryAfter ?? '',
+          errorData.data.retryAfter ?? '',
           ToastKeysEnum.EMAIL_CONFIRMATION,
         );
       } else {

@@ -57,7 +57,12 @@ export default function NewProjectForm(): ReactElement {
     }
 
     try {
-      const newProject = await createProject(data).unwrap();
+      const trimmedData = {
+        ...data,
+        projectName: data.projectName.trim(),
+        description: data.description.trim(),
+      };
+      const newProject = await createProject(trimmedData).unwrap();
       showToast({
         severity: 'success',
         summary: tForms('projectForm.createSuccess'),

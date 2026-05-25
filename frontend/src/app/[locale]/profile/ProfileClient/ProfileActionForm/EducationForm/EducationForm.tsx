@@ -79,21 +79,18 @@ export default function EducationForm(props: EducationFormProps): ReactElement {
       return;
     }
 
+    const trimmedData = {
+      institution: data.institution.trim(),
+      specialization: data.specialization.trim(),
+    };
+
     if (initialValues) {
-      const result = await updateEducation({
-        id: initialValues.id,
-        data,
-      });
-      if ('error' in result) {
-        showToast({
-          severity: 'error',
-          summary: tForms('educationForm.error'),
-          life: 3000,
-          actionKey: ToastKeysEnum.EDUCATION,
-        });
-        return;
-      }
-      if ('data' in result) {
+      try {
+        await updateEducation({
+          id: initialValues.id,
+          data: trimmedData,
+        }).unwrap();
+
         showToast({
           severity: 'success',
           summary: tForms('educationForm.success'),
@@ -101,19 +98,18 @@ export default function EducationForm(props: EducationFormProps): ReactElement {
           actionKey: ToastKeysEnum.EDUCATION,
         });
         onCancel();
+      } catch {
+        showToast({
+          severity: 'error',
+          summary: tForms('educationForm.error'),
+          life: 3000,
+          actionKey: ToastKeysEnum.EDUCATION,
+        });
       }
     } else {
-      const result = await addEducation(data);
-      if ('error' in result) {
-        showToast({
-          severity: 'error',
-          summary: tForms('educationForm.error'),
-          life: 3000,
-          actionKey: ToastKeysEnum.EDUCATION,
-        });
-        return;
-      }
-      if ('data' in result) {
+      try {
+        await addEducation(trimmedData).unwrap();
+
         showToast({
           severity: 'success',
           summary: tForms('educationForm.success'),
@@ -121,6 +117,13 @@ export default function EducationForm(props: EducationFormProps): ReactElement {
           actionKey: ToastKeysEnum.EDUCATION,
         });
         onCancel();
+      } catch {
+        showToast({
+          severity: 'error',
+          summary: tForms('educationForm.error'),
+          life: 3000,
+          actionKey: ToastKeysEnum.EDUCATION,
+        });
       }
     }
   };

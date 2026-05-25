@@ -58,17 +58,15 @@ export default function UserNameForm(props: UserNameFormProps): ReactElement {
       return;
     }
 
-    const result = await updateUser(data);
-    if ('error' in result) {
-      showToast({
-        severity: 'error',
-        summary: tForms('userNameForm.error'),
-        life: 3000,
-        actionKey: ToastKeysEnum.USER_NAME,
-      });
-      return;
-    }
-    if ('data' in result) {
+    try {
+      const trimmedData = {
+        ...data,
+        firstName: data.firstName.trim(),
+        lastName: data.lastName.trim(),
+      };
+
+      await updateUser(trimmedData).unwrap();
+
       showToast({
         severity: 'success',
         summary: tForms('userNameForm.success'),
@@ -76,6 +74,13 @@ export default function UserNameForm(props: UserNameFormProps): ReactElement {
         actionKey: ToastKeysEnum.USER_NAME,
       });
       onCancel();
+    } catch {
+      showToast({
+        severity: 'error',
+        summary: tForms('userNameForm.error'),
+        life: 3000,
+        actionKey: ToastKeysEnum.USER_NAME,
+      });
     }
   };
 

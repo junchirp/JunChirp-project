@@ -65,13 +65,9 @@ export default function SupportForm(props: SupportFormProps): ReactElement {
       return;
     }
 
-    const result = await sendSupportRequest({
-      ...data,
-      locale,
-    });
-    onClose();
+    try {
+      await sendSupportRequest({ ...data, locale }).unwrap();
 
-    if ('data' in result) {
       showToast({
         severity: 'success',
         summary: t('supportForm.success'),
@@ -79,9 +75,7 @@ export default function SupportForm(props: SupportFormProps): ReactElement {
         life: 3000,
         actionKey: ToastKeysEnum.SUPPORT,
       });
-    }
-
-    if ('error' in result) {
+    } catch {
       showToast({
         severity: 'error',
         summary: t('supportForm.error'),
@@ -89,6 +83,8 @@ export default function SupportForm(props: SupportFormProps): ReactElement {
         life: 3000,
         actionKey: ToastKeysEnum.SUPPORT,
       });
+    } finally {
+      onClose();
     }
   };
 

@@ -82,17 +82,19 @@ export default function RegistrationForm(): ReactElement {
       return;
     }
 
-    const trimmedData = {
-      firstName: data.firstName.trim(),
-      lastName: data.lastName.trim(),
-      email: data.email.trim(),
-      password: data.password,
-      locale,
-    };
-    const result = await registration(trimmedData);
+    try {
+      const trimmedData = {
+        firstName: data.firstName.trim(),
+        lastName: data.lastName.trim(),
+        email: data.email.trim(),
+        password: data.password,
+        locale,
+      };
+      await registration(trimmedData).unwrap();
 
-    if ('error' in result) {
-      const errorData = result.error as
+      router.push('/confirm-email?type=registration');
+    } catch (error) {
+      const errorData = error as
         | ((FetchBaseQueryError | SerializedError) & { status: number })
         | undefined;
       const status = errorData?.status;
@@ -115,10 +117,7 @@ export default function RegistrationForm(): ReactElement {
         life: 3000,
         actionKey: ToastKeysEnum.REGISTRATION,
       });
-      return;
     }
-
-    router.push('/confirm-email?type=registration');
   };
 
   return (

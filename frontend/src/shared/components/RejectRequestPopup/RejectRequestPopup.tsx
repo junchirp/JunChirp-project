@@ -34,17 +34,16 @@ export default function RejectRequestPopup(
       return;
     }
 
-    const result = await rejectRequest({ id: request.id, userId: user.id });
-    onClose();
+    try {
+      await rejectRequest({ id: request.id, userId: user.id }).unwrap();
 
-    if ('data' in result) {
       showToast({
         severity: 'success',
         summary: t('success'),
         life: 3000,
         actionKey: ToastKeysEnum.PARTICIPATION_REQUEST,
       });
-    } else {
+    } catch {
       showToast({
         severity: 'error',
         summary: t('error'),
@@ -52,6 +51,8 @@ export default function RejectRequestPopup(
         life: 3000,
         actionKey: ToastKeysEnum.PARTICIPATION_REQUEST,
       });
+    } finally {
+      onClose();
     }
   };
 

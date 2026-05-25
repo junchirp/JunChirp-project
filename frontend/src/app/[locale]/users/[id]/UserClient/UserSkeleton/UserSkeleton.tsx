@@ -21,7 +21,7 @@ export default function UserSkeleton(): ReactElement {
         <div className={styles['user-skeleton__7']} />
       </div>
       <div className={styles['user-skeleton__8']}>
-        <div className={styles['user-skeleton__9']}></div>
+        <div className={styles['user-skeleton__9']} />
       </div>
     </div>
   );

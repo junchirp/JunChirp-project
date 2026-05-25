@@ -246,19 +246,16 @@ export default function ProfileClient(): ReactElement {
   };
 
   const handleDeleteSocial = async (item: SocialInterface): Promise<void> => {
-    const result = await deleteSocial(item.id);
-    closeModal();
+    try {
+      await deleteSocial(item.id).unwrap();
 
-    if ('data' in result) {
       showToast({
         severity: 'success',
         summary: tProfile('deleteItem.socials.success'),
         life: 3000,
         actionKey: ToastKeysEnum.DELETE_SOCIAL,
       });
-    }
-
-    if ('error' in result) {
+    } catch {
       showToast({
         severity: 'error',
         summary: tProfile('deleteItem.socials.error'),
@@ -266,25 +263,24 @@ export default function ProfileClient(): ReactElement {
         life: 3000,
         actionKey: ToastKeysEnum.DELETE_SOCIAL,
       });
+    } finally {
+      closeModal();
     }
   };
 
   const handleDeleteEducation = async (
     item: EducationInterface,
   ): Promise<void> => {
-    const result = await deleteEducation(item.id);
-    closeModal();
+    try {
+      await deleteEducation(item.id).unwrap();
 
-    if ('data' in result) {
       showToast({
         severity: 'success',
         summary: tProfile('deleteItem.educations.success'),
         life: 3000,
         actionKey: ToastKeysEnum.DELETE_EDUCATION,
       });
-    }
-
-    if ('error' in result) {
+    } catch {
       showToast({
         severity: 'error',
         summary: tProfile('deleteItem.educations.error'),
@@ -292,25 +288,24 @@ export default function ProfileClient(): ReactElement {
         life: 3000,
         actionKey: ToastKeysEnum.DELETE_EDUCATION,
       });
+    } finally {
+      closeModal();
     }
   };
 
   const handleDeleteSoftSkill = async (
     item: SoftSkillInterface,
   ): Promise<void> => {
-    const result = await deleteSoftSkill(item.id);
-    closeModal();
+    try {
+      await deleteSoftSkill(item.id).unwrap();
 
-    if ('data' in result) {
       showToast({
         severity: 'success',
         summary: tProfile('deleteItem.softSkills.success'),
         life: 3000,
         actionKey: ToastKeysEnum.DELETE_SOFT_SKILL,
       });
-    }
-
-    if ('error' in result) {
+    } catch {
       showToast({
         severity: 'error',
         summary: tProfile('deleteItem.softSkills.error'),
@@ -318,25 +313,24 @@ export default function ProfileClient(): ReactElement {
         life: 3000,
         actionKey: ToastKeysEnum.DELETE_SOFT_SKILL,
       });
+    } finally {
+      closeModal();
     }
   };
 
   const handleDeleteHardSkill = async (
     item: HardSkillInterface,
   ): Promise<void> => {
-    const result = await deleteHardSkill(item.id);
-    closeModal();
+    try {
+      await deleteHardSkill(item.id).unwrap();
 
-    if ('data' in result) {
       showToast({
         severity: 'success',
         summary: tProfile('deleteItem.hardSkills.success'),
         life: 3000,
         actionKey: ToastKeysEnum.DELETE_HARD_SKILL,
       });
-    }
-
-    if ('error' in result) {
+    } catch {
       showToast({
         severity: 'error',
         summary: tProfile('deleteItem.hardSkills.error'),
@@ -344,6 +338,8 @@ export default function ProfileClient(): ReactElement {
         life: 3000,
         actionKey: ToastKeysEnum.DELETE_HARD_SKILL,
       });
+    } finally {
+      closeModal();
     }
   };
 

@@ -9,7 +9,7 @@ export default function DocsListSkeleton(): ReactElement {
     <div className={styles['docs-list-skeleton']}>
       <div className={styles['docs-list-skeleton__header']} />
       <div className={styles['docs-list-skeleton__list']}>
-        <ListSkeleton height={246} rows={7} columns={3} noPadding />
+        <ListSkeleton itemHeight={246} rows={7} columns={3} noPadding />
       </div>
     </div>
   );

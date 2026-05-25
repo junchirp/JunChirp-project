@@ -94,13 +94,21 @@ export default function SocialForm(props: SocialFormProps): ReactElement {
     const preparedData = { ...data, url };
 
     if (initialValues) {
-      const result = await updateSocial({
-        id: initialValues.id,
-        data: preparedData,
-      });
+      try {
+        await updateSocial({
+          id: initialValues.id,
+          data: preparedData,
+        }).unwrap();
 
-      if ('error' in result) {
-        const errorData = result.error as
+        showToast({
+          severity: 'success',
+          summary: tForms('socialForm.success'),
+          life: 3000,
+          actionKey: ToastKeysEnum.SOCIAL,
+        });
+        onCancel();
+      } catch (error) {
+        const errorData = error as
           | ((FetchBaseQueryError | SerializedError) & {
               status: number;
             })
@@ -122,23 +130,20 @@ export default function SocialForm(props: SocialFormProps): ReactElement {
             actionKey: ToastKeysEnum.SOCIAL,
           });
         }
-        return;
-      }
-
-      if ('data' in result) {
-        showToast({
-          severity: 'success',
-          summary: tForms('socialForm.success'),
-          life: 3000,
-          actionKey: ToastKeysEnum.SOCIAL,
-        });
-        onCancel();
       }
     } else {
-      const result = await addSocial(preparedData);
+      try {
+        await addSocial(preparedData).unwrap();
 
-      if ('error' in result) {
-        const errorData = result.error as
+        showToast({
+          severity: 'success',
+          summary: tForms('socialForm.success'),
+          life: 3000,
+          actionKey: ToastKeysEnum.SOCIAL,
+        });
+        onCancel();
+      } catch (error) {
+        const errorData = error as
           | ((FetchBaseQueryError | SerializedError) & {
               status: number;
             })
@@ -160,16 +165,6 @@ export default function SocialForm(props: SocialFormProps): ReactElement {
             actionKey: ToastKeysEnum.SOCIAL,
           });
         }
-        return;
-      }
-      if ('data' in result) {
-        showToast({
-          severity: 'success',
-          summary: tForms('socialForm.success'),
-          life: 3000,
-          actionKey: ToastKeysEnum.SOCIAL,
-        });
-        onCancel();
       }
     }
   };
