@@ -714,5 +714,18 @@
     "description": "Do you really want to delete <doc>{documentName}</doc>? This action cannot be undone.",
     "success": "Document deleted.",
     "error": "Failed to delete document."
+  },
+  "deleteProjectPopup": {
+    "title": "Delete project",
+    "warning": "This action is irreversible. Once deleted, the project cannot be restored.",
+    "description": "Do you really want to delete <project>{projectName}</project>? This action cannot be undone.",
+    "success": "Project deleted.",
+    "error": "Failed to delete project."
+  },
+  "completeProjectPopup": {
+    "title": "Complete project",
+    "description": "After completion, the project will become view-only.",
+    "success": "Project marked as completed.",
+    "error": "Failed to complete project."
   }
 }

@@ -117,7 +117,7 @@ export default function DocsClient(): ReactElement {
           onClose={closePopup}
           onConfirm={handleDeleteDocument}
           doc={deletedItem}
-          loading={isLoading}
+          isLoading={isLoading}
         />
       )}
     </>

@@ -53,7 +53,8 @@ export default function LoginForm(): ReactElement {
     setError(false);
 
     try {
-      const user = await login(data).unwrap();
+      const trimmedData = { ...data, email: data.email.trim() };
+      const user = await login(trimmedData).unwrap();
       const next = searchParams.get('next');
       const isSafeNext = next && next.startsWith('/') && !next.startsWith('//');
       if (isSafeNext) {

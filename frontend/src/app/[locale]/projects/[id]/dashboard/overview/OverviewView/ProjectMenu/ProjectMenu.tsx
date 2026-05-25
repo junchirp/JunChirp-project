@@ -8,15 +8,18 @@ import Button from '@/shared/components/Button/Button';
 import { useClickOutside } from '@/hooks/useClickOutside';
 import { useRouter } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
+import { ProjectInterface } from '@/shared/interfaces/project.interface';
 
 interface ProjectMenuProps {
-  projectId: string;
+  project: ProjectInterface;
   isOwner: boolean;
   onLeave: () => void;
+  onDelete: () => void;
+  onComplete: () => void;
 }
 
 export default function ProjectMenu(props: ProjectMenuProps): ReactElement {
-  const { projectId, isOwner, onLeave } = props;
+  const { project, isOwner, onLeave, onDelete, onComplete } = props;
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const buttonRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLElement>(null);
@@ -27,8 +30,18 @@ export default function ProjectMenu(props: ProjectMenuProps): ReactElement {
   const closeMenu = (): void => setIsOpen(false);
 
   const leaveProject = (): void => {
-    closeMenu();
     onLeave();
+    closeMenu();
+  };
+
+  const deleteProject = (): void => {
+    onDelete();
+    closeMenu();
+  };
+
+  const completeProject = (): void => {
+    onComplete();
+    closeMenu();
   };
 
   useClickOutside({
@@ -47,7 +60,7 @@ export default function ProjectMenu(props: ProjectMenuProps): ReactElement {
 
   const handleEdit = (): void => {
     closeMenu();
-    router.push(`/projects/${projectId}/dashboard/overview?mode=edit`);
+    router.push(`/projects/${project.id}/dashboard/overview?mode=edit`);
   };
 
   return (
@@ -57,6 +70,7 @@ export default function ProjectMenu(props: ProjectMenuProps): ReactElement {
           className={styles['project-menu__button']}
           variant="secondary-frame"
           color="green"
+          disabled={project.status === 'done' && !isOwner}
           icon={<Settings />}
           onClick={toggleMenu}
         />
@@ -64,7 +78,7 @@ export default function ProjectMenu(props: ProjectMenuProps): ReactElement {
 
       {isOpen && (
         <nav className={styles['project-menu__menu']} ref={menuRef}>
-          {isOwner ? (
+          {isOwner && project.status === 'active' ? (
             <>
               <button
                 className={styles['project-menu__item']}
@@ -91,7 +105,10 @@ export default function ProjectMenu(props: ProjectMenuProps): ReactElement {
                   {t('ownership')}
                 </span>
               </button>
-              <button className={styles['project-menu__item']}>
+              <button
+                className={styles['project-menu__item']}
+                onClick={completeProject}
+              >
                 <Image
                   src="/images/save.svg"
                   alt="save"
@@ -102,7 +119,10 @@ export default function ProjectMenu(props: ProjectMenuProps): ReactElement {
                   {t('complete')}
                 </span>
               </button>
-              <button className={styles['project-menu__item']}>
+              <button
+                className={styles['project-menu__item']}
+                onClick={deleteProject}
+              >
                 <Image
                   src="/images/trash.svg"
                   alt="trash"
@@ -114,7 +134,19 @@ export default function ProjectMenu(props: ProjectMenuProps): ReactElement {
                 </span>
               </button>
             </>
-          ) : (
+          ) : isOwner && project.status === 'done' ? (
+            <button className={styles['project-menu__item']} onClick={() => {}}>
+              <Image
+                src="/images/trash.svg"
+                alt="trash"
+                width={48}
+                height={48}
+              />
+              <span className={styles['project-menu__text']}>
+                Відновити проєкт
+              </span>
+            </button>
+          ) : !isOwner && project.status === 'active' ? (
             <button
               className={styles['project-menu__item']}
               onClick={leaveProject}
@@ -127,7 +159,7 @@ export default function ProjectMenu(props: ProjectMenuProps): ReactElement {
               />
               <span className={styles['project-menu__text']}>{t('exit')}</span>
             </button>
-          )}
+          ) : null}
         </nav>
       )}
     </div>

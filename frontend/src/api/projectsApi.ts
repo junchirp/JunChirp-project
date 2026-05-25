@@ -132,16 +132,17 @@ export const projectsApi = mainApi.injectEndpoints({
       invalidatesTags: [
         { type: 'project-cards', id: 'LIST' },
         { type: 'my-projects', id: 'LIST' },
+        { type: 'auth', id: 'CURRENT' },
       ],
     }),
-    closeProject: builder.mutation<ProjectInterface, string>({
+    completeProject: builder.mutation<ProjectInterface, string>({
       query: (id) => ({
-        url: `projects/${id}/leave`,
-        method: 'DELETE',
+        url: `projects/${id}/close`,
+        method: 'PATCH',
       }),
       invalidatesTags: (_result, _error, id) => [
         { type: 'project-cards', id: 'LIST' },
-        { type: 'project-cards', id },
+        { type: 'projects', id },
         { type: 'my-projects', id: 'LIST' },
         { type: 'auth', id: 'CURRENT' },
       ],
@@ -160,4 +161,6 @@ export const {
   useUpdateProjectLogoMutation,
   useDeleteProjectLogoMutation,
   useLeaveProjectMutation,
+  useDeleteProjectMutation,
+  useCompleteProjectMutation,
 } = projectsApi;
