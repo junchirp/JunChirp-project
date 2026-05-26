@@ -69,37 +69,32 @@ export default function InviteFooter({
       return;
     }
 
-    if (currentInvite) {
-      const result = await acceptInvite(currentInvite.id);
+    try {
+      await acceptInvite(currentInvite.id).unwrap();
+      goProject();
+    } catch (error) {
+      const errorData = error as
+        | ((FetchBaseQueryError | SerializedError) & {
+            status: number;
+          })
+        | undefined;
+      const status = errorData?.status;
 
-      if ('error' in result) {
-        const errorData = result.error as
-          | ((FetchBaseQueryError | SerializedError) & {
-              status: number;
-            })
-          | undefined;
-        const status = errorData?.status;
-
-        if (status === 400) {
-          showToast({
-            severity: 'error',
-            summary: tProjectsPage('invite.error400'),
-            life: 3000,
-            actionKey: ToastKeysEnum.PARTICIPATION_INVITE,
-          });
-        } else {
-          showToast({
-            severity: 'error',
-            summary: tProjectsPage('invite.error'),
-            detail: tProjectsPage('invite.errorDetails'),
-            life: 3000,
-            actionKey: ToastKeysEnum.PARTICIPATION_INVITE,
-          });
-        }
-      }
-
-      if ('data' in result) {
-        goProject();
+      if (status === 400) {
+        showToast({
+          severity: 'error',
+          summary: tProjectsPage('invite.error400'),
+          life: 3000,
+          actionKey: ToastKeysEnum.PARTICIPATION_INVITE,
+        });
+      } else {
+        showToast({
+          severity: 'error',
+          summary: tProjectsPage('invite.error'),
+          detail: tProjectsPage('invite.errorDetails'),
+          life: 3000,
+          actionKey: ToastKeysEnum.PARTICIPATION_INVITE,
+        });
       }
     }
   };

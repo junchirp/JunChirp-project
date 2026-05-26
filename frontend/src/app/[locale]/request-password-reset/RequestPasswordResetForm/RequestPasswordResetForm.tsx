@@ -41,10 +41,13 @@ export default function RequestPasswordResetForm(): ReactElement {
       email: data.email.trim(),
       locale,
     };
-    const result = await reqResetPassword(trimmedData);
 
-    if ('error' in result) {
-      const errorData = result.error as
+    try {
+      const result = await reqResetPassword(trimmedData).unwrap();
+
+      router.replace(`/confirm-password-reset?requestId=${result.id}`);
+    } catch (error) {
+      const errorData = error as
         | ((FetchBaseQueryError | SerializedError) & {
             status: number;
             data: { attemptsCount: number; retryAfter: string };
@@ -60,8 +63,6 @@ export default function RequestPasswordResetForm(): ReactElement {
       } else {
         setError(true);
       }
-    } else if ('data' in result) {
-      router.replace(`/confirm-password-reset?requestId=${result.data.id}`);
     }
   };
 

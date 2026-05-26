@@ -54,10 +54,19 @@ export default function SoftSkillForm(props: SoftSkillFormProps): ReactElement {
       return;
     }
 
-    const trimmedData = { softSkillName: data.softSkillName.trim() };
-    const result = await addSoftSkill(trimmedData);
-    if ('error' in result) {
-      const errorData = result.error as
+    try {
+      const trimmedData = { softSkillName: data.softSkillName.trim() };
+      await addSoftSkill(trimmedData).unwrap();
+
+      showToast({
+        severity: 'success',
+        summary: tForms('softSkillForm.success'),
+        life: 3000,
+        actionKey: ToastKeysEnum.SOFT_SKILL,
+      });
+      onCancel();
+    } catch (error) {
+      const errorData = error as
         | ((FetchBaseQueryError | SerializedError) & {
             status: number;
           })
@@ -79,16 +88,6 @@ export default function SoftSkillForm(props: SoftSkillFormProps): ReactElement {
           actionKey: ToastKeysEnum.SOFT_SKILL,
         });
       }
-      return;
-    }
-    if ('data' in result) {
-      showToast({
-        severity: 'success',
-        summary: tForms('softSkillForm.success'),
-        life: 3000,
-        actionKey: ToastKeysEnum.SOFT_SKILL,
-      });
-      onCancel();
     }
   };
 

@@ -40,16 +40,17 @@ export default function ChangeEmailForm({ onClose }: FormProps): ReactElement {
   const locale = useSystemLocale();
 
   const onSubmit = async (data: FormData): Promise<void> => {
-    if (errors.email?.message || isActive(ToastKeysEnum.CHANGE_EMAIL)) {
+    if (isActive(ToastKeysEnum.CHANGE_EMAIL)) {
       return;
     }
-    const trimmedData = {
-      email: data.email.trim(),
-      locale,
-    };
-    const result = await updateEmail(trimmedData);
 
-    if ('data' in result) {
+    try {
+      const trimmedData = {
+        email: data.email.trim(),
+        locale,
+      };
+      await updateEmail(trimmedData).unwrap();
+
       showToast({
         severity: 'success',
         summary: tForms('changeEmailForm.success'),
@@ -57,7 +58,7 @@ export default function ChangeEmailForm({ onClose }: FormProps): ReactElement {
         life: 3000,
         actionKey: ToastKeysEnum.CHANGE_EMAIL,
       });
-    } else if ('error' in result) {
+    } catch {
       showToast({
         severity: 'error',
         summary: tForms('changeEmailForm.error'),

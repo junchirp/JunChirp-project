@@ -25,6 +25,6 @@ export enum ToastKeysEnum {
   USERS = 'users',
   COPY = 'copy',
   UPLOAD_IMAGE = 'upload image',
-  LEAVE_PROJECT = 'leave project',
+  PROJECT = 'project',
   DOCUMENT = 'document',
 }

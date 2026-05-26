@@ -34,34 +34,30 @@ export default function RequestFooter({
   const [cancelRequest, { isLoading }] = useCancelRequestMutation();
 
   const handleCancelRequest = async (): Promise<void> => {
-    if (currentRequest) {
-      if (isActive(ToastKeysEnum.PARTICIPATION_REQUEST)) {
-        return;
-      }
+    if (isActive(ToastKeysEnum.PARTICIPATION_REQUEST)) {
+      return;
+    }
 
-      const result = await cancelRequest({
+    try {
+      await cancelRequest({
         id: currentRequest.id,
         userId: user.id,
+      }).unwrap();
+
+      showToast({
+        severity: 'success',
+        summary: tProjectsPage('request.cancelSuccess'),
+        life: 3000,
+        actionKey: ToastKeysEnum.PARTICIPATION_REQUEST,
       });
-
-      if ('error' in result) {
-        showToast({
-          severity: 'error',
-          summary: tProjectsPage('request.cancelError'),
-          detail: tProjectsPage('request.errorDetails'),
-          life: 3000,
-          actionKey: ToastKeysEnum.PARTICIPATION_REQUEST,
-        });
-      }
-
-      if ('data' in result) {
-        showToast({
-          severity: 'success',
-          summary: tProjectsPage('request.cancelSuccess'),
-          life: 3000,
-          actionKey: ToastKeysEnum.PARTICIPATION_REQUEST,
-        });
-      }
+    } catch {
+      showToast({
+        severity: 'error',
+        summary: tProjectsPage('request.cancelError'),
+        detail: tProjectsPage('request.errorDetails'),
+        life: 3000,
+        actionKey: ToastKeysEnum.PARTICIPATION_REQUEST,
+      });
     }
   };
 

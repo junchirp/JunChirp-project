@@ -34,17 +34,16 @@ export default function RejectInvitePopup(
       return;
     }
 
-    const result = await rejectInvite({ id: invite.id, userId: user.id });
-    onClose();
+    try {
+      await rejectInvite({ id: invite.id, userId: user.id }).unwrap();
 
-    if ('data' in result) {
       showToast({
         severity: 'success',
         summary: t('success'),
         life: 3000,
         actionKey: ToastKeysEnum.PARTICIPATION_INVITE,
       });
-    } else {
+    } catch {
       showToast({
         severity: 'error',
         summary: t('error'),
@@ -52,6 +51,8 @@ export default function RejectInvitePopup(
         life: 3000,
         actionKey: ToastKeysEnum.PARTICIPATION_INVITE,
       });
+    } finally {
+      onClose();
     }
   };
 

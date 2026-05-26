@@ -81,9 +81,18 @@ export default function ResetPasswordForm({
       return;
     }
 
-    const result = await resetPassword({ token, password: data.password });
+    try {
+      await resetPassword({ token, password: data.password }).unwrap();
 
-    if ('error' in result) {
+      showToast({
+        severity: 'success',
+        summary: tForms('resetPasswordForm.success'),
+        life: 3000,
+        actionKey: ToastKeysEnum.RESET_PASSWORD,
+      });
+
+      router.push('/auth/login');
+    } catch {
       showToast({
         severity: 'error',
         summary: tForms('resetPasswordForm.error'),
@@ -91,17 +100,7 @@ export default function ResetPasswordForm({
         life: 3000,
         actionKey: ToastKeysEnum.RESET_PASSWORD,
       });
-      return;
     }
-
-    showToast({
-      severity: 'success',
-      summary: tForms('resetPasswordForm.success'),
-      life: 3000,
-      actionKey: ToastKeysEnum.RESET_PASSWORD,
-    });
-
-    router.push('/auth/login');
   };
 
   const cancelReset = async (): Promise<void> => {

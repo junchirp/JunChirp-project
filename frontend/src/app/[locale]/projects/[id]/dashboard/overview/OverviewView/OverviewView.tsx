@@ -8,11 +8,17 @@ import ProjectMenu from './ProjectMenu/ProjectMenu';
 import { useFormatter, useTranslations } from 'next-intl';
 import { ProjectInterface } from '@/shared/interfaces/project.interface';
 import { useSystemLocale } from '@/hooks/useSystemLocale';
-import { useLeaveProjectMutation } from '@/api/projectsApi';
+import {
+  useCompleteProjectMutation,
+  useDeleteProjectMutation,
+  useLeaveProjectMutation,
+} from '@/api/projectsApi';
 import LeaveProjectPopup from './LeaveProjectPopup/LeaveProjectPopup';
 import { useToast } from '@/hooks/useToast';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 import { useRouter } from '@/i18n/routing';
+import DeleteProjectPopup from './DeleteProjectPopup/DeleteProjectPopup';
+import CompleteProjectPopup from './CompleteProjectPopup/CompleteProjectPopup';
 
 interface OverviewViewProps {
   project: ProjectInterface;
@@ -25,7 +31,9 @@ export default function OverviewView({
 }: OverviewViewProps): ReactElement {
   const tProjectsPage = useTranslations('projectsPage');
   const tStatus = useTranslations('status');
-  const tPopup = useTranslations('leaveProjectPopup');
+  const tLeavePopup = useTranslations('leaveProjectPopup');
+  const tDeletePopup = useTranslations('deleteProjectPopup');
+  const tCompletePopup = useTranslations('completeProjectPopup');
   const locale = useSystemLocale();
   const format = useFormatter();
   const formattedDate = format.dateTime(new Date(project.createdAt), {
@@ -34,36 +42,98 @@ export default function OverviewView({
     year: 'numeric',
   });
   const [leavePopupOpen, setLeavePopupOpen] = useState(false);
-  const [leaveProject, { isLoading }] = useLeaveProjectMutation();
+  const [leaveProject, { isLoading: leaveLoading }] = useLeaveProjectMutation();
   const { showToast, isActive } = useToast();
   const router = useRouter();
+  const [deletePopupOpen, setDeletePopupOpen] = useState(false);
+  const [deleteProject, { isLoading: deleteLoading }] =
+    useDeleteProjectMutation();
+  const [completePopupOpen, setCompletePopupOpen] = useState(false);
+  const [completeProject, { isLoading: completeLoading }] =
+    useCompleteProjectMutation();
 
   const openLeavePopup = (): void => setLeavePopupOpen(true);
   const closeLeavePopup = (): void => setLeavePopupOpen(false);
+  const openDeletePopup = (): void => setDeletePopupOpen(true);
+  const closeDeletePopup = (): void => setDeletePopupOpen(false);
+  const openCompletePopup = (): void => setCompletePopupOpen(true);
+  const closeCompletePopup = (): void => setCompletePopupOpen(false);
 
   const exitFromProject = async (): Promise<void> => {
-    if (isActive(ToastKeysEnum.LEAVE_PROJECT)) {
+    if (isActive(ToastKeysEnum.PROJECT)) {
       return;
     }
 
     try {
       await leaveProject(project.id).unwrap();
-      closeLeavePopup();
+
       showToast({
         severity: 'success',
-        summary: tPopup('success'),
+        summary: tLeavePopup('success'),
         life: 3000,
-        actionKey: ToastKeysEnum.LEAVE_PROJECT,
+        actionKey: ToastKeysEnum.PROJECT,
       });
+
       router.replace(`/projects/${project.id}`);
     } catch {
-      closeLeavePopup();
       showToast({
         severity: 'error',
-        summary: tPopup('error'),
+        summary: tLeavePopup('error'),
         life: 3000,
-        actionKey: ToastKeysEnum.LEAVE_PROJECT,
+        actionKey: ToastKeysEnum.PROJECT,
       });
+    }
+  };
+
+  const handleDeleteProject = async (): Promise<void> => {
+    if (isActive(ToastKeysEnum.PROJECT)) {
+      return;
+    }
+
+    try {
+      await deleteProject(project.id).unwrap();
+
+      showToast({
+        severity: 'success',
+        summary: tDeletePopup('success'),
+        life: 3000,
+        actionKey: ToastKeysEnum.PROJECT,
+      });
+
+      router.replace('/projects');
+    } catch {
+      showToast({
+        severity: 'error',
+        summary: tDeletePopup('error'),
+        life: 3000,
+        actionKey: ToastKeysEnum.PROJECT,
+      });
+    }
+  };
+
+  const handleCompleteProject = async (): Promise<void> => {
+    if (isActive(ToastKeysEnum.PROJECT)) {
+      return;
+    }
+
+    try {
+      await completeProject(project.id).unwrap();
+
+      showToast({
+        severity: 'success',
+        summary: tCompletePopup('success'),
+        life: 3000,
+        actionKey: ToastKeysEnum.PROJECT,
+      });
+    } catch {
+      showToast({
+        severity: 'error',
+        summary: tCompletePopup('error'),
+        life: 3000,
+        actionKey: ToastKeysEnum.PROJECT,
+      });
+    } finally {
+      closeCompletePopup();
     }
   };
 
@@ -106,13 +176,13 @@ export default function OverviewView({
                   ? tStatus('active')
                   : tStatus('completed')}
               </p>
-              {project.status === 'active' && (
-                <ProjectMenu
-                  projectId={project.id}
-                  isOwner={isOwner}
-                  onLeave={openLeavePopup}
-                />
-              )}
+              <ProjectMenu
+                project={project}
+                isOwner={isOwner}
+                onLeave={openLeavePopup}
+                onDelete={openDeletePopup}
+                onComplete={openCompletePopup}
+              />
             </div>
             <h2 className={styles['overview-view__title']}>
               {project.projectName}
@@ -142,15 +212,26 @@ export default function OverviewView({
           </div>
         </div>
       </div>
-      {leavePopupOpen && (
-        <LeaveProjectPopup
-          isLoading={isLoading}
-          project={project}
-          isOpen={leavePopupOpen}
-          onClose={closeLeavePopup}
-          onConfirm={exitFromProject}
-        />
-      )}
+      <LeaveProjectPopup
+        isLoading={leaveLoading}
+        project={project}
+        isOpen={leavePopupOpen}
+        onClose={closeLeavePopup}
+        onConfirm={exitFromProject}
+      />
+      <DeleteProjectPopup
+        isLoading={deleteLoading}
+        project={project}
+        isOpen={deletePopupOpen}
+        onClose={closeDeletePopup}
+        onConfirm={handleDeleteProject}
+      />
+      <CompleteProjectPopup
+        isLoading={completeLoading}
+        isOpen={completePopupOpen}
+        onClose={closeCompletePopup}
+        onConfirm={handleCompleteProject}
+      />
     </>
   );
 }

@@ -15,13 +15,13 @@ interface DeleteDocumentPopupProps {
   onClose: () => void;
   onConfirm: (item: DocumentInterface) => void;
   doc: DocumentInterface;
-  loading: boolean;
+  isLoading?: boolean;
 }
 
 export default function DeleteDocumentPopup(
   props: DeleteDocumentPopupProps,
 ): ReactElement {
-  const { isOpen, doc, onClose, onConfirm, loading } = props;
+  const { isOpen, doc, onClose, onConfirm, isLoading } = props;
   const tButtons = useTranslations('buttons');
   const tPopup = useTranslations('deleteDocumentPopup');
 
@@ -52,7 +52,7 @@ export default function DeleteDocumentPopup(
           </Button>
           <Button
             color="green"
-            loading={loading}
+            loading={isLoading}
             onClick={() => onConfirm(doc)}
           >
             {tButtons('delete')}

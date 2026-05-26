@@ -4,7 +4,7 @@ import { ReactElement, useState } from 'react';
 import DataContainer from '@/shared/components/DataContainer/DataContainer';
 import ParticipationsTable from '@/shared/components/ParticipationsTable/ParticipationsTable';
 import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
-import CancelRequestPopup from '@/shared/components/CancelRequestPopup/CancelRequestPopup';
+import CancelRequestPopup from './CancelRequestPopup/CancelRequestPopup';
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import { useTranslations } from 'next-intl';
 

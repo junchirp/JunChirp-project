@@ -36,11 +36,9 @@ export default function ConfirmEmailContent(): ReactElement {
       return;
     }
 
-    const result = await sendEmail({
-      locale,
-    });
+    try {
+      await sendEmail({ locale }).unwrap();
 
-    if ('data' in result) {
       showToast({
         severity: 'success',
         summary: tConfirmation('success'),
@@ -48,8 +46,8 @@ export default function ConfirmEmailContent(): ReactElement {
         life: 3000,
         actionKey: ToastKeysEnum.CONFIRM_EMAIL,
       });
-    } else if ('error' in result) {
-      const errorData = result.error as
+    } catch (error) {
+      const errorData = error as
         | ((FetchBaseQueryError | SerializedError) & {
             status: number;
             data: {

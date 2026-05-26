@@ -63,7 +63,16 @@ export default function EditProjectForm({
     }
 
     try {
-      const newProject = await updateProject({ id: project.id, data }).unwrap();
+      const trimmedData = {
+        ...data,
+        projectName: data.projectName.trim(),
+        description: data.description.trim(),
+      };
+      const newProject = await updateProject({
+        id: project.id,
+        data: trimmedData,
+      }).unwrap();
+
       showToast({
         severity: 'success',
         summary: tForms('projectForm.updateSuccess'),

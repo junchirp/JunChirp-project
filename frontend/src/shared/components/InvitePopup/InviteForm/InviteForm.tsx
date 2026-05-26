@@ -68,17 +68,16 @@ export default function InviteForm(props: InviteFormProps): ReactElement {
       return;
     }
 
-    const result = await inviteUser({ ...data, locale });
+    try {
+      await inviteUser({ ...data, locale }).unwrap();
 
-    if ('data' in result) {
-      onClose();
       showToast({
         severity: 'success',
         summary: tForm('inviteForm.success'),
         life: 3000,
         actionKey: ToastKeysEnum.PARTICIPATION_INVITE,
       });
-    } else if ('error' in result) {
+    } catch {
       showToast({
         severity: 'error',
         summary: tForm('inviteForm.error'),
@@ -86,6 +85,8 @@ export default function InviteForm(props: InviteFormProps): ReactElement {
         life: 3000,
         actionKey: ToastKeysEnum.PARTICIPATION_INVITE,
       });
+    } finally {
+      onClose();
     }
   };
 

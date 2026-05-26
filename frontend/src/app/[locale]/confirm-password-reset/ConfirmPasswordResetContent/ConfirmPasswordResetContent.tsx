@@ -48,12 +48,9 @@ export default function ConfirmPasswordResetContent(): ReactElement | null {
       return;
     }
 
-    const result = await reqResetPassword({
-      email: token.email,
-      locale: locale,
-    });
+    try {
+      await reqResetPassword({ email: token.email, locale: locale }).unwrap();
 
-    if ('data' in result) {
       showToast({
         severity: 'success',
         summary: t('success'),
@@ -61,10 +58,8 @@ export default function ConfirmPasswordResetContent(): ReactElement | null {
         life: 3000,
         actionKey: ToastKeysEnum.PASSWORD_RESET_CONFIRMATION,
       });
-    }
-
-    if ('error' in result) {
-      const errorData = result.error as
+    } catch (error) {
+      const errorData = error as
         | ((FetchBaseQueryError | SerializedError) & {
             status: number;
             data: { attemptsCount: number; retryAfter: string };

@@ -85,10 +85,17 @@ export default function ParticipationRequestForm({
       return;
     }
 
-    const result = await createRequest({ ...data, locale });
+    try {
+      await createRequest({ ...data, locale }).unwrap();
 
-    if ('error' in result) {
-      const errorData = result.error as
+      showToast({
+        severity: 'success',
+        summary: tProjectsPage('request.success'),
+        life: 3000,
+        actionKey: ToastKeysEnum.PARTICIPATION_REQUEST,
+      });
+    } catch (error) {
+      const errorData = error as
         | ((FetchBaseQueryError | SerializedError) & {
             status: number;
           })
@@ -111,15 +118,6 @@ export default function ParticipationRequestForm({
           actionKey: ToastKeysEnum.PARTICIPATION_REQUEST,
         });
       }
-    }
-
-    if ('data' in result) {
-      showToast({
-        severity: 'success',
-        summary: tProjectsPage('request.success'),
-        life: 3000,
-        actionKey: ToastKeysEnum.PARTICIPATION_REQUEST,
-      });
     }
   };
 

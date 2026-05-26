@@ -54,10 +54,19 @@ export default function HardSkillForm(props: HardSkillFormProps): ReactElement {
       return;
     }
 
-    const trimmedData = { hardSkillName: data.hardSkillName.trim() };
-    const result = await addHardSkill(trimmedData);
-    if ('error' in result) {
-      const errorData = result.error as
+    try {
+      const trimmedData = { hardSkillName: data.hardSkillName.trim() };
+      await addHardSkill(trimmedData).unwrap();
+
+      showToast({
+        severity: 'success',
+        summary: tForms('hardSkillForm.success'),
+        life: 3000,
+        actionKey: ToastKeysEnum.HARD_SKILL,
+      });
+      onCancel();
+    } catch (error) {
+      const errorData = error as
         | ((FetchBaseQueryError | SerializedError) & {
             status: number;
           })
@@ -79,16 +88,6 @@ export default function HardSkillForm(props: HardSkillFormProps): ReactElement {
           actionKey: ToastKeysEnum.HARD_SKILL,
         });
       }
-      return;
-    }
-    if ('data' in result) {
-      showToast({
-        severity: 'success',
-        summary: tForms('hardSkillForm.success'),
-        life: 3000,
-        actionKey: ToastKeysEnum.HARD_SKILL,
-      });
-      onCancel();
     }
   };
 
