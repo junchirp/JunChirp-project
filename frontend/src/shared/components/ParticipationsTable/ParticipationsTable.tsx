@@ -10,7 +10,7 @@ import { useFormatter, useTranslations } from 'next-intl';
 interface ParticipationsTableProps {
   items: ProjectParticipationInterface[];
   openModal?: (item: ProjectParticipationInterface) => void;
-  accept?: (id: string) => void;
+  accept?: (item: ProjectParticipationInterface) => void;
   cancel?: (item: ProjectParticipationInterface) => void;
   isLoading: boolean;
   actionColumnWidth: number;
@@ -120,7 +120,7 @@ export default function ParticipationsTable(
                         size="ssm"
                         color="green"
                         loading={isLoading}
-                        onClick={() => accept(item.id)}
+                        onClick={() => accept(item)}
                       >
                         {tButtons('accept')}
                       </Button>

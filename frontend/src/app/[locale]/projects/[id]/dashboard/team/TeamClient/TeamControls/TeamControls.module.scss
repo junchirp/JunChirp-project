@@ -1,0 +1,20 @@
+.team-controls {
+  display: flex;
+  gap: 24px;
+  justify-content: space-between;
+
+  &__filters {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  &__view {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-weight: 600;
+    font-size: 20px;
+    white-space: nowrap;
+  }
+}

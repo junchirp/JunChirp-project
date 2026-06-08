@@ -27,4 +27,5 @@ export enum ToastKeysEnum {
   UPLOAD_IMAGE = 'upload image',
   PROJECT = 'project',
   DOCUMENT = 'document',
+  MEMBER = 'member',
 }

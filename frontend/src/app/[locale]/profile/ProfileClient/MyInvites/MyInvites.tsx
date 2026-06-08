@@ -37,13 +37,19 @@ export default function MyInvites({
 
   const closeBanner = (): void => setBanner(false);
 
-  const handleAcceptInvite = async (id: string): Promise<void> => {
+  const handleAcceptInvite = async (
+    inv: ProjectParticipationInterface,
+  ): Promise<void> => {
     if (!user.discordId) {
       setBanner(true);
       return;
     }
 
-    await acceptInvite(id);
+    try {
+      await acceptInvite(inv.id).unwrap();
+    } catch {
+      return;
+    }
   };
 
   return (

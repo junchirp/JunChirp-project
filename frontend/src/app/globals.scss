@@ -242,3 +242,11 @@ select {
   border: none !important;
   padding: 0 4px 4px !important;
 }
+
+.p-inputswitch.p-highlight .p-inputswitch-slider {
+  background-color: variables.$green-1;
+}
+
+.p-inputswitch:not(.p-disabled):has(.p-inputswitch-input:hover).p-highlight .p-inputswitch-slider {
+  background-color: variables.$green-2;
+}

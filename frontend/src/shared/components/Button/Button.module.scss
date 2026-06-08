@@ -34,6 +34,8 @@
 
       &--icon-button-#{$variant}-#{$size} {
         @include mixins.icon-button-size($size, $variant);
+
+        flex-shrink: 0;
       }
     }
   }

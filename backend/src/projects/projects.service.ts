@@ -586,8 +586,6 @@ export class ProjectsService {
             },
           },
           include: {
-            users: true,
-            roleType: true,
             project: true,
           },
         });

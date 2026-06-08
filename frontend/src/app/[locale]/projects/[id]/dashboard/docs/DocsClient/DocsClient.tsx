@@ -26,16 +26,19 @@ export default function DocsClient(): ReactElement {
   const { id } = useParams<{ id: string }>();
   const { data = [], isLoading: listLoading } = useGetDocumentsQuery(id);
   const user = useAppSelector(authSelector.selectRequiredUser);
-  const { data: project } = useGetProjectByIdQuery(id);
+  const { data: project, isLoading: projectLoading } =
+    useGetProjectByIdQuery(id);
+  const isLoading = listLoading || projectLoading;
   const isOwner = user.id === project?.ownerId;
   const [action, setAction] = useState<DocumentActionType>(null);
   const formRef = useRef<HTMLDivElement | null>(null);
   const [deletedItem, setDeletedItem] = useState<DocumentInterface | null>(
     null,
   );
-  const [deleteDocument, { isLoading }] = useDeleteDocumentMutation();
+  const [deleteDocument, { isLoading: deleteDocLoading }] =
+    useDeleteDocumentMutation();
   const { showToast, isActive } = useToast();
-  const t = useTranslations('deleteDocumentPopup');
+  const t = useTranslations('documents');
 
   useEffect(() => {
     if (action && formRef.current) {
@@ -87,7 +90,7 @@ export default function DocsClient(): ReactElement {
     }
   };
 
-  return listLoading ? (
+  return isLoading ? (
     <DocsListSkeleton />
   ) : (
     <>
@@ -117,7 +120,7 @@ export default function DocsClient(): ReactElement {
           onClose={closePopup}
           onConfirm={handleDeleteDocument}
           doc={deletedItem}
-          isLoading={isLoading}
+          isLoading={deleteDocLoading}
         />
       )}
     </>

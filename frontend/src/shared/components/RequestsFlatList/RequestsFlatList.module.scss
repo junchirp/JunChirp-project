@@ -1,0 +1,6 @@
+.requests-flat-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-auto-rows: auto;
+  gap: 32px;
+}
