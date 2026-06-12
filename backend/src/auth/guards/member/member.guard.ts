@@ -45,15 +45,18 @@ export class MemberGuard implements CanActivate {
         !!(await this.prisma.project.findFirst({
           where: {
             id: resourceId,
-            roles: {
-              some: {
-                users: {
+            OR: [
+              { ownerId: user.id },
+              {
+                roles: {
                   some: {
-                    id: user.id,
+                    users: {
+                      some: { id: user.id },
+                    },
                   },
                 },
               },
-            },
+            ],
           },
         })),
 
@@ -62,15 +65,18 @@ export class MemberGuard implements CanActivate {
           where: {
             id: resourceId,
             project: {
-              roles: {
-                some: {
-                  users: {
+              OR: [
+                { ownerId: user.id },
+                {
+                  roles: {
                     some: {
-                      id: user.id,
+                      users: {
+                        some: { id: user.id },
+                      },
                     },
                   },
                 },
-              },
+              ],
             },
           },
         })),
@@ -82,15 +88,18 @@ export class MemberGuard implements CanActivate {
             taskStatus: {
               board: {
                 project: {
-                  roles: {
-                    some: {
-                      users: {
+                  OR: [
+                    { ownerId: user.id },
+                    {
+                      roles: {
                         some: {
-                          id: user.id,
+                          users: {
+                            some: { id: user.id },
+                          },
                         },
                       },
                     },
-                  },
+                  ],
                 },
               },
             },
@@ -103,15 +112,18 @@ export class MemberGuard implements CanActivate {
             id: resourceId,
             board: {
               project: {
-                roles: {
-                  some: {
-                    users: {
+                OR: [
+                  { ownerId: user.id },
+                  {
+                    roles: {
                       some: {
-                        id: user.id,
+                        users: {
+                          some: { id: user.id },
+                        },
                       },
                     },
                   },
-                },
+                ],
               },
             },
           },
@@ -121,10 +133,19 @@ export class MemberGuard implements CanActivate {
         !!(await this.prisma.projectRole.findFirst({
           where: {
             id: resourceId,
-            users: {
-              some: {
-                id: user.id,
-              },
+            project: {
+              OR: [
+                { ownerId: user.id },
+                {
+                  roles: {
+                    some: {
+                      users: {
+                        some: { id: user.id },
+                      },
+                    },
+                  },
+                },
+              ],
             },
           },
         })),
