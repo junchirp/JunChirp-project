@@ -129,7 +129,7 @@ export default function TeamClient(): ReactElement {
     return {
       key: tb,
       count,
-      disabled: count === 0,
+      disabled: count === 0 && !(isOwner && tb === 'vacancies'),
       active: activeTab === tb,
     };
   });

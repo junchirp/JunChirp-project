@@ -64,6 +64,6 @@ export const TEAM_TABS: Record<TeamTabType, TeamTabConfigInterface> = {
   vacancies: {
     getState: (c) => (c.vacancies === 0 && !c.isOwner ? 'disabled' : 'enabled'),
     getCount: (c) => c.vacancies,
-    fallback: 'vacancies',
+    fallback: 'all',
   },
 };
