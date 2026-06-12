@@ -136,6 +136,11 @@
     "errorDetails": "Please try again later.",
     "success": "Invitation cancelled."
   },
+  "acceptInvite": {
+    "error": "Failed to accept invitation.",
+    "errorDetails": "Please try again later.",
+    "success": " Invitation accepted."
+  },
   "acceptRequest": {
     "error": "Failed to accept application.",
     "errorDetails": "Please try again later.",
