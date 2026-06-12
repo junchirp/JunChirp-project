@@ -294,15 +294,10 @@ export class ProjectsController {
   @Member()
   @ApiOperation({ summary: 'User leaves project' })
   @ApiNoContentResponse()
-  @ApiNotFoundResponse({
-    description: 'User is not in the team / User not found',
-  })
+  @ApiNotFoundResponse({ description: 'User is not in the team' })
   @ApiForbiddenResponse({
     description:
       'Access denied: you are not a participant of this project / Access denied: email not confirmed / Access denied: discord not confirmed / Invalid CSRF token',
-  })
-  @ApiMethodNotAllowedResponse({
-    description: 'You cannot leave the project',
   })
   @ApiBadRequestResponse({
     description: 'User is no longer part of this project',
@@ -318,25 +313,16 @@ export class ProjectsController {
     @UUIDParam('id') id: string,
     @CurrentUser('id') userId: string,
   ): Promise<void> {
-    return this.projectsService.handleUserRemovalFromProject(
-      id,
-      userId,
-      'leave',
-    );
+    return this.projectsService.handleUserRemovalFromProject(id, userId);
   }
 
   @Owner()
   @ApiOperation({ summary: 'Remove user from project team' })
   @ApiNoContentResponse()
-  @ApiNotFoundResponse({
-    description: 'User is not in the team / User not found',
-  })
+  @ApiNotFoundResponse({ description: 'User is not in the team' })
   @ApiForbiddenResponse({
     description:
       'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Invalid CSRF token',
-  })
-  @ApiMethodNotAllowedResponse({
-    description: 'You cannot delete the project owner',
   })
   @ApiHeader({
     name: 'x-csrf-token',
@@ -349,11 +335,7 @@ export class ProjectsController {
     @UUIDParam('id') id: string,
     @UUIDParam('userId') userId: string,
   ): Promise<void> {
-    return this.projectsService.handleUserRemovalFromProject(
-      id,
-      userId,
-      'remove',
-    );
+    return this.projectsService.handleUserRemovalFromProject(id, userId);
   }
 
   @Member()
