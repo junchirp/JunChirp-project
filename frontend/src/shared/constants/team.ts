@@ -8,10 +8,6 @@ export const VALID_TEAM_TABS = [
 
 export type TeamTabType = (typeof VALID_TEAM_TABS)[number];
 
-export const VALID_TEAM_VIEWS = ['flat', 'grouped'] as const;
-
-export type TeamViewType = (typeof VALID_TEAM_VIEWS)[number];
-
 export interface TeamCtxInterface {
   isOwner: boolean;
   members: number;

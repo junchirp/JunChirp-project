@@ -24,8 +24,7 @@ export default function BurgerMenu({
   const buttonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLElement>(null);
   const [logoutMutation] = useLogoutMutation();
-  const tMenu = useTranslations('burgerMenu');
-  const tDiscord = useTranslations('discord');
+  const t = useTranslations('burgerMenu');
   const [isBanner, setBanner] = useState(false);
 
   const toggleMenu = (): void => setIsOpen((prev) => !prev);
@@ -92,7 +91,7 @@ export default function BurgerMenu({
                 width={48}
                 height={48}
               />
-              <span>{tMenu('profile')}</span>
+              <span>{t('profile')}</span>
             </button>
             <button
               className={`${styles['burger-menu__menu-item']} ${isActive('/projects') && styles['burger-menu__menu-item--active']}`}
@@ -104,7 +103,7 @@ export default function BurgerMenu({
                 width={48}
                 height={48}
               />
-              <span>{tMenu('projects')}</span>
+              <span>{t('projects')}</span>
             </button>
             <button
               className={`${styles['burger-menu__menu-item']} ${isActive('/users') && styles['burger-menu__menu-item--active']}`}
@@ -116,7 +115,7 @@ export default function BurgerMenu({
                 width={48}
                 height={48}
               />
-              <span>{tMenu('users')}</span>
+              <span>{t('users')}</span>
             </button>
             {isDiscord ? (
               <button
@@ -129,7 +128,7 @@ export default function BurgerMenu({
                   width={48}
                   height={48}
                 />
-                <span>{tMenu('chat')}</span>
+                <span>{t('chat')}</span>
               </button>
             ) : (
               <button
@@ -142,7 +141,7 @@ export default function BurgerMenu({
                   width={48}
                   height={48}
                 />
-                <span>{tMenu('joinCommunity')}</span>
+                <span>{t('joinCommunity')}</span>
               </button>
             )}
             <button
@@ -150,18 +149,12 @@ export default function BurgerMenu({
               onClick={handleLogout}
             >
               <Image src="/images/exit.svg" alt="exit" width={48} height={48} />
-              <span>{tMenu('signOut')}</span>
+              <span>{t('signOut')}</span>
             </button>
           </nav>
         )}
       </div>
-      {isBanner && (
-        <DiscordBanner
-          closeBanner={closeBanner}
-          message={tDiscord('homePage')}
-          isCancelButton
-        />
-      )}
+      {isBanner && <DiscordBanner closeBanner={closeBanner} isCancelButton />}
     </>
   );
 }

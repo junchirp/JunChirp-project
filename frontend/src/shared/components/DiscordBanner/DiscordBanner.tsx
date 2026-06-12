@@ -10,19 +10,14 @@ import { useOAuthRedirect } from '@/hooks/useOAuthRedirect';
 
 interface DiscordBannerProps {
   closeBanner: () => void;
-  message: string;
   isCancelButton?: boolean;
   withWrapper?: boolean;
 }
 
 export default function DiscordBanner(props: DiscordBannerProps): ReactElement {
-  const {
-    closeBanner,
-    message,
-    isCancelButton = false,
-    withWrapper = false,
-  } = props;
-  const t = useTranslations('buttons');
+  const { closeBanner, isCancelButton = false, withWrapper = false } = props;
+  const tButtons = useTranslations('buttons');
+  const tDiscord = useTranslations('discord');
   const { redirectToOAuth } = useOAuthRedirect();
 
   const handleDiscordLogin = (): void => redirectToOAuth('discord');
@@ -36,15 +31,19 @@ export default function DiscordBanner(props: DiscordBannerProps): ReactElement {
         height={223}
         priority
       />
-      <p className={styles['discord-banner__text']}>{message}</p>
+      <p className={styles['discord-banner__text']}>
+        {tDiscord('description')}
+      </p>
       <div className={styles['discord-banner__actions']}>
         {isCancelButton && (
           <Button color="green" variant="secondary-frame" onClick={closeBanner}>
-            {t('cancel')}
+            {tButtons('cancel')}
           </Button>
         )}
         <Button color="green" onClick={handleDiscordLogin}>
-          {isCancelButton ? `${t('connect')}` : `${t('connect')} Discord`}
+          {isCancelButton
+            ? `${tButtons('connect')}`
+            : `${tButtons('connect')} Discord`}
         </Button>
       </div>
       <Button

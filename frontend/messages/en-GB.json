@@ -27,11 +27,7 @@
     "leave": "Leave"
   },
   "discord": {
-    "profile": "Connect Discord to join projects and gain access to project chats.",
-    "invite": "Connect Discord to join the project. This will allow you to access the project chat.",
-    "request": "Connect Discord to apply. This will allow you to access the project chat after being accepted.",
-    "newProject": "Connect Discord to create a project. This is required to create a project chat.",
-    "homePage": "To continue, connect your Discord. This is required to access project chats.",
+    "description": "Connect your Discord to continue. This is required to join projects and access project chats.",
     "error": "Failed to connect Discord.",
     "errorDetails": "Please try again.",
     "success": "Discord connected successfully."
@@ -740,10 +736,10 @@
     "requests": "Requests",
     "participationRequests": "Participation requests",
     "vacancies": "Vacancies",
-    "group": "Group by roles",
     "deleteMember": {
       "success": "Participant deleted.",
-      "error": "Failed to delete participant."
+      "error": "Failed to delete participant.",
+      "errorDetails": "Please try again later."
     },
     "cancelInvite": {
       "success": "Invitation cancelled.",
@@ -758,6 +754,21 @@
     "acceptRequest": {
       "success": "Application accepted.",
       "error": "Failed to accept application.",
+      "errorDetails": "Please try again later."
+    },
+    "addSlot": {
+      "success": "Vacancy added.",
+      "error": "Failed to add vacancy.",
+      "errorDetails": "Please try again later."
+    },
+    "addRole": {
+      "success": "Role added to project.",
+      "error": "Failed to add role.",
+      "errorDetails": "Please try again later."
+    },
+    "deleteSlot": {
+      "success": "Vacancy deleted.",
+      "error": "Failed to delete vacancy.",
       "errorDetails": "Please try again later."
     }
   },

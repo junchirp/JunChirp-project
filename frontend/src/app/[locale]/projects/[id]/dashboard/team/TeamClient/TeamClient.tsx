@@ -19,16 +19,9 @@ import {
   TeamCtxInterface,
   TeamTabInterface,
   TeamTabType,
-  TeamViewType,
   VALID_TEAM_TABS,
-  VALID_TEAM_VIEWS,
 } from '@/shared/constants/team';
 import TeamControls from './TeamControls/TeamControls';
-import MembersFlatList from '@/shared/components/MembersFlatList/MembersFlatList';
-import VacanciesFlatList from '@/shared/components/VacanciesFlatList/VacanciesFlatList';
-import RequestsFlatList from '@/shared/components/RequestsFlatList/RequestsFlatList';
-import InvitesFlatList from '@/shared/components/InvitesFlatList/InvitesFlatList';
-import AllFlatList from '@/shared/components/AllFlatList/AllFlatList';
 import VacanciesGroupedList from './VacanciesGroupedList/VacanciesGroupedList';
 import MembersGroupedList from './MembersGroupedList/MembersGroupedList';
 import RequestsGroupedList from './RequestsGroupedList/RequestsGroupedList';
@@ -50,14 +43,19 @@ import { useTranslations } from 'next-intl';
 import { UserParticipationInterface } from '@/shared/interfaces/user-participation.interface';
 import { UserCardInterface } from '@/shared/interfaces/user-card.interface';
 import DeclineRequestPopup from '@/shared/components/DeclineRequestPopup/DeclineRequestPopup';
+import {
+  useAddProjectRoleMutation,
+  useAddSlotMutation,
+  useDeleteSlotMutation,
+  useGetProjectRolesListQuery,
+} from '@/api/projectRolesApi';
+import VacanciesManagementSection from './VacanciesManagementSection/VacanciesManagementSection';
 
 export default function TeamClient(): ReactElement {
   const { id } = useParams<{ id: string }>();
   const searchParams = useSearchParams();
   const rawTab = searchParams.get('tab');
-  const rawView = searchParams.get('view');
   const tab = getValidParam(rawTab, VALID_TEAM_TABS, 'all');
-  const view = getValidParam(rawView, VALID_TEAM_VIEWS, 'flat');
   const user = useAppSelector(authSelector.selectRequiredUser);
   const { data: project, isLoading: projectLoading } =
     useGetProjectByIdQuery(id);
@@ -82,6 +80,19 @@ export default function TeamClient(): ReactElement {
     useDeclineRequestMutation();
   const { showToast, isActive } = useToast();
   const t = useTranslations('team');
+  const { data: systemRolesList = [] } = useGetProjectRolesListQuery();
+  const projectRoles = project?.roles ?? [];
+  const projectRoleTypeIds = new Set(
+    projectRoles.map((role) => role.roleType.id),
+  );
+  const otherRoles = systemRolesList.filter(
+    (role) => !projectRoleTypeIds.has(role.id),
+  );
+  const [addProjectRole, { isLoading: addRoleLoading }] =
+    useAddProjectRoleMutation();
+  const [addSlot, { isLoading: addSlotLoading }] = useAddSlotMutation();
+  const [deleteSlot, { isLoading: deleteSlotLoading }] =
+    useDeleteSlotMutation();
 
   const openDeleteMemberPopup = (m: TeamMemberInterface): void =>
     setMember(m.user);
@@ -128,25 +139,19 @@ export default function TeamClient(): ReactElement {
       return;
     }
 
-    const shouldRedirect = rawTab !== activeTab || rawView !== view;
+    const shouldRedirect = rawTab !== activeTab;
 
     if (shouldRedirect) {
-      router.replace(
-        `/projects/${id}/dashboard/team?tab=${activeTab}&view=${view}`,
-      );
+      router.replace(`/projects/${id}/dashboard/team?tab=${activeTab}`);
     }
-  }, [isLoading, tab, activeTab, view, id, router]);
+  }, [isLoading, tab, activeTab, id, router]);
 
   const changeTab = (tb: TeamTabType): void => {
     if (TEAM_TABS[tb].getState(ctx) === 'hidden') {
       return;
     }
 
-    router.replace(`/projects/${id}/dashboard/team?tab=${tb}&view=${view}`);
-  };
-
-  const changeView = (v: TeamViewType): void => {
-    router.replace(`/projects/${id}/dashboard/team?tab=${activeTab}&view=${v}`);
+    router.replace(`/projects/${id}/dashboard/team?tab=${tb}`);
   };
 
   const handleDeleteMember = async (userId: string): Promise<void> => {
@@ -167,6 +172,7 @@ export default function TeamClient(): ReactElement {
       showToast({
         severity: 'error',
         summary: t('deleteMember.error'),
+        detail: t('deleteMember.errorDetails'),
         life: 3000,
         actionKey: ToastKeysEnum.MEMBER,
       });
@@ -175,7 +181,78 @@ export default function TeamClient(): ReactElement {
     }
   };
 
-  const deleteVacancy = (id: string): void => {};
+  const deleteVacancy = async (roleId: string): Promise<void> => {
+    if (isActive(ToastKeysEnum.PROJECT_ROLE)) {
+      return;
+    }
+
+    try {
+      await deleteSlot({ id: roleId, projectId: id }).unwrap();
+
+      showToast({
+        severity: 'success',
+        summary: 'Вакансію видалено.',
+        life: 3000,
+        actionKey: ToastKeysEnum.PROJECT_ROLE,
+      });
+    } catch {
+      showToast({
+        severity: 'error',
+        summary: 'Не вдалося видалити вакансію.',
+        life: 3000,
+        actionKey: ToastKeysEnum.PROJECT_ROLE,
+      });
+    }
+  };
+
+  const addVacancy = async (roleId: string): Promise<void> => {
+    if (isActive(ToastKeysEnum.PROJECT_ROLE) || addSlotLoading) {
+      return;
+    }
+
+    try {
+      await addSlot({ id: roleId, projectId: id }).unwrap();
+
+      showToast({
+        severity: 'success',
+        summary: t('addSlot.success'),
+        life: 3000,
+        actionKey: ToastKeysEnum.PROJECT_ROLE,
+      });
+    } catch {
+      showToast({
+        severity: 'error',
+        summary: t('addSlot.error'),
+        detail: t('addSlot.errorDetails'),
+        life: 3000,
+        actionKey: ToastKeysEnum.PROJECT_ROLE,
+      });
+    }
+  };
+
+  const addRole = async (roleId: string): Promise<void> => {
+    if (isActive(ToastKeysEnum.PROJECT_ROLE) || addRoleLoading) {
+      return;
+    }
+
+    try {
+      await addProjectRole({ projectId: id, roleTypeId: roleId }).unwrap();
+
+      showToast({
+        severity: 'success',
+        summary: t('addRole.success'),
+        life: 3000,
+        actionKey: ToastKeysEnum.PROJECT_ROLE,
+      });
+    } catch {
+      showToast({
+        summary: t('addRole.error'),
+        detail: t('addRole.errorDetails'),
+        life: 3000,
+        actionKey: ToastKeysEnum.PROJECT_ROLE,
+      });
+    }
+  };
 
   const handleDeclineRequest = async (
     requestId: string,
@@ -186,7 +263,7 @@ export default function TeamClient(): ReactElement {
     }
 
     try {
-      await declineRequest({ id: requestId, userId, projectId: id });
+      await declineRequest({ id: requestId, userId, projectId: id }).unwrap();
 
       showToast({
         severity: 'success',
@@ -263,63 +340,7 @@ export default function TeamClient(): ReactElement {
     }
   };
 
-  const renderFlat = (): ReactElement | null => {
-    switch (activeTab) {
-      case 'members':
-        return (
-          <MembersFlatList
-            members={teamViewModel.flat.members}
-            isOwner={isOwner}
-            onDelete={openDeleteMemberPopup}
-          />
-        );
-
-      case 'requests':
-        return isOwner ? (
-          <RequestsFlatList
-            requests={teamViewModel.flat.requests}
-            onDecline={openDeclineRequestPopup}
-            onAccept={handleAcceptRequest}
-            acceptLoading={acceptRequestLoading}
-          />
-        ) : null;
-
-      case 'invitations':
-        return isOwner ? (
-          <InvitesFlatList
-            invites={teamViewModel.flat.invitations}
-            onCancel={handleCancelInvite}
-            loading={cancelInviteLoading}
-          />
-        ) : null;
-
-      case 'vacancies':
-        return (
-          <VacanciesFlatList
-            vacancies={teamViewModel.flat.vacancies}
-            isOwner={isOwner}
-            onDelete={deleteVacancy}
-          />
-        );
-
-      case 'all':
-        return (
-          <AllFlatList
-            items={teamViewModel.flat.all}
-            isOwner={isOwner}
-            onDeleteMember={openDeleteMemberPopup}
-            onDeleteVacancy={deleteVacancy}
-            onDeclineRequest={openDeclineRequestPopup}
-            onAcceptRequest={handleAcceptRequest}
-            onCancelInvite={handleCancelInvite}
-            inviteLoading={cancelInviteLoading}
-            acceptRequestLoading={acceptRequestLoading}
-          />
-        );
-    }
-  };
-
-  const renderGrouped = (): ReactElement | null => {
+  const renderContent = (): ReactElement | null => {
     switch (activeTab) {
       case 'members':
         return (
@@ -350,11 +371,23 @@ export default function TeamClient(): ReactElement {
         ) : null;
 
       case 'vacancies':
-        return (
+        return isOwner ? (
+          <VacanciesManagementSection
+            projectRoles={projectRoles}
+            otherRoles={otherRoles}
+            onDeleteVacancy={deleteVacancy}
+            onAddVacancy={addVacancy}
+            onAddRole={addRole}
+            loading={deleteSlotLoading}
+          />
+        ) : (
           <VacanciesGroupedList
             vacancies={teamViewModel.grouped.vacancies}
             isOwner={isOwner}
+            tab={activeTab}
             onDelete={deleteVacancy}
+            onAdd={addRole}
+            loading={deleteSlotLoading}
           />
         );
 
@@ -363,35 +396,25 @@ export default function TeamClient(): ReactElement {
           <AllGroupedList
             items={teamViewModel.grouped.all}
             isOwner={isOwner}
+            tab={activeTab}
             onDeleteMember={openDeleteMemberPopup}
             onDeleteVacancy={deleteVacancy}
             onDeclineRequest={openDeclineRequestPopup}
             onAcceptRequest={handleAcceptRequest}
             onCancelInvite={handleCancelInvite}
+            onAddVacancy={addVacancy}
             inviteLoading={cancelInviteLoading}
             acceptRequestLoading={acceptRequestLoading}
+            vacancyLoading={deleteSlotLoading}
           />
         );
     }
   };
 
-  const renderContent = (): ReactElement | null => {
-    if (view === 'flat') {
-      return renderFlat();
-    }
-
-    return renderGrouped();
-  };
-
   return (
     <>
       <div className={styles['team-client']}>
-        <TeamControls
-          tabs={tabs}
-          view={view}
-          onTabChange={changeTab}
-          onViewChange={changeView}
-        />
+        <TeamControls tabs={tabs} onTabChange={changeTab} />
         <>{renderContent()}</>
       </div>
       {member && (

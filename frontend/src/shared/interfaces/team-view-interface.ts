@@ -1,8 +1,6 @@
 import { UserCardInterface } from '@/shared/interfaces/user-card.interface';
 import { UserParticipationInterface } from '@/shared/interfaces/user-participation.interface';
 
-export type TeamItemType = 'member' | 'request' | 'invite' | 'vacancy';
-
 export interface TeamMemberInterface {
   type: 'member';
   user: UserCardInterface;

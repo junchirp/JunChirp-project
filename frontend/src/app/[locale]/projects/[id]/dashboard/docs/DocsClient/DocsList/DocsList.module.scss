@@ -52,7 +52,7 @@
     background-color: transparent;
 
     &:hover {
-      border: 2px solid variables.$green-5;
+      border-color: variables.$green-5;
       cursor: pointer;
     }
   }

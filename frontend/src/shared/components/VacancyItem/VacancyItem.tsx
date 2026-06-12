@@ -11,17 +11,17 @@ interface VacancyItemProps {
   vacancy: TeamVacancyInterface;
   isOwner: boolean;
   onDelete: (id: string) => void;
+  loading: boolean;
 }
 
 export default function VacancyItem(props: VacancyItemProps): ReactElement {
-  const { vacancy, isOwner, onDelete } = props;
+  const { vacancy, isOwner, onDelete, loading } = props;
 
   return (
     <div className={styles['vacancy-item']}>
       <div className={styles['vacancy-item__image-wrapper']}>
-        <Image src="/images/user.svg" alt="bird" height={100} width={100} />
+        <Image src="/images/user.svg" alt="user" height={100} width={100} />
       </div>
-
       <div className={styles['vacancy-item__details']}>
         <div className={styles['vacancy-item__role']}>{vacancy.roleName}</div>
         {isOwner && (
@@ -29,6 +29,7 @@ export default function VacancyItem(props: VacancyItemProps): ReactElement {
             <Button
               variant="tertiary"
               icon={<X />}
+              loading={loading}
               onClick={() => onDelete(vacancy.roleId)}
             />
           </div>

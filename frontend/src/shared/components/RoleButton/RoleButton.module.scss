@@ -1,0 +1,34 @@
+@use '@/assets/styles/variables';
+
+.role-button {
+  display: flex;
+  gap: 32px;
+  border-radius: 32px;
+  padding: 32px;
+  border: 2px solid variables.$gray-1;
+  background-color: transparent;
+
+  &:hover {
+    border-color: variables.$green-5;
+    cursor: pointer;
+  }
+
+  &__image {
+    flex-shrink: 0;
+  }
+
+  &__role {
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  &__details {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    width: 100%;
+  }
+}

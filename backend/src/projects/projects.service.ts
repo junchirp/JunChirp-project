@@ -267,6 +267,7 @@ export class ProjectsService {
             },
           },
           roles: {
+            orderBy: { createdAt: 'asc' },
             include: {
               roleType: true,
               users: {

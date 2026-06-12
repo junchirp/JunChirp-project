@@ -5,12 +5,11 @@
   gap: 32px;
   border-radius: 32px;
   padding: 32px;
-  background-color: variables.$gray-5;
-  border: 2px solid variables.$gray-5;
+  border: 2px solid variables.$gray-1;
+  background-color: variables.$gray-1;
 
   &:hover {
     border-color: variables.$green-5;
-    background-color: variables.$gray-1;
   }
 
   &__image {

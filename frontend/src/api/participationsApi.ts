@@ -178,7 +178,7 @@ export const participationsApi = mainApi.injectEndpoints({
       },
       invalidatesTags: (_result, _error, { projectId }) => [
         { type: 'requests-in-my-projects', id: 'LIST' },
-        { type: 'invites', id: projectId },
+        { type: 'requests', id: projectId },
       ],
     }),
     cancelRequest: builder.mutation<void, { id: string; userId: string }>({

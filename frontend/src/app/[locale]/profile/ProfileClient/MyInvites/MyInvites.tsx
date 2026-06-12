@@ -25,7 +25,6 @@ export default function MyInvites({
   const [isBanner, setBanner] = useState(false);
   const [acceptInvite, { isLoading }] = useAcceptInviteMutation();
   const tTable = useTranslations('participationsTable');
-  const tDiscord = useTranslations('discord');
 
   const openModal = (inv: ProjectParticipationInterface): void => {
     setInvite(inv);
@@ -72,12 +71,7 @@ export default function MyInvites({
         />
       )}
       {isBanner && (
-        <DiscordBanner
-          closeBanner={closeBanner}
-          message={tDiscord('invite')}
-          isCancelButton
-          withWrapper
-        />
+        <DiscordBanner closeBanner={closeBanner} isCancelButton withWrapper />
       )}
     </>
   );
