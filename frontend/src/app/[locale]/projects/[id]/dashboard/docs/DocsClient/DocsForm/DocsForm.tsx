@@ -47,6 +47,7 @@ export default function DocsForm(props: DocsFormProps): ReactElement {
     handleSubmit,
     control,
     reset,
+    setFocus,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(documentSchema(tForms)),
@@ -57,6 +58,10 @@ export default function DocsForm(props: DocsFormProps): ReactElement {
       projectId: '',
     },
   });
+
+  useEffect(() => {
+    setFocus('documentName');
+  }, [setFocus]);
 
   useEffect(() => {
     if (initialValues) {

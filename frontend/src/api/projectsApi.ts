@@ -5,6 +5,7 @@ import { ProjectsFiltersInterface } from '@/shared/interfaces/projects-filters.i
 import { ProjectInterface } from '@/shared/interfaces/project.interface';
 import { CreateProjectInterface } from '@/shared/interfaces/create-project.interface';
 import { ProjectLogoInterface } from '@/shared/interfaces/project-logo.interface';
+import { UserParticipationInterface } from '@/shared/interfaces/user-participation.interface';
 
 export const projectsApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -147,6 +148,41 @@ export const projectsApi = mainApi.injectEndpoints({
         { type: 'auth', id: 'CURRENT' },
       ],
     }),
+    getInvitesByProjectId: builder.query<UserParticipationInterface[], string>({
+      query: (id) => {
+        return {
+          url: `/projects/${id}/invites`,
+        };
+      },
+      providesTags: (_result, _error, id) => [{ type: 'invites', id }],
+    }),
+    getRequestsByProjectId: builder.query<UserParticipationInterface[], string>(
+      {
+        query: (id) => {
+          return {
+            url: `/projects/${id}/requests`,
+          };
+        },
+        providesTags: (_result, _error, id) => [{ type: 'requests', id }],
+      },
+    ),
+    deleteUserFromProject: builder.mutation<
+      void,
+      { id: string; userId: string }
+    >({
+      query: ({ id, userId }) => ({
+        url: `projects/${id}/users/${userId}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: (_result, _error, { id, userId }) => [
+        { type: 'project-cards', id: 'LIST' },
+        { type: 'project-cards', id },
+        { type: 'projects', id },
+        { type: 'my-projects', id: 'LIST' },
+        { type: 'users', id: 'LIST' },
+        { type: 'users', id: userId },
+      ],
+    }),
   }),
 });
 
@@ -163,4 +199,7 @@ export const {
   useLeaveProjectMutation,
   useDeleteProjectMutation,
   useCompleteProjectMutation,
+  useGetInvitesByProjectIdQuery,
+  useGetRequestsByProjectIdQuery,
+  useDeleteUserFromProjectMutation,
 } = projectsApi;

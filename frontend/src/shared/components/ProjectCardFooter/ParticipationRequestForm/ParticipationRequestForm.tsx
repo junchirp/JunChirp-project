@@ -42,7 +42,6 @@ export default function ParticipationRequestForm({
 }: ParticipationRequestFormProps): ReactElement {
   const tForm = useTranslations('forms');
   const tProjectsPage = useTranslations('projectsPage');
-  const tDiscord = useTranslations('discord');
   const tButtons = useTranslations('buttons');
   const {
     control,
@@ -165,7 +164,6 @@ export default function ParticipationRequestForm({
       {isRequestBanner && (
         <DiscordBanner
           closeBanner={closeRequestBanner}
-          message={tDiscord('request')}
           isCancelButton
           withWrapper
         />

@@ -31,7 +31,6 @@ export default function MyProjects({
   const [isBanner, setBanner] = useState(false);
   const router = useRouter();
   const tProjects = useTranslations('projectsPage');
-  const tDiscord = useTranslations('discord');
   const tForms = useTranslations('forms.projectForm');
   const [getProjectsCount, { isFetching }] = useLazyGetProjectsCountQuery();
   const { showToast, isActive } = useToast();
@@ -100,12 +99,7 @@ export default function MyProjects({
         </div>
       </div>
       {isBanner && (
-        <DiscordBanner
-          closeBanner={closeBanner}
-          message={tDiscord('newProject')}
-          isCancelButton
-          withWrapper
-        />
+        <DiscordBanner closeBanner={closeBanner} isCancelButton withWrapper />
       )}
     </>
   );

@@ -38,7 +38,6 @@ export default function WhatWeNeed({ user }: WhatWeNeedProps): ReactElement {
   const [isBanner, setBanner] = useState(false);
   const router = useRouter();
   const tWhatNeed = useTranslations('whatWeNeed');
-  const tDiscord = useTranslations('discord');
   const tBlocks: {
     title: string;
     description: string;
@@ -291,13 +290,7 @@ export default function WhatWeNeed({ user }: WhatWeNeedProps): ReactElement {
           </div>
         </div>
       </div>
-      {isBanner && (
-        <DiscordBanner
-          closeBanner={closeBanner}
-          message={tDiscord('homePage')}
-          isCancelButton
-        />
-      )}
+      {isBanner && <DiscordBanner closeBanner={closeBanner} isCancelButton />}
     </>
   );
 }

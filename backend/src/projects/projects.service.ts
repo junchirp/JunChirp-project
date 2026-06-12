@@ -267,6 +267,7 @@ export class ProjectsService {
             },
           },
           roles: {
+            orderBy: { createdAt: 'asc' },
             include: {
               roleType: true,
               users: {
@@ -586,8 +587,6 @@ export class ProjectsService {
             },
           },
           include: {
-            users: true,
-            roleType: true,
             project: true,
           },
         });

@@ -31,15 +31,20 @@ export default function UserInvites({
       return;
     }
 
-    const result = await cancelInvite({ id: invite.id, userId: user.id });
-    if ('data' in result) {
+    try {
+      await cancelInvite({
+        id: invite.id,
+        userId: user.id,
+        projectId: invite.projectRole.project.id,
+      }).unwrap();
+
       showToast({
         severity: 'success',
         summary: tAction('success'),
         life: 3000,
         actionKey: ToastKeysEnum.PARTICIPATION_INVITE,
       });
-    } else {
+    } catch {
       showToast({
         severity: 'error',
         summary: tAction('error'),

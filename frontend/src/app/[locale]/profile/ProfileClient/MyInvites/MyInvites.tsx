@@ -9,6 +9,8 @@ import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import RejectInvitePopup from '@/shared/components/RejectInvitePopup/RejectInvitePopup';
 import { useTranslations } from 'next-intl';
 import DiscordBanner from '@/shared/components/DiscordBanner/DiscordBanner';
+import { useToast } from '@/hooks/useToast';
+import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 
 interface MyInvitesProps {
   invites: ProjectParticipationInterface[];
@@ -25,7 +27,8 @@ export default function MyInvites({
   const [isBanner, setBanner] = useState(false);
   const [acceptInvite, { isLoading }] = useAcceptInviteMutation();
   const tTable = useTranslations('participationsTable');
-  const tDiscord = useTranslations('discord');
+  const tInvite = useTranslations('acceptInvite');
+  const { showToast, isActive } = useToast();
 
   const openModal = (inv: ProjectParticipationInterface): void => {
     setInvite(inv);
@@ -37,13 +40,36 @@ export default function MyInvites({
 
   const closeBanner = (): void => setBanner(false);
 
-  const handleAcceptInvite = async (id: string): Promise<void> => {
+  const handleAcceptInvite = async (
+    inv: ProjectParticipationInterface,
+  ): Promise<void> => {
+    if (isActive(ToastKeysEnum.PARTICIPATION_INVITE)) {
+      return;
+    }
+
     if (!user.discordId) {
       setBanner(true);
       return;
     }
 
-    await acceptInvite(id);
+    try {
+      await acceptInvite(inv.id).unwrap();
+
+      showToast({
+        severity: 'success',
+        summary: tInvite('success'),
+        life: 3000,
+        actionKey: ToastKeysEnum.PARTICIPATION_INVITE,
+      });
+    } catch {
+      showToast({
+        severity: 'error',
+        summary: tInvite('error'),
+        detail: tInvite('errorDetails'),
+        life: 3000,
+        actionKey: ToastKeysEnum.PARTICIPATION_INVITE,
+      });
+    }
   };
 
   return (
@@ -66,12 +92,7 @@ export default function MyInvites({
         />
       )}
       {isBanner && (
-        <DiscordBanner
-          closeBanner={closeBanner}
-          message={tDiscord('invite')}
-          isCancelButton
-          withWrapper
-        />
+        <DiscordBanner closeBanner={closeBanner} isCancelButton withWrapper />
       )}
     </>
   );

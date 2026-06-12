@@ -12,6 +12,7 @@ import { LocaleInterface } from '@/shared/interfaces/locale.interface';
 import { ConfirmEmailWithLocaleInterface } from '@/shared/interfaces/confirm-email-with-locale.interface';
 import { EmailWithIdInterface } from '@/shared/interfaces/email-with-id.interface';
 import { setUser } from '@/redux/auth/authSlice';
+import { projectsApi } from '@/api/projectsApi';
 
 const USER_RELATED_TAGS = [
   { type: 'auth', id: 'CURRENT' },
@@ -53,6 +54,7 @@ export const authApi = mainApi.injectEndpoints({
         try {
           const { data } = await queryFulfilled;
           dispatch(setUser(data));
+          dispatch(projectsApi.util.resetApiState());
         } catch {
           return;
         }

@@ -21,7 +21,7 @@ export default function ProjectTabs(): ReactElement {
     ? 0
     : pathname.endsWith('/docs')
       ? 1
-      : pathname.endsWith('/members')
+      : pathname.endsWith('/team')
         ? 2
         : pathname.endsWith('/boards')
           ? 3
@@ -46,7 +46,7 @@ export default function ProjectTabs(): ReactElement {
       label: t('members'),
       disabled: activeIndex === 2,
       command: (): void => {
-        router.push(`${basePath}/members`);
+        router.push(`${basePath}/team`);
       },
     },
     {

@@ -27,11 +27,7 @@
     "leave": "Leave"
   },
   "discord": {
-    "profile": "Connect Discord to join projects and gain access to project chats.",
-    "invite": "Connect Discord to join the project. This will allow you to access the project chat.",
-    "request": "Connect Discord to apply. This will allow you to access the project chat after being accepted.",
-    "newProject": "Connect Discord to create a project. This is required to create a project chat.",
-    "homePage": "To continue, connect your Discord. This is required to access project chats.",
+    "description": "Connect your Discord to continue. This is required to join projects and access project chats.",
     "error": "Failed to connect Discord.",
     "errorDetails": "Please try again.",
     "success": "Discord connected successfully."
@@ -117,7 +113,7 @@
     "errorDetails": "Please try again later.",
     "success": "Invitation declined."
   },
-  "rejectRequestPopup": {
+  "declineRequestPopup": {
     "title": "Decline application?",
     "description": "Are you sure you want to decline the application of user <user>{userName}</user> for participation in the project <project>{projectName}</project>? This action cannot be undone.",
     "cancel": "Cancel",
@@ -139,6 +135,16 @@
     "error": "Failed to cancel invitation.",
     "errorDetails": "Please try again later.",
     "success": "Invitation cancelled."
+  },
+  "acceptInvite": {
+    "error": "Failed to accept invitation.",
+    "errorDetails": "Please try again later.",
+    "success": " Invitation accepted."
+  },
+  "acceptRequest": {
+    "error": "Failed to accept application.",
+    "errorDetails": "Please try again later.",
+    "success": "Application accepted."
   },
   "forms": {
     "errors": {
@@ -706,14 +712,14 @@
     "actions": {
       "edit": "Edit document",
       "add": "Add document"
-    }
+    },
+    "success": "Document deleted.",
+    "error": "Failed to delete document."
   },
   "deleteDocumentPopup": {
     "title": "Delete document",
     "warning": "This action is irreversible. Once deleted, the document cannot be restored.",
-    "description": "Do you really want to delete <doc>{documentName}</doc>? This action cannot be undone.",
-    "success": "Document deleted.",
-    "error": "Failed to delete document."
+    "description": "Do you really want to delete <doc>{documentName}</doc>? This action cannot be undone."
   },
   "deleteProjectPopup": {
     "title": "Delete project",
@@ -727,5 +733,53 @@
     "description": "After completion, the project will become view-only.",
     "success": "Project marked as completed.",
     "error": "Failed to complete project."
+  },
+  "team": {
+    "all": "All",
+    "members": "In project",
+    "invitations": "Invitations",
+    "requests": "Requests",
+    "participationRequests": "Participation requests",
+    "vacancies": "Vacancies",
+    "deleteMember": {
+      "success": "Participant deleted.",
+      "error": "Failed to delete participant.",
+      "errorDetails": "Please try again later."
+    },
+    "cancelInvite": {
+      "success": "Invitation cancelled.",
+      "error": "Failed to cancel invitation.",
+      "errorDetails": "Please try again later."
+    },
+    "declineRequest": {
+      "success": "Application declined.",
+      "error": "Failed to decline application.",
+      "errorDetails": "Please try again later."
+    },
+    "acceptRequest": {
+      "success": "Application accepted.",
+      "error": "Failed to accept application.",
+      "errorDetails": "Please try again later."
+    },
+    "addSlot": {
+      "success": "Vacancy added.",
+      "error": "Failed to add vacancy.",
+      "errorDetails": "Please try again later."
+    },
+    "addRole": {
+      "success": "Role added to project.",
+      "error": "Failed to add role.",
+      "errorDetails": "Please try again later."
+    },
+    "deleteSlot": {
+      "success": "Vacancy deleted.",
+      "error": "Failed to delete vacancy.",
+      "errorDetails": "Please try again later."
+    }
+  },
+  "deleteMemberPopup": {
+    "title": "Delete participant",
+    "warning": "This action is irreversible. Once deleted, the participant cannot rejoin the project.",
+    "description": "Do you really want to delete <user>{firstName} {lastName}</user> from the project?"
   }
 }

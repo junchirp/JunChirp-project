@@ -31,7 +31,10 @@ export const participationsApi = mainApi.injectEndpoints({
           return;
         }
       },
-      invalidatesTags: [{ type: 'invites-in-my-projects', id: 'LIST' }],
+      invalidatesTags: (_result, _error, { projectId }) => [
+        { type: 'invites-in-my-projects', id: 'LIST' },
+        { type: 'invites', id: projectId },
+      ],
     }),
     createRequest: builder.mutation<
       ProjectParticipationInterface,
@@ -101,7 +104,10 @@ export const participationsApi = mainApi.injectEndpoints({
         { type: 'my-projects', id: 'LIST' },
       ],
     }),
-    acceptRequest: builder.mutation<void, { id: string; userId: string }>({
+    acceptRequest: builder.mutation<
+      void,
+      { id: string; userId: string; projectId: string }
+    >({
       query: ({ id }) => ({
         url: `participations/request/${id}/accept`,
         method: 'PUT',
@@ -130,13 +136,18 @@ export const participationsApi = mainApi.injectEndpoints({
           return;
         }
       },
-      invalidatesTags: (_result, _error, { userId }) => [
+      invalidatesTags: (_result, _error, { userId, projectId }) => [
         { type: 'users', id: userId },
         { type: 'user-projects', id: userId },
         { type: 'requests-in-my-projects', id: 'LIST' },
+        { type: 'requests', id: projectId },
+        { type: 'projects', id: projectId },
       ],
     }),
-    rejectRequest: builder.mutation<void, { id: string; userId: string }>({
+    declineRequest: builder.mutation<
+      void,
+      { id: string; userId: string; projectId: string }
+    >({
       query: ({ id }) => ({
         url: `participations/request/${id}/decline`,
         method: 'DELETE',
@@ -165,7 +176,10 @@ export const participationsApi = mainApi.injectEndpoints({
           return;
         }
       },
-      invalidatesTags: [{ type: 'requests-in-my-projects', id: 'LIST' }],
+      invalidatesTags: (_result, _error, { projectId }) => [
+        { type: 'requests-in-my-projects', id: 'LIST' },
+        { type: 'requests', id: projectId },
+      ],
     }),
     cancelRequest: builder.mutation<void, { id: string; userId: string }>({
       query: ({ id }) => ({
@@ -198,7 +212,10 @@ export const participationsApi = mainApi.injectEndpoints({
       },
       invalidatesTags: [{ type: 'my-requests-in-projects', id: 'LIST' }],
     }),
-    cancelInvite: builder.mutation<void, { id: string; userId: string }>({
+    cancelInvite: builder.mutation<
+      void,
+      { id: string; userId: string; projectId: string }
+    >({
       query: ({ id }) => ({
         url: `participations/invite/${id}/cancel`,
         method: 'DELETE',
@@ -227,7 +244,10 @@ export const participationsApi = mainApi.injectEndpoints({
           return;
         }
       },
-      invalidatesTags: ['invites-in-my-projects'],
+      invalidatesTags: (_result, _error, { projectId }) => [
+        { type: 'invites-in-my-projects', id: 'LIST' },
+        { type: 'invites', id: projectId },
+      ],
     }),
   }),
 });
@@ -237,7 +257,7 @@ export const {
   useAcceptInviteMutation,
   useRejectInviteMutation,
   useCreateRequestMutation,
-  useRejectRequestMutation,
+  useDeclineRequestMutation,
   useAcceptRequestMutation,
   useCancelRequestMutation,
   useCancelInviteMutation,

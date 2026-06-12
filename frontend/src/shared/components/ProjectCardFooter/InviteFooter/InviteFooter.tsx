@@ -35,7 +35,6 @@ export default function InviteFooter({
 }: InviteFooterProps): ReactElement {
   const tButtons = useTranslations('buttons');
   const tProjectsPage = useTranslations('projectsPage');
-  const tDiscord = useTranslations('discord');
   const [isInvitePopupOpen, setInvitePopupOpen] = useState(false);
   const [isInviteBanner, setInviteBanner] = useState(false);
   const [acceptInvite, { isLoading: inviteLoading }] =
@@ -132,7 +131,6 @@ export default function InviteFooter({
       {isInviteBanner && (
         <DiscordBanner
           closeBanner={closeInviteBanner}
-          message={tDiscord('invite')}
           isCancelButton
           withWrapper
         />

@@ -135,12 +135,14 @@ model ProjectRole {
   slots                Int                    @default(1)
   projectId            String                 @map("project_id")
   roleTypeId           String                 @map("role_type_id")
+  createdAt            DateTime               @default(now()) @map("created_at")
   project              Project                @relation(fields: [projectId], references: [id])
   roleType             ProjectRoleType        @relation(fields: [roleTypeId], references: [id])
   users                User[]
   ParticipationInvite  ParticipationInvite[]
   ParticipationRequest ParticipationRequest[]
 
+  @@unique([projectId, roleTypeId])
   @@map("project_roles")
 }
 
