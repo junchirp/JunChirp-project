@@ -52,6 +52,8 @@ export const projectRolesApi = mainApi.injectEndpoints({
         { type: 'project-cards', id: 'LIST' },
         { type: 'project-cards', id: projectId },
         { type: 'my-projects', id: 'LIST' },
+        { type: 'requests', id: projectId },
+        { type: 'invites', id: projectId },
       ],
     }),
   }),
