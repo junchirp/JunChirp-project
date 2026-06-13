@@ -3,6 +3,7 @@ import { DocumentResponseDto } from '../../documents/dto/document.response-dto';
 import { ProjectCardResponseDto } from './project-card.response-dto';
 import { BoardResponseDto } from '../../boards/dto/board.response-dto';
 import { ProjectRoleWithUserResponseDto } from '../../project-roles/dto/project-role-with-user.response-dto';
+import { UserCardResponseDto } from '../../users/dto/user-card.response-dto';
 
 export class ProjectResponseDto extends OmitType(ProjectCardResponseDto, [
   'roles',
@@ -21,4 +22,7 @@ export class ProjectResponseDto extends OmitType(ProjectCardResponseDto, [
 
   @ApiProperty({ type: () => [ProjectRoleWithUserResponseDto] })
   public readonly roles: ProjectRoleWithUserResponseDto[];
+
+  @ApiProperty({ type: () => [ProjectRoleWithUserResponseDto] })
+  public readonly owner: UserCardResponseDto;
 }

@@ -15,6 +15,7 @@ import { ProjectCardResponseDto } from '../../projects/dto/project-card.response
 import { BoardMapper } from './board.mapper';
 import { ProjectCategoryMapper } from './project-category.mapper';
 import { ProjectLogoMapper } from './project-logo.mapper';
+import { UserMapper } from './user.mapper';
 
 export class ProjectMapper {
   public static toCardResponse(
@@ -64,6 +65,7 @@ export class ProjectMapper {
       })[];
       documents: Document[];
       boards: Board[];
+      owner: User & { desiredRoles: ProjectRoleType[] };
     },
   ): ProjectResponseDto {
     return {
@@ -71,6 +73,7 @@ export class ProjectMapper {
       projectName: project.projectName,
       description: project.description,
       ownerId: project.ownerId,
+      owner: UserMapper.toCardResponse(project.owner),
       participantsCount: project.participantsCount,
       status: project.status,
       createdAt: project.createdAt,

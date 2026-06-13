@@ -194,7 +194,11 @@ export class ProjectsService {
               },
             },
             documents: true,
-            owner: true,
+            owner: {
+              include: {
+                desiredRoles: true,
+              },
+            },
             boards: true,
           },
         });
@@ -267,7 +271,11 @@ export class ProjectsService {
             },
           },
           documents: true,
-          owner: true,
+          owner: {
+            include: {
+              desiredRoles: true,
+            },
+          },
           boards: true,
         },
       });
@@ -328,7 +336,11 @@ export class ProjectsService {
             },
           },
           documents: true,
-          owner: true,
+          owner: {
+            include: {
+              desiredRoles: true,
+            },
+          },
           boards: true,
         },
       });
@@ -387,7 +399,11 @@ export class ProjectsService {
               },
             },
             documents: true,
-            owner: true,
+            owner: {
+              include: {
+                desiredRoles: true,
+              },
+            },
             boards: true,
           },
         });
