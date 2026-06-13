@@ -50,9 +50,9 @@ export default function ProjectCardFooter({
       roleType: role.roleType,
       slots: role.slots,
     }));
-  const isMyProject = project.roles.some((role) =>
-    role.users.some((u) => u.id === user.id),
-  );
+  const isMyProject =
+    project.roles.some((role) => role.users.some((u) => u.id === user.id)) ||
+    project.ownerId === user.id;
 
   const assertNever = (): never => {
     throw new Error('Unexpected variant');

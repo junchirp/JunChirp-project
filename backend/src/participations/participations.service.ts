@@ -68,18 +68,29 @@ export class ParticipationsService {
           throw new BadRequestException('The role has no empty slots');
         }
 
-        const isMember = await prisma.projectRole.findFirst({
+        const isParticipant = await prisma.project.findFirst({
           where: {
-            projectId: createInviteDto.projectId,
-            users: {
-              some: {
-                id: createInviteDto.userId,
+            id: createInviteDto.projectId,
+            OR: [
+              {
+                ownerId: createInviteDto.userId,
               },
-            },
+              {
+                roles: {
+                  some: {
+                    users: {
+                      some: {
+                        id: createInviteDto.userId,
+                      },
+                    },
+                  },
+                },
+              },
+            ],
           },
         });
 
-        if (isMember) {
+        if (isParticipant) {
           throw new ConflictException('User is already in the project team');
         }
 
@@ -207,18 +218,29 @@ export class ParticipationsService {
           throw new BadRequestException('The role has no empty slots');
         }
 
-        const isMember = await prisma.projectRole.findFirst({
+        const isParticipant = await prisma.project.findFirst({
           where: {
-            projectId: createRequestDto.projectId,
-            users: {
-              some: {
-                id: userId,
+            id: createRequestDto.projectId,
+            OR: [
+              {
+                ownerId: userId,
               },
-            },
+              {
+                roles: {
+                  some: {
+                    users: {
+                      some: {
+                        id: userId,
+                      },
+                    },
+                  },
+                },
+              },
+            ],
           },
         });
 
-        if (isMember) {
+        if (isParticipant) {
           throw new ConflictException('You are already in the project team');
         }
 
