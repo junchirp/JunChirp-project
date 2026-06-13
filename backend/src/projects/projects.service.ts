@@ -90,15 +90,22 @@ export class ProjectsService {
           }
         : {}),
       ...(userId && {
-        roles: {
-          some: {
-            users: {
+        OR: [
+          {
+            ownerId: userId,
+          },
+          {
+            roles: {
               some: {
-                id: userId,
+                users: {
+                  some: {
+                    id: userId,
+                  },
+                },
               },
             },
           },
-        },
+        ],
       }),
     };
 
