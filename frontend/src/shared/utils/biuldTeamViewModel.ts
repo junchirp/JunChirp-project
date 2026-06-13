@@ -1,6 +1,5 @@
 import { UserParticipationInterface } from '@/shared/interfaces/user-participation.interface';
 import {
-  TeamAllFlatSectionInterface,
   TeamInviteInterface,
   TeamMemberInterface,
   TeamRequestInterface,
@@ -93,17 +92,12 @@ export function buildTeamViewModel(params: {
 
   if (!project) {
     return {
-      flat: {
-        all: {
-          members: [],
-          requests: [],
-          invitations: [],
-          vacancies: [],
-        },
-        members: [],
-        requests: [],
-        invitations: [],
-        vacancies: [],
+      ctx: {
+        isOwner: false,
+        members: 0,
+        requests: 0,
+        invitations: 0,
+        vacancies: 0,
       },
       grouped: {
         all: [],
@@ -115,7 +109,18 @@ export function buildTeamViewModel(params: {
     };
   }
 
-  const members: TeamMemberInterface[] = project.roles.flatMap((role) =>
+  const ownerRole: RoleWithUserInterface = {
+    id: 'owner',
+    roleType: {
+      id: 'owner',
+      roleName: 'Project Owner',
+    },
+    slots: 1,
+    users: [project.owner],
+  };
+  const rolesForGrouping = [ownerRole, ...project.roles];
+
+  const members: TeamMemberInterface[] = rolesForGrouping.flatMap((role) =>
     role.users.map((user) => ({
       type: 'member',
       roleId: role.id,
@@ -144,32 +149,25 @@ export function buildTeamViewModel(params: {
     }));
   });
 
-  const allItems: TeamAllFlatSectionInterface = {
-    members: members,
-    vacancies: vacancyItems,
-    requests: isOwner ? requestItems : [],
-    invitations: isOwner ? inviteItems : [],
-  };
-
   return {
-    flat: {
-      all: allItems,
-      members,
-      requests: isOwner ? requestItems : [],
-      invitations: isOwner ? inviteItems : [],
-      vacancies: vacancyItems,
+    ctx: {
+      isOwner,
+      members: members.length,
+      requests: isOwner ? requestItems.length : 0,
+      invitations: isOwner ? inviteItems.length : 0,
+      vacancies: vacancyItems.length,
     },
 
     grouped: {
       all: groupAllByRole(
-        project.roles,
+        rolesForGrouping,
         members,
         requestItems,
         inviteItems,
         vacancyItems,
         isOwner,
       ),
-      members: groupByRole(project.roles, members, (item) => item.roleId),
+      members: groupByRole(rolesForGrouping, members, (item) => item.roleId),
       requests: isOwner
         ? groupByRole(
             project.roles,
