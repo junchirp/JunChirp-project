@@ -16,6 +16,7 @@ import { useRouter } from '@/i18n/routing';
 import { getValidParam } from '@/shared/utils/getValidParam';
 import {
   TEAM_TABS,
+  TeamCtxInterface,
   TeamTabInterface,
   TeamTabType,
   VALID_TEAM_TABS,
@@ -105,17 +106,25 @@ export default function TeamClient(): ReactElement {
     [project, requests, invites, isOwner],
   );
 
+  const ctx: TeamCtxInterface = {
+    isOwner,
+    members: teamViewModel.flat.members.length,
+    requests: teamViewModel.flat.requests.length,
+    invitations: teamViewModel.flat.invitations.length,
+    vacancies: teamViewModel.flat.vacancies.length,
+  };
+
   const activeTab: TeamTabType =
-    TEAM_TABS[tab].getState(teamViewModel.ctx) === 'hidden' ||
-    TEAM_TABS[tab].getState(teamViewModel.ctx) === 'disabled'
+    TEAM_TABS[tab].getState(ctx) === 'hidden' ||
+    TEAM_TABS[tab].getState(ctx) === 'disabled'
       ? TEAM_TABS[tab].fallback
       : tab;
 
   const tabs: TeamTabInterface[] = VALID_TEAM_TABS.filter(
-    (tb) => TEAM_TABS[tb].getState(teamViewModel.ctx) !== 'hidden',
+    (tb) => TEAM_TABS[tb].getState(ctx) !== 'hidden',
   ).map((tb) => {
     const config = TEAM_TABS[tb];
-    const count = config.getCount(teamViewModel.ctx);
+    const count = config.getCount(ctx);
 
     return {
       key: tb,
@@ -138,7 +147,7 @@ export default function TeamClient(): ReactElement {
   }, [isLoading, tab, activeTab, id, router]);
 
   const changeTab = (tb: TeamTabType): void => {
-    if (TEAM_TABS[tb].getState(teamViewModel.ctx) === 'hidden') {
+    if (TEAM_TABS[tb].getState(ctx) === 'hidden') {
       return;
     }
 
