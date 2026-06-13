@@ -1,5 +1,6 @@
 import { UserCardInterface } from '@/shared/interfaces/user-card.interface';
 import { UserParticipationInterface } from '@/shared/interfaces/user-participation.interface';
+import { TeamCtxInterface } from '@/shared/constants/team';
 
 export interface TeamMemberInterface {
   type: 'member';
@@ -43,10 +44,6 @@ export interface TeamRoleAllGroupInterface {
   items: TeamAllFlatSectionInterface;
 }
 
-export interface TeamFlatSectionInterface extends TeamAllFlatSectionInterface {
-  all: TeamAllFlatSectionInterface;
-}
-
 export interface TeamViewInterface {
   grouped: {
     all: TeamRoleAllGroupInterface[];
@@ -55,5 +52,5 @@ export interface TeamViewInterface {
     invitations: TeamRoleGroupInterface<TeamInviteInterface>[];
     vacancies: TeamRoleGroupInterface<TeamVacancyInterface>[];
   };
-  flat: TeamFlatSectionInterface;
+  ctx: TeamCtxInterface;
 }

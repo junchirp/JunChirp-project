@@ -157,9 +157,6 @@ export class ProjectsService {
 
     try {
       const newProject = await this.prisma.$transaction(async (prisma) => {
-        const ownerRoleType =
-          await this.projectRolesService.findOrCreateRole('Project owner');
-
         const project = await prisma.project.create({
           data: {
             ownerId: userId,
@@ -171,14 +168,6 @@ export class ProjectsService {
             discordMemberRoleId: memberRoleId,
             roles: {
               create: [
-                {
-                  roleType: {
-                    connect: { id: ownerRoleType.id },
-                  },
-                  users: {
-                    connect: { id: userId },
-                  },
-                },
                 ...createProjectDto.rolesIds.map((roleTypeId) => ({
                   roleType: {
                     connect: { id: roleTypeId },
@@ -205,7 +194,11 @@ export class ProjectsService {
               },
             },
             documents: true,
-            owner: true,
+            owner: {
+              include: {
+                desiredRoles: true,
+              },
+            },
             boards: true,
           },
         });
@@ -278,7 +271,11 @@ export class ProjectsService {
             },
           },
           documents: true,
-          owner: true,
+          owner: {
+            include: {
+              desiredRoles: true,
+            },
+          },
           boards: true,
         },
       });
@@ -339,7 +336,11 @@ export class ProjectsService {
             },
           },
           documents: true,
-          owner: true,
+          owner: {
+            include: {
+              desiredRoles: true,
+            },
+          },
           boards: true,
         },
       });
@@ -398,30 +399,33 @@ export class ProjectsService {
               },
             },
             documents: true,
-            owner: true,
+            owner: {
+              include: {
+                desiredRoles: true,
+              },
+            },
             boards: true,
           },
         });
 
-        const usersIds: string[] = project.roles.flatMap((role) =>
-          role.users.map((user) => user.id),
-        );
+        const usersIds: string[] = [
+          ...project.roles.flatMap((role) => role.users.map((user) => user.id)),
+          project.ownerId,
+        ];
 
-        if (usersIds.length) {
-          await prisma.user.updateMany({
-            where: {
-              id: { in: usersIds },
+        await prisma.user.updateMany({
+          where: {
+            id: { in: usersIds },
+          },
+          data: {
+            activeProjectsCount: {
+              decrement: 1,
             },
-            data: {
-              activeProjectsCount: {
-                decrement: 1,
-              },
-              doneProjectsCount: {
-                increment: 1,
-              },
+            doneProjectsCount: {
+              increment: 1,
             },
-          });
-        }
+          },
+        });
 
         return project;
       });
@@ -462,20 +466,21 @@ export class ProjectsService {
           },
         });
 
-        const usersIds: string[] = projectToDelete.roles.flatMap((role) =>
-          role.users.map((user) => user.id),
-        );
+        const usersIds: string[] = [
+          ...projectToDelete.roles.flatMap((role) =>
+            role.users.map((user) => user.id),
+          ),
+          projectToDelete.ownerId,
+        ];
 
-        if (usersIds.length) {
-          await prisma.user.updateMany({
-            where: {
-              id: { in: usersIds },
-            },
-            data: {
-              activeProjectsCount: { decrement: 1 },
-            },
-          });
-        }
+        await prisma.user.updateMany({
+          where: {
+            id: { in: usersIds },
+          },
+          data: {
+            activeProjectsCount: { decrement: 1 },
+          },
+        });
 
         return projectToDelete;
       });
@@ -573,11 +578,10 @@ export class ProjectsService {
   public async handleUserRemovalFromProject(
     projectId: string,
     userId: string,
-    context: 'leave' | 'remove',
   ): Promise<void> {
     try {
       const result = await this.prisma.$transaction(async (prisma) => {
-        const role = await prisma.projectRole.findFirst({
+        const role = await prisma.projectRole.findFirstOrThrow({
           where: {
             projectId: projectId,
             users: {
@@ -590,20 +594,6 @@ export class ProjectsService {
             project: true,
           },
         });
-
-        if (!role) {
-          throw new NotFoundException('User is not in the team');
-        }
-
-        if (role.project.ownerId === userId) {
-          if (context === 'remove') {
-            throw new MethodNotAllowedException(
-              'You cannot delete the project owner',
-            );
-          } else {
-            throw new MethodNotAllowedException('You cannot leave the project');
-          }
-        }
 
         const user = await prisma.user.update({
           where: { id: userId },
@@ -642,7 +632,7 @@ export class ProjectsService {
       if (isPrismaError(error)) {
         switch (error.code) {
           case 'P2025':
-            throw new NotFoundException('User not found');
+            throw new NotFoundException('User is not in the team');
           case 'P2003':
             throw new BadRequestException(
               'User is no longer part of this project',
