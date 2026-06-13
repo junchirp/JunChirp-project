@@ -24,18 +24,13 @@ export class NoMemberGuard implements CanActivate {
     const isParticipant = await this.prisma.project.findFirst({
       where: {
         id: projectId,
-        OR: [
-          { ownerId: user.id },
-          {
-            roles: {
-              some: {
-                users: {
-                  some: { id: user.id },
-                },
-              },
+        roles: {
+          some: {
+            users: {
+              some: { id: user.id },
             },
           },
-        ],
+        },
       },
       select: { id: true },
     });
