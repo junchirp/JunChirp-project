@@ -36,7 +36,7 @@ export default function MemberItem(props: MemberItemProps): ReactElement {
             {member.user.firstName} {member.user.lastName}
           </Link>
         </div>
-        {isOwner && (
+        {isOwner && member.roleId !== 'owner' && (
           <div className={styles['member-item__actions']}>
             <Button
               variant="tertiary"

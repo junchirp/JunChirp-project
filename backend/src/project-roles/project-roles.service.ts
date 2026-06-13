@@ -26,14 +26,6 @@ export class ProjectRolesService {
     });
   }
 
-  public async findOrCreateRole(roleName: string): Promise<ProjectRoleType> {
-    return this.prisma.projectRoleType.upsert({
-      where: { roleName },
-      update: {},
-      create: { roleName },
-    });
-  }
-
   public async createProjectRole(
     createProjectRoleDto: CreateProjectRoleDto,
   ): Promise<ProjectRoleResponseDto> {
