@@ -13,7 +13,7 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ProjectCardInterface } from '@/shared/interfaces/project-card.interface';
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
@@ -21,7 +21,7 @@ import DiscordBanner from '@/shared/components/DiscordBanner/DiscordBanner';
 import { useToast } from '@/hooks/useToast';
 import { useCreateRequestMutation } from '@/api/participationsApi';
 import { ProjectRoleInterface } from '@/shared/interfaces/project-role.interface';
-import { useSystemLocale } from '@/hooks/useSystemLocale';
+import { Locale } from '@/i18n/routing';
 
 interface ParticipationRequestFormProps {
   project: ProjectCardInterface;
@@ -58,7 +58,7 @@ export default function ParticipationRequestForm({
   });
   const [isRequestBanner, setRequestBanner] = useState(false);
   const { showToast, isActive } = useToast();
-  const locale = useSystemLocale();
+  const locale = useLocale();
   const [createRequest, { isLoading: requestLoading }] =
     useCreateRequestMutation();
   const roleTypeIds = user.desiredRoles.map((role) => role.id);
@@ -85,7 +85,7 @@ export default function ParticipationRequestForm({
     }
 
     try {
-      await createRequest({ ...data, locale }).unwrap();
+      await createRequest({ ...data, locale: locale as Locale }).unwrap();
 
       showToast({
         severity: 'success',

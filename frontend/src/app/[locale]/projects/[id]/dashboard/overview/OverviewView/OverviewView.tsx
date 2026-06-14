@@ -5,9 +5,8 @@ import styles from './OverviewView.module.scss';
 import Image from 'next/image';
 import { membersPipe } from '@/shared/utils/membersPipe';
 import ProjectMenu from './ProjectMenu/ProjectMenu';
-import { useFormatter, useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { ProjectInterface } from '@/shared/interfaces/project.interface';
-import { useSystemLocale } from '@/hooks/useSystemLocale';
 import {
   useCompleteProjectMutation,
   useDeleteProjectMutation,
@@ -16,9 +15,10 @@ import {
 import LeaveProjectPopup from './LeaveProjectPopup/LeaveProjectPopup';
 import { useToast } from '@/hooks/useToast';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
-import { useRouter } from '@/i18n/routing';
+import { Locale, useRouter } from '@/i18n/routing';
 import DeleteProjectPopup from './DeleteProjectPopup/DeleteProjectPopup';
 import CompleteProjectPopup from './CompleteProjectPopup/CompleteProjectPopup';
+import { useDateFormatter } from '@/hooks/useDateFormatter';
 
 interface OverviewViewProps {
   project: ProjectInterface;
@@ -34,13 +34,9 @@ export default function OverviewView({
   const tLeavePopup = useTranslations('leaveProjectPopup');
   const tDeletePopup = useTranslations('deleteProjectPopup');
   const tCompletePopup = useTranslations('completeProjectPopup');
-  const locale = useSystemLocale();
-  const format = useFormatter();
-  const formattedDate = format.dateTime(new Date(project.createdAt), {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  });
+  const locale = useLocale();
+  const format = useDateFormatter();
+  const formattedDate = format(new Date(project.createdAt));
   const [leavePopupOpen, setLeavePopupOpen] = useState(false);
   const [leaveProject, { isLoading: leaveLoading }] = useLeaveProjectMutation();
   const { showToast, isActive } = useToast();
@@ -192,7 +188,7 @@ export default function OverviewView({
             {project.description}
           </p>
           <p className={styles['overview-view__category']}>
-            {project.category.categoryName[locale]}
+            {project.category.categoryName[locale as Locale]}
           </p>
           <div className={styles['overview-view__team']}>
             <div className={styles['overview-view__members']}>
