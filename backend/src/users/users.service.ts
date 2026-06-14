@@ -427,18 +427,6 @@ export class UsersService {
     email: string,
     token: CryptoTokenInterface,
   ): Promise<ResetPasswordToken> {
-    const user = await this.getUserByEmail(email, false);
-
-    if (!user) {
-      await this.loggerService.log(
-        ip,
-        email,
-        'reset password',
-        'User with this email not found',
-      );
-      throw new NotFoundException('User not found');
-    }
-
     const attempts = await this.prisma.resetPasswordAttempt.findMany({
       where: { ip },
       orderBy: { createdAt: 'asc' },
@@ -451,13 +439,6 @@ export class UsersService {
         oldestAttempt.createdAt.getTime() + 60 * 60 * 1000,
       );
 
-      await this.loggerService.log(
-        ip,
-        email,
-        'reset password',
-        'You have used up all your attempts. Please try again later',
-      );
-
       throw new TooManyRequestsException(
         'You have used up all your attempts. Please try again later.',
         attempts.length,
@@ -465,28 +446,32 @@ export class UsersService {
       );
     }
 
-    return this.prisma.$transaction(async (prisma) => {
-      const resetPasswordToken = await prisma.resetPasswordToken.upsert({
-        where: { email },
-        update: {
-          token: token.hashed,
-          createdAt: token.createdAt,
-        },
-        create: {
-          email,
-          token: token.hashed,
-          createdAt: token.createdAt,
-        },
-      });
+    await this.prisma.resetPasswordAttempt.create({
+      data: {
+        ip,
+        createdAt: new Date(),
+      },
+    });
 
-      await prisma.resetPasswordAttempt.create({
-        data: {
-          ip,
-          createdAt: token.createdAt,
-        },
-      });
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+    });
 
-      return resetPasswordToken;
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return this.prisma.resetPasswordToken.upsert({
+      where: { email },
+      update: {
+        token: token.hashed,
+        createdAt: token.createdAt,
+      },
+      create: {
+        email,
+        token: token.hashed,
+        createdAt: token.createdAt,
+      },
     });
   }
 
