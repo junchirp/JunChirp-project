@@ -160,7 +160,7 @@ export class ParticipationsService {
       await this.mailService.sendParticipationInvite(
         `${this.configService.get<string>(
           'BASE_FRONTEND_URL',
-        )}/project/${invite.projectId}`,
+        )}/projects/${invite.projectId}`,
         invite,
         user,
         createInviteDto.locale,
