@@ -11,11 +11,10 @@ import { useSendConfirmationEmailMutation } from '@/api/authApi';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
 import ChangeEmailPopup from './ChangeEmailPopup/ChangeEmailPopup';
-import { useTranslations } from 'next-intl';
-import { useRouter } from '@/i18n/routing';
+import { useLocale, useTranslations } from 'next-intl';
+import { Locale, useRouter } from '@/i18n/routing';
 import { useError429Toast } from '@/hooks/useError429Toast';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
-import { useSystemLocale } from '@/hooks/useSystemLocale';
 
 export default function ConfirmEmailContent(): ReactElement {
   const user = useAppSelector(authSelector.selectRequiredUser);
@@ -28,7 +27,7 @@ export default function ConfirmEmailContent(): ReactElement {
   const tConfirmation = useTranslations('emailConfirmation');
   const tButtons = useTranslations('buttons');
   const tInfo: string[] = tConfirmation.raw('information');
-  const locale = useSystemLocale();
+  const locale = useLocale();
   const router = useRouter();
 
   const sendConfirmationRequest = async (): Promise<void> => {
@@ -37,7 +36,7 @@ export default function ConfirmEmailContent(): ReactElement {
     }
 
     try {
-      await sendEmail({ locale }).unwrap();
+      await sendEmail({ locale: locale as Locale }).unwrap();
 
       showToast({
         severity: 'success',

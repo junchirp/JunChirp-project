@@ -15,10 +15,10 @@ import {
   supportSchema,
   supportSchemaStatic,
 } from '@/shared/forms/schemas/supportSchema';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
-import { useSystemLocale } from '@/hooks/useSystemLocale';
 import { normalizeInputValue } from '@/shared/utils/normalizeInputValue';
+import { Locale } from '@/i18n/routing';
 
 type FormData = z.infer<typeof supportSchemaStatic>;
 
@@ -32,7 +32,7 @@ export default function SupportForm(props: SupportFormProps): ReactElement {
   const { showToast, isActive } = useToast();
   const { user, onClose } = props;
   const t = useTranslations('forms');
-  const locale = useSystemLocale();
+  const locale = useLocale();
   const {
     control,
     register,
@@ -66,7 +66,7 @@ export default function SupportForm(props: SupportFormProps): ReactElement {
     }
 
     try {
-      await sendSupportRequest({ ...data, locale }).unwrap();
+      await sendSupportRequest({ ...data, locale: locale as Locale }).unwrap();
 
       showToast({
         severity: 'success',

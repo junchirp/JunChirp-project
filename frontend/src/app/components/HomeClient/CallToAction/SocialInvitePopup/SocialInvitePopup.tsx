@@ -11,13 +11,12 @@ import Telegram from '@/assets/icons/telegram.svg';
 import Discord from '@/assets/icons/discord.svg';
 import { PlatformType } from '@/shared/types/platform.type';
 import { useToast } from '@/hooks/useToast';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 import Dialog from '@/shared/components/Dialog/Dialog';
 import DialogHeader from '@/shared/components/Dialog/DialogHeader/DialogHeader';
 import DialogBody from '@/shared/components/Dialog/DialogBody/DialogBody';
 import DialogFooter from '@/shared/components/Dialog/DialogFooter/DialogFooter';
-import { useSystemLocale } from '@/hooks/useSystemLocale';
 
 interface SocialInvitePopupProps {
   onClose: () => void;
@@ -49,7 +48,7 @@ export default function SocialInvitePopup(
   const { showToast, isActive } = useToast();
   const tPopup = useTranslations('invitePlatformPopup');
   const tButtons = useTranslations('buttons');
-  const locale = useSystemLocale();
+  const locale = useLocale();
 
   useEffect(() => {
     const url = `${window.location.origin}/${locale}?ref=${userId}`;

@@ -2,15 +2,8 @@ import { defineRouting } from 'next-intl/routing';
 import { createNavigation } from 'next-intl/navigation';
 
 export const routing = defineRouting({
-  locales: ['en-GB', 'uk-UA'],
-  defaultLocale: 'uk-UA',
-  localePrefix: {
-    mode: 'always',
-    prefixes: {
-      'en-GB': '/en',
-      'uk-UA': '/ua',
-    },
-  },
+  locales: ['en', 'ua'],
+  defaultLocale: 'ua',
   localeCookie: true,
 });
 
