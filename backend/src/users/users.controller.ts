@@ -49,6 +49,7 @@ import { ConfirmEmailWithLocaleDto } from './dto/confirm-email-with-locale.dto';
 import { CurrentUser } from '../shared/decorators/current-user.decorator';
 import { IdResponseDto } from './dto/id.response-dto';
 import { CountResponseDto } from './dto/count.response-dto';
+import { RequestResetPasswordDto } from './dto/request-reset-password.dto';
 
 @Controller('users')
 export class UsersController {
@@ -182,7 +183,7 @@ export class UsersController {
   @Post('request-password-reset')
   public async sendPasswordResetUrl(
     @Ip() ip: string,
-    @Body() body: EmailWithLocaleDto,
+    @Body() body: RequestResetPasswordDto,
   ): Promise<IdResponseDto> {
     return this.usersService.sendPasswordResetUrl(ip, body);
   }
