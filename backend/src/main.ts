@@ -16,9 +16,18 @@ import { NextFunction, Request, Response } from 'express';
 async function bootstrap(): Promise<void> {
   const PORT = Number(process.env.PORT) || 3000;
   const server = express();
-  server.set('trust proxy', true);
+  server.set('trust proxy', 1);
 
-  server.listen(PORT, '0.0.0.0');
+  server.use((req, _res, next) => {
+    const proto = req.headers['x-forwarded-proto'] ?? 'https';
+    req.headers['x-forwarded-proto'] = proto as string;
+
+    if (req.headers['x-forwarded-host']) {
+      req.headers.host = req.headers['x-forwarded-host'] as string;
+    }
+
+    next();
+  });
 
   const dev = process.env.NODE_ENV !== 'production';
   const frontendDir = path.resolve(__dirname, '../../frontend');
@@ -75,6 +84,7 @@ async function bootstrap(): Promise<void> {
 
   await app.init();
   isReady = true;
+  server.listen(PORT, '0.0.0.0');
 
   console.log(`Server started on port ${PORT}`);
 }
