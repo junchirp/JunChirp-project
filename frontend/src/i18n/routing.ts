@@ -5,7 +5,7 @@ export const routing = defineRouting({
   locales: ['en', 'ua'],
   defaultLocale: 'ua',
   localeCookie: true,
-  localePrefix: 'as-needed',
+  localePrefix: 'always',
 });
 
 export type Locale = (typeof routing.locales)[number];
