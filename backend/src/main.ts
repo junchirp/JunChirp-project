@@ -24,14 +24,10 @@ async function bootstrap(): Promise<void> {
   const next = nextModule as unknown as (opts: {
     dev: boolean;
     dir: string;
-    hostname?: string;
-    port?: number;
   }) => NextServer;
   const nextApp = next({
     dev,
     dir: frontendDir,
-    hostname: '0.0.0.0',
-    port: PORT,
   });
   await nextApp.prepare();
   const handle = nextApp.getRequestHandler();
