@@ -16,17 +16,23 @@ import { NextFunction, Request, Response } from 'express';
 async function bootstrap(): Promise<void> {
   const PORT = Number(process.env.PORT) || 3000;
   const server = express();
-  server.set('trust proxy', true);
 
-  server.listen(PORT, '0.0.0.0');
+  server.set('trust proxy', 1);
 
   const dev = process.env.NODE_ENV !== 'production';
   const frontendDir = path.resolve(__dirname, '../../frontend');
   const next = nextModule as unknown as (opts: {
     dev: boolean;
     dir: string;
+    hostname?: string;
+    port?: number;
   }) => NextServer;
-  const nextApp = next({ dev, dir: frontendDir });
+  const nextApp = next({
+    dev,
+    dir: frontendDir,
+    hostname: '0.0.0.0',
+    port: PORT,
+  });
   await nextApp.prepare();
   const handle = nextApp.getRequestHandler();
   let isReady = false;
@@ -35,6 +41,13 @@ async function bootstrap(): Promise<void> {
     if (req.url.startsWith('/api') || req.url.startsWith('/swagger')) {
       return nextMiddleware();
     }
+    const forwardedHost = req.headers['x-forwarded-host'];
+    if (forwardedHost) {
+      req.headers.host = Array.isArray(forwardedHost)
+        ? forwardedHost[0]
+        : forwardedHost;
+    }
+    req.headers['x-forwarded-proto'] = 'https';
     return handle(req, res);
   });
 
@@ -75,6 +88,8 @@ async function bootstrap(): Promise<void> {
 
   await app.init();
   isReady = true;
+
+  server.listen(PORT, '0.0.0.0');
 
   console.log(`Server started on port ${PORT}`);
 }
