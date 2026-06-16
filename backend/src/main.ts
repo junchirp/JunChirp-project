@@ -42,15 +42,11 @@ async function bootstrap(): Promise<void> {
       return nextMiddleware();
     }
     const forwardedHost = req.headers['x-forwarded-host'];
-    const host = Array.isArray(forwardedHost)
-      ? forwardedHost[0]
-      : (forwardedHost ?? req.headers.host);
-
-    if (host) {
-      req.headers.host = host.replace(/:\d+$/, '');
+    if (forwardedHost) {
+      req.headers.host = Array.isArray(forwardedHost)
+        ? forwardedHost[0]
+        : forwardedHost;
     }
-
-    req.headers['x-forwarded-host'] = req.headers.host;
     req.headers['x-forwarded-proto'] = 'https';
     return handle(req, res);
   });
