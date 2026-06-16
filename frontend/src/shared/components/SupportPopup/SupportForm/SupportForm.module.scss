@@ -18,6 +18,7 @@
       & .support-form__button {
         position: relative;
         bottom: 2px;
+        flex-shrink: 0;
       }
     }
   }

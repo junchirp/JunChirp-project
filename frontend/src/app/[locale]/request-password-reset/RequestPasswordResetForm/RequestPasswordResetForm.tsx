@@ -8,11 +8,12 @@ import Button from '@/shared/components/Button/Button';
 import { useRequestPasswordResetMutation } from '@/api/authApi';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
-import { Locale, useRouter } from '@/i18n/routing';
-import { useLocale, useTranslations } from 'next-intl';
+import { useRouter } from '@/i18n/routing';
+import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { useError429Toast } from '@/hooks/useError429Toast';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
+import { useShortLocale } from '@/hooks/useShortLocale';
 
 interface FormData {
   email: string;
@@ -27,7 +28,7 @@ export default function RequestPasswordResetForm(): ReactElement {
   const [reqResetPassword, { isLoading }] = useRequestPasswordResetMutation();
   const { showToast, isActive } = useError429Toast();
   const router = useRouter();
-  const locale = useLocale();
+  const locale = useShortLocale();
   const [isError, setError] = useState(false);
 
   const onSubmit = async (data: FormData): Promise<void> => {
@@ -38,7 +39,7 @@ export default function RequestPasswordResetForm(): ReactElement {
     setError(false);
     const trimmedData = {
       email: data.email.trim(),
-      locale: locale as Locale,
+      locale,
     };
 
     try {

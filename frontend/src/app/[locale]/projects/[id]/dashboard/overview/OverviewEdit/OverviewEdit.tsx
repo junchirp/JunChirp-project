@@ -4,13 +4,12 @@ import React, { ReactElement } from 'react';
 import styles from './OverviewEdit.module.scss';
 import { ProjectInterface } from '@/shared/interfaces/project.interface';
 import EditProjectForm from './EditProjectForm/EditProjectForm';
-import { useTranslations } from 'next-intl';
+import { useFormatter, useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { membersPipe } from '@/shared/utils/membersPipe';
 import Button from '@/shared/components/Button/Button';
 import { useRouter } from '@/i18n/routing';
 import ProjectImageUpload from './ProjectImageUpload/ProjectImageUpload';
-import { useDateFormatter } from '@/hooks/useDateFormatter';
 
 interface OverviewEditProps {
   project: ProjectInterface;
@@ -23,8 +22,12 @@ export default function OverviewEdit({
   const tProjectsPage = useTranslations('projectsPage');
   const tButtons = useTranslations('buttons');
   const router = useRouter();
-  const format = useDateFormatter();
-  const formattedDate = format(new Date(project.createdAt));
+  const format = useFormatter();
+  const formattedDate = format.dateTime(new Date(project.createdAt), {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  });
 
   const cancelEditProject = (): void => {
     router.replace(`/projects/${project.id}/dashboard/overview`);
