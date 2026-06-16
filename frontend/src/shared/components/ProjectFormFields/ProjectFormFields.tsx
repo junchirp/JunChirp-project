@@ -15,8 +15,7 @@ import { z } from 'zod';
 import { projectSchemaStatic } from '@/shared/forms/schemas/projectSchema';
 import { ProjectRoleTypeInterface } from '@/shared/interfaces/project-role-type.interface';
 import { ProjectInterface } from '@/shared/interfaces/project.interface';
-import { useLocale } from 'next-intl';
-import { Locale } from '@/i18n/routing';
+import { useShortLocale } from '@/hooks/useShortLocale';
 
 type FormData = z.infer<typeof projectSchemaStatic>;
 
@@ -40,7 +39,7 @@ export default function ProjectFormFields(
   const existingRoleIds = new Set(
     project?.roles.map((r) => r.roleType.id) ?? [],
   );
-  const locale = useLocale();
+  const locale = useShortLocale();
 
   return (
     <fieldset className={styles['project-form-fields']} disabled={disabled}>
@@ -99,7 +98,7 @@ export default function ProjectFormFields(
             labelMargin={12}
             placeholder={tForms('projectForm.placeholders.category')}
             {...field}
-            getOptionLabel={(o) => o.categoryName[locale as Locale]}
+            getOptionLabel={(o) => o.categoryName[locale]}
             getOptionValue={(o) => o.id}
             withError
             errorMessage={errors.categoryId?.message}

@@ -12,7 +12,7 @@ import Button from '@/shared/components/Button/Button';
 import { blackListPasswords } from '@/shared/constants/black-list-passwords';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
-import { Link, Locale, useRouter } from '@/i18n/routing';
+import { Link, useRouter } from '@/i18n/routing';
 import Checkbox from '@/assets/icons/checkbox-empty.svg';
 import CheckboxChecked from '@/assets/icons/checkbox-checked.svg';
 import PasswordStrengthIndicator from '@/shared/components/PasswordStrengthIndicator/PasswordStrengthIndicator';
@@ -22,8 +22,9 @@ import {
   registrationSchemaStatic,
 } from '@/shared/forms/schemas/registrationSchema';
 import { normalizeInputValue } from '@/shared/utils/normalizeInputValue';
-import { useLocale, useTranslations } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
+import { useShortLocale } from '@/hooks/useShortLocale';
 
 type FormData = z.infer<typeof registrationSchemaStatic>;
 
@@ -74,7 +75,7 @@ export default function RegistrationForm(): ReactElement {
   const router = useRouter();
   const [registration, { isLoading }] = useRegisterMutation();
   const { showToast, isActive } = useToast();
-  const locale = useLocale();
+  const locale = useShortLocale();
 
   const onSubmit = async (data: FormData): Promise<void> => {
     if (isActive(ToastKeysEnum.REGISTRATION)) {
@@ -87,7 +88,7 @@ export default function RegistrationForm(): ReactElement {
         lastName: data.lastName.trim(),
         email: data.email.trim(),
         password: data.password,
-        locale: locale as Locale,
+        locale,
       };
       await registration(trimmedData).unwrap();
 

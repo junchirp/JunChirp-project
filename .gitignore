@@ -1,5 +1,7 @@
 # compiled output
 /backend/dist
+/backend/node_modules
+/frontend/node_modules
 /node_modules
 *.tsbuildinfo
 
@@ -79,7 +81,3 @@ Thumbs.db
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
-
-# Prisma / generated artifacts
-node_modules/.prisma
-.prisma

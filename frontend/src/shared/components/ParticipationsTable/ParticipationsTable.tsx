@@ -5,8 +5,7 @@ import styles from './ParticipationsTable.module.scss';
 import { Link } from '@/i18n/routing';
 import Button from '@/shared/components/Button/Button';
 import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
-import { useFormatter, useLocale, useTranslations } from 'next-intl';
-import { useDateFormatter } from '@/hooks/useDateFormatter';
+import { useFormatter, useTranslations } from 'next-intl';
 
 interface ParticipationsTableProps {
   items: ProjectParticipationInterface[];
@@ -25,7 +24,7 @@ export default function ParticipationsTable(
   const tTable = useTranslations('participationsTable');
   const tButtons = useTranslations('buttons');
   const cancelEvent = openModal ?? cancel;
-  const format = useDateFormatter();
+  const format = useFormatter();
 
   return (
     <table className={styles['participations-table']}>
@@ -68,7 +67,11 @@ export default function ParticipationsTable(
       </thead>
       <tbody>
         {items.map((item, index) => {
-          const formattedDate = format(new Date(item.createdAt));
+          const formattedDate = format.dateTime(new Date(item.createdAt), {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+          });
 
           return (
             <tr key={item.id} className={styles['participations-table__row']}>

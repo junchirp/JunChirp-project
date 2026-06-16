@@ -13,9 +13,9 @@ import {
   availableEmailSchema,
   availableEmailSchemaStatic,
 } from '@/shared/forms/schemas/availableEmailSchema';
-import { useLocale, useTranslations } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
-import { Locale } from '@/i18n/routing';
+import { useShortLocale } from '@/hooks/useShortLocale';
 
 type FormData = z.infer<typeof availableEmailSchemaStatic>;
 
@@ -37,7 +37,7 @@ export default function ChangeEmailForm({ onClose }: FormProps): ReactElement {
 
   const [updateEmail, { isLoading }] = useUpdateEmailMutation();
   const { showToast, isActive } = useToast();
-  const locale = useLocale();
+  const locale = useShortLocale();
 
   const onSubmit = async (data: FormData): Promise<void> => {
     if (isActive(ToastKeysEnum.CHANGE_EMAIL)) {
@@ -47,7 +47,7 @@ export default function ChangeEmailForm({ onClose }: FormProps): ReactElement {
     try {
       const trimmedData = {
         email: data.email.trim(),
-        locale: locale as Locale,
+        locale,
       };
       await updateEmail(trimmedData).unwrap();
 

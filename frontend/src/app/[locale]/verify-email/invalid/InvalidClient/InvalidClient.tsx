@@ -8,10 +8,11 @@ import { useResendConfirmationEmailMutation } from '@/api/authApi';
 import { useToast } from '@/hooks/useToast';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
-import { useLocale, useTranslations } from 'next-intl';
-import { Locale, useRouter } from '@/i18n/routing';
+import { useTranslations } from 'next-intl';
+import { useRouter } from '@/i18n/routing';
 import { useError429Toast } from '@/hooks/useError429Toast';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
+import { useShortLocale } from '@/hooks/useShortLocale';
 
 export default function InvalidClient(): ReactElement {
   const { showToast, isActive } = useToast();
@@ -20,7 +21,7 @@ export default function InvalidClient(): ReactElement {
   const [resendEmail, { isLoading }] = useResendConfirmationEmailMutation();
   const token = searchParams.get('token') ?? '';
   const t = useTranslations('confirmationResult.invalid');
-  const locale = useLocale();
+  const locale = useShortLocale();
   const router = useRouter();
 
   const onSubmit = async (): Promise<void> => {
@@ -29,7 +30,7 @@ export default function InvalidClient(): ReactElement {
     }
 
     try {
-      await resendEmail({ token, locale: locale as Locale }).unwrap();
+      await resendEmail({ token, locale }).unwrap();
       showToast({
         severity: 'success',
         summary: t('success'),

@@ -10,18 +10,19 @@ import {
 import { FetchBaseQueryError, skipToken } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
 import { useToast } from '@/hooks/useToast';
-import { Locale, useRouter } from '@/i18n/routing';
-import { useLocale, useTranslations } from 'next-intl';
+import { useRouter } from '@/i18n/routing';
+import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 import { useError429Toast } from '@/hooks/useError429Toast';
+import { useShortLocale } from '@/hooks/useShortLocale';
 
 export default function ConfirmPasswordResetContent(): ReactElement | null {
   const [reqResetPassword, { isLoading }] = useRequestPasswordResetMutation();
   const { showToast, isActive } = useToast();
   const { showToast: showError } = useError429Toast();
   const router = useRouter();
-  const locale = useLocale();
+  const locale = useShortLocale();
   const t = useTranslations('resetPasswordConfirmation');
   const tInfo: string[] = t.raw('information');
   const searchParams = useSearchParams();
@@ -48,7 +49,7 @@ export default function ConfirmPasswordResetContent(): ReactElement | null {
     }
 
     try {
-      await reqResetPassword({ email: token.email, locale: locale as Locale }).unwrap();
+      await reqResetPassword({ email: token.email, locale }).unwrap();
 
       showToast({
         severity: 'success',

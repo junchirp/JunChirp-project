@@ -15,6 +15,7 @@ import styles from './LocaleSwitcher.module.scss';
 import Up from '@/assets/icons/chevron-up.svg';
 import Down from '@/assets/icons/chevron-down.svg';
 import { useClickOutside } from '@/hooks/useClickOutside';
+import { localeMap } from '@/shared/constants/locale-map';
 
 export default function LocaleSwitcher(): ReactElement {
   const router = useRouter();
@@ -29,7 +30,7 @@ export default function LocaleSwitcher(): ReactElement {
   const ref = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
-  const labelFn = (opt: Locale): string => opt.toUpperCase();
+  const labelFn = (opt: Locale): string => localeMap[opt].toUpperCase();
 
   useEffect(() => {
     if (!options.length) {
