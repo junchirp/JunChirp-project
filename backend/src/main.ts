@@ -34,20 +34,27 @@ async function bootstrap(): Promise<void> {
   let isReady = false;
 
   server.use((req, res, nextMiddleware) => {
+    const originalRedirect = res.redirect.bind(res);
+
+    res.redirect = ((...args: Parameters<typeof res.redirect>) => {
+      let url = args[args.length - 1];
+
+      if (typeof url === 'string') {
+        url = url.replace(
+          /https?:\/\/[^/]+:\d+/,
+          'https://junchirp-ugdf.onrender.com',
+        );
+
+        args[args.length - 1] = url;
+      }
+
+      return originalRedirect(...args);
+    }) as typeof res.redirect;
+
     if (req.url.startsWith('/api') || req.url.startsWith('/swagger')) {
       return nextMiddleware();
     }
-    const forwardedHost = req.headers['x-forwarded-host'];
-    const host = Array.isArray(forwardedHost)
-      ? forwardedHost[0]
-      : (forwardedHost ?? req.headers.host);
 
-    if (host) {
-      req.headers.host = host.replace(/:\d+$/, '');
-    }
-
-    req.headers['x-forwarded-host'] = req.headers.host;
-    req.headers['x-forwarded-proto'] = 'https';
     return handle(req, res);
   });
 
