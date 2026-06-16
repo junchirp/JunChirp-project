@@ -8,12 +8,22 @@ export default function middleware(req: NextRequest): NextResponse {
   const res = intlMiddleware(req);
   const location = res.headers.get('location');
 
-  if (location) {
-    const url = new URL(location);
-    url.port = '';
-    return NextResponse.redirect(url);
+  if (!location) {
+    return res;
   }
-  return res;
+
+  const url = new URL(location);
+  const host =
+    req.headers.get('x-forwarded-host') ?? req.headers.get('host') ?? '';
+  const isLocal = host.includes('localhost') || host.includes('127.0.0.1');
+
+  if (!isLocal) {
+    if (url.port && url.hostname !== 'localhost') {
+      url.port = '';
+    }
+  }
+
+  return NextResponse.redirect(url);
 }
 
 export const config = {
