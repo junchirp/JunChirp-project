@@ -5,15 +5,17 @@ import { routing } from './i18n/routing';
 const intlMiddleware = createMiddleware(routing);
 
 export default function middleware(req: NextRequest): NextResponse {
-  const res = intlMiddleware(req);
-  const location = res.headers.get('location');
+  const url = req.nextUrl.clone();
 
-  if (location) {
-    const url = new URL(location);
+  const host = req.headers.get('x-forwarded-host') ?? req.headers.get('host');
+
+  if (host && !host.includes('localhost')) {
+    url.host = host;
     url.port = '';
-    return NextResponse.redirect(url);
   }
-  return res;
+
+  const patchedReq = new NextRequest(url, req);
+  return intlMiddleware(patchedReq);
 }
 
 export const config = {
