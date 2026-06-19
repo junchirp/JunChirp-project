@@ -13,7 +13,7 @@ import { useTranslations } from 'next-intl';
 import { useProjectParticipantsOptions } from '@/hooks/useProjectParticipantsOptions';
 import { useProjectStatusOptions } from '@/hooks/useProjectStatusOptions';
 import { useShortLocale } from '@/hooks/useShortLocale';
-import { SystemLocaleType } from '@/shared/types/system-locale.type';
+import { ShortLocaleType } from '@/shared/types/short-locale.type';
 
 interface FormData {
   status: 'active' | 'done' | null;
@@ -31,7 +31,7 @@ export default function ProjectsFiltersForm(): ReactElement {
       id: '',
       categoryName: {
         [locale]: t('all'),
-      } as Record<SystemLocaleType, string>,
+      } as Record<ShortLocaleType, string>,
     },
     ...data,
   ];

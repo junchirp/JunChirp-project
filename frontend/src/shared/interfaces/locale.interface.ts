@@ -1,5 +1,5 @@
-import { SystemLocaleType } from '../types/system-locale.type';
+import { ShortLocaleType } from '../types/short-locale.type';
 
 export interface LocaleInterface {
-  locale: SystemLocaleType;
+  locale: ShortLocaleType;
 }

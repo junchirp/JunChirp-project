@@ -1,6 +1,6 @@
-import { SystemLocaleType } from '../types/system-locale.type';
+import { ShortLocaleType } from '../types/short-locale.type';
 
 export interface ProjectCategoryInterface {
   id: string;
-  categoryName: Record<SystemLocaleType, string>;
+  categoryName: Record<ShortLocaleType, string>;
 }

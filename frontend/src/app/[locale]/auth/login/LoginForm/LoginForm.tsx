@@ -10,7 +10,6 @@ import { useSearchParams } from 'next/navigation';
 import React, { ReactElement, useState } from 'react';
 import { useToast } from '@/hooks/useToast';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
-import { SerializedError } from '@reduxjs/toolkit';
 import { useLazyGetProjectRolesListQuery } from '@/api/projectRolesApi';
 import { useSupport } from '@/hooks/useSupport';
 import { useTranslations } from 'next-intl';
@@ -21,13 +20,6 @@ interface FormData {
   email: string;
   password: string;
 }
-
-type ErrorType =
-  | ((FetchBaseQueryError | SerializedError) & {
-      status: number;
-      data: { attemptsCount: number };
-    })
-  | undefined;
 
 export default function LoginForm(): ReactElement {
   const [isError, setError] = useState(false);
@@ -66,15 +58,20 @@ export default function LoginForm(): ReactElement {
         router.replace('/confirm-email?type=login');
       }
     } catch (error) {
-      const status = (error as ErrorType)?.status;
+      const err = error as FetchBaseQueryError;
+      const status = err.status;
 
-      if (status === 429) {
-        const attemptsCount = (error as ErrorType)?.data.attemptsCount ?? 0;
+      if (status === 403) {
+        const code = (err.data as { code?: string })?.code;
 
-        let [summary, detail] = ['', <></>];
-        if (attemptsCount === 15) {
-          [summary, detail] = [
-            tForms('loginForm.error429'),
+        if (code === 'EBADCSRFTOKEN') {
+          return;
+        }
+
+        showToast({
+          severity: 'error',
+          summary: tForms('loginForm.error429'),
+          detail: (
             <p>
               {tForms.rich('loginForm.error429_15Details', {
                 cta: (chunks) => (
@@ -83,9 +80,20 @@ export default function LoginForm(): ReactElement {
                   </Button>
                 ),
               })}
-            </p>,
-          ];
-        } else if (attemptsCount === 10) {
+            </p>
+          ),
+          life: 10000,
+          actionKey: ToastKeysEnum.LOGIN,
+        });
+        return;
+      }
+
+      if (status === 429) {
+        const attemptsCount = (err.data as { attemptsCount: number })
+          .attemptsCount;
+        let [summary, detail] = ['', <></>];
+
+        if (attemptsCount === 10) {
           [summary, detail] = [
             tForms('loginForm.error429'),
             <p>
@@ -119,9 +127,9 @@ export default function LoginForm(): ReactElement {
           life: 10000,
           actionKey: ToastKeysEnum.LOGIN,
         });
-      } else {
-        setError(true);
+        return;
       }
+      setError(true);
     }
   };
 

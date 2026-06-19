@@ -1,7 +1,7 @@
-import { SystemLocaleType } from '../types/system-locale.type';
+import { ShortLocaleType } from '../types/short-locale.type';
 
 export interface CreateRequestInterface {
   projectId: string;
   projectRoleId: string;
-  locale: SystemLocaleType;
+  locale: ShortLocaleType;
 }

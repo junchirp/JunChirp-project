@@ -173,7 +173,7 @@ export class UsersController {
     description: 'You have used up all your attempts. Please try again later.',
   })
   @ApiNotFoundResponse({ description: 'User not found' })
-  @ApiForbiddenResponse({ description: 'Invalid CSRF token' })
+  @ApiForbiddenResponse({ description: 'Invalid CSRF token / User is blocked' })
   @ApiHeader({
     name: 'x-csrf-token',
     description: 'CSRF token for the request',

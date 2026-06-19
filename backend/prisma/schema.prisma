@@ -16,6 +16,7 @@ model User {
   password              String                 @default("")
   createdAt             DateTime               @default(now()) @map("created_at")
   isVerified            Boolean                @default(false) @map("is_verified")
+  isBlocked             Boolean                @default(false) @map("is_blocked")
   firstName             String                 @map("first_name")
   lastName              String                 @map("last_name")
   roleId                String                 @map("role_id")

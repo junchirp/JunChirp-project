@@ -1,6 +1,6 @@
 import {
   BadRequestException,
-  ConflictException,
+  ConflictException, ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -459,6 +459,10 @@ export class UsersService {
 
     if (!user) {
       throw new NotFoundException('User not found');
+    }
+
+    if (user.isBlocked) {
+      throw new ForbiddenException('User is blocked');
     }
 
     return this.prisma.resetPasswordToken.upsert({

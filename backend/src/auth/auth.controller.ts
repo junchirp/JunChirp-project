@@ -48,7 +48,7 @@ export class AuthController {
   @ApiTooManyRequestsResponse({
     description: 'Too many failed attempts. Please try again later',
   })
-  @ApiForbiddenResponse({ description: 'Invalid CSRF token' })
+  @ApiForbiddenResponse({ description: 'Invalid CSRF token / User is blocked' })
   @ApiHeader({
     name: 'x-csrf-token',
     description: 'CSRF token for the request',
