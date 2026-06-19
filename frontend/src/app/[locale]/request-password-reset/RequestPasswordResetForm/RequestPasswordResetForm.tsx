@@ -7,13 +7,14 @@ import Input from '@/shared/components/Input/Input';
 import Button from '@/shared/components/Button/Button';
 import { useRequestPasswordResetMutation } from '@/api/authApi';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
-import { SerializedError } from '@reduxjs/toolkit';
 import { useRouter } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { useError429Toast } from '@/hooks/useError429Toast';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 import { useShortLocale } from '@/hooks/useShortLocale';
+import { useToast } from '@/hooks/useToast';
+import { useSupport } from '@/hooks/useSupport';
 
 interface FormData {
   email: string;
@@ -26,7 +27,9 @@ export default function RequestPasswordResetForm(): ReactElement {
     mode: 'onChange',
   });
   const [reqResetPassword, { isLoading }] = useRequestPasswordResetMutation();
-  const { showToast, isActive } = useError429Toast();
+  const { showToast: show429Toast } = useError429Toast();
+  const { showToast, isActive } = useToast();
+  const support = useSupport();
   const router = useRouter();
   const locale = useShortLocale();
   const [isError, setError] = useState(false);
@@ -47,22 +50,44 @@ export default function RequestPasswordResetForm(): ReactElement {
 
       router.replace(`/confirm-password-reset?requestId=${result.id}`);
     } catch (error) {
-      const errorData = error as
-        | ((FetchBaseQueryError | SerializedError) & {
-            status: number;
-            data: { attemptsCount: number; retryAfter: string };
-          })
-        | undefined;
-      const status = errorData?.status;
+      const err = error as FetchBaseQueryError;
+      const status = err.status;
 
       if (status === 429) {
-        showToast(
-          errorData?.data.retryAfter ?? '',
-          ToastKeysEnum.PASSWORD_RESET_CONFIRMATION,
-        );
-      } else {
-        setError(true);
+        const retryAfter = (err.data as { retryAfter: string }).retryAfter;
+        show429Toast(retryAfter, ToastKeysEnum.PASSWORD_RESET_CONFIRMATION);
+
+        return;
       }
+
+      if (status === 403) {
+        const code = (err.data as { code?: string })?.code;
+
+        if (code === 'EBADCSRFTOKEN') {
+          return;
+        }
+
+        showToast({
+          severity: 'error',
+          summary: tForms('loginForm.error429'),
+          detail: (
+            <p>
+              {tForms.rich('loginForm.error429_15Details', {
+                cta: (chunks) => (
+                  <Button variant="link" color="blue" onClick={support}>
+                    {chunks}
+                  </Button>
+                ),
+              })}
+            </p>
+          ),
+          life: 10000,
+          actionKey: ToastKeysEnum.PASSWORD_RESET_CONFIRMATION,
+        });
+        return;
+      }
+
+      setError(true);
     }
   };
 

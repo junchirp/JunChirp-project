@@ -1,7 +1,7 @@
 import { Locale } from '@/i18n/routing';
-import { SystemLocaleType } from '@/shared/types/system-locale.type';
+import { ShortLocaleType } from '@/shared/types/short-locale.type';
 
-export const localeMap: Record<Locale, SystemLocaleType> = {
+export const localeMap: Record<Locale, ShortLocaleType> = {
   'en-GB': 'en',
   'uk-UA': 'ua',
 } as const;

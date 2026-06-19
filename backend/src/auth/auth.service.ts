@@ -1,4 +1,5 @@
 import {
+  ForbiddenException,
   forwardRef,
   Inject,
   Injectable,
@@ -65,6 +66,17 @@ export class AuthService {
       throw new UnauthorizedException('Email or password is incorrect');
     }
 
+    if (user.isBlocked) {
+      await this.loggerService.log(
+        ip ?? 'unknown',
+        loginDto.email,
+        'login',
+        'User is blocked',
+      );
+
+      throw new ForbiddenException('User is blocked');
+    }
+
     const loginAttempt = await this.prisma.loginAttempt.findUnique({
       where: { userId: user.id },
     });
@@ -90,6 +102,7 @@ export class AuthService {
       loginDto.password,
       user.password,
     );
+
     if (passwordEquals) {
       if (loginAttempt) {
         await this.prisma.loginAttempt.delete({
@@ -107,35 +120,56 @@ export class AuthService {
       return baseUserInfo;
     } else {
       if (loginAttempt) {
+        const attemptsCount = loginAttempt.attemptsCount + 1;
         const updateData: {
           attemptsCount: number;
           blockedUntil?: Date;
         } = {
-          attemptsCount: loginAttempt.attemptsCount + 1,
+          attemptsCount,
         };
 
-        if (loginAttempt.attemptsCount + 1 >= 5 && !loginAttempt.blockedUntil) {
+        if (attemptsCount === 5) {
           updateData.blockedUntil = new Date(
             new Date().getTime() + 15 * 60 * 1000,
           );
         }
 
-        if (
-          loginAttempt.attemptsCount + 1 >= 10 &&
-          !loginAttempt.blockedUntil
-        ) {
+        if (attemptsCount === 10) {
           updateData.blockedUntil = new Date(
             new Date().getTime() + 60 * 60 * 1000,
           );
         }
 
-        if (
-          loginAttempt.attemptsCount + 1 >= 15 &&
-          !loginAttempt.blockedUntil
-        ) {
-          updateData.blockedUntil = new Date(
-            new Date().getTime() + 365 * 24 * 60 * 60 * 1000,
+        if (attemptsCount === 15) {
+          await this.prisma.$transaction([
+            this.prisma.loginAttempt.update({
+              where: {
+                userId: user.id,
+              },
+              data: {
+                attemptsCount: attemptsCount,
+                blockedUntil: null,
+              },
+            }),
+
+            this.prisma.user.update({
+              where: {
+                id: user.id,
+              },
+              data: {
+                isBlocked: true,
+              },
+            }),
+          ]);
+
+          await this.loggerService.log(
+            ip ?? 'unknown',
+            loginDto.email,
+            'login',
+            'User has been blocked due to too many failed attempts',
           );
+
+          throw new ForbiddenException('User is blocked');
         }
 
         await this.prisma.loginAttempt.update({
@@ -143,7 +177,7 @@ export class AuthService {
           data: updateData,
         });
 
-        if ([5, 10, 15].includes(updateData.attemptsCount)) {
+        if ([5, 10].includes(updateData.attemptsCount)) {
           await this.loggerService.log(
             ip ?? 'unknown',
             loginDto.email,
