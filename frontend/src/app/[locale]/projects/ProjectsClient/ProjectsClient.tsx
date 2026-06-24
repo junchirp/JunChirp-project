@@ -28,7 +28,9 @@ export default function ProjectsClient(): ReactElement {
     updateFilters({ page });
   };
 
-  const { data: list, isLoading: listLoading } = useGetProjectsQuery(filters);
+  const { data: list, isLoading: listLoading } = useGetProjectsQuery(filters, {
+    refetchOnMountOrArgChange: true,
+  });
   const { data: requests = [], isLoading: requestsLoading } =
     useGetMyRequestsQuery(user.id);
   const { data: invites = [], isLoading: invitesLoading } =
@@ -49,9 +51,7 @@ export default function ProjectsClient(): ReactElement {
           width={33}
           height={35}
         />
-        <h2 className={styles['projects-client__title']}>
-          [{t('bannerName')}]
-        </h2>
+        <h2 className={styles['projects-client__title']}>{t('bannerName')}</h2>
         <Image
           className={`${styles['projects-client__image']} ${styles['projects-client__image--last']}`}
           src="/images/star.svg"

@@ -7,11 +7,11 @@ import ArrowUpRight from '@/assets/icons/arrow-up-right.svg';
 import UserBaseInfo from './UserBaseInfo/UserBaseInfo';
 import { useParams } from 'next/navigation';
 import {
-  useGetInvitesInMyProjectsQuery,
+  useGetUserInvitesInMyProjectsQuery,
   useGetMyInvitesQuery,
   useGetMyProjectsQuery,
   useGetMyRequestsQuery,
-  useGetRequestsInMyProjectsQuery,
+  useGetUserRequestsInMyProjectsQuery,
   useGetUserByIdQuery,
   useGetUserProjectsQuery,
 } from '@/api/usersApi';
@@ -58,9 +58,9 @@ export default function UserClient(): ReactElement {
   const { data: myInvites = [], isLoading: myInvitesLoading } =
     useGetMyInvitesQuery(authUser.id);
   const { data: requests = [], isLoading: requestsLoading } =
-    useGetRequestsInMyProjectsQuery(userId);
+    useGetUserRequestsInMyProjectsQuery(userId);
   const { data: invites = [], isLoading: invitesLoading } =
-    useGetInvitesInMyProjectsQuery(userId);
+    useGetUserInvitesInMyProjectsQuery(userId);
   const isLoading =
     projectsLoading ||
     userLoading ||

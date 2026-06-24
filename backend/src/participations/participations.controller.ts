@@ -7,6 +7,7 @@ import {
   Put,
   HttpCode,
   HttpStatus,
+  Get,
 } from '@nestjs/common';
 import { ParticipationsService } from './participations.service';
 import { CreateInviteDto } from './dto/create-invite.dto';
@@ -19,6 +20,7 @@ import {
   ApiHeader,
   ApiNoContentResponse,
   ApiNotFoundResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -29,6 +31,7 @@ import { User } from '../auth/decorators/user.decorator';
 import { UserCardResponseDto } from '../users/dto/user-card.response-dto';
 import { CreateRequestDto } from './dto/create-request.dto';
 import { UUIDParam } from '../shared/decorators/UUID-param.decorator';
+import { CurrentUser } from '../shared/decorators/current-user.decorator';
 
 @User()
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
@@ -227,5 +230,25 @@ export class ParticipationsController {
   @Delete('invite/:id/cancel')
   public async cancelInvite(@UUIDParam('id') id: string): Promise<void> {
     return this.participationsService.cancelInvite(id);
+  }
+
+  @ApiOperation({ summary: `Get all invites in current user's projects` })
+  @ApiOkResponse({ type: [ProjectParticipationResponseDto] })
+  @ApiForbiddenResponse({ description: 'Access denied: email not confirmed' })
+  @Get('invites')
+  public async getInvitesInMyProjects(
+    @CurrentUser('id') ownerId: string,
+  ): Promise<ProjectParticipationResponseDto[]> {
+    return this.participationsService.getInvitesInMyProjects(ownerId);
+  }
+
+  @ApiOperation({ summary: `Get all requests in current user's projects` })
+  @ApiOkResponse({ type: [ProjectParticipationResponseDto] })
+  @ApiForbiddenResponse({ description: 'Access denied: email not confirmed' })
+  @Get('requests')
+  public async getRequestsInMyProjects(
+    @CurrentUser('id') ownerId: string,
+  ): Promise<ProjectParticipationResponseDto[]> {
+    return this.participationsService.getRequestsInMyProjects(ownerId);
   }
 }

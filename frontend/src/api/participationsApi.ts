@@ -20,7 +20,7 @@ export const participationsApi = mainApi.injectEndpoints({
           const { data: newInvite } = await queryFulfilled;
           dispatch(
             usersApi.util.updateQueryData(
-              'getInvitesInMyProjects',
+              'getUserInvitesInMyProjects',
               arg.userId,
               (draft: ProjectParticipationInterface[]) => {
                 draft.push(newInvite);
@@ -31,8 +31,9 @@ export const participationsApi = mainApi.injectEndpoints({
           return;
         }
       },
-      invalidatesTags: (_result, _error, { projectId }) => [
+      invalidatesTags: (_result, _error, { projectId, userId }) => [
         { type: 'invites-in-my-projects', id: 'LIST' },
+        { type: 'invites-in-my-projects', id: userId },
         { type: 'invites', id: projectId },
       ],
     }),
@@ -120,7 +121,7 @@ export const participationsApi = mainApi.injectEndpoints({
           await queryFulfilled;
           dispatch(
             usersApi.util.updateQueryData(
-              'getRequestsInMyProjects',
+              'getUserRequestsInMyProjects',
               userId,
               (draft: ProjectParticipationInterface[]) => {
                 const index = draft.findIndex(
@@ -140,6 +141,7 @@ export const participationsApi = mainApi.injectEndpoints({
         { type: 'users', id: userId },
         { type: 'user-projects', id: userId },
         { type: 'requests-in-my-projects', id: 'LIST' },
+        { type: 'requests-in-my-projects', id: userId },
         { type: 'requests', id: projectId },
         { type: 'projects', id: projectId },
       ],
@@ -160,7 +162,7 @@ export const participationsApi = mainApi.injectEndpoints({
           await queryFulfilled;
           dispatch(
             usersApi.util.updateQueryData(
-              'getRequestsInMyProjects',
+              'getUserRequestsInMyProjects',
               userId,
               (draft: ProjectParticipationInterface[]) => {
                 const index = draft.findIndex(
@@ -176,8 +178,9 @@ export const participationsApi = mainApi.injectEndpoints({
           return;
         }
       },
-      invalidatesTags: (_result, _error, { projectId }) => [
+      invalidatesTags: (_result, _error, { projectId, userId }) => [
         { type: 'requests-in-my-projects', id: 'LIST' },
+        { type: 'requests-in-my-projects', id: userId },
         { type: 'requests', id: projectId },
       ],
     }),
@@ -228,7 +231,7 @@ export const participationsApi = mainApi.injectEndpoints({
           await queryFulfilled;
           dispatch(
             usersApi.util.updateQueryData(
-              'getInvitesInMyProjects',
+              'getUserInvitesInMyProjects',
               userId,
               (draft: ProjectParticipationInterface[]) => {
                 const index = draft.findIndex(
@@ -244,10 +247,33 @@ export const participationsApi = mainApi.injectEndpoints({
           return;
         }
       },
-      invalidatesTags: (_result, _error, { projectId }) => [
+      invalidatesTags: (_result, _error, { projectId, userId }) => [
         { type: 'invites-in-my-projects', id: 'LIST' },
         { type: 'invites', id: projectId },
+        { type: 'invites-in-my-projects', id: userId },
       ],
+    }),
+    getInvitesInMyProjects: builder.query<
+      ProjectParticipationInterface[],
+      string
+    >({
+      query: () => {
+        return {
+          url: 'participations/invites',
+        };
+      },
+      providesTags: [{ type: 'invites-in-my-projects', id: 'LIST' }],
+    }),
+    getRequestsInMyProjects: builder.query<
+      ProjectParticipationInterface[],
+      string
+    >({
+      query: () => {
+        return {
+          url: 'participations/requests',
+        };
+      },
+      providesTags: [{ type: 'requests-in-my-projects', id: 'LIST' }],
     }),
   }),
 });
@@ -261,4 +287,6 @@ export const {
   useAcceptRequestMutation,
   useCancelRequestMutation,
   useCancelInviteMutation,
+  useGetInvitesInMyProjectsQuery,
+  useGetRequestsInMyProjectsQuery,
 } = participationsApi;

@@ -6,6 +6,7 @@ import { ProjectRoleTypeInterface } from '@/shared/interfaces/project-role-type.
 import Button from '@/shared/components/Button/Button';
 import styles from './ActiveUsersFilters.module.scss';
 import X from '@/assets/icons/x.svg';
+import { useTranslations } from 'next-intl';
 
 interface FormData {
   desiredRolesIds: string[];
@@ -15,13 +16,17 @@ interface FormData {
 interface ActiveUsersFiltersProps {
   form: UseFormReturn<FormData, unknown, FormData>;
   rolesList: ProjectRoleTypeInterface[];
+  updateFilters: (
+    value: Record<string, string | string[] | number | undefined | null>,
+  ) => void;
 }
 
-export default function ActiveUsersFilters({
-  form,
-  rolesList,
-}: ActiveUsersFiltersProps): ReactElement {
+export default function ActiveUsersFilters(
+  props: ActiveUsersFiltersProps,
+): ReactElement {
+  const { form, rolesList, updateFilters } = props;
   const values = form.watch();
+  const t = useTranslations('usersPage');
 
   const selectedRoles = values.desiredRolesIds.map((id) =>
     rolesList.find((item) => item.id === id),
@@ -31,6 +36,10 @@ export default function ActiveUsersFilters({
     const current = form.getValues('desiredRolesIds');
     const updated = current.filter((id) => id !== idToRemove);
     form.setValue('desiredRolesIds', updated);
+    updateFilters({
+      desiredRolesIds: updated,
+      page: 1,
+    });
   };
 
   return (
@@ -38,14 +47,19 @@ export default function ActiveUsersFilters({
       <Button
         color="green"
         variant="link"
-        onClick={() =>
-          form.reset({
+        onClick={() => {
+          const val = {
             desiredRolesIds: [],
             activeProjectsCount: null,
-          })
-        }
+          };
+          form.reset(val);
+          updateFilters({
+            ...val,
+            page: 1,
+          });
+        }}
       >
-        Очистити всі фільтри
+        {t('clearFilters')}
       </Button>
       {selectedRoles.map((role) =>
         role ? (
@@ -68,7 +82,13 @@ export default function ActiveUsersFilters({
             color="gray"
             variant="link"
             size="md"
-            onClick={() => form.setValue('activeProjectsCount', null)}
+            onClick={() => {
+              form.setValue('activeProjectsCount', null);
+              updateFilters({
+                activeProjectsCount: null,
+                page: 1,
+              });
+            }}
             icon={<X />}
           />
           {values.activeProjectsCount}

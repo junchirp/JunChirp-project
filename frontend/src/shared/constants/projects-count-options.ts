@@ -1,24 +1,24 @@
-import { SelectOptionsInterface } from '@/shared/interfaces/select-options.interface';
+import { ProjectsCountWithKeyInterface } from '@/shared/interfaces/projects-count-with-key.interface';
 
-export const projectsCountOptions: SelectOptionsInterface[] = [
+export const projectsCountOptions: ProjectsCountWithKeyInterface[] = [
   {
     id: '-1',
-    label: 'Всі',
+    labelKey: 'all',
     value: null,
   },
   {
     id: '0',
-    label: '0',
+    labelKey: '0',
     value: 0,
   },
   {
     id: '1',
-    label: '1',
+    labelKey: '1',
     value: 1,
   },
   {
     id: '2',
-    label: '2',
+    labelKey: '2',
     value: 2,
   },
 ];

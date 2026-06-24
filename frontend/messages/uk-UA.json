@@ -17,6 +17,7 @@
     "cancelRequest": "Скасувати заявку",
     "sendInvite": "Надіслати запрошення",
     "invite": "Запросити",
+    "profile": "Профіль",
     "continueWith": "Продовжити з",
     "enterAnotherEmail": "Ввести інший e-mail",
     "changeEmail": "Змінити e-mail",
@@ -382,7 +383,7 @@
   },
   "projectsPage": {
     "bannerName": "Проєкти",
-    "filterName": "Фільтр проектів",
+    "filterName": "Фільтр проєктів",
     "myProjects": "Мої проєкти",
     "projectList": "Список проєктів",
     "createProject": "Створити проєкт",
@@ -781,5 +782,23 @@
     "title": "Видалити учасника",
     "warning": "Ця дія незворотна. Після видалення учасник не зможе повернутися у проєкт.",
     "description": "Ти дійсно хочеш видалити <user>{firstName} {lastName}</user> з проєкту?"
+  },
+  "usersPage": {
+    "bannerName": "Учасники платформи",
+    "filterName": "Фільтр учасників",
+    "role": "Роль",
+    "activeProjectsCount": "Кількість активних проєктів",
+    "activeProjects": "Кількість активних проєктів",
+    "completedProjects": "Кількість завершених проєктів",
+    "requests": "Заявки в мої проєкти",
+    "invites": "Запрошення в мої проєкти",
+    "all": "Всі",
+    "clearFilters": "Очистити всі фільтри"
+  },
+  "projectsCount": {
+    "all": "Всі",
+    "0": "0",
+    "1": "1",
+    "2": "2"
   }
 }

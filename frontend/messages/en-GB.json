@@ -17,6 +17,7 @@
     "cancelRequest": "Cancel Application",
     "sendInvite": "Send invitation",
     "invite": "Invite",
+    "profile": "Profile",
     "continueWith": "Continue with",
     "enterAnotherEmail": "Enter another email",
     "changeEmail": "Change email",
@@ -781,5 +782,23 @@
     "title": "Delete participant",
     "warning": "This action is irreversible. Once deleted, the participant cannot rejoin the project.",
     "description": "Do you really want to delete <user>{firstName} {lastName}</user> from the project?"
+  },
+  "usersPage": {
+    "bannerName": "Platform members",
+    "filterName": "Filter Members",
+    "role": "Role",
+    "activeProjectsCount": "Number of active projects",
+    "activeProjects": "Active projects",
+    "completedProjects": "Completed projects",
+    "requests": "Applications to my projects",
+    "invites": "Invitations to my projects",
+    "all": "All",
+    "clearFilters": "Clear all filters"
+  },
+  "projectsCount": {
+    "all": "All",
+    "0": "0",
+    "1": "1",
+    "2": "2"
   }
 }

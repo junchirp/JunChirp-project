@@ -5,8 +5,12 @@
 
   &__form {
     display: grid;
-    grid-template-columns: 1fr 1fr auto;
+    grid-template-columns: 1fr 1fr;
     gap: 32px;
-    align-items: end;
+  }
+
+  &__fieldset {
+    width: 100%;
+    min-width: 0;
   }
 }
