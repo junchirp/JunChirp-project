@@ -41,9 +41,7 @@ export default function DiscordBanner(props: DiscordBannerProps): ReactElement {
           </Button>
         )}
         <Button color="green" onClick={handleDiscordLogin}>
-          {isCancelButton
-            ? `${tButtons('connect')}`
-            : `${tButtons('connect')} Discord`}
+          {tButtons('connect')}
         </Button>
       </div>
       <Button

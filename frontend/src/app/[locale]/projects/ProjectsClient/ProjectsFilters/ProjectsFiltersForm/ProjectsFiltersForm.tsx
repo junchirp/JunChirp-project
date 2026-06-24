@@ -74,7 +74,6 @@ export default function ProjectsFiltersForm(): ReactElement {
                 labelHeight={1.4}
                 labelWeight={600}
                 labelMargin={12}
-                placeholder="Всі"
                 getOptionLabel={(o) => o.categoryName[locale]}
                 getOptionValue={(o) => o.id}
                 onChange={(value) => {
@@ -101,7 +100,6 @@ export default function ProjectsFiltersForm(): ReactElement {
                 labelHeight={1.4}
                 labelWeight={600}
                 labelMargin={12}
-                placeholder="Всі"
                 getOptionLabel={(o) => o.label}
                 getOptionValue={(o) => o.value}
                 onChange={(value) => {
@@ -128,7 +126,6 @@ export default function ProjectsFiltersForm(): ReactElement {
                 labelHeight={1.4}
                 labelWeight={600}
                 labelMargin={12}
-                placeholder="Всі"
                 value={
                   field.value
                     ? `${field.value.minParticipants}-${field.value.maxParticipants}`

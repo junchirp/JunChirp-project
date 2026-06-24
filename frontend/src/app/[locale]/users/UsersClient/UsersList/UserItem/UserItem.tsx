@@ -9,20 +9,31 @@ import { ProjectCardInterface } from '@/shared/interfaces/project-card.interface
 import InvitePopup from '@/shared/components/InvitePopup/InvitePopup';
 import { UserCardInterface } from '@/shared/interfaces/user-card.interface';
 import { useRouter } from '@/i18n/routing';
+import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
+import { useTranslations } from 'next-intl';
 
 interface UserItemProps {
   user: UserCardInterface;
   currentUser: AuthInterface;
   myProjects: ProjectCardInterface[];
+  requests: ProjectParticipationInterface[];
+  invites: ProjectParticipationInterface[];
 }
 
 export default function UserItem({
   user,
   currentUser,
   myProjects,
+  requests,
+  invites,
 }: UserItemProps): ReactElement {
   const [isModalOpen, setModalOpen] = useState(false);
   const router = useRouter();
+  const tPage = useTranslations('usersPage');
+  const tButtons = useTranslations('buttons');
+  const projectsCount = myProjects.filter((project) =>
+    project.roles.some((role) => role.users.some((u) => u.id === user.id)),
+  ).length;
 
   const handleRedirect = (): void => {
     router.push(user.id === currentUser.id ? '/profile' : `/users/${user.id}`);
@@ -56,7 +67,7 @@ export default function UserItem({
             <p
               className={`${styles['user-item__projects-text']} ${styles['user-item__projects-text--green']}`}
             >
-              Кількість активних проєктів:{' '}
+              {tPage('activeProjects')}:
               <span className={styles['user-item__projects-count']}>
                 {user.activeProjectsCount}
               </span>
@@ -64,11 +75,27 @@ export default function UserItem({
             <p
               className={`${styles['user-item__projects-text']} ${styles['user-item__projects-text--gray']}`}
             >
-              Кількість завершених проєктів:{' '}
+              {tPage('completedProjects')}:
               <span className={styles['user-item__projects-count']}>
                 {user.doneProjectsCount}
               </span>
             </p>
+            {!!requests.length && (
+              <p className={styles['user-item__projects-text']}>
+                {tPage('requests')}:
+                <span className={styles['user-item__projects-count']}>
+                  {requests.length}
+                </span>
+              </p>
+            )}
+            {!!invites.length && (
+              <p className={styles['user-item__projects-text']}>
+                {tPage('invites')}:
+                <span className={styles['user-item__projects-count']}>
+                  {invites.length}
+                </span>
+              </p>
+            )}
           </div>
         </div>
         <div className={styles['user-item__actions']}>
@@ -78,7 +105,7 @@ export default function UserItem({
             fullWidth
             onClick={handleRedirect}
           >
-            Профіль
+            {tButtons('profile')}
           </Button>
           <Button
             color="green"
@@ -86,11 +113,13 @@ export default function UserItem({
             disabled={
               user.activeProjectsCount === 2 ||
               user.id === currentUser.id ||
-              myProjects.length === 0
+              myProjects.length === 0 ||
+              myProjects.length ===
+                requests.length + invites.length + projectsCount
             }
             onClick={openModal}
           >
-            Запросити
+            {tButtons('invite')}
           </Button>
         </div>
       </div>

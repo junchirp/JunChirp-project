@@ -691,4 +691,94 @@ export class ParticipationsService {
       UserParticipationMapper.toResponse(request),
     );
   }
+
+  public async getRequestsInMyProjects(
+    authId: string,
+  ): Promise<ProjectParticipationResponseDto[]> {
+    const requests = await this.prisma.participationRequest.findMany({
+      where: {
+        projectRole: {
+          project: {
+            ownerId: authId,
+          },
+        },
+      },
+      include: {
+        projectRole: {
+          include: {
+            roleType: true,
+            project: {
+              include: {
+                logo: true,
+                category: {
+                  include: {
+                    translations: true,
+                  },
+                },
+                roles: {
+                  include: {
+                    roleType: true,
+                    users: {
+                      include: {
+                        desiredRoles: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return requests.map((request) =>
+      ProjectParticipationMapper.toResponse(request),
+    );
+  }
+
+  public async getInvitesInMyProjects(
+    authId: string,
+  ): Promise<ProjectParticipationResponseDto[]> {
+    const invites = await this.prisma.participationInvite.findMany({
+      where: {
+        projectRole: {
+          project: {
+            ownerId: authId,
+          },
+        },
+      },
+      include: {
+        projectRole: {
+          include: {
+            roleType: true,
+            project: {
+              include: {
+                logo: true,
+                category: {
+                  include: {
+                    translations: true,
+                  },
+                },
+                roles: {
+                  include: {
+                    roleType: true,
+                    users: {
+                      include: {
+                        desiredRoles: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return invites.map((invite) =>
+      ProjectParticipationMapper.toResponse(invite),
+    );
+  }
 }

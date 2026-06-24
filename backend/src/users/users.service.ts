@@ -727,15 +727,21 @@ export class UsersService {
         : {}),
     };
 
-    const [users, total] = await Promise.all([
+    const [users, total] = await this.prisma.$transaction([
       this.prisma.user.findMany({
         where,
-        include: { desiredRoles: true },
+        include: {
+          desiredRoles: true,
+        },
         skip,
         take: limit,
-        orderBy: { createdAt: 'desc' },
+        orderBy: {
+          createdAt: 'desc',
+        },
       }),
-      this.prisma.user.count({ where }),
+      this.prisma.user.count({
+        where,
+      }),
     ]);
 
     return {

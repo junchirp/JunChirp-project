@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactElement, useEffect } from 'react';
+import { ReactElement } from 'react';
 import styles from './UsersClient.module.scss';
 import Image from 'next/image';
 import UsersFilters from './UsersFilters/UsersFilters';
@@ -8,55 +8,38 @@ import UsersList from './UsersList/UsersList';
 import { useUsersFilters } from '@/hooks/useUsersFilters';
 import { useGetMyProjectsQuery, useGetUsersQuery } from '@/api/usersApi';
 import ListSkeleton from '@/shared/components/ListSkeleton/ListSkeleton';
-import { useToast } from '@/hooks/useToast';
 import Pagination from '@/shared/components/Pagination/Pagination';
 import { useAppSelector } from '@/hooks/reduxHooks';
 import authSelector from '@/redux/auth/authSelector';
-import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
+import { useTranslations } from 'next-intl';
+import {
+  useGetInvitesInMyProjectsQuery,
+  useGetRequestsInMyProjectsQuery,
+} from '@/api/participationsApi';
 
 export default function UsersClient(): ReactElement {
   const { filters, updateFilters } = useUsersFilters();
-  const { showToast } = useToast();
   const user = useAppSelector(authSelector.selectRequiredUser);
-
-  const onPageChange = (page: number): void => {
-    updateFilters({ page });
-  };
-
-  const {
-    data: usersList,
-    isLoading: usersLoading,
-    isError,
-  } = useGetUsersQuery(filters, {
-    refetchOnMountOrArgChange: true,
-  });
+  const t = useTranslations('usersPage');
+  const { data: usersList, isLoading: usersLoading } = useGetUsersQuery(
+    filters,
+    { refetchOnMountOrArgChange: true },
+  );
   const { data: myProjectsList, isLoading: myProjectsLoading } =
     useGetMyProjectsQuery(user.id);
   const myProjects =
     myProjectsList?.projects.filter((project) => project.ownerId === user.id) ??
     [];
+  const { data: invites = [], isLoading: invitesLoading } =
+    useGetInvitesInMyProjectsQuery(user.id);
+  const { data: requests = [], isLoading: requestsLoading } =
+    useGetRequestsInMyProjectsQuery(user.id);
+  const isLoading =
+    usersLoading || myProjectsLoading || invitesLoading || requestsLoading;
 
-  useEffect(() => {
-    if (isError) {
-      showToast({
-        severity: 'error',
-        summary: 'Не вдалося завантажити учасників.',
-        life: 3000,
-        actionKey: ToastKeysEnum.USERS,
-      });
-    }
-  }, [isError]);
-
-  useEffect(() => {
-    if (!usersLoading && !isError && usersList?.users.length === 0) {
-      showToast({
-        severity: 'error',
-        summary: 'Немає учасників за цими критеріями.',
-        life: 3000,
-        actionKey: ToastKeysEnum.USERS,
-      });
-    }
-  }, [usersLoading, isError, usersList]);
+  const onPageChange = (page: number): void => {
+    updateFilters({ page });
+  };
 
   return (
     <div className={styles['users-client']}>
@@ -68,10 +51,7 @@ export default function UsersClient(): ReactElement {
           width={33}
           height={35}
         />
-        <h2 className={styles['users-client__title']}>
-          <span className={styles['users-client__green-text']}>[УЧАСНИКИ]</span>{' '}
-          платформи
-        </h2>
+        <h2 className={styles['users-client__title']}>{t('bannerName')}</h2>
         <Image
           className={`${styles['users-client__image']} ${styles['users-client__image--last']}`}
           src="/images/star.svg"
@@ -82,10 +62,15 @@ export default function UsersClient(): ReactElement {
       </div>
       <div className={styles['users-client__container']}>
         <UsersFilters />
-        {usersLoading || myProjectsLoading ? (
+        {isLoading ? (
           <ListSkeleton itemHeight={288} rows={10} />
         ) : usersList?.users.length ? (
-          <UsersList users={usersList.users} myProjects={myProjects} />
+          <UsersList
+            users={usersList.users}
+            myProjects={myProjects}
+            invites={invites}
+            requests={requests}
+          />
         ) : null}
         {!!usersList?.users.length && (
           <Pagination
