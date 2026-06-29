@@ -21,13 +21,6 @@ export default function DocsList(props: DocsListProps): ReactElement {
   const { docs, isOwner, addDoc, editDoc, deleteDoc } = props;
   const t = useTranslations('documents');
 
-  const handleClick = (): void => {
-    if (docs.length >= MAX_DOCS_COUNT) {
-      return;
-    }
-    addDoc();
-  };
-
   return (
     <div className={styles['docs-list']}>
       <div className={styles['docs-list__header']}>
@@ -39,13 +32,26 @@ export default function DocsList(props: DocsListProps): ReactElement {
       </div>
       <div className={styles['docs-list__list']}>
         {isOwner && (
-          <button className={styles['docs-list__button']} onClick={handleClick}>
-            <Image
-              src="/images/add-doc.svg"
-              alt="add-doc"
-              width={92}
-              height={102}
-            />
+          <button
+            className={styles['docs-list__button']}
+            disabled={docs.length >= MAX_DOCS_COUNT}
+            onClick={addDoc}
+          >
+            {docs.length < MAX_DOCS_COUNT ? (
+              <Image
+                src="/images/add-doc-green.svg"
+                alt="add-doc"
+                width={92}
+                height={102}
+              />
+            ) : (
+              <Image
+                src="/images/add-doc-gray.svg"
+                alt="add-doc"
+                width={92}
+                height={102}
+              />
+            )}
             <span className={styles['docs-list__button-text']}>
               {t('button')}
             </span>

@@ -1,9 +1,7 @@
 import {
-  Board,
   Project,
   ProjectCategory,
   ProjectRole,
-  Document,
   ProjectRoleType,
   User,
   ProjectCategoryTranslation,
@@ -12,7 +10,6 @@ import {
 import { ProjectResponseDto } from '../../projects/dto/project.response-dto';
 import { ProjectRoleMapper } from './project-role.mapper';
 import { ProjectCardResponseDto } from '../../projects/dto/project-card.response-dto';
-import { BoardMapper } from './board.mapper';
 import { ProjectCategoryMapper } from './project-category.mapper';
 import { ProjectLogoMapper } from './project-logo.mapper';
 import { UserMapper } from './user.mapper';
@@ -63,8 +60,6 @@ export class ProjectMapper {
         roleType: ProjectRoleType;
         users: (User & { desiredRoles: ProjectRoleType[] })[];
       })[];
-      documents: Document[];
-      boards: Board[];
       owner: User & { desiredRoles: ProjectRoleType[] };
     },
   ): ProjectResponseDto {
@@ -87,11 +82,9 @@ export class ProjectMapper {
       discordUrl: project.discordUrl,
       logo: project.logo ? ProjectLogoMapper.toResponse(project.logo) : null,
       publicUrl: project.publicUrl,
-      documents: project.documents,
       roles: project.roles.map((role) =>
         ProjectRoleMapper.toUserResponse(role),
       ),
-      boards: project.boards.map((board) => BoardMapper.toBaseResponse(board)),
     };
   }
 

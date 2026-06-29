@@ -22,7 +22,6 @@ export enum ToastKeysEnum {
   DELETE_SOCIAL = 'delete social',
   DELETE_SOFT_SKILL = 'delete soft skill',
   SAVE_CHANGES = 'save changes',
-  USERS = 'users',
   COPY = 'copy',
   UPLOAD_IMAGE = 'upload image',
   PROJECT = 'project',

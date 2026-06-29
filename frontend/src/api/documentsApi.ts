@@ -30,7 +30,7 @@ export const documentsApi = mainApi.injectEndpoints({
       query: ({ id, data }) => ({
         url: `documents/${id}`,
         method: 'PUT',
-        body: data,
+        body: { documentName: data.documentName, projectId: data.projectId },
       }),
       invalidatesTags: (_result, _error, { data }) => [
         { type: 'docs', id: data.projectId },
