@@ -55,6 +55,11 @@
       border-color: variables.$green-5;
       cursor: pointer;
     }
+
+    &:disabled {
+      color: variables.$gray-3;
+      border-color: variables.$gray-3;
+    }
   }
 
   &__button-text {

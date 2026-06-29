@@ -25,7 +25,7 @@ import { localeArray, LocaleType } from '../shared/types/locale.type';
 
 @Injectable()
 export class AuthService {
-  private EXPIRE_DAY_REFRESH_TOKEN = 7;
+  private EXPIRE_DAY_REFRESH_TOKEN = 1;
 
   private REFRESH_TOKEN_NAME = 'refreshToken';
 
@@ -584,6 +584,7 @@ export class AuthService {
             status: 'success',
             authType,
           });
+      console.log(returnUrl, safeReturnUrl);
 
       const redirectUrl = `${frontendBaseUrl}${safeReturnUrl}`;
 
@@ -678,6 +679,8 @@ export class AuthService {
 
             finalPath = `${nextUrlObj.pathname}${nextUrlObj.search}`;
           }
+        } else {
+          finalPath = '/';
         }
       }
 

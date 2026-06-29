@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ProjectStatus } from '@prisma/client';
 import { ProjectCategoryResponseDto } from './project-category.response-dto';
-import { ProjectRoleResponseDto } from '../../project-roles/dto/project-role.response-dto';
 import { ProjectLogoResponseDto } from './project-logo.response-dto';
+import { ProjectRoleWithUserResponseDto } from '../../project-roles/dto/project-role-with-user.response-dto';
 
 export class ProjectCardResponseDto {
   @ApiProperty({
@@ -64,6 +64,6 @@ export class ProjectCardResponseDto {
   @ApiProperty({ type: () => ProjectCategoryResponseDto })
   public readonly category: ProjectCategoryResponseDto;
 
-  @ApiProperty({ type: () => [ProjectRoleResponseDto] })
-  public readonly roles: ProjectRoleResponseDto[];
+  @ApiProperty({ type: () => [ProjectRoleWithUserResponseDto] })
+  public readonly roles: ProjectRoleWithUserResponseDto[];
 }
