@@ -363,10 +363,9 @@ export class UsersService {
           );
         });
 
-        const accessToken = req.cookies['accessToken'];
         const refreshToken = req.cookies['refreshToken'];
 
-        await this.authService.clearTokens(accessToken, refreshToken, res);
+        await this.authService.clearTokens(refreshToken, res);
 
         return { message: 'Email verified successfully' };
       } catch (error) {
