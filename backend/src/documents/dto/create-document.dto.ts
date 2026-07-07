@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsUrl, IsUUID, Length, Matches } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsUrl,
+  IsUUID,
+  Length,
+  Matches,
+} from 'class-validator';
 
 export class CreateDocumentDto {
   @ApiProperty({ example: 'Document name', description: 'Document name' })

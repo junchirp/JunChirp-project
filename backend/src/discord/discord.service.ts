@@ -8,7 +8,8 @@ import {
   GatewayIntentBits,
   Guild,
   ChannelType,
-  PermissionResolvable, TextChannel,
+  PermissionResolvable,
+  TextChannel,
 } from 'discord.js';
 import axios from 'axios';
 import { ConfigService } from '@nestjs/config';

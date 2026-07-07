@@ -45,7 +45,7 @@ export class ValidationPipe implements PipeTransform {
   private formatErrors(errors: ValidationError[]): string[] {
     const messages: string[] = [];
 
-    const parse = (error: ValidationError, parent?: string) => {
+    const parse = (error: ValidationError, parent?: string): void => {
       const property = parent ? `${parent}.${error.property}` : error.property;
 
       if (error.constraints) {

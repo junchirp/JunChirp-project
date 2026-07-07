@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Prisma, ProjectRoleType } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { ProjectRoleTypeResponseDto } from './dto/project-role-type.response-dto';
 import { isPrismaError } from 'src/shared/utils/is-prisma-error';
 import { ProjectRoleMapper } from '../shared/mappers/project-role.mapper';
