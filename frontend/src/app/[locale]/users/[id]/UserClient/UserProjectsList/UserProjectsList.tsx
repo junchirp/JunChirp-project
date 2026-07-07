@@ -73,7 +73,7 @@ export default function UserProjectsList({
     if (page !== 1) {
       setPage(1);
     } else {
-      refetch().then((res) => {
+      void refetch().then((res) => {
         if ('data' in res) {
           setAllProjects(res.data?.projects ?? []);
         }

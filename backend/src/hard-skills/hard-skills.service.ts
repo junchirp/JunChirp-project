@@ -13,7 +13,7 @@ import { isPrismaError } from '../shared/utils/is-prisma-error';
 
 @Injectable()
 export class HardSkillsService {
-  public constructor(private prisma: PrismaService) {}
+  public constructor(private readonly prisma: PrismaService) {}
 
   public async getHardSkillsAutocomplete(query: string): Promise<string[]> {
     const results = await this.prisma.hardSkill.findMany({

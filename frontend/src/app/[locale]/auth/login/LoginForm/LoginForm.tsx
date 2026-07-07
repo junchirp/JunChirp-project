@@ -10,7 +10,6 @@ import { useSearchParams } from 'next/navigation';
 import React, { ReactElement, useState } from 'react';
 import { useToast } from '@/hooks/useToast';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
-import { useLazyGetProjectRolesListQuery } from '@/api/projectRolesApi';
 import { useSupport } from '@/hooks/useSupport';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
@@ -33,7 +32,6 @@ export default function LoginForm(): ReactElement {
   const router = useRouter();
   const [login, { isLoading }] = useLoginMutation();
   const { showToast, isActive } = useToast();
-  const [loadRoles] = useLazyGetProjectRolesListQuery();
   const support = useSupport();
   const searchParams = useSearchParams();
 
@@ -52,7 +50,6 @@ export default function LoginForm(): ReactElement {
       if (isSafeNext) {
         router.replace(next);
       } else if (user.isVerified) {
-        loadRoles(undefined);
         router.replace('/');
       } else {
         router.replace('/confirm-email?type=login');

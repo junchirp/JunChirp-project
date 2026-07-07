@@ -31,7 +31,7 @@ import { UUIDParam } from '../shared/decorators/UUID-param.decorator';
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
 @Controller('tasks')
 export class TasksController {
-  public constructor(private tasksService: TasksService) {}
+  public constructor(private readonly tasksService: TasksService) {}
 
   @Member('body', 'taskStatusId', 'taskStatus')
   @ApiOperation({ summary: 'Create task' })

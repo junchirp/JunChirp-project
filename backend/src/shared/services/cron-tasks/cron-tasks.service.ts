@@ -4,7 +4,7 @@ import { PrismaService } from '../../../prisma/prisma.service';
 
 @Injectable()
 export class CronTasksService {
-  public constructor(private prisma: PrismaService) {}
+  public constructor(private readonly prisma: PrismaService) {}
 
   @Cron(CronExpression.EVERY_MINUTE)
   public async deleteEveryMinute(): Promise<void> {

@@ -35,6 +35,10 @@ const getShareLink = (platform: PlatformType, url: string): string => {
       return `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
     case 'telegram':
       return `https://t.me/share/url?url=${encodeURIComponent(url)}`;
+    case 'instagram':
+      return url;
+    case 'discord':
+      return url;
     default:
       return url;
   }

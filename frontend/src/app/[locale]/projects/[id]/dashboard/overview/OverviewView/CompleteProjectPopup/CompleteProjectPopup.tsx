@@ -6,9 +6,7 @@ import DialogHeader from '@/shared/components/Dialog/DialogHeader/DialogHeader';
 import DialogBody from '@/shared/components/Dialog/DialogBody/DialogBody';
 import DialogFooter from '@/shared/components/Dialog/DialogFooter/DialogFooter';
 import Button from '@/shared/components/Button/Button';
-import { ProjectInterface } from '@/shared/interfaces/project.interface';
 import { useTranslations } from 'next-intl';
-import styles from './LeaveProjectPopup.module.scss';
 
 interface CompleteProjectPopupProps {
   isOpen: boolean;

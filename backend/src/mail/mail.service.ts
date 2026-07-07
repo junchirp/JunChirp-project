@@ -29,9 +29,9 @@ export class MailService {
   private readonly oauth2Client: OAuth2Client;
 
   public constructor(
-    private configService: ConfigService,
-    private redisService: RedisService,
-    @InjectQueue('mail') private queue: Queue,
+    private readonly configService: ConfigService,
+    private readonly redisService: RedisService,
+    @InjectQueue('mail') private readonly queue: Queue,
   ) {
     this.oauth2Client = new google.auth.OAuth2(
       this.configService.get('GOOGLE_CLIENT_ID'),

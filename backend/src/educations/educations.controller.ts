@@ -32,7 +32,7 @@ import { UUIDParam } from '../shared/decorators/UUID-param.decorator';
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
 @Controller('educations')
 export class EducationsController {
-  public constructor(private educationsService: EducationsService) {}
+  public constructor(private readonly educationsService: EducationsService) {}
 
   @ApiOperation({ summary: 'Get list of institution names' })
   @ApiOkResponse({ type: [String] })

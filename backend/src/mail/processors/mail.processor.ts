@@ -4,7 +4,7 @@ import { MailService } from '../mail.service';
 
 @Processor('mail')
 export class MailProcessor {
-  public constructor(private mailService: MailService) {}
+  public constructor(private readonly mailService: MailService) {}
 
   @Process('mail')
   public async handleSendEmail(

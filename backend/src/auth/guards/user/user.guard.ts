@@ -10,7 +10,7 @@ import { USER_GUARD_KEY, UserCheckType } from '../../decorators/user.decorator';
 
 @Injectable()
 export class UserGuard implements CanActivate {
-  public constructor(private reflector: Reflector) {}
+  public constructor(private readonly reflector: Reflector) {}
 
   public async canActivate(context: ExecutionContext): Promise<boolean> {
     const check: UserCheckType =

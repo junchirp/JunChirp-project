@@ -12,7 +12,7 @@ import { MessageResponseDto } from '../users/dto/message.response-dto';
 
 @Controller('support')
 export class SupportController {
-  public constructor(private supportService: SupportService) {}
+  public constructor(private readonly supportService: SupportService) {}
 
   @ApiOperation({ summary: 'Create support request' })
   @ApiOkResponse({ type: MessageResponseDto })

@@ -1,4 +1,4 @@
-interface DeclineRequestDataInterface {
+export interface DeclineRequestDataInterface {
   id: string;
   userName: string;
   userId: string;

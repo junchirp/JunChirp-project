@@ -40,7 +40,7 @@ import { GoogleCallbackGuard } from './guards/google-callback/google-callback.gu
 @ApiTags('Authorization')
 @Controller('auth')
 export class AuthController {
-  public constructor(private authService: AuthService) {}
+  public constructor(private readonly authService: AuthService) {}
 
   @ApiOperation({ summary: 'Login' })
   @ApiOkResponse({ type: AuthResponseDto })

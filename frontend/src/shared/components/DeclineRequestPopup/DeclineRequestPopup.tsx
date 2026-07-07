@@ -8,6 +8,7 @@ import DialogHeader from '@/shared/components/Dialog/DialogHeader/DialogHeader';
 import DialogBody from '@/shared/components/Dialog/DialogBody/DialogBody';
 import DialogFooter from '@/shared/components/Dialog/DialogFooter/DialogFooter';
 import Dialog from '@/shared/components/Dialog/Dialog';
+import { DeclineRequestDataInterface } from '@/shared/interfaces/decline-request-data.interface';
 
 interface DeclineRequestPopupProps {
   data: DeclineRequestDataInterface;

@@ -59,9 +59,12 @@ export default function BurgerMenu({
     closeMenu();
   };
 
-  const handleLogout = (): void => {
-    logoutMutation(undefined);
-    closeMenu();
+  const handleLogout = async (): Promise<void> => {
+    try {
+      await logoutMutation().unwrap();
+    } finally {
+      closeMenu();
+    }
   };
 
   return (

@@ -5,7 +5,7 @@ import { RedisService } from '../../../redis/redis.service';
 
 @Injectable()
 export class DiscordInitGuard extends AuthGuard('discord') {
-  public constructor(private redisService: RedisService) {
+  public constructor(private readonly redisService: RedisService) {
     super();
   }
 

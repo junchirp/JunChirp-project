@@ -23,6 +23,9 @@ export default defineConfig({
     '@stylistic': stylistic,
   },
   rules: {
+    '@typescript-eslint/no-floating-promises': 'error',
+    '@typescript-eslint/switch-exhaustiveness-check': 'error',
+    '@typescript-eslint/prefer-readonly': 'error',
     '@typescript-eslint/prefer-nullish-coalescing': 'error',
     '@typescript-eslint/prefer-includes': 'error',
     '@typescript-eslint/no-implied-eval': 'error',
@@ -35,7 +38,11 @@ export default defineConfig({
     '@typescript-eslint/prefer-optional-chain': 'error',
     '@typescript-eslint/no-unused-vars': [
       'error',
-      { argsIgnorePattern: '^_', ignoreRestSiblings: true },
+      {
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        ignoreRestSiblings: true,
+      },
     ],
     '@typescript-eslint/naming-convention': [
       'error',

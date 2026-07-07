@@ -104,7 +104,9 @@ export default function MultiSelectWithChips<T>(
   const buttonClassNames = [
     styles['multi-select-with-chips__button'],
     isOpen && styles['multi-select-with-chips__button--focused'],
-    withError && errorMessage && styles['multi-select-with-chips__button--invalid'],
+    withError &&
+      errorMessage &&
+      styles['multi-select-with-chips__button--invalid'],
   ]
     .filter(Boolean)
     .join(' ');

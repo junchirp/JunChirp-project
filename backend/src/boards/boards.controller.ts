@@ -35,7 +35,7 @@ import { UUIDParam } from '../shared/decorators/UUID-param.decorator';
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
 @Controller('boards')
 export class BoardsController {
-  public constructor(private boardsService: BoardsService) {}
+  public constructor(private readonly boardsService: BoardsService) {}
 
   @Owner('body', 'projectId', 'project')
   @ApiOperation({ summary: 'Add board' })

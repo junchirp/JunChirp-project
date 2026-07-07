@@ -26,24 +26,24 @@ import { TokenPayloadInterface } from '../shared/interfaces/token-payload.interf
 
 @Injectable()
 export class AuthService {
-  private EXPIRE_DAY_REFRESH_TOKEN = 1;
+  private readonly EXPIRE_DAY_REFRESH_TOKEN = 1;
 
-  private EXPIRE_MINUTES_ACCESS_TOKEN = 5;
+  private readonly EXPIRE_MINUTES_ACCESS_TOKEN = 5;
 
-  private REFRESH_TOKEN_NAME = 'refreshToken';
+  private readonly REFRESH_TOKEN_NAME = 'refreshToken';
 
-  private ACCESS_TOKEN_NAME = 'accessToken';
+  private readonly ACCESS_TOKEN_NAME = 'accessToken';
 
   public constructor(
     @Inject(forwardRef(() => UsersService))
-    private usersService: UsersService,
-    private mailService: MailService,
-    private configService: ConfigService,
-    private jwtService: JwtService,
-    private prisma: PrismaService,
-    private redisService: RedisService,
-    private loggerService: LoggerService,
-    private discordService: DiscordService,
+    private readonly usersService: UsersService,
+    private readonly mailService: MailService,
+    private readonly configService: ConfigService,
+    private readonly jwtService: JwtService,
+    private readonly prisma: PrismaService,
+    private readonly redisService: RedisService,
+    private readonly loggerService: LoggerService,
+    private readonly discordService: DiscordService,
   ) {}
 
   public async validateUser(

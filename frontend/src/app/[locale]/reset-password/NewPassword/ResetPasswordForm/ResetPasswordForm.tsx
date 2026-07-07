@@ -69,7 +69,7 @@ export default function ResetPasswordForm({
 
   useEffect(() => {
     if (dirtyFields.confirmPassword || dirtyFields.password) {
-      trigger();
+      void trigger();
     }
   }, [password, trigger, dirtyFields.confirmPassword, dirtyFields.password]);
 

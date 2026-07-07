@@ -32,7 +32,7 @@ import { UUIDParam } from 'src/shared/decorators/UUID-param.decorator';
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
 @Controller('hard-skills')
 export class HardSkillsController {
-  public constructor(private hardSkillsService: HardSkillsService) {}
+  public constructor(private readonly hardSkillsService: HardSkillsService) {}
 
   @ApiOperation({ summary: 'Get list of hard skills names' })
   @ApiOkResponse({ type: [String] })

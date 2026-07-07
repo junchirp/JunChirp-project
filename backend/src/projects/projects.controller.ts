@@ -55,7 +55,7 @@ import { DocumentResponseDto } from '../documents/dto/document.response-dto';
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
 @Controller('projects')
 export class ProjectsController {
-  public constructor(private projectsService: ProjectsService) {}
+  public constructor(private readonly projectsService: ProjectsService) {}
 
   @ApiOperation({ summary: 'Get array of project categories' })
   @ApiOkResponse({ type: [ProjectCategoryResponseDto] })

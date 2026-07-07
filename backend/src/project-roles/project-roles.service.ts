@@ -14,7 +14,7 @@ import { ProjectRoleResponseDto } from './dto/project-role.response-dto';
 
 @Injectable()
 export class ProjectRolesService {
-  public constructor(private prisma: PrismaService) {}
+  public constructor(private readonly prisma: PrismaService) {}
 
   public async getProjectRoleTypes(): Promise<ProjectRoleTypeResponseDto[]> {
     return this.prisma.projectRoleType.findMany({

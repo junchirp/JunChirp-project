@@ -189,7 +189,6 @@ export const projectsApi = mainApi.injectEndpoints({
 export const {
   useGetProjectsQuery,
   useGetCategoriesQuery,
-  useLazyGetCategoriesQuery,
   useGetProjectCardByIdQuery,
   useGetProjectByIdQuery,
   useCreateProjectMutation,

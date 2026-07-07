@@ -12,8 +12,8 @@ import * as sanitizeHtml from 'sanitize-html';
 @Injectable()
 export class SupportService {
   public constructor(
-    private prisma: PrismaService,
-    private mailService: MailService,
+    private readonly prisma: PrismaService,
+    private readonly mailService: MailService,
   ) {}
 
   public async createSupportRequest(

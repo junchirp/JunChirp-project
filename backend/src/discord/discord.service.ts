@@ -18,17 +18,17 @@ import { ConfigService } from '@nestjs/config';
 export class DiscordService implements OnModuleInit {
   private client: Client;
 
-  private guildId: string = this.configService.get<string>(
+  private readonly guildId: string = this.configService.get<string>(
     'DISCORD_GUILD_ID',
   ) as string;
 
   private guild: Guild;
 
-  private botToken: string = this.configService.get<string>(
+  private readonly botToken: string = this.configService.get<string>(
     'DISCORD_BOT_TOKEN',
   ) as string;
 
-  public constructor(private configService: ConfigService) {}
+  public constructor(private readonly configService: ConfigService) {}
 
   public async onModuleInit(): Promise<void> {
     this.client = new Client({

@@ -23,7 +23,7 @@ import { UUIDParam } from '../shared/decorators/UUID-param.decorator';
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
 @Controller('socials')
 export class SocialsController {
-  public constructor(private socialsService: SocialsService) {}
+  public constructor(private readonly socialsService: SocialsService) {}
 
   @ApiOperation({ summary: 'Get list of social networks' })
   @ApiOkResponse({ type: [SocialResponseDto] })

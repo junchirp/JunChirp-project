@@ -42,13 +42,13 @@ interface GetProjectsOptionsInterface {
 @Injectable()
 export class ProjectsService {
   public constructor(
-    private prisma: PrismaService,
-    private cloudinaryService: CloudinaryService,
-    private projectRolesService: ProjectRolesService,
-    private participationsService: ParticipationsService,
-    private discordService: DiscordService,
+    private readonly prisma: PrismaService,
+    private readonly cloudinaryService: CloudinaryService,
+    private readonly projectRolesService: ProjectRolesService,
+    private readonly participationsService: ParticipationsService,
+    private readonly discordService: DiscordService,
     @Inject(forwardRef(() => UsersService))
-    private usersService: UsersService,
+    private readonly usersService: UsersService,
   ) {}
 
   public async getCategories(): Promise<ProjectCategoryResponseDto[]> {
@@ -358,16 +358,19 @@ export class ProjectsService {
 
       return ProjectMapper.toFullResponse(updatedProject);
     } catch (error) {
-      switch (isPrismaError(error) && error.code) {
-        case 'P2003':
-          throw new BadRequestException(
-            'Some role type IDs or category ID are invalid',
-          );
-        case 'P2025':
-          throw new NotFoundException('Project not found');
-        default:
-          throw error;
+      if (isPrismaError(error)) {
+        switch (error.code) {
+          case 'P2003':
+            throw new BadRequestException(
+              'Some role type IDs or category ID are invalid',
+            );
+          case 'P2025':
+            throw new NotFoundException('Project not found');
+          default:
+            throw error;
+        }
       }
+      throw error;
     }
   }
 

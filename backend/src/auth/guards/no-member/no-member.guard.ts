@@ -9,7 +9,7 @@ import { PrismaService } from '../../../prisma/prisma.service';
 
 @Injectable()
 export class NoMemberGuard implements CanActivate {
-  public constructor(private prisma: PrismaService) {}
+  public constructor(private readonly prisma: PrismaService) {}
 
   public async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();

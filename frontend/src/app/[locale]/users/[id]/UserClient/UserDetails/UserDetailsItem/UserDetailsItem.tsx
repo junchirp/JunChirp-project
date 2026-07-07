@@ -11,7 +11,6 @@ import {
 import { socialNetworks } from '@/shared/constants/social-networks';
 import styles from './UserDetailsItem.module.scss';
 import Image from 'next/image';
-import { Link } from '@/i18n/routing';
 
 interface UserDetailItemProps<T> {
   item: T;

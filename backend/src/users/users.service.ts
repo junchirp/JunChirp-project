@@ -53,15 +53,15 @@ interface GetUsersOptionsInterface {
 @Injectable()
 export class UsersService {
   public constructor(
-    private prisma: PrismaService,
-    private configService: ConfigService,
-    private mailService: MailService,
-    private rolesService: RolesService,
-    private cloudinaryService: CloudinaryService,
-    private projectsService: ProjectsService,
-    private participationsService: ParticipationsService,
-    private loggerService: LoggerService,
-    private authService: AuthService,
+    private readonly prisma: PrismaService,
+    private readonly configService: ConfigService,
+    private readonly mailService: MailService,
+    private readonly rolesService: RolesService,
+    private readonly cloudinaryService: CloudinaryService,
+    private readonly projectsService: ProjectsService,
+    private readonly participationsService: ParticipationsService,
+    private readonly loggerService: LoggerService,
+    private readonly authService: AuthService,
   ) {}
 
   public async createUser(
@@ -678,9 +678,10 @@ export class UsersService {
         switch (error.code) {
           case 'P2025':
             throw new NotFoundException('User not found');
-
           case 'P2002':
             throw new ConflictException('Email is already in use');
+          default:
+            throw error;
         }
       }
 

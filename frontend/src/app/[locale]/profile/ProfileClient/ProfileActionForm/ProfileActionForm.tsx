@@ -56,6 +56,10 @@ export default function ProfileActionForm(
       content = <UserNameForm initialValues={user} onCancel={onCancel} />;
       break;
     }
+    case undefined: {
+      content = <></>;
+      break;
+    }
     default: {
       content = allField ? (
         <p className={styles['profile-action-form__text']}>

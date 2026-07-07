@@ -30,7 +30,9 @@ import { UUIDParam } from '../shared/decorators/UUID-param.decorator';
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
 @Controller('project-roles')
 export class ProjectRolesController {
-  public constructor(private projectRolesService: ProjectRolesService) {}
+  public constructor(
+    private readonly projectRolesService: ProjectRolesService,
+  ) {}
 
   @ApiOperation({
     summary: 'Get array of all project roles available on the platform',
