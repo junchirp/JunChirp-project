@@ -144,4 +144,10 @@ export default defineConfig({
     curly: 'error',
     eqeqeq: ['error', 'smart'],
   },
+  ignores: [
+    '.next/**',
+    'out/**',
+    'build/**',
+    'next-env.d.ts',
+  ]
 });
