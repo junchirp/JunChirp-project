@@ -15,7 +15,7 @@ import { isPrismaError } from '../shared/utils/is-prisma-error';
 
 @Injectable()
 export class BoardsService {
-  public constructor(private prisma: PrismaService) {}
+  public constructor(private readonly prisma: PrismaService) {}
 
   public async addBoard(
     createBoardDto: CreateBoardDto,

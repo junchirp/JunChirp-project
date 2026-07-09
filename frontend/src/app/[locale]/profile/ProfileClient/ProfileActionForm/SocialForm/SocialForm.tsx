@@ -76,7 +76,7 @@ export default function SocialForm(props: SocialFormProps): ReactElement {
   useEffect(() => {
     const subscription = watch((_, { name }) => {
       if (name === 'network') {
-        trigger('url');
+        void trigger('url');
       }
     });
     return (): void => subscription.unsubscribe();

@@ -40,7 +40,7 @@ import { GoogleCallbackGuard } from './guards/google-callback/google-callback.gu
 @ApiTags('Authorization')
 @Controller('auth')
 export class AuthController {
-  public constructor(private authService: AuthService) {}
+  public constructor(private readonly authService: AuthService) {}
 
   @ApiOperation({ summary: 'Login' })
   @ApiOkResponse({ type: AuthResponseDto })
@@ -99,13 +99,12 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ): Promise<void> {
-    return this.authService.regenerateAccessToken(req, res);
+    return this.authService.regenerateTokens(req, res);
   }
 
   @Auth()
   @ApiOperation({ summary: 'Logout' })
   @ApiOkResponse({ type: MessageResponseDto })
-  @ApiUnauthorizedResponse({ description: 'Token is invalid' })
   @ApiForbiddenResponse({ description: 'Invalid CSRF token' })
   @ApiHeader({
     name: 'x-csrf-token',

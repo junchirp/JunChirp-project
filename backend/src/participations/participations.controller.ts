@@ -37,7 +37,9 @@ import { CurrentUser } from '../shared/decorators/current-user.decorator';
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
 @Controller('participations')
 export class ParticipationsController {
-  public constructor(private participationsService: ParticipationsService) {}
+  public constructor(
+    private readonly participationsService: ParticipationsService,
+  ) {}
 
   @Owner('body', 'projectId', 'project')
   @ApiOperation({ summary: 'Create invite (owner)' })

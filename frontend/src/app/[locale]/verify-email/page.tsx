@@ -6,39 +6,38 @@ import { useSearchParams } from 'next/navigation';
 import { useRouter } from '@/i18n/routing';
 import { useConfirmEmailMutation } from '@/api/authApi';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
-import { SerializedError } from '@reduxjs/toolkit';
 import styles from './page.module.scss';
 
 export default function VerifyEmail(): ReactElement {
   const searchParams = useSearchParams();
   const router = useRouter();
   const token = searchParams.get('token') ?? '';
-  const [verifyEmail, { isError, isSuccess, error }] =
-    useConfirmEmailMutation();
+  const [verifyEmail] = useConfirmEmailMutation();
 
   useEffect(() => {
-    verifyEmail({ token });
-  }, [verifyEmail]);
-
-  useEffect(() => {
-    if (isSuccess) {
-      router.push('/verify-email/success');
-    } else if (isError) {
-      const errorData = error as (FetchBaseQueryError | SerializedError) & {
-        status?: number;
-        data: {
-          error?: string;
+    const verify = async (): Promise<void> => {
+      try {
+        await verifyEmail({ token }).unwrap();
+        router.push('/verify-email/success');
+      } catch (err) {
+        const error = err as FetchBaseQueryError & {
+          data?: {
+            error?: string;
+          };
         };
-      };
-      const resStatus = errorData.status;
 
-      if (resStatus === 400 && errorData.data.error !== 'Validation Error') {
-        router.push(`/verify-email/invalid?token=${encodeURIComponent(token)}`);
-      } else {
-        router.push(`/verify-email/deleted`);
+        if (error.status === 400 && error.data?.error !== 'Validation Error') {
+          router.push(
+            `/verify-email/invalid?token=${encodeURIComponent(token)}`,
+          );
+        } else {
+          router.push('/verify-email/deleted');
+        }
       }
-    }
-  }, [isSuccess, isError, error]);
+    };
+
+    void verify();
+  }, [token, verifyEmail, router]);
 
   return (
     <div className={styles['verify-email']}>

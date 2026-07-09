@@ -35,7 +35,7 @@ import { UUIDParam } from '../shared/decorators/UUID-param.decorator';
 })
 @Controller('documents')
 export class DocumentsController {
-  public constructor(private documentsService: DocumentsService) {}
+  public constructor(private readonly documentsService: DocumentsService) {}
 
   @Owner('body', 'projectId', 'project')
   @ApiOperation({ summary: 'Add document' })

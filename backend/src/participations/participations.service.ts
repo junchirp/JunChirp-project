@@ -24,12 +24,12 @@ import { isPrismaError } from '../shared/utils/is-prisma-error';
 @Injectable()
 export class ParticipationsService {
   public constructor(
-    private prisma: PrismaService,
-    private mailService: MailService,
-    private configService: ConfigService,
-    private discordService: DiscordService,
+    private readonly prisma: PrismaService,
+    private readonly mailService: MailService,
+    private readonly configService: ConfigService,
+    private readonly discordService: DiscordService,
     @Inject(forwardRef(() => UsersService))
-    private usersService: UsersService,
+    private readonly usersService: UsersService,
   ) {}
 
   public async createInvite(

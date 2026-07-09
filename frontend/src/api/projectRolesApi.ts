@@ -60,7 +60,6 @@ export const projectRolesApi = mainApi.injectEndpoints({
 });
 
 export const {
-  useLazyGetProjectRolesListQuery,
   useGetProjectRolesListQuery,
   useAddProjectRoleMutation,
   useAddSlotMutation,

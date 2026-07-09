@@ -21,15 +21,15 @@ export class RedisService {
     await this.redis.del(key);
   }
 
-  public async addToBlacklist(token: string, ttl: number): Promise<void> {
-    await this.set(token, 'blacklisted', ttl);
-  }
-
-  public async isBlacklisted(token: string): Promise<boolean> {
-    return (await this.redis.get(token)) !== null;
-  }
-
   public async addGmailAccessToken(token: string, ttl: number): Promise<void> {
     await this.set('gmail_access_token', token, ttl);
+  }
+
+  public async addToWhitelist(jti: string, ttl: number): Promise<void> {
+    await this.set(jti, 'whitelisted', ttl);
+  }
+
+  public async isTokenValid(jti: string): Promise<boolean> {
+    return (await this.redis.get(jti)) !== null;
   }
 }

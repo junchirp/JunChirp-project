@@ -90,7 +90,7 @@ function AutocompleteComponent(
 
     let cancelled = false;
 
-    (async (): Promise<void> => {
+    void (async (): Promise<void> => {
       try {
         const result = await fetcher(query);
         if (cancelled) {

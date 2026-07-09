@@ -2,7 +2,7 @@ import { ReactElement, ReactNode } from 'react';
 import Header from './Header/Header';
 import styles from './BaseLayout.module.scss';
 import ReduxProvider from '@/providers/ReduxProvider';
-import DataLoader from './DataLoader/DataLoader';
+import UserLoader from '@/shared/components/BaseLayout/UserLoader/UserLoader';
 import { PrimeReactProvider } from 'primereact/api';
 import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
@@ -32,7 +32,7 @@ export default function BaseLayout({
             <PrimeReactProvider>
               <MessageProvider>
                 <SupportProvider>
-                  <DataLoader />
+                  <UserLoader />
                   <OAuthDiscordHandler />
                   <OAuthGoogleHandler />
                   <div className={styles.body__container}>

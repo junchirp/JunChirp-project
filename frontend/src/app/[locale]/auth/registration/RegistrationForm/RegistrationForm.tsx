@@ -64,12 +64,12 @@ export default function RegistrationForm(): ReactElement {
 
   useEffect(() => {
     if (dirtyFields.confirmPassword) {
-      trigger('confirmPassword');
+      void trigger('confirmPassword');
     }
   }, [password, trigger, dirtyFields.confirmPassword]);
 
   useEffect(() => {
-    trigger('password');
+    void trigger('password');
   }, [firstName, lastName, trigger]);
 
   const router = useRouter();

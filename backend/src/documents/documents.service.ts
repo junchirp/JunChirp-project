@@ -13,7 +13,7 @@ import { isPrismaError } from '../shared/utils/is-prisma-error';
 
 @Injectable()
 export class DocumentsService {
-  public constructor(private prisma: PrismaService) {}
+  public constructor(private readonly prisma: PrismaService) {}
 
   public async addDocument(
     createDocumentDto: CreateDocumentDto,

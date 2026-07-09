@@ -1,0 +1,154 @@
+// @ts-check
+
+import js from '@eslint/js';
+import { defineConfig } from 'eslint/config';
+import tseslint from 'typescript-eslint';
+import prettierRecommended from 'eslint-plugin-prettier/recommended';
+import stylistic from '@stylistic/eslint-plugin';
+import nextPlugin from '@next/eslint-plugin-next';
+
+export default defineConfig({
+  ignores: [
+    '**/.next/**',
+    '**/out/**',
+    '**/build/**',
+    '**/next-env.d.ts',
+  ]
+}, {
+  files: ['**/*.{ts,tsx}'],
+  extends: [
+    js.configs.recommended,
+    tseslint.configs.recommended,
+    tseslint.configs.stylistic,
+    prettierRecommended,
+  ],
+  languageOptions: {
+    parserOptions: {
+      projectService: true,
+    },
+  },
+  plugins: {
+    '@stylistic': stylistic,
+    '@next/next': nextPlugin,
+  },
+  rules: {
+    ...nextPlugin.configs['core-web-vitals'].rules,
+    '@typescript-eslint/no-floating-promises': 'error',
+    '@typescript-eslint/switch-exhaustiveness-check': 'error',
+    '@typescript-eslint/prefer-readonly': 'error',
+    '@typescript-eslint/prefer-nullish-coalescing': 'error',
+    '@typescript-eslint/prefer-includes': 'error',
+    '@typescript-eslint/no-implied-eval': 'error',
+    '@typescript-eslint/no-for-in-array': 'error',
+    '@typescript-eslint/no-duplicate-type-constituents': 'error',
+    '@typescript-eslint/explicit-member-accessibility': 'error',
+    '@typescript-eslint/no-duplicate-enum-values': 'off',
+    '@typescript-eslint/explicit-function-return-type': 'error',
+    '@typescript-eslint/no-mixed-enums': 'error',
+    '@typescript-eslint/prefer-optional-chain': 'error',
+    '@typescript-eslint/no-unused-vars': [
+      'error',
+      {
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        ignoreRestSiblings: true,
+      },
+    ],
+    '@typescript-eslint/naming-convention': [
+      'error',
+      {
+        selector: 'variable',
+        format: ['camelCase', 'UPPER_CASE', 'PascalCase'],
+      },
+      {
+        selector: 'function',
+        format: ['camelCase', 'PascalCase'],
+      },
+      {
+        selector: 'typeLike',
+        format: ['PascalCase'],
+      },
+    ],
+    '@stylistic/comma-dangle': [
+      'error',
+      {
+        arrays: 'always-multiline',
+        objects: 'always-multiline',
+        imports: 'always-multiline',
+        exports: 'always-multiline',
+        functions: 'always-multiline',
+        importAttributes: 'never',
+        dynamicImports: 'never',
+        enums: 'always-multiline',
+        generics: 'always-multiline',
+      },
+    ],
+    '@stylistic/comma-spacing': 'error',
+    '@stylistic/no-extra-semi': 'error',
+    '@typescript-eslint/no-loop-func': 'error',
+    '@typescript-eslint/no-magic-numbers': [
+      'error',
+      {
+        ignore: [
+          -1, 0, 0.4, 0.45, 0.5, 0.55, 0.9, 1, 1.2, 1.4, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+          15, 16, 20, 24, 32, 50, 60, 80, 84, 100, 200, 254, 255, 400, 401, 403, 404, 409, 429, 500,
+          600, 1000, 1024, 3000, 3600, 10000,
+        ],
+      },
+    ],
+    '@typescript-eslint/no-shadow': 'error',
+    '@typescript-eslint/no-unused-expressions': 'error',
+    '@typescript-eslint/no-use-before-define': [
+      'error',
+      {
+        functions: true,
+        classes: true,
+        variables: true,
+        allowNamedExports: false,
+      },
+    ],
+    '@typescript-eslint/no-useless-constructor': 'error',
+    '@typescript-eslint/no-non-null-assertion': 'error',
+    '@stylistic/quotes': [
+      'error',
+      'single',
+      { allowTemplateLiterals: 'always' },
+    ],
+    '@typescript-eslint/no-empty-function': [
+      'error',
+      {
+        allow: ['arrowFunctions'],
+      },
+    ],
+    '@stylistic/function-call-spacing': 'error',
+    '@stylistic/keyword-spacing': 'error',
+    '@stylistic/lines-between-class-members': [
+      'error',
+      'always',
+      { exceptAfterOverload: false },
+    ],
+    '@stylistic/space-before-blocks': 'error',
+    '@stylistic/semi': 'error',
+    '@stylistic/space-before-function-paren': [
+      'error',
+      { anonymous: 'always', named: 'never', asyncArrow: 'always' },
+    ],
+    '@stylistic/space-infix-ops': ['error', { int32Hint: false }],
+    '@stylistic/object-curly-spacing': ['error', 'always'],
+    'prettier/prettier': [
+      'error',
+      {
+        endOfLine: 'lf',
+        trailingComma: 'all',
+      },
+    ],
+    'class-methods-use-this': 'off',
+    'no-var': 'error',
+    'no-debugger': 'error',
+    'no-duplicate-imports': 'error',
+    'no-duplicate-case': 'error',
+    'prefer-const': 'error',
+    curly: 'error',
+    eqeqeq: ['error', 'smart'],
+  },
+});

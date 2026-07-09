@@ -29,9 +29,9 @@ export class MailService {
   private readonly oauth2Client: OAuth2Client;
 
   public constructor(
-    private configService: ConfigService,
-    private redisService: RedisService,
-    @InjectQueue('mail') private queue: Queue,
+    private readonly configService: ConfigService,
+    private readonly redisService: RedisService,
+    @InjectQueue('mail') private readonly queue: Queue,
   ) {
     this.oauth2Client = new google.auth.OAuth2(
       this.configService.get('GOOGLE_CLIENT_ID'),
@@ -93,10 +93,11 @@ export class MailService {
       return response.data;
     } catch (error) {
       if (error instanceof GaxiosError && error.response?.data) {
-        throw new Error(`Response data: ${error.response.data}`);
+        throw new Error(`Response data: ${String(error.response.data)}`, {
+          cause: error,
+        });
       }
-      const message = error instanceof Error ? error.message : String(error);
-      throw Error(message);
+      throw error;
     }
   }
 

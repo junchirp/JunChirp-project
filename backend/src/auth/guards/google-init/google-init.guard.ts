@@ -5,7 +5,7 @@ import { RedisService } from '../../../redis/redis.service';
 
 @Injectable()
 export class GoogleInitGuard extends AuthGuard('google') {
-  public constructor(private redisService: RedisService) {
+  public constructor(private readonly redisService: RedisService) {
     super({
       accessType: 'offline',
       prompt: 'select_account',

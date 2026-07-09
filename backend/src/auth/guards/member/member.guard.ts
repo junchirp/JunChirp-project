@@ -17,8 +17,8 @@ import {
 @Injectable()
 export class MemberGuard implements CanActivate {
   public constructor(
-    private prisma: PrismaService,
-    private reflector: Reflector,
+    private readonly prisma: PrismaService,
+    private readonly reflector: Reflector,
   ) {}
 
   public async canActivate(context: ExecutionContext): Promise<boolean> {

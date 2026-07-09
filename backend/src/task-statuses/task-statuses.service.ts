@@ -15,8 +15,8 @@ import { isPrismaError } from '../shared/utils/is-prisma-error';
 @Injectable()
 export class TaskStatusesService {
   public constructor(
-    private prisma: PrismaService,
-    private boardsService: BoardsService,
+    private readonly prisma: PrismaService,
+    private readonly boardsService: BoardsService,
   ) {}
 
   public async addTaskStatus(

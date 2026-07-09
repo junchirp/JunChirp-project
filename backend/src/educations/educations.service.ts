@@ -13,7 +13,7 @@ import { isPrismaError } from '../shared/utils/is-prisma-error';
 
 @Injectable()
 export class EducationsService {
-  public constructor(private prisma: PrismaService) {}
+  public constructor(private readonly prisma: PrismaService) {}
 
   public async getInstitutionsAutocomplete(query: string): Promise<string[]> {
     const results = await this.prisma.institution.findMany({

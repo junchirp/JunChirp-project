@@ -53,7 +53,7 @@ import { RequestResetPasswordDto } from './dto/request-reset-password.dto';
 
 @Controller('users')
 export class UsersController {
-  public constructor(private usersService: UsersService) {}
+  public constructor(private readonly usersService: UsersService) {}
 
   @ApiOperation({ summary: 'Resend confirmation email' })
   @ApiOkResponse({ type: MessageResponseDto })

@@ -9,7 +9,7 @@ import { isPrismaError } from '../shared/utils/is-prisma-error';
 
 @Injectable()
 export class TasksService {
-  public constructor(private prisma: PrismaService) {}
+  public constructor(private readonly prisma: PrismaService) {}
 
   public async createTask(
     createTaskDto: CreateTaskDto,

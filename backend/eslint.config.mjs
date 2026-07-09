@@ -1,38 +1,31 @@
-const eslint = require('@eslint/js');
-const tseslint = require('typescript-eslint');
-const eslintPluginPrettierRecommended = require('eslint-plugin-prettier/recommended');
-const stylistic = require('@stylistic/eslint-plugin');
-const typescriptEslintPlugin = require('@typescript-eslint/eslint-plugin');
-const nextPlugin = require('@next/eslint-plugin-next');
+// @ts-check
 
-module.exports = tseslint.config({
-  files: ['**/*.{js,ts,jsx,tsx}'],
-  ignores: ['node_modules', '.next', 'dist'],
+import js from '@eslint/js';
+import { defineConfig } from 'eslint/config';
+import tseslint from 'typescript-eslint';
+import prettierRecommended from 'eslint-plugin-prettier/recommended';
+import stylistic from '@stylistic/eslint-plugin';
+
+export default defineConfig({
+  files: ['**/*.ts'],
+  extends: [
+    js.configs.recommended,
+    tseslint.configs.recommended,
+    tseslint.configs.stylistic,
+    prettierRecommended,
+  ],
   languageOptions: {
-    parser: require('@typescript-eslint/parser'),
     parserOptions: {
-      ecmaVersion: 'latest',
-      sourceType: 'module',
-      project: './tsconfig.json',
-      tsconfigRootDir: __dirname,
-      ecmaFeatures: {
-        jsx: true,
-      },
+      projectService: true,
     },
   },
-  extends: [
-    eslint.configs.recommended,
-    ...tseslint.configs.recommended,
-    ...tseslint.configs.stylistic,
-    eslintPluginPrettierRecommended,
-  ],
   plugins: {
-    '@typescript-eslint/eslint-plugin': typescriptEslintPlugin,
     '@stylistic': stylistic,
-    '@next/next': nextPlugin,
   },
   rules: {
-    ...nextPlugin.configs.recommended.rules,
+    '@typescript-eslint/no-floating-promises': 'error',
+    '@typescript-eslint/switch-exhaustiveness-check': 'error',
+    '@typescript-eslint/prefer-readonly': 'error',
     '@typescript-eslint/prefer-nullish-coalescing': 'error',
     '@typescript-eslint/prefer-includes': 'error',
     '@typescript-eslint/no-implied-eval': 'error',
@@ -43,7 +36,14 @@ module.exports = tseslint.config({
     '@typescript-eslint/explicit-function-return-type': 'error',
     '@typescript-eslint/no-mixed-enums': 'error',
     '@typescript-eslint/prefer-optional-chain': 'error',
-    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    '@typescript-eslint/no-unused-vars': [
+      'error',
+      {
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        ignoreRestSiblings: true,
+      },
+    ],
     '@typescript-eslint/naming-convention': [
       'error',
       {
@@ -79,9 +79,9 @@ module.exports = tseslint.config({
       'error',
       {
         ignore: [
-          -1, 0, 0.4, 0.45, 0.5, 0.55, 0.9, 1, 1.2, 1.4, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
-          15, 16, 20, 24, 32, 50, 60, 80, 84, 100, 200, 254, 255, 400, 401, 403, 404, 409, 429, 500,
-          600, 1000, 1024, 3000, 3600, 10000,
+          -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 15, 20, 24, 30, 32, 50, 60,
+          100, 200, 254, 255, 300, 365, 465, 500, 503, 1000, 1024, 3000, 3600,
+          6379, 100000, 999999,
         ],
       },
     ],
@@ -131,10 +131,6 @@ module.exports = tseslint.config({
         trailingComma: 'all',
       },
     ],
-    'import/extensions': 'off',
-    'import/no-extraneous-dependencies': 'off',
-    'import/no-unresolved': 'off',
-    'import/prefer-default-export': 'off',
     'class-methods-use-this': 'off',
     'no-var': 'error',
     'no-debugger': 'error',
@@ -143,10 +139,5 @@ module.exports = tseslint.config({
     'prefer-const': 'error',
     curly: 'error',
     eqeqeq: ['error', 'smart'],
-  },
-  settings: {
-    react: {
-      version: 'detect',
-    },
   },
 });

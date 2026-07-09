@@ -35,7 +35,9 @@ import { UUIDParam } from '../shared/decorators/UUID-param.decorator';
 })
 @Controller('task-statuses')
 export class TaskStatusesController {
-  public constructor(private taskStatusesService: TaskStatusesService) {}
+  public constructor(
+    private readonly taskStatusesService: TaskStatusesService,
+  ) {}
 
   @Owner('body', 'boardId', 'board')
   @ApiOperation({ summary: 'Add task status' })

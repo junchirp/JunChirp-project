@@ -9,7 +9,7 @@ import { LoginDto } from './dto/login.dto';
 import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
+import { JsonWebTokenError, JwtService, TokenExpiredError } from '@nestjs/jwt';
 import { Request, Response } from 'express';
 import { UserWithPasswordResponseDto } from '../users/dto/user-with-password.response-dto';
 import { CreateUserDto } from '../users/dto/create-user.dto';
@@ -22,25 +22,28 @@ import { LoggerService } from '../logger/logger.service';
 import { DiscordService } from '../discord/discord.service';
 import { AuthResponseDto } from '../users/dto/auth.response-dto';
 import { localeArray, LocaleType } from '../shared/types/locale.type';
+import { TokenPayloadInterface } from '../shared/interfaces/token-payload.interface';
 
 @Injectable()
 export class AuthService {
-  private EXPIRE_DAY_REFRESH_TOKEN = 1;
+  private readonly EXPIRE_DAY_REFRESH_TOKEN = 1;
 
-  private REFRESH_TOKEN_NAME = 'refreshToken';
+  private readonly EXPIRE_MINUTES_ACCESS_TOKEN = 5;
 
-  private ACCESS_TOKEN_NAME = 'accessToken';
+  private readonly REFRESH_TOKEN_NAME = 'refreshToken';
+
+  private readonly ACCESS_TOKEN_NAME = 'accessToken';
 
   public constructor(
     @Inject(forwardRef(() => UsersService))
-    private usersService: UsersService,
-    private mailService: MailService,
-    private configService: ConfigService,
-    private jwtService: JwtService,
-    private prisma: PrismaService,
-    private redisService: RedisService,
-    private loggerService: LoggerService,
-    private discordService: DiscordService,
+    private readonly usersService: UsersService,
+    private readonly mailService: MailService,
+    private readonly configService: ConfigService,
+    private readonly jwtService: JwtService,
+    private readonly prisma: PrismaService,
+    private readonly redisService: RedisService,
+    private readonly loggerService: LoggerService,
+    private readonly discordService: DiscordService,
   ) {}
 
   public async validateUser(
@@ -215,7 +218,7 @@ export class AuthService {
     res: Response,
   ): Promise<AuthResponseDto> {
     const user: AuthResponseDto = req.user as AuthResponseDto;
-    const { accessToken, refreshToken } = this.createTokens(user.id);
+    const { accessToken, refreshToken } = await this.createTokens(user.id);
     this.addRefreshTokenToResponse(res, refreshToken);
     this.addAccessTokenToResponse(res, accessToken);
 
@@ -250,7 +253,7 @@ export class AuthService {
       'User registered successfully',
     );
 
-    const { accessToken, refreshToken } = this.createTokens(user.id);
+    const { accessToken, refreshToken } = await this.createTokens(user.id);
     this.addRefreshTokenToResponse(res, refreshToken);
     this.addAccessTokenToResponse(res, accessToken);
     const token = this.usersService.createCryptoToken();
@@ -273,7 +276,10 @@ export class AuthService {
   }
 
   private createAccessToken(userId: string): string {
-    const data = { id: userId };
+    const data: TokenPayloadInterface = {
+      sub: userId,
+      jti: crypto.randomUUID(),
+    };
 
     return this.jwtService.sign(data, {
       secret: this.configService.get('JWT_SECRET'),
@@ -281,8 +287,16 @@ export class AuthService {
     });
   }
 
-  private createRefreshToken(userId: string): string {
-    const data = { id: userId };
+  private async createRefreshToken(userId: string): Promise<string> {
+    const data: TokenPayloadInterface = {
+      sub: userId,
+      jti: crypto.randomUUID(),
+    };
+
+    await this.redisService.addToWhitelist(
+      data.jti,
+      this.EXPIRE_DAY_REFRESH_TOKEN * 24 * 3600,
+    );
 
     return this.jwtService.sign(data, {
       secret: this.configService.get('JWT_REFRESH_SECRET'),
@@ -290,12 +304,12 @@ export class AuthService {
     });
   }
 
-  private createTokens(userId: string): {
+  private async createTokens(userId: string): Promise<{
     accessToken: string;
     refreshToken: string;
-  } {
+  }> {
     const accessToken = this.createAccessToken(userId);
-    const refreshToken = this.createRefreshToken(userId);
+    const refreshToken = await this.createRefreshToken(userId);
 
     return {
       accessToken,
@@ -317,7 +331,9 @@ export class AuthService {
 
   private addAccessTokenToResponse(res: Response, accessToken: string): void {
     const expiresIn = new Date();
-    expiresIn.setMinutes(expiresIn.getMinutes() + 15);
+    expiresIn.setMinutes(
+      expiresIn.getMinutes() + this.EXPIRE_MINUTES_ACCESS_TOKEN,
+    );
 
     res.cookie(this.ACCESS_TOKEN_NAME, accessToken, {
       httpOnly: true,
@@ -327,58 +343,56 @@ export class AuthService {
     });
   }
 
-  private validateRefreshToken(refreshToken: string): string {
+  private async validateRefreshToken(refreshToken: string): Promise<string> {
     try {
-      const payload = this.jwtService.verify(refreshToken, {
-        secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
-      });
+      const payload = this.jwtService.verify<TokenPayloadInterface>(
+        refreshToken,
+        {
+          secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+        },
+      );
+      const isValid = await this.redisService.isTokenValid(payload.jti);
 
-      return payload.id;
-    } catch {
-      throw new UnauthorizedException('Invalid or expired refresh token');
+      if (!isValid) {
+        throw new UnauthorizedException('Invalid or expired refresh token');
+      }
+
+      await this.redisService.del(payload.jti);
+      return payload.sub;
+    } catch (error) {
+      if (
+        error instanceof TokenExpiredError ||
+        error instanceof JsonWebTokenError
+      ) {
+        throw new UnauthorizedException('Invalid or expired refresh token');
+      }
+      throw error;
     }
   }
 
-  public regenerateAccessToken(req: Request, res: Response): void {
-    const refreshToken = req.cookies['refreshToken'];
-    const userId = this.validateRefreshToken(refreshToken);
-    const newAccessToken = this.createAccessToken(userId);
-    this.addAccessTokenToResponse(res, newAccessToken);
+  public async regenerateTokens(req: Request, res: Response): Promise<void> {
+    const token = req.cookies['refreshToken'];
+    const userId = await this.validateRefreshToken(token);
+    const { accessToken, refreshToken } = await this.createTokens(userId);
+    this.addRefreshTokenToResponse(res, refreshToken);
+    this.addAccessTokenToResponse(res, accessToken);
   }
 
-  public async clearTokens(
-    accessToken: string | undefined,
-    refreshToken: string | undefined,
-    res: Response,
-  ): Promise<void> {
+  public async clearTokens(refreshToken: string, res: Response): Promise<void> {
     try {
-      if (accessToken) {
-        const accessPayload = this.jwtService.decode(accessToken) as {
-          exp?: number;
-        } | null;
-        const accessExp = accessPayload?.exp;
-        const now = Math.floor(Date.now() / 1000);
+      const payload = this.jwtService.verify<TokenPayloadInterface>(
+        refreshToken,
+        { secret: this.configService.get<string>('JWT_REFRESH_SECRET') },
+      );
 
-        if (accessExp && accessExp > now) {
-          await this.redisService.addToBlacklist(accessToken, accessExp - now);
-        }
+      await this.redisService.del(payload.jti);
+    } catch (error) {
+      if (!(
+        error instanceof TokenExpiredError || error instanceof JsonWebTokenError
+      )) {
+        throw error;
       }
-
-      if (refreshToken) {
-        const refreshPayload = this.jwtService.decode(refreshToken) as {
-          exp?: number;
-        } | null;
-        const refreshExp = refreshPayload?.exp;
-        const now = Math.floor(Date.now() / 1000);
-
-        if (refreshExp && refreshExp > now) {
-          await this.redisService.addToBlacklist(
-            refreshToken,
-            refreshExp - now,
-          );
-        }
-      }
-
+    } finally {
       res.clearCookie('refreshToken', {
         httpOnly: true,
         secure: true,
@@ -389,8 +403,6 @@ export class AuthService {
         secure: true,
         sameSite: 'lax',
       });
-    } catch {
-      return;
     }
   }
 
@@ -399,12 +411,11 @@ export class AuthService {
     req: Request,
     res: Response,
   ): Promise<MessageResponseDto> {
-    const accessToken = req.cookies['accessToken'];
     const refreshToken = req.cookies['refreshToken'];
     const user = req.user as AuthResponseDto;
 
     try {
-      await this.clearTokens(accessToken, refreshToken, res);
+      await this.clearTokens(refreshToken, res);
 
       await this.loggerService.log(
         ip,
@@ -418,9 +429,9 @@ export class AuthService {
         ip,
         user.email,
         'logout',
-        'Token is invalid',
+        'Something went wrong',
       );
-      throw new UnauthorizedException(`Token is invalid: ${error}`);
+      throw error;
     }
   }
 
@@ -451,7 +462,7 @@ export class AuthService {
 
     const { user, authType } =
       await this.usersService.createOrUpdateGoogleUser(reqUser);
-    const { accessToken, refreshToken } = this.createTokens(user.id);
+    const { accessToken, refreshToken } = await this.createTokens(user.id);
     this.addRefreshTokenToResponse(res, refreshToken);
     this.addAccessTokenToResponse(res, accessToken);
 
