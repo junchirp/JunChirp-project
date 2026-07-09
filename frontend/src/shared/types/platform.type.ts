@@ -1,7 +1,2 @@
 export type PlatformType =
-  | 'linkedin'
-  | 'twitter'
-  | 'facebook'
-  | 'telegram'
-  | 'instagram'
-  | 'discord';
+  'linkedin' | 'twitter' | 'facebook' | 'telegram' | 'instagram' | 'discord';

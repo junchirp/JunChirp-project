@@ -8,6 +8,13 @@ import stylistic from '@stylistic/eslint-plugin';
 import nextPlugin from '@next/eslint-plugin-next';
 
 export default defineConfig({
+  ignores: [
+    '**/.next/**',
+    '**/out/**',
+    '**/build/**',
+    '**/next-env.d.ts',
+  ]
+}, {
   files: ['**/*.{ts,tsx}'],
   extends: [
     js.configs.recommended,
@@ -144,10 +151,4 @@ export default defineConfig({
     curly: 'error',
     eqeqeq: ['error', 'smart'],
   },
-  ignores: [
-    '.next/**',
-    'out/**',
-    'build/**',
-    'next-env.d.ts',
-  ]
 });

@@ -16,7 +16,8 @@ export default function AuthLayout({
           src="/images/brackets.svg"
           alt="brackets"
           fill
-        ></Image>
+          priority
+        />
       </div>
       <div className={styles['auth-layout__routes-wrapper']}>
         <TabMenuWrapper />
