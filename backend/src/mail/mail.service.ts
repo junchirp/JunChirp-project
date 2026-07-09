@@ -93,10 +93,11 @@ export class MailService {
       return response.data;
     } catch (error) {
       if (error instanceof GaxiosError && error.response?.data) {
-        throw new Error(`Response data: ${error.response.data}`);
+        throw new Error(`Response data: ${String(error.response.data)}`, {
+          cause: error,
+        });
       }
-      const message = error instanceof Error ? error.message : String(error);
-      throw Error(message);
+      throw error;
     }
   }
 

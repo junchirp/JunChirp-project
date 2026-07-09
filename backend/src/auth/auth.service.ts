@@ -387,12 +387,9 @@ export class AuthService {
 
       await this.redisService.del(payload.jti);
     } catch (error) {
-      if (
-        !(
-          error instanceof TokenExpiredError ||
-          error instanceof JsonWebTokenError
-        )
-      ) {
+      if (!(
+        error instanceof TokenExpiredError || error instanceof JsonWebTokenError
+      )) {
         throw error;
       }
     } finally {
