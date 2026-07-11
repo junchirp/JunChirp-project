@@ -109,7 +109,7 @@ export class ProjectsService {
       }),
     };
 
-    const [projects, total] = await Promise.all([
+    const [projects, total] = await this.prisma.$transaction([
       this.prisma.project.findMany({
         where,
         skip,

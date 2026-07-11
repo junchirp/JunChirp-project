@@ -113,16 +113,14 @@ export class TaskStatusesService {
           },
         });
 
-        await Promise.all(
-          columnsToUpdate.map((column) =>
-            prisma.taskStatus.update({
-              where: { id: column.id },
-              data: {
-                columnIndex: column.columnIndex - 1,
-              },
-            }),
-          ),
-        );
+        for (const column of columnsToUpdate) {
+          await prisma.taskStatus.update({
+            where: { id: column.id },
+            data: {
+              columnIndex: column.columnIndex - 1,
+            },
+          });
+        }
       });
     } catch (error) {
       if (isPrismaError(error) && error.code === 'P2025') {
