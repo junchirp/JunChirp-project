@@ -14,13 +14,13 @@ import { MessageResponseDto } from './dto/message.response-dto';
 import { MailService } from '../mail/mail.service';
 import { UserResponseDto } from './dto/user.response-dto';
 import { ConfirmEmailDto } from './dto/confirm-email.dto';
-import { TooManyRequestsException } from '../shared/exceptions/too-many-requests.exception';
+import { TooManyRequestsException } from '../common/exceptions/too-many-requests.exception';
 import { RolesService } from '../roles/roles.service';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import * as bcrypt from 'bcrypt';
 import { CreateGoogleUserDto } from './dto/create-google-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UserMapper } from '../shared/mappers/user.mapper';
+import { UserMapper } from '../common/mappers/user.mapper';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { ProjectsService } from '../projects/projects.service';
 import { ProjectsListResponseDto } from '../projects/dto/projects-list.response-dto';
@@ -36,10 +36,10 @@ import { AuthResponseDto } from './dto/auth.response-dto';
 import { EmailWithLocaleDto } from './dto/email-with-locale.dto';
 import { EmailResponseDto } from './dto/email.response-dto';
 import * as crypto from 'crypto';
-import { CryptoTokenInterface } from '../shared/interfaces/crypto-token.interface';
-import { LocaleType } from '../shared/types/locale.type';
+import { CryptoTokenInterface } from '../common/interfaces/crypto-token.interface';
+import { LocaleType } from '../common/types/locale.type';
 import { ConfirmEmailWithLocaleDto } from './dto/confirm-email-with-locale.dto';
-import { isPrismaError } from '../shared/utils/is-prisma-error';
+import { isPrismaError } from '../common/utils/is-prisma-error';
 import { IdResponseDto } from './dto/id.response-dto';
 import { CountResponseDto } from './dto/count.response-dto';
 
@@ -366,7 +366,7 @@ export class UsersService {
 
         const refreshToken = req.cookies['refreshToken'];
 
-        await this.authService.clearTokens(refreshToken, res);
+        await this.authService.clearTokens(refreshToken, req, res);
 
         return { message: 'Email verified successfully' };
       } catch (error) {

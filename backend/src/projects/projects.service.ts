@@ -12,7 +12,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { ProjectCategoryResponseDto } from './dto/project-category.response-dto';
 import { ProjectResponseDto } from './dto/project.response-dto';
 import { ProjectsListResponseDto } from './dto/projects-list.response-dto';
-import { ProjectMapper } from '../shared/mappers/project.mapper';
+import { ProjectMapper } from '../common/mappers/project.mapper';
 import { Prisma, ProjectStatus } from '@prisma/client';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { ProjectRolesService } from '../project-roles/project-roles.service';
@@ -21,13 +21,13 @@ import { UserParticipationResponseDto } from '../participations/dto/user-partici
 import { DiscordService } from '../discord/discord.service';
 import { UsersService } from '../users/users.service';
 import { ProjectCardResponseDto } from './dto/project-card.response-dto';
-import { ProjectCategoryMapper } from '../shared/mappers/project-category.mapper';
-import { isPrismaError } from '../shared/utils/is-prisma-error';
+import { ProjectCategoryMapper } from '../common/mappers/project-category.mapper';
+import { isPrismaError } from '../common/utils/is-prisma-error';
 import imageSize from 'image-size';
 import { ProjectLogoResponseDto } from './dto/project-logo.response-dto';
-import { ProjectLogoMapper } from '../shared/mappers/project-logo.mapper';
+import { ProjectLogoMapper } from '../common/mappers/project-logo.mapper';
 import { DocumentResponseDto } from '../documents/dto/document.response-dto';
-import { DocumentMapper } from '../shared/mappers/document.mapper';
+import { DocumentMapper } from '../common/mappers/document.mapper';
 
 interface GetProjectsOptionsInterface {
   userId: string;

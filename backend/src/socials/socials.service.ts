@@ -8,8 +8,8 @@ import { CreateSocialDto } from './dto/create-social.dto';
 import { UpdateSocialDto } from './dto/update-social.dto';
 import { SocialResponseDto } from './dto/social.response-dto';
 import { PrismaService } from '../prisma/prisma.service';
-import { SocialMapper } from '../shared/mappers/social.mapper';
-import { isPrismaError } from '../shared/utils/is-prisma-error';
+import { SocialMapper } from '../common/mappers/social.mapper';
+import { isPrismaError } from '../common/utils/is-prisma-error';
 
 @Injectable()
 export class SocialsService {

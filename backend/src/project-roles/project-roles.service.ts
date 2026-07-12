@@ -7,8 +7,8 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma } from '@prisma/client';
 import { ProjectRoleTypeResponseDto } from './dto/project-role-type.response-dto';
-import { isPrismaError } from 'src/shared/utils/is-prisma-error';
-import { ProjectRoleMapper } from '../shared/mappers/project-role.mapper';
+import { isPrismaError } from 'src/common/utils/is-prisma-error';
+import { ProjectRoleMapper } from '../common/mappers/project-role.mapper';
 import { CreateProjectRoleDto } from './dto/create-project-role.dto';
 import { ProjectRoleResponseDto } from './dto/project-role.response-dto';
 

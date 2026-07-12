@@ -3,7 +3,7 @@ import {
   MODEL_KEY,
   PROJECT_ID_KEY_KEY,
   PROJECT_ID_SOURCE_KEY,
-} from '../../shared/constants/owner-member-metadata';
+} from '../../common/constants/owner-member-metadata';
 import { MemberGuard } from '../guards/member/member.guard';
 import { User } from './user.decorator';
 

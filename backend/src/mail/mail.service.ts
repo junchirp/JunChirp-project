@@ -8,11 +8,11 @@ import {
   SupportRequest,
   User,
 } from '@prisma/client';
-import { Participation } from '../shared/types/participation.type';
+import { Participation } from '../common/types/participation.type';
 import {
   LocaleEmailSubjectType,
   LocaleType,
-} from '../shared/types/locale.type';
+} from '../common/types/locale.type';
 import { AuthResponseDto } from '../users/dto/auth.response-dto';
 import * as path from 'path';
 import * as fs from 'fs';

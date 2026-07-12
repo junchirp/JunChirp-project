@@ -79,9 +79,10 @@ export class AuthController {
   public async registration(
     @Body() createUserDto: CreateUserDto,
     @Ip() ip: string,
+    @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ): Promise<AuthResponseDto> {
-    return this.authService.registration(createUserDto, ip, res);
+    return this.authService.registration(createUserDto, ip, req, res);
   }
 
   @ApiOperation({ summary: 'Refresh token' })

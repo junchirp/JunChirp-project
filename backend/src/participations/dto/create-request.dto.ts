@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsIn, IsNotEmpty, IsUUID } from 'class-validator';
-import { localeArray, LocaleType } from '../../shared/types/locale.type';
+import { localeArray, LocaleType } from '../../common/types/locale.type';
 
 export class CreateRequestDto {
   @ApiProperty({

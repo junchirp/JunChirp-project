@@ -8,8 +8,8 @@ import { CreateEducationDto } from './dto/create-education.dto';
 import { UpdateEducationDto } from './dto/update-education.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { EducationResponseDto } from './dto/education.response-dto';
-import { EducationMapper } from '../shared/mappers/education.mapper';
-import { isPrismaError } from '../shared/utils/is-prisma-error';
+import { EducationMapper } from '../common/mappers/education.mapper';
+import { isPrismaError } from '../common/utils/is-prisma-error';
 
 @Injectable()
 export class EducationsService {

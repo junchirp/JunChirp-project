@@ -8,8 +8,8 @@ import { CreateHardSkillDto } from './dto/create-hard-skill.dto';
 import { UpdateHardSkillDto } from './dto/update-hard-skill.dto';
 import { HardSkillResponseDto } from './dto/hard-skill.response-dto';
 import { PrismaService } from '../prisma/prisma.service';
-import { HardSkillMapper } from '../shared/mappers/hard-skill.mapper';
-import { isPrismaError } from '../shared/utils/is-prisma-error';
+import { HardSkillMapper } from '../common/mappers/hard-skill.mapper';
+import { isPrismaError } from '../common/utils/is-prisma-error';
 
 @Injectable()
 export class HardSkillsService {

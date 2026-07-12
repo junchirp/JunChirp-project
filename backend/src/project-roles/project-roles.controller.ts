@@ -24,7 +24,7 @@ import { User } from '../auth/decorators/user.decorator';
 import { Owner } from '../auth/decorators/owner.decorator';
 import { ProjectRoleResponseDto } from './dto/project-role.response-dto';
 import { CreateProjectRoleDto } from './dto/create-project-role.dto';
-import { UUIDParam } from '../shared/decorators/UUID-param.decorator';
+import { UUIDParam } from '../common/decorators/UUID-param.decorator';
 
 @User()
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })

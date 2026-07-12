@@ -8,8 +8,8 @@ import { CreateSoftSkillDto } from './dto/create-soft-skill.dto';
 import { UpdateSoftSkillDto } from './dto/update-soft-skill.dto';
 import { SoftSkillResponseDto } from './dto/soft-skill.response-dto';
 import { PrismaService } from '../prisma/prisma.service';
-import { SoftSkillMapper } from '../shared/mappers/soft-skill.mapper';
-import { isPrismaError } from '../shared/utils/is-prisma-error';
+import { SoftSkillMapper } from '../common/mappers/soft-skill.mapper';
+import { isPrismaError } from '../common/utils/is-prisma-error';
 
 @Injectable()
 export class SoftSkillsService {

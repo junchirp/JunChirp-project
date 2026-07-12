@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString, Length } from 'class-validator';
-import { IsPasswordNotContainName } from '../../shared/validators/is-password-not-contain-name.validator';
-import { IsPasswordInBlackList } from '../../shared/validators/is-in-black-list.validator';
-import { ContainsOnlyAllowedCharacters } from '../../shared/validators/contains-only-allowed-characters.validator';
-import { HasTwoGroups } from '../../shared/validators/has-two-groups.validator';
+import { IsPasswordNotContainName } from '../../common/validators/is-password-not-contain-name.validator';
+import { IsPasswordInBlackList } from '../../common/validators/is-in-black-list.validator';
+import { ContainsOnlyAllowedCharacters } from '../../common/validators/contains-only-allowed-characters.validator';
+import { HasTwoGroups } from '../../common/validators/has-two-groups.validator';
 
 export class ResetPasswordDto {
   @ApiProperty({ example: 'q1we5?!ER234', description: 'Password' })

@@ -5,7 +5,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { UsersService } from 'src/users/users.service';
 import { Request } from 'express';
 import { AuthResponseDto } from '../../users/dto/auth.response-dto';
-import { TokenPayloadInterface } from '../../shared/interfaces/token-payload.interface';
+import { TokenPayloadInterface } from '../../common/interfaces/token-payload.interface';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {

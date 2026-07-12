@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsIn } from 'class-validator';
-import { localeArray, LocaleType } from '../../shared/types/locale.type';
+import { localeArray, LocaleType } from '../../common/types/locale.type';
 
 export class RequestResetPasswordDto {
   @ApiProperty({ example: 'email@mail.com', description: 'Email' })

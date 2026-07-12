@@ -12,6 +12,7 @@ import { GoogleStrategy } from './strategies/google.strategy';
 import { LoggerModule } from '../logger/logger.module';
 import { DiscordStrategy } from './strategies/discord.strategy';
 import { DiscordModule } from '../discord/discord.module';
+import { CsrfModule } from '../csrf/csrf.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { DiscordModule } from '../discord/discord.module';
       }),
     }),
     LoggerModule,
+    CsrfModule,
   ],
   controllers: [AuthController],
   providers: [

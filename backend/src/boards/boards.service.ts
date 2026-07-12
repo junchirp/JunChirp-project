@@ -8,10 +8,10 @@ import {
 import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { PrismaService } from '../prisma/prisma.service';
-import { BoardMapper } from '../shared/mappers/board.mapper';
+import { BoardMapper } from '../common/mappers/board.mapper';
 import { UpdateColumnsOrderDto } from './dto/update-columns-order.dto';
 import { BoardWithColumnsResponseDto } from './dto/board-with-columns.response-dto';
-import { isPrismaError } from '../shared/utils/is-prisma-error';
+import { isPrismaError } from '../common/utils/is-prisma-error';
 
 @Injectable()
 export class BoardsService {
