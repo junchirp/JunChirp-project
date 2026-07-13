@@ -12,6 +12,8 @@ import { GoogleStrategy } from './strategies/google.strategy';
 import { LoggerModule } from '../logger/logger.module';
 import { DiscordStrategy } from './strategies/discord.strategy';
 import { DiscordModule } from '../discord/discord.module';
+import { CsrfModule } from '../csrf/csrf.module';
+import { CookieConfigModule } from '../cookie-config/cookie-config.module';
 
 @Module({
   imports: [
@@ -29,6 +31,8 @@ import { DiscordModule } from '../discord/discord.module';
       }),
     }),
     LoggerModule,
+    CsrfModule,
+    CookieConfigModule,
   ],
   controllers: [AuthController],
   providers: [

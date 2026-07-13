@@ -38,17 +38,17 @@ import { ProjectResponseDto } from './dto/project.response-dto';
 import { Request } from 'express';
 import { UserWithPasswordResponseDto } from '../users/dto/user-with-password.response-dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ParseImageFilePipe } from '../shared/pipes/parse-image-file/parse-image-file.pipe';
+import { ParseImageFilePipe } from '../common/pipes/parse-image-file/parse-image-file.pipe';
 import { Owner } from '../auth/decorators/owner.decorator';
-import { ParseUUIDv4Pipe } from '../shared/pipes/parse-UUIDv4/parse-UUIDv4.pipe';
+import { ParseUUIDv4Pipe } from '../common/pipes/parse-UUIDv4/parse-UUIDv4.pipe';
 import { Member } from '../auth/decorators/member.decorator';
 import { UserParticipationResponseDto } from '../participations/dto/user-participation.response-dto';
 import { User } from '../auth/decorators/user.decorator';
 import { ProjectCardResponseDto } from './dto/project-card.response-dto';
-import { UUIDParam } from '../shared/decorators/UUID-param.decorator';
+import { UUIDParam } from '../common/decorators/UUID-param.decorator';
 import { ProjectLogoResponseDto } from './dto/project-logo.response-dto';
 import { NoMember } from '../auth/decorators/no-member.decorator';
-import { CurrentUser } from '../shared/decorators/current-user.decorator';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { DocumentResponseDto } from '../documents/dto/document.response-dto';
 
 @User()

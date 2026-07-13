@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString, IsUrl, Length, Matches } from 'class-validator';
-import { IsValidSocialNetworkUrl } from '../../shared/validators/is-valid-social-network-url.validator';
+import { IsValidSocialNetworkUrl } from '../../common/validators/is-valid-social-network-url.validator';
 
 export class CreateSocialDto {
   @ApiProperty({

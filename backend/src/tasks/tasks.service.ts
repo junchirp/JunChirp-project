@@ -2,10 +2,10 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { PrismaService } from '../prisma/prisma.service';
-import { TaskMapper } from '../shared/mappers/task.mapper';
+import { TaskMapper } from '../common/mappers/task.mapper';
 import { TaskWithStatusResponseDto } from './dto/task-with-status.response-dto';
 import { UpdateStatusTaskDto } from './dto/update-status-task.dto';
-import { isPrismaError } from '../shared/utils/is-prisma-error';
+import { isPrismaError } from '../common/utils/is-prisma-error';
 
 @Injectable()
 export class TasksService {

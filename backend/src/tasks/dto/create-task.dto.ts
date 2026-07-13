@@ -9,7 +9,7 @@ import {
 } from 'class-validator';
 import { TaskPriority } from '@prisma/client';
 import { Type } from 'class-transformer';
-import { IsFutureDate } from '../../shared/validators/is-future-date.validator';
+import { IsFutureDate } from '../../common/validators/is-future-date.validator';
 
 export class CreateTaskDto {
   @ApiProperty({ example: 'Task name', description: 'Task name' })

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { LocaleType } from '../../shared/types/locale.type';
+import { LocaleType } from '../../common/types/locale.type';
 
 export class ProjectCategoryResponseDto {
   @ApiProperty({

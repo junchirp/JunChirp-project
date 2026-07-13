@@ -8,8 +8,8 @@ import { CreateDocumentDto } from './dto/create-document.dto';
 import { UpdateDocumentDto } from './dto/update-document.dto';
 import { DocumentResponseDto } from './dto/document.response-dto';
 import { PrismaService } from '../prisma/prisma.service';
-import { DocumentMapper } from '../shared/mappers/document.mapper';
-import { isPrismaError } from '../shared/utils/is-prisma-error';
+import { DocumentMapper } from '../common/mappers/document.mapper';
+import { isPrismaError } from '../common/utils/is-prisma-error';
 
 @Injectable()
 export class DocumentsService {

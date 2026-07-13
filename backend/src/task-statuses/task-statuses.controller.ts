@@ -25,7 +25,7 @@ import {
 } from '@nestjs/swagger';
 import { TaskStatusResponseDto } from './dto/task-status.response-dto';
 import { User } from '../auth/decorators/user.decorator';
-import { UUIDParam } from '../shared/decorators/UUID-param.decorator';
+import { UUIDParam } from '../common/decorators/UUID-param.decorator';
 
 @User('discord')
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })

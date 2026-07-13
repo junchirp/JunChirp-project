@@ -26,7 +26,7 @@ import { Request } from 'express';
 import { UserWithPasswordResponseDto } from '../users/dto/user-with-password.response-dto';
 import { EducationResponseDto } from './dto/education.response-dto';
 import { User } from '../auth/decorators/user.decorator';
-import { UUIDParam } from '../shared/decorators/UUID-param.decorator';
+import { UUIDParam } from '../common/decorators/UUID-param.decorator';
 
 @User()
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })

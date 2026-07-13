@@ -43,10 +43,10 @@ import { EmailValidationResponseDto } from './dto/email-validation.response-dto'
 import { TokenValidationResponseDto } from './dto/token-validation.response-dto';
 import { AuthResponseDto } from './dto/auth.response-dto';
 import { EmailResponseDto } from './dto/email.response-dto';
-import { UUIDParam } from '../shared/decorators/UUID-param.decorator';
-import { LocaleDto } from '../shared/dto/locale.dto';
+import { UUIDParam } from '../common/decorators/UUID-param.decorator';
+import { LocaleDto } from '../common/dto/locale.dto';
 import { ConfirmEmailWithLocaleDto } from './dto/confirm-email-with-locale.dto';
-import { CurrentUser } from '../shared/decorators/current-user.decorator';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { IdResponseDto } from './dto/id.response-dto';
 import { CountResponseDto } from './dto/count.response-dto';
 import { RequestResetPasswordDto } from './dto/request-reset-password.dto';

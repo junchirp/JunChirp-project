@@ -30,8 +30,8 @@ import { UserWithPasswordResponseDto } from '../users/dto/user-with-password.res
 import { User } from '../auth/decorators/user.decorator';
 import { UserCardResponseDto } from '../users/dto/user-card.response-dto';
 import { CreateRequestDto } from './dto/create-request.dto';
-import { UUIDParam } from '../shared/decorators/UUID-param.decorator';
-import { CurrentUser } from '../shared/decorators/current-user.decorator';
+import { UUIDParam } from '../common/decorators/UUID-param.decorator';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
 
 @User()
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })

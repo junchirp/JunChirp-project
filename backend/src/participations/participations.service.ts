@@ -9,17 +9,17 @@ import {
 import { CreateInviteDto } from './dto/create-invite.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserParticipationResponseDto } from './dto/user-participation.response-dto';
-import { UserParticipationMapper } from '../shared/mappers/user-participation.mapper';
+import { UserParticipationMapper } from '../common/mappers/user-participation.mapper';
 import { ProjectParticipationResponseDto } from './dto/project-participation.response-dto';
 import { MailService } from '../mail/mail.service';
 import { ConfigService } from '@nestjs/config';
-import { ProjectParticipationMapper } from '../shared/mappers/project-participation.mapper';
+import { ProjectParticipationMapper } from '../common/mappers/project-participation.mapper';
 import { CreateRequestDto } from './dto/create-request.dto';
 import { DiscordService } from '../discord/discord.service';
 import { UserCardResponseDto } from '../users/dto/user-card.response-dto';
-import { UserMapper } from '../shared/mappers/user.mapper';
+import { UserMapper } from '../common/mappers/user.mapper';
 import { UsersService } from '../users/users.service';
-import { isPrismaError } from '../shared/utils/is-prisma-error';
+import { isPrismaError } from '../common/utils/is-prisma-error';
 
 @Injectable()
 export class ParticipationsService {

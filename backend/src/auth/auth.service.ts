@@ -15,25 +15,19 @@ import { UserWithPasswordResponseDto } from '../users/dto/user-with-password.res
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { MailService } from '../mail/mail.service';
 import { PrismaService } from '../prisma/prisma.service';
-import { TooManyRequestsException } from '../shared/exceptions/too-many-requests.exception';
+import { TooManyRequestsException } from '../common/exceptions/too-many-requests.exception';
 import { RedisService } from '../redis/redis.service';
 import { MessageResponseDto } from '../users/dto/message.response-dto';
 import { LoggerService } from '../logger/logger.service';
 import { DiscordService } from '../discord/discord.service';
 import { AuthResponseDto } from '../users/dto/auth.response-dto';
-import { localeArray, LocaleType } from '../shared/types/locale.type';
-import { TokenPayloadInterface } from '../shared/interfaces/token-payload.interface';
+import { localeArray, LocaleType } from '../common/types/locale.type';
+import { TokenPayloadInterface } from '../common/interfaces/token-payload.interface';
+import { CookieConfigService } from '../cookie-config/cookie-config.service';
+import { CsrfService } from '../csrf/csrf.service';
 
 @Injectable()
 export class AuthService {
-  private readonly EXPIRE_DAY_REFRESH_TOKEN = 1;
-
-  private readonly EXPIRE_MINUTES_ACCESS_TOKEN = 5;
-
-  private readonly REFRESH_TOKEN_NAME = 'refreshToken';
-
-  private readonly ACCESS_TOKEN_NAME = 'accessToken';
-
   public constructor(
     @Inject(forwardRef(() => UsersService))
     private readonly usersService: UsersService,
@@ -44,6 +38,8 @@ export class AuthService {
     private readonly redisService: RedisService,
     private readonly loggerService: LoggerService,
     private readonly discordService: DiscordService,
+    private readonly cookieService: CookieConfigService,
+    private readonly csrfService: CsrfService,
   ) {}
 
   public async validateUser(
@@ -221,6 +217,7 @@ export class AuthService {
     const { accessToken, refreshToken } = await this.createTokens(user.id);
     this.addRefreshTokenToResponse(res, refreshToken);
     this.addAccessTokenToResponse(res, accessToken);
+    this.csrfService.rotate(req, res);
 
     await this.loggerService.log(
       ip,
@@ -235,6 +232,7 @@ export class AuthService {
   public async registration(
     createUserDto: CreateUserDto,
     ip: string,
+    req: Request,
     res: Response,
   ): Promise<AuthResponseDto> {
     const hashPassword = await bcrypt.hash(createUserDto.password, 10);
@@ -253,9 +251,6 @@ export class AuthService {
       'User registered successfully',
     );
 
-    const { accessToken, refreshToken } = await this.createTokens(user.id);
-    this.addRefreshTokenToResponse(res, refreshToken);
-    this.addAccessTokenToResponse(res, accessToken);
     const token = this.usersService.createCryptoToken();
     await this.usersService.createVerificationEmailRecords(ip, user, token);
     const params = new URLSearchParams({
@@ -268,6 +263,11 @@ export class AuthService {
       url,
       createUserDto.locale,
     );
+
+    const { accessToken, refreshToken } = await this.createTokens(user.id);
+    this.addRefreshTokenToResponse(res, refreshToken);
+    this.addAccessTokenToResponse(res, accessToken);
+    this.csrfService.rotate(req, res);
 
     const { educations, socials, hardSkills, softSkills, ...baseUserInfo } =
       user;
@@ -295,7 +295,7 @@ export class AuthService {
 
     await this.redisService.addToWhitelist(
       data.jti,
-      this.EXPIRE_DAY_REFRESH_TOKEN * 24 * 3600,
+      this.cookieService.expireSecRefreshToken,
     );
 
     return this.jwtService.sign(data, {
@@ -318,29 +318,19 @@ export class AuthService {
   }
 
   private addRefreshTokenToResponse(res: Response, refreshToken: string): void {
-    const expiresIn = new Date();
-    expiresIn.setDate(expiresIn.getDate() + this.EXPIRE_DAY_REFRESH_TOKEN);
-
-    res.cookie(this.REFRESH_TOKEN_NAME, refreshToken, {
-      httpOnly: true,
-      expires: expiresIn,
-      secure: true,
-      sameSite: 'lax',
-    });
+    res.cookie(
+      this.cookieService.refreshTokenCookieName,
+      refreshToken,
+      this.cookieService.refreshCookieOptions,
+    );
   }
 
   private addAccessTokenToResponse(res: Response, accessToken: string): void {
-    const expiresIn = new Date();
-    expiresIn.setMinutes(
-      expiresIn.getMinutes() + this.EXPIRE_MINUTES_ACCESS_TOKEN,
+    res.cookie(
+      this.cookieService.accessTokenCookieName,
+      accessToken,
+      this.cookieService.accessCookieOptions,
     );
-
-    res.cookie(this.ACCESS_TOKEN_NAME, accessToken, {
-      httpOnly: true,
-      expires: expiresIn,
-      secure: true,
-      sameSite: 'lax',
-    });
   }
 
   private async validateRefreshToken(refreshToken: string): Promise<string> {
@@ -371,14 +361,18 @@ export class AuthService {
   }
 
   public async regenerateTokens(req: Request, res: Response): Promise<void> {
-    const token = req.cookies['refreshToken'];
+    const token = req.cookies[this.cookieService.refreshTokenCookieName];
     const userId = await this.validateRefreshToken(token);
     const { accessToken, refreshToken } = await this.createTokens(userId);
     this.addRefreshTokenToResponse(res, refreshToken);
     this.addAccessTokenToResponse(res, accessToken);
   }
 
-  public async clearTokens(refreshToken: string, res: Response): Promise<void> {
+  public async clearTokens(
+    refreshToken: string,
+    req: Request,
+    res: Response,
+  ): Promise<void> {
     try {
       const payload = this.jwtService.verify<TokenPayloadInterface>(
         refreshToken,
@@ -393,16 +387,15 @@ export class AuthService {
         throw error;
       }
     } finally {
-      res.clearCookie('refreshToken', {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'lax',
-      });
-      res.clearCookie('accessToken', {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'lax',
-      });
+      res.clearCookie(
+        this.cookieService.refreshTokenCookieName,
+        this.cookieService.baseCookieOptions,
+      );
+      res.clearCookie(
+        this.cookieService.accessTokenCookieName,
+        this.cookieService.baseCookieOptions,
+      );
+      this.csrfService.rotate(req, res);
     }
   }
 
@@ -411,11 +404,11 @@ export class AuthService {
     req: Request,
     res: Response,
   ): Promise<MessageResponseDto> {
-    const refreshToken = req.cookies['refreshToken'];
+    const refreshToken = req.cookies[this.cookieService.refreshTokenCookieName];
     const user = req.user as AuthResponseDto;
 
     try {
-      await this.clearTokens(refreshToken, res);
+      await this.clearTokens(refreshToken, req, res);
 
       await this.loggerService.log(
         ip,
@@ -465,6 +458,7 @@ export class AuthService {
     const { accessToken, refreshToken } = await this.createTokens(user.id);
     this.addRefreshTokenToResponse(res, refreshToken);
     this.addAccessTokenToResponse(res, accessToken);
+    this.csrfService.rotate(req, res);
 
     await this.loggerService.log(
       ip,
@@ -522,6 +516,8 @@ export class AuthService {
       const redirectUrl = `${frontendBaseUrl}${safeReturnUrl}`;
 
       await this.redisService.del(state);
+
+      this.csrfService.rotate(req, res);
 
       return res.redirect(redirectUrl);
     } catch {

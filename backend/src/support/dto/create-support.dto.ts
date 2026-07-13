@@ -7,7 +7,7 @@ import {
   Length,
   Matches,
 } from 'class-validator';
-import { localeArray, LocaleType } from '../../shared/types/locale.type';
+import { localeArray, LocaleType } from '../../common/types/locale.type';
 
 export class CreateSupportDto {
   @ApiProperty({ example: 'email@mail.com', description: 'Email' })

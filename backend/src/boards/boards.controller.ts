@@ -29,7 +29,7 @@ import { Member } from '../auth/decorators/member.decorator';
 import { UpdateColumnsOrderDto } from './dto/update-columns-order.dto';
 import { BoardWithColumnsResponseDto } from './dto/board-with-columns.response-dto';
 import { User } from '../auth/decorators/user.decorator';
-import { UUIDParam } from '../shared/decorators/UUID-param.decorator';
+import { UUIDParam } from '../common/decorators/UUID-param.decorator';
 
 @User('discord')
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })

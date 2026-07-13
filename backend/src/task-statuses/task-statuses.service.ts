@@ -8,9 +8,9 @@ import { CreateTaskStatusDto } from './dto/create-task-status.dto';
 import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
 import { TaskStatusResponseDto } from './dto/task-status.response-dto';
 import { PrismaService } from '../prisma/prisma.service';
-import { TaskStatusMapper } from '../shared/mappers/task-status.mapper';
+import { TaskStatusMapper } from '../common/mappers/task-status.mapper';
 import { BoardsService } from '../boards/boards.service';
-import { isPrismaError } from '../shared/utils/is-prisma-error';
+import { isPrismaError } from '../common/utils/is-prisma-error';
 
 @Injectable()
 export class TaskStatusesService {
@@ -113,16 +113,14 @@ export class TaskStatusesService {
           },
         });
 
-        await Promise.all(
-          columnsToUpdate.map((column) =>
-            prisma.taskStatus.update({
-              where: { id: column.id },
-              data: {
-                columnIndex: column.columnIndex - 1,
-              },
-            }),
-          ),
-        );
+        for (const column of columnsToUpdate) {
+          await prisma.taskStatus.update({
+            where: { id: column.id },
+            data: {
+              columnIndex: column.columnIndex - 1,
+            },
+          });
+        }
       });
     } catch (error) {
       if (isPrismaError(error) && error.code === 'P2025') {

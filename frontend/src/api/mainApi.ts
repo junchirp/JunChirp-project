@@ -4,11 +4,9 @@ import {
   createApi,
   QueryReturnValue,
   FetchBaseQueryMeta,
-  BaseQueryApi,
 } from '@reduxjs/toolkit/query/react';
 import type { FetchArgs, FetchBaseQueryError } from '@reduxjs/toolkit/query';
-import { csrfApi } from './csrfApi';
-import csrfSelector from '@/redux/csrf/csrfSelector';
+import { fetchNewCsrfToken, getCsrfToken } from './csrf';
 
 interface CsrfErrorData {
   code: string;
@@ -37,20 +35,22 @@ const isCsrfError = (error: FetchBaseQueryError | undefined): boolean => {
     : false;
 };
 
-const getCsrfTokenFromStore = (api: BaseQueryApi): string | undefined => {
-  return csrfSelector.selectCsrfToken(api.getState());
-};
-
-const fetchNewCsrfToken = async (
-  api: BaseQueryApi,
-): Promise<string | undefined> => {
-  const result = await api.dispatch(
-    csrfApi.endpoints.getCsrfToken.initiate(undefined),
-  );
-  if ('data' in result) {
-    return result.data;
+const shouldRefreshCsrf = (
+  args: string | FetchArgs,
+  method: string,
+): boolean => {
+  if (method !== 'POST') {
+    return false;
   }
-  return undefined;
+
+  const url = typeof args === 'string' ? args : args.url;
+
+  return (
+    url.endsWith('auth/login') ||
+    url.endsWith('auth/register') ||
+    url.endsWith('auth/logout') ||
+    url.endsWith('users/confirm')
+  );
 };
 
 const baseQueryWithReauthAndCsrf: BaseQueryFn<
@@ -63,8 +63,7 @@ const baseQueryWithReauthAndCsrf: BaseQueryFn<
   const attachCsrfHeader = async (
     arg: string | FetchArgs,
   ): Promise<string | FetchArgs> => {
-    let token = getCsrfTokenFromStore(api);
-    token ??= await fetchNewCsrfToken(api);
+    const token = getCsrfToken() ?? (await fetchNewCsrfToken());
 
     if (!token) {
       return arg;
@@ -105,12 +104,12 @@ const baseQueryWithReauthAndCsrf: BaseQueryFn<
   };
 
   if (isCsrfError(result.error)) {
-    await fetchNewCsrfToken(api);
+    await fetchNewCsrfToken();
     result = await retryRequest();
   }
 
   if (result.error?.status === 401 && !isAuthRequest(args, method)) {
-    const token = getCsrfTokenFromStore(api) ?? (await fetchNewCsrfToken(api));
+    const token = getCsrfToken() ?? (await fetchNewCsrfToken());
 
     try {
       const refreshResp = await fetch(`${BASE_URL}/auth/refresh-token`, {
@@ -143,6 +142,9 @@ const baseQueryWithReauthAndCsrf: BaseQueryFn<
     }
   }
 
+  if (!result.error && shouldRefreshCsrf(args, method)) {
+    await fetchNewCsrfToken();
+  }
   return result;
 };
 

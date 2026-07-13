@@ -7,11 +7,11 @@ import {
   Length,
   Matches,
 } from 'class-validator';
-import { IsPasswordInBlackList } from '../../shared/validators/is-in-black-list.validator';
-import { IsPasswordNotContainName } from '../../shared/validators/is-password-not-contain-name.validator';
-import { ContainsOnlyAllowedCharacters } from '../../shared/validators/contains-only-allowed-characters.validator';
-import { HasTwoGroups } from '../../shared/validators/has-two-groups.validator';
-import { localeArray, LocaleType } from '../../shared/types/locale.type';
+import { IsPasswordInBlackList } from '../../common/validators/is-in-black-list.validator';
+import { IsPasswordNotContainName } from '../../common/validators/is-password-not-contain-name.validator';
+import { ContainsOnlyAllowedCharacters } from '../../common/validators/contains-only-allowed-characters.validator';
+import { HasTwoGroups } from '../../common/validators/has-two-groups.validator';
+import { localeArray, LocaleType } from '../../common/types/locale.type';
 
 export class CreateUserDto {
   @ApiProperty({ example: 'email@mail.com', description: 'Email' })

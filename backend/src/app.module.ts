@@ -5,7 +5,7 @@ import { MailModule } from './mail/mail.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { UsersModule } from './users/users.module';
 import { ScheduleModule } from '@nestjs/schedule';
-import { CronTasksService } from './shared/services/cron-tasks/cron-tasks.service';
+import { CronTasksService } from './common/services/cron-tasks/cron-tasks.service';
 import { RolesModule } from './roles/roles.module';
 import { RedisModule } from './redis/redis.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
@@ -27,7 +27,9 @@ import { SupportModule } from './support/support.module';
 import { LoggerModule } from './logger/logger.module';
 import { DiscordModule } from './discord/discord.module';
 import { HttpModule } from '@nestjs/axios';
-import { ValidationPipe } from './shared/pipes/validation/validation.pipe';
+import { ValidationPipe } from './common/pipes/validation/validation.pipe';
+import { CookieConfigService } from './cookie-config/cookie-config.service';
+import { CookieConfigModule } from './cookie-config/cookie-config.module';
 
 @Module({
   imports: [
@@ -72,6 +74,7 @@ import { ValidationPipe } from './shared/pipes/validation/validation.pipe';
         maxRedirects: 5,
       }),
     }),
+    CookieConfigModule,
   ],
   providers: [
     CronTasksService,
