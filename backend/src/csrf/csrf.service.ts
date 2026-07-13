@@ -5,7 +5,7 @@ import { EBadCsrfTokenException } from '../common/exceptions/e-bad-csrf-token.ex
 import { ConfigService } from '@nestjs/config';
 import { CsrfTokenResponseDto } from './dto/csrf-token.response-dto';
 import { randomUUID } from 'crypto';
-import { CookieConfigService } from '../common/services/cookie-config/cookie-config.service';
+import { CookieConfigService } from '../cookie-config/cookie-config.service';
 
 @Injectable()
 export class CsrfService {
@@ -43,9 +43,7 @@ export class CsrfService {
 
   public generateToken(req: Request, res: Response): CsrfTokenResponseDto {
     return {
-      csrfToken: this.csrf.generateCsrfToken(req, res, {
-        validateOnReuse: true,
-      }),
+      csrfToken: this.csrf.generateCsrfToken(req, res),
     };
   }
 
@@ -61,8 +59,6 @@ export class CsrfService {
       this.cookieService.baseCookieOptions,
     );
 
-    this.csrf.generateCsrfToken(req, res, {
-      validateOnReuse: true,
-    });
+    this.csrf.generateCsrfToken(req, res);
   }
 }

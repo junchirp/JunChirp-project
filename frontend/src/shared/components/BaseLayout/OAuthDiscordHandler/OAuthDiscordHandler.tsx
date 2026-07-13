@@ -6,6 +6,7 @@ import { useToast } from '@/hooks/useToast';
 import { useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
+import { fetchNewCsrfToken } from '@/api/csrf';
 
 export default function OAuthDiscordHandler(): null {
   const params = useSearchParams();
@@ -16,46 +17,52 @@ export default function OAuthDiscordHandler(): null {
   const handledRef = useRef(false);
 
   useEffect(() => {
-    if (handledRef.current) {
-      return;
-    }
+    const handleDiscordOAuth = async (): Promise<void> => {
+      if (handledRef.current) {
+        return;
+      }
 
-    const social = params.get('social');
-    const status = params.get('status');
+      const social = params.get('social');
+      const status = params.get('status');
 
-    if (social !== 'discord') {
-      return;
-    }
+      if (social !== 'discord') {
+        return;
+      }
 
-    if (status === 'success') {
-      showToast({
-        severity: 'success',
-        summary: t('success'),
-        life: 3000,
-        actionKey: ToastKeysEnum.DISCORD,
-      });
-    }
+      if (status === 'success') {
+        await fetchNewCsrfToken();
 
-    if (status === 'failure') {
-      showToast({
-        severity: 'error',
-        summary: t('error'),
-        detail: t('errorDetails'),
-        life: 3000,
-        actionKey: ToastKeysEnum.DISCORD,
-      });
-    }
+        showToast({
+          severity: 'success',
+          summary: t('success'),
+          life: 3000,
+          actionKey: ToastKeysEnum.DISCORD,
+        });
+      }
 
-    handledRef.current = true;
+      if (status === 'failure') {
+        showToast({
+          severity: 'error',
+          summary: t('error'),
+          detail: t('errorDetails'),
+          life: 3000,
+          actionKey: ToastKeysEnum.DISCORD,
+        });
+      }
 
-    const newParams = new URLSearchParams(params.toString());
-    newParams.delete('social');
-    newParams.delete('status');
-    newParams.delete('error');
-    const newQuery = newParams.toString();
+      handledRef.current = true;
 
-    router.replace(newQuery ? `${pathname}?${newQuery}` : pathname);
-  }, [params, pathname, router, showToast]);
+      const newParams = new URLSearchParams(params.toString());
+      newParams.delete('social');
+      newParams.delete('status');
+      newParams.delete('error');
+      const newQuery = newParams.toString();
+
+      router.replace(newQuery ? `${pathname}?${newQuery}` : pathname);
+    };
+
+    void handleDiscordOAuth();
+  }, [params, pathname, router, showToast, t]);
 
   return null;
 }

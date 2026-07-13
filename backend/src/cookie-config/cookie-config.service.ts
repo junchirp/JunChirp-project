@@ -23,7 +23,7 @@ export class CookieConfigService {
   }
 
   public get refreshTokenCookieName(): string {
-    return this.isProduction ? '__Host-access-token' : 'refreshToken';
+    return this.isProduction ? '__Host-access-token' : 'refresh-token';
   }
 
   public get baseCookieOptions(): CookieOptions {

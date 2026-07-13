@@ -28,7 +28,8 @@ import { LoggerModule } from './logger/logger.module';
 import { DiscordModule } from './discord/discord.module';
 import { HttpModule } from '@nestjs/axios';
 import { ValidationPipe } from './common/pipes/validation/validation.pipe';
-import { CookieConfigService } from './common/services/cookie-config/cookie-config.service';
+import { CookieConfigService } from './cookie-config/cookie-config.service';
+import { CookieConfigModule } from './cookie-config/cookie-config.module';
 
 @Module({
   imports: [
@@ -73,10 +74,10 @@ import { CookieConfigService } from './common/services/cookie-config/cookie-conf
         maxRedirects: 5,
       }),
     }),
+    CookieConfigModule,
   ],
   providers: [
     CronTasksService,
-    CookieConfigService,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,

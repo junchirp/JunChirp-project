@@ -11,8 +11,8 @@ import nextModule = require('next');
 import { NextServer } from 'next/dist/server/next';
 import { ValidationPipe } from './common/pipes/validation/validation.pipe';
 import { NextFunction, Request, Response } from 'express';
-import { CsrfSessionIdMiddleware } from './common/middleware/csrf-session-id/csrf-session-id.middleware';
-import { CsrfProtectionMiddleware } from './common/middleware/csrf-protection/csrf-protection.middleware';
+import { CsrfSessionIdMiddleware } from './csrf/middleware/csrf-session-id/csrf-session-id.middleware';
+import { CsrfProtectionMiddleware } from './csrf/middleware/csrf-protection/csrf-protection.middleware';
 
 async function bootstrap(): Promise<void> {
   const PORT = Number(process.env.PORT) || 3000;

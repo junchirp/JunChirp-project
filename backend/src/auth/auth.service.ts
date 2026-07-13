@@ -23,7 +23,7 @@ import { DiscordService } from '../discord/discord.service';
 import { AuthResponseDto } from '../users/dto/auth.response-dto';
 import { localeArray, LocaleType } from '../common/types/locale.type';
 import { TokenPayloadInterface } from '../common/interfaces/token-payload.interface';
-import { CookieConfigService } from '../common/services/cookie-config/cookie-config.service';
+import { CookieConfigService } from '../cookie-config/cookie-config.service';
 import { CsrfService } from '../csrf/csrf.service';
 
 @Injectable()
@@ -361,7 +361,7 @@ export class AuthService {
   }
 
   public async regenerateTokens(req: Request, res: Response): Promise<void> {
-    const token = req.cookies['refreshToken'];
+    const token = req.cookies[this.cookieService.refreshTokenCookieName];
     const userId = await this.validateRefreshToken(token);
     const { accessToken, refreshToken } = await this.createTokens(userId);
     this.addRefreshTokenToResponse(res, refreshToken);
@@ -404,7 +404,7 @@ export class AuthService {
     req: Request,
     res: Response,
   ): Promise<MessageResponseDto> {
-    const refreshToken = req.cookies['refreshToken'];
+    const refreshToken = req.cookies[this.cookieService.refreshTokenCookieName];
     const user = req.user as AuthResponseDto;
 
     try {
