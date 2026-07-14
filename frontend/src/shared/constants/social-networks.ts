@@ -26,28 +26,28 @@ export const socialNetworks: ClientSocialInterface[] = [
   },
   {
     network: 'Discord',
-    icon: 'images/discord.svg',
+    icon: '/images/discord.svg',
     urlRegex:
-      /^(https?:\/\/)?(www\.)?discord(\.gg|app\.com\/users)\/[A-Za-z0-9]+\/?$/i,
+      /^(https?:\/\/)?(www\.)?discord(?:\.gg|(?:app)?\.com\/users)\/[A-Za-z0-9]+\/?$/i,
   },
   {
     network: 'Telegram',
-    icon: 'images/telegram.svg',
+    icon: '/images/telegram.svg',
     urlRegex: /^(https?:\/\/)?(t\.me|telegram\.me)\/[A-Za-z0-9_]+\/?$/i,
   },
   {
     network: 'GitHub',
-    icon: 'images/github.svg',
+    icon: '/images/github.svg',
     urlRegex: /^(https?:\/\/)?(www\.)?github\.com\/[A-Za-z0-9_.-]+\/?$/i,
   },
   {
     network: 'GitLab',
-    icon: 'images/gitlab.svg',
+    icon: '/images/gitlab.svg',
     urlRegex: /^(https?:\/\/)?(www\.)?gitlab\.com\/[A-Za-z0-9_.-]+\/?$/i,
   },
   {
     network: 'YouTube',
-    icon: 'images/youtube.svg',
+    icon: '/images/youtube.svg',
     urlRegex:
       /^(https?:\/\/)?(www\.)?youtube\.com\/(c|channel|user)\/[A-Za-z0-9_-]+\/?$/i,
   },

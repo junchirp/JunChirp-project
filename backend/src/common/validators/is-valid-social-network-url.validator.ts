@@ -35,7 +35,7 @@ const socialNetworks: SocialNetworkInterface = {
   // pinterest: /^https:\/\/(www\.)?pinterest\.com\/[a-zA-Z0-9_]+$/,
   // reddit: /^https:\/\/(www\.)?reddit\.com\/u\/[a-zA-Z0-9_]+$/,
   discord:
-    /^(https?:\/\/)?(www\.)?discord(\.gg|app\.com\/users)\/[A-Za-z0-9]+\/?$/i,
+    /^(https?:\/\/)?(www\.)?discord(?:\.gg|(?:app)?\.com\/users)\/[A-Za-z0-9]+\/?$/i,
   telegram: /^(https?:\/\/)?(t\.me|telegram\.me)\/[A-Za-z0-9_]+\/?$/i,
   github: /^(https?:\/\/)?(www\.)?github\.com\/[A-Za-z0-9_.-]+\/?$/i,
   gitlab: /^(https?:\/\/)?(www\.)?gitlab\.com\/[A-Za-z0-9_.-]+\/?$/i,
