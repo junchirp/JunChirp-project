@@ -89,7 +89,7 @@ export default function ProjectFormFields(
         name="categoryId"
         control={control}
         render={({ field }) => (
-          <Dropdown<ProjectCategoryInterface>
+          <Dropdown
             options={categories}
             label={tForms('projectForm.category')}
             labelSize={20}

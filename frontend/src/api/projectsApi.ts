@@ -6,6 +6,7 @@ import { ProjectInterface } from '@/shared/interfaces/project.interface';
 import { CreateProjectInterface } from '@/shared/interfaces/create-project.interface';
 import { ProjectLogoInterface } from '@/shared/interfaces/project-logo.interface';
 import { UserParticipationInterface } from '@/shared/interfaces/user-participation.interface';
+import { UpdateProjectInterface } from '@/shared/interfaces/update-project.interface';
 
 export const projectsApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -65,7 +66,7 @@ export const projectsApi = mainApi.injectEndpoints({
     }),
     updateProject: builder.mutation<
       ProjectInterface,
-      { id: string; data: CreateProjectInterface }
+      { id: string; data: UpdateProjectInterface }
     >({
       query: ({ id, data }) => ({
         url: `projects/${id}`,

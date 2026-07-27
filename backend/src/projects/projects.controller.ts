@@ -50,6 +50,7 @@ import { ProjectLogoResponseDto } from './dto/project-logo.response-dto';
 import { NoMember } from '../auth/decorators/no-member.decorator';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { DocumentResponseDto } from '../documents/dto/document.response-dto';
+import { BoardResponseDto } from '../boards/dto/board.response-dto';
 
 @User()
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
@@ -350,5 +351,19 @@ export class ProjectsController {
     @UUIDParam('id') id: string,
   ): Promise<DocumentResponseDto[]> {
     return this.projectsService.getDocumentsList(id);
+  }
+
+  @Member()
+  @ApiOperation({ summary: 'Get boards list by project id' })
+  @ApiOkResponse({ type: [BoardResponseDto] })
+  @ApiForbiddenResponse({
+    description:
+      'Access denied: you are not a participant of this project / Access denied: email not confirmed / Access denied: discord not confirmed / Invalid CSRF token',
+  })
+  @Get(':id/boards')
+  public async getBoardsList(
+    @UUIDParam('id') id: string,
+  ): Promise<BoardResponseDto[]> {
+    return this.projectsService.getBoardsList(id);
   }
 }

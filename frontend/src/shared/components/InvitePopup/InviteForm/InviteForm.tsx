@@ -97,7 +97,7 @@ export default function InviteForm(props: InviteFormProps): ReactElement {
           name="projectId"
           control={control}
           render={({ field }) => (
-            <Dropdown<ProjectCardInterface>
+            <Dropdown
               {...field}
               options={myProjects}
               label={tForm('inviteForm.project')}
@@ -115,7 +115,7 @@ export default function InviteForm(props: InviteFormProps): ReactElement {
           name="projectRoleId"
           control={control}
           render={({ field }) => (
-            <Dropdown<RoleWithUserInterface>
+            <Dropdown
               {...field}
               options={roleOptions}
               label={tForm('inviteForm.role')}

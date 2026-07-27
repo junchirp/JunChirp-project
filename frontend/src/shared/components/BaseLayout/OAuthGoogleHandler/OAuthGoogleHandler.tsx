@@ -28,6 +28,11 @@ export default function OAuthGoogleHandler(): null {
       const status = params.get('status');
       const error = params.get('error');
       const authType = params.get('authType');
+      const social = params.get('social');
+
+      if (social !== 'google') {
+        return;
+      }
 
       if (status === 'success') {
         if (loadingStatus !== 'loaded') {

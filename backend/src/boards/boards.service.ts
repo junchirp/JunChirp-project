@@ -10,8 +10,16 @@ import { UpdateBoardDto } from './dto/update-board.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { BoardMapper } from '../common/mappers/board.mapper';
 import { UpdateColumnsOrderDto } from './dto/update-columns-order.dto';
-import { BoardWithColumnsResponseDto } from './dto/board-with-columns.response-dto';
 import { isPrismaError } from '../common/utils/is-prisma-error';
+import { DEFAULT_NAMES } from '../common/constants/default-names';
+import { generateUniqName } from '../common/utils/generate-unique-name';
+// import { CreateTaskStatusDto } from './dto/create-task-status.dto';
+// import { TaskStatusResponseDto } from './dto/task-status.response-dto';
+// import { TaskStatusMapper } from '../common/mappers/task-status.mapper';
+// import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
+import { BoardResponseDto } from './dto/board.response-dto';
+import { generateCopyName } from '../common/utils/generate-copy-name';
+import { LocaleDto } from '../common/dto/locale.dto';
 
 @Injectable()
 export class BoardsService {
@@ -19,7 +27,7 @@ export class BoardsService {
 
   public async addBoard(
     createBoardDto: CreateBoardDto,
-  ): Promise<BoardWithColumnsResponseDto> {
+  ): Promise<BoardResponseDto> {
     const existingBoards = await this.prisma.board.count({
       where: { projectId: createBoardDto.projectId },
     });
@@ -31,35 +39,55 @@ export class BoardsService {
     }
 
     try {
-      const board = await this.prisma.board.create({
-        data: {
-          boardName: createBoardDto.boardName,
-          projectId: createBoardDto.projectId,
-          columns: {
-            create: [
-              { statusName: 'To Do', columnIndex: 1 },
-              { statusName: 'In Progress', columnIndex: 2 },
-              { statusName: 'Done', columnIndex: 3 },
+      return this.prisma.$transaction(async (prisma) => {
+        const baseName = DEFAULT_NAMES[createBoardDto.locale].board;
+        const existingBoardNames = await prisma.board.findMany({
+          where: {
+            projectId: createBoardDto.projectId,
+            OR: [
+              {
+                boardName: baseName,
+              },
+              {
+                boardName: {
+                  startsWith: `${baseName} `,
+                },
+              },
             ],
           },
-        },
-        include: {
-          columns: {
-            include: {
-              tasks: {
-                include: {
-                  assignee: {
-                    include: {
-                      desiredRoles: true,
-                    },
+          select: {
+            boardName: true,
+          },
+        });
+
+        const boardName = generateUniqName(
+          existingBoardNames,
+          (item) => item.boardName,
+          baseName,
+        );
+
+        const board = await prisma.board.create({
+          data: {
+            boardName,
+            projectId: createBoardDto.projectId,
+            columns: {
+              create: DEFAULT_NAMES[createBoardDto.locale].defaultColumns,
+            },
+          },
+          include: {
+            columns: {
+              include: {
+                _count: {
+                  select: {
+                    tasks: true,
                   },
                 },
               },
             },
           },
-        },
+        });
+        return BoardMapper.toResponse(board);
       });
-      return BoardMapper.toExpandResponse(board);
     } catch (error) {
       if (isPrismaError(error) && error.code === 'P2002') {
         throw new ConflictException('Board with this name already exists');
@@ -68,7 +96,7 @@ export class BoardsService {
     }
   }
 
-  public async getBoardById(id: string): Promise<BoardWithColumnsResponseDto> {
+  public async getBoardById(id: string): Promise<BoardResponseDto> {
     try {
       const board = await this.prisma.board.findUniqueOrThrow({
         where: { id },
@@ -76,13 +104,9 @@ export class BoardsService {
           columns: {
             orderBy: { columnIndex: 'asc' },
             include: {
-              tasks: {
-                include: {
-                  assignee: {
-                    include: {
-                      desiredRoles: true,
-                    },
-                  },
+              _count: {
+                select: {
+                  tasks: true,
                 },
               },
             },
@@ -90,7 +114,7 @@ export class BoardsService {
         },
       });
 
-      return BoardMapper.toExpandResponse(board);
+      return BoardMapper.toResponse(board);
     } catch (error) {
       if (isPrismaError(error) && error.code === 'P2025') {
         throw new NotFoundException('Board not found');
@@ -102,7 +126,7 @@ export class BoardsService {
   public async updateBoard(
     id: string,
     updateBoardDto: UpdateBoardDto,
-  ): Promise<BoardWithColumnsResponseDto> {
+  ): Promise<BoardResponseDto> {
     try {
       const board = await this.prisma.board.update({
         where: { id },
@@ -110,13 +134,9 @@ export class BoardsService {
         include: {
           columns: {
             include: {
-              tasks: {
-                include: {
-                  assignee: {
-                    include: {
-                      desiredRoles: true,
-                    },
-                  },
+              _count: {
+                select: {
+                  tasks: true,
                 },
               },
             },
@@ -124,7 +144,7 @@ export class BoardsService {
         },
       });
 
-      return BoardMapper.toExpandResponse(board);
+      return BoardMapper.toResponse(board);
     } catch (error) {
       if (isPrismaError(error)) {
         switch (error.code) {
@@ -142,8 +162,29 @@ export class BoardsService {
 
   public async deleteBoard(id: string): Promise<void> {
     try {
-      await this.prisma.board.delete({
-        where: { id },
+      await this.prisma.$transaction(async (prisma) => {
+        const board = await prisma.board.findUniqueOrThrow({
+          where: { id },
+          select: {
+            projectId: true,
+          },
+        });
+
+        const boardsCount = await prisma.board.count({
+          where: {
+            projectId: board.projectId,
+          },
+        });
+
+        if (boardsCount <= 1) {
+          throw new BadRequestException(
+            'A project must have at least one board',
+          );
+        }
+
+        await prisma.board.delete({
+          where: { id },
+        });
       });
     } catch (error) {
       if (isPrismaError(error) && error.code === 'P2025') {
@@ -156,7 +197,7 @@ export class BoardsService {
   public async updateColumnsOrder(
     boardId: string,
     updateColumnsOrderDto: UpdateColumnsOrderDto,
-  ): Promise<BoardWithColumnsResponseDto> {
+  ): Promise<BoardResponseDto> {
     const board = await this.prisma.board.findUnique({
       where: { id: boardId },
       select: { id: true },
@@ -212,13 +253,9 @@ export class BoardsService {
       include: {
         columns: {
           include: {
-            tasks: {
-              include: {
-                assignee: {
-                  include: {
-                    desiredRoles: true,
-                  },
-                },
+            _count: {
+              select: {
+                tasks: true,
               },
             },
           },
@@ -231,6 +268,222 @@ export class BoardsService {
       throw new InternalServerErrorException('Board not found after update');
     }
 
-    return BoardMapper.toExpandResponse(updatedBoard);
+    return BoardMapper.toResponse(updatedBoard);
   }
+
+  public async duplicateBoard(
+    id: string,
+    localeDto: LocaleDto,
+  ): Promise<BoardResponseDto> {
+    try {
+      return await this.prisma.$transaction(async (prisma) => {
+        const sourceBoard = await prisma.board.findUniqueOrThrow({
+          where: { id },
+          include: {
+            columns: {
+              orderBy: {
+                columnIndex: 'asc',
+              },
+              include: {
+                tasks: {
+                  orderBy: {
+                    taskIndex: 'asc',
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        const boards = await prisma.board.findMany({
+          where: {
+            projectId: sourceBoard.projectId,
+          },
+          select: {
+            boardName: true,
+          },
+        });
+
+        if (boards.length >= 5) {
+          throw new BadRequestException(
+            'You can only add up to 5 boards in the project',
+          );
+        }
+
+        const boardNames = new Set(boards.map((board) => board.boardName));
+
+        const boardName = generateCopyName(
+          sourceBoard.boardName,
+          localeDto.locale,
+          boardNames,
+        );
+
+        const newBoard = await prisma.board.create({
+          data: {
+            boardName,
+            projectId: sourceBoard.projectId,
+
+            columns: {
+              create: sourceBoard.columns.map((column) => ({
+                statusName: column.statusName,
+                columnIndex: column.columnIndex,
+                color: column.color,
+
+                tasks: {
+                  create: column.tasks.map((task) => ({
+                    taskName: task.taskName,
+                    description: task.description,
+                    priority: task.priority,
+                    deadline: task.deadline,
+                    taskIndex: task.taskIndex,
+                  })),
+                },
+              })),
+            },
+          },
+
+          include: {
+            columns: {
+              orderBy: {
+                columnIndex: 'asc',
+              },
+              include: {
+                _count: {
+                  select: {
+                    tasks: true,
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        return BoardMapper.toResponse(newBoard);
+      });
+    } catch (error) {
+      if (isPrismaError(error)) {
+        switch (error.code) {
+          case 'P2025':
+            throw new NotFoundException('Board not found');
+          case 'P2002':
+            throw new ConflictException('Board with this name already exists');
+          default:
+            throw error;
+        }
+      }
+      throw error;
+    }
+  }
+  //
+  // public async addColumn(
+  //   createTaskStatusDto: CreateTaskStatusDto,
+  // ): Promise<TaskStatusResponseDto> {
+  //   await this.getBoardById(createTaskStatusDto.boardId);
+  //
+  //   const existingColumns = await this.prisma.taskStatus.count({
+  //     where: { boardId: createTaskStatusDto.boardId },
+  //   });
+  //
+  //   if (existingColumns >= 5) {
+  //     throw new BadRequestException(
+  //       'You can only add up to 5 columns on the board',
+  //     );
+  //   }
+  //
+  //   try {
+  //     const status = await this.prisma.taskStatus.create({
+  //       data: {
+  //         boardId: createTaskStatusDto.boardId,
+  //         statusName: createTaskStatusDto.statusName,
+  //         columnIndex: existingColumns + 1,
+  //       },
+  //       include: {
+  //         tasks: {
+  //           include: {
+  //             assignees: {
+  //               include: {
+  //                 desiredRoles: true,
+  //               },
+  //             },
+  //           },
+  //         },
+  //       },
+  //     });
+  //
+  //     return TaskStatusMapper.toExpandResponse(status);
+  //   } catch (error) {
+  //     if (isPrismaError(error) && error.code === 'P2002') {
+  //       throw new ConflictException('Column name must be unique on the board');
+  //     }
+  //     throw error;
+  //   }
+  // }
+  //
+  // public async updateColumn(
+  //   id: string,
+  //   updateTaskStatusDto: UpdateTaskStatusDto,
+  // ): Promise<TaskStatusResponseDto> {
+  //   try {
+  //     const status = await this.prisma.taskStatus.update({
+  //       where: { id },
+  //       data: {
+  //         ...updateTaskStatusDto,
+  //       },
+  //     });
+  //
+  //     return TaskStatusMapper.toBaseResponse(status);
+  //   } catch (error) {
+  //     if (isPrismaError(error)) {
+  //       switch (error.code) {
+  //         case 'P2025':
+  //           throw new NotFoundException('Column not found');
+  //         case 'P2002':
+  //           throw new ConflictException(
+  //             'Column name must be unique on the board',
+  //           );
+  //         default:
+  //           throw error;
+  //       }
+  //     }
+  //     throw error;
+  //   }
+  // }
+  //
+  // public async deleteColumn(id: string): Promise<void> {
+  //   try {
+  //     await this.prisma.$transaction(async (prisma) => {
+  //       const deletedColumn = await prisma.taskStatus.delete({
+  //         where: { id },
+  //         select: {
+  //           columnIndex: true,
+  //           boardId: true,
+  //         },
+  //       });
+  //
+  //       const columnsToUpdate = await prisma.taskStatus.findMany({
+  //         where: {
+  //           boardId: deletedColumn.boardId,
+  //           columnIndex: {
+  //             gt: deletedColumn.columnIndex,
+  //           },
+  //         },
+  //       });
+  //
+  //       for (const column of columnsToUpdate) {
+  //         await prisma.taskStatus.update({
+  //           where: { id: column.id },
+  //           data: {
+  //             columnIndex: column.columnIndex - 1,
+  //           },
+  //         });
+  //       }
+  //     });
+  //   } catch (error) {
+  //     if (isPrismaError(error) && error.code === 'P2025') {
+  //       throw new NotFoundException('Column not found');
+  //     }
+  //
+  //     throw error;
+  //   }
+  // }
 }

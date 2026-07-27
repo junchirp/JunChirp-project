@@ -175,7 +175,7 @@ const mainApi = createApi({
     // invitations
     'invites-me-in-projects', // LIST
     'invites-in-my-projects', // LIST | userId
-    'invites', // ProjectId
+    'invites', // projectId
 
     // requests
     'my-requests-in-projects', // LIST
@@ -184,6 +184,10 @@ const mainApi = createApi({
 
     // documents
     'docs', // projectId
+
+    // boards
+    'boards', // projectId
+    'board', // boardId
   ],
   endpoints: () => ({}),
 });

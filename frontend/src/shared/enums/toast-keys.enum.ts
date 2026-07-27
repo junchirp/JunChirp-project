@@ -28,4 +28,5 @@ export enum ToastKeysEnum {
   DOCUMENT = 'document',
   MEMBER = 'member',
   PROJECT_ROLE = 'project role',
+  BOARD = 'board',
 }

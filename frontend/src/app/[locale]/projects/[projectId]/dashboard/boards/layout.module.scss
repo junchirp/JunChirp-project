@@ -1,0 +1,13 @@
+@use '@/assets/styles/variables';
+
+.boards-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+
+  &__divider {
+    height: 4px;
+    width: 100%;
+    background-color: variables.$green-2;
+  }
+}

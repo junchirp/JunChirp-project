@@ -1,36 +1,23 @@
-import { Board, ProjectRoleType, Task, TaskStatus, User } from '@prisma/client';
+import { Board, TaskStatus } from '@prisma/client';
 import { BoardResponseDto } from '../../boards/dto/board.response-dto';
 import { TaskStatusMapper } from './task-status.mapper';
-import { BoardWithColumnsResponseDto } from '../../boards/dto/board-with-columns.response-dto';
 
 export class BoardMapper {
-  public static toBaseResponse(board: Board): BoardResponseDto {
-    return {
-      id: board.id,
-      boardName: board.boardName,
-      projectId: board.projectId,
-    };
-  }
-
-  public static toExpandResponse(
+  public static toResponse(
     board: Board & {
       columns: (TaskStatus & {
-        tasks: (Task & {
-          assignee:
-            | (User & {
-                desiredRoles: ProjectRoleType[];
-              })
-            | null;
-        })[];
+        _count: {
+          tasks: number;
+        };
       })[];
     },
-  ): BoardWithColumnsResponseDto {
+  ): BoardResponseDto {
     return {
       id: board.id,
       boardName: board.boardName,
       projectId: board.projectId,
       columns: board.columns.map((column) =>
-        TaskStatusMapper.toExpandResponse(column),
+        TaskStatusMapper.toBaseResponse(column),
       ),
     };
   }

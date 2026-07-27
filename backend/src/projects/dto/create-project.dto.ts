@@ -1,14 +1,23 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsArray,
+  IsIn,
   IsNotEmpty,
   IsString,
   IsUUID,
   Length,
   Matches,
 } from 'class-validator';
+import { localeArray, LocaleType } from '../../common/types/locale.type';
 
 export class CreateProjectDto {
+  @ApiProperty({
+    example: 'en',
+    description: 'Locale',
+  })
+  @IsIn(localeArray, { message: 'Must be a locale string' })
+  public readonly locale: LocaleType;
+
   @ApiProperty({ example: 'Project name', description: 'Project name' })
   @IsString({ message: 'Must be a string' })
   @Length(2, 50, { message: 'Must be between 2 and 50 characters' })
