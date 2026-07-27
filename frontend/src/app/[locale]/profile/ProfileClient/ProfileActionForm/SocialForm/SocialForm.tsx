@@ -179,7 +179,7 @@ export default function SocialForm(props: SocialFormProps): ReactElement {
           name="network"
           control={control}
           render={({ field }) => (
-            <Dropdown<ClientSocialInterface>
+            <Dropdown
               {...field}
               options={socialNetworks}
               label={tForms('socialForm.network')}

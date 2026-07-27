@@ -28,15 +28,21 @@ export class TaskResponseDto {
   public readonly priority: TaskPriority;
 
   @ApiProperty({
+    example: 2,
+    description: 'Task index in the column',
+  })
+  public readonly taskIndex: number;
+
+  @ApiProperty({
     example: '2025-04-11 11:51:05.224',
     description: 'Task deadline',
   })
   public readonly deadline: Date;
 
   @ApiProperty({
-    type: () => UserCardResponseDto,
+    type: () => [UserCardResponseDto],
   })
-  public readonly assignee: UserCardResponseDto | null;
+  public readonly assignees: UserCardResponseDto[];
 
   @ApiProperty({
     example: '6446ff53-d993-46b3-a837-25d55fac1392',

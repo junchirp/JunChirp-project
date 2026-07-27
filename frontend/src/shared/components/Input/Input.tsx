@@ -7,7 +7,6 @@ import {
   ForwardedRef,
   ReactElement,
   useId,
-  ChangeEvent,
 } from 'react';
 import styles from './Input.module.scss';
 import Image from 'next/image';
@@ -52,10 +51,6 @@ function InputComponent(
       : 'password'
     : type;
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    rest.onChange?.(e);
-  };
-
   const inputClassNames = [
     styles.input__input,
     withError && !!errorMessage && styles['input__input--invalid'],
@@ -85,7 +80,6 @@ function InputComponent(
           ref={ref}
           type={inputType}
           value={value}
-          onChange={handleChange}
           className={inputClassNames}
           placeholder={placeholder}
         />

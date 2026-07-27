@@ -800,5 +800,30 @@
     "0": "0",
     "1": "1",
     "2": "2"
+  },
+  "boards": {
+    "title": "Board",
+    "menu": {
+      "rename": "Rename",
+      "duplicate": "Duplicate",
+      "delete": "Delete"
+    },
+    "createBoard": {
+      "error": "Failed to create board.",
+      "errorDetails": "Please try again."
+    },
+    "duplicateBoard": {
+      "error": "Failed to duplicate board.",
+      "errorDetails": "Please try again."
+    },
+    "deleteBoard": {
+      "error": "Failed to delete board.",
+      "errorDetails": "Please try again.",
+      "success": "Board deleted."
+    }
+  },
+  "deleteBoardPopup": {
+    "title": "Delete board",
+    "description": "This board contains tasks. Do you really want to delete the board <board>{boardName}</board>? This action cannot be undone."
   }
 }

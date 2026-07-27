@@ -21,10 +21,12 @@ import { useTranslations } from 'next-intl';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 import CancelCreateProjectPopup from './CancelCreateProjectPopup/CancelCreateProjectPopup';
 import ProjectFormFields from '@/shared/components/ProjectFormFields/ProjectFormFields';
+import { useShortLocale } from '@/hooks/useShortLocale';
 
 type FormData = z.infer<typeof projectSchemaStatic>;
 
 export default function NewProjectForm(): ReactElement {
+  const locale = useShortLocale();
   const { data: categories = [] } = useGetCategoriesQuery();
   const { data: roles = [] } = useGetProjectRolesListQuery();
   const tForms = useTranslations('forms');
@@ -62,7 +64,10 @@ export default function NewProjectForm(): ReactElement {
         projectName: data.projectName.trim(),
         description: data.description.trim(),
       };
-      const newProject = await createProject(trimmedData).unwrap();
+      const newProject = await createProject({
+        ...trimmedData,
+        locale,
+      }).unwrap();
       showToast({
         severity: 'success',
         summary: tForms('projectForm.createSuccess'),

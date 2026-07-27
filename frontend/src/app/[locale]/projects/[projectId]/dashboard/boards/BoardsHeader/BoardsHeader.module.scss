@@ -1,0 +1,13 @@
+@use '@/assets/styles/variables';
+
+.boards-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  position: relative;
+
+  &__dropdown {
+    width: 100%;
+  }
+}

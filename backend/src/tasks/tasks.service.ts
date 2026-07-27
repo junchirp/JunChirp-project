@@ -21,8 +21,16 @@ export class TasksService {
           deadline: new Date(createTaskDto.deadline),
         },
         include: {
-          taskStatus: true,
-          assignee: {
+          taskStatus: {
+            include: {
+              _count: {
+                select: {
+                  tasks: true,
+                },
+              },
+            },
+          },
+          assignees: {
             include: {
               desiredRoles: true,
             },
@@ -44,8 +52,16 @@ export class TasksService {
       const task = await this.prisma.task.findUniqueOrThrow({
         where: { id },
         include: {
-          taskStatus: true,
-          assignee: {
+          taskStatus: {
+            include: {
+              _count: {
+                select: {
+                  tasks: true,
+                },
+              },
+            },
+          },
+          assignees: {
             include: {
               desiredRoles: true,
             },
@@ -71,8 +87,16 @@ export class TasksService {
         where: { id },
         data: updateTaskDto,
         include: {
-          taskStatus: true,
-          assignee: {
+          taskStatus: {
+            include: {
+              _count: {
+                select: {
+                  tasks: true,
+                },
+              },
+            },
+          },
+          assignees: {
             include: {
               desiredRoles: true,
             },
@@ -115,8 +139,16 @@ export class TasksService {
         where: { id },
         data: updateStatusTaskDto,
         include: {
-          taskStatus: true,
-          assignee: {
+          taskStatus: {
+            include: {
+              _count: {
+                select: {
+                  tasks: true,
+                },
+              },
+            },
+          },
+          assignees: {
             include: {
               desiredRoles: true,
             },

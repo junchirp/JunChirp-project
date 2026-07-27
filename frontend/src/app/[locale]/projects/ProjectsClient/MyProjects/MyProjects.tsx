@@ -42,7 +42,7 @@ export default function MyProjects({
 
     if (user.discordId) {
       try {
-        const result = await getProjectsCount(undefined, true).unwrap();
+        const result = await getProjectsCount().unwrap();
 
         if (result.count >= 2) {
           showToast({

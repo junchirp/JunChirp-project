@@ -106,9 +106,13 @@
         background-color: variables.$white-2;
       }
     }
+
+    &--selected {
+      background-color: variables.$gray-5;
+    }
   }
 
-  &__list {
+  &__list-wrapper {
     position: absolute;
     background-color: variables.$white-2;
     left: 0;
@@ -116,11 +120,7 @@
     border-radius: 8px;
     border: 1px solid variables.$gray-8;
     z-index: 10;
+    overflow-y: auto;
     max-height: 205px;
-
-    &:has(li:nth-child(6)) {
-      overflow-y: scroll;
-      border-radius: 8px 0 0 8px;
-    }
   }
 }

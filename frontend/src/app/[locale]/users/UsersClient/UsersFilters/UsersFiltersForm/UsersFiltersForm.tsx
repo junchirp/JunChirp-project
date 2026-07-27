@@ -75,7 +75,7 @@ export default function UsersFiltersForm(): ReactElement {
             name="activeProjectsCount"
             control={form.control}
             render={({ field }) => (
-              <Dropdown<SelectOptionsInterface>
+              <Dropdown
                 {...field}
                 options={projectsCountOptions}
                 label={`${t('activeProjectsCount')}:`}

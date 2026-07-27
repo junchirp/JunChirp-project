@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ProjectCardResponseDto } from './project-card.response-dto';
-import { ProjectRoleWithUserResponseDto } from '../../project-roles/dto/project-role-with-user.response-dto';
 import { UserCardResponseDto } from '../../users/dto/user-card.response-dto';
 
 export class ProjectResponseDto extends ProjectCardResponseDto {
@@ -10,6 +9,6 @@ export class ProjectResponseDto extends ProjectCardResponseDto {
   })
   public readonly discordUrl: string;
 
-  @ApiProperty({ type: () => [ProjectRoleWithUserResponseDto] })
+  @ApiProperty({ type: () => UserCardResponseDto })
   public readonly owner: UserCardResponseDto;
 }

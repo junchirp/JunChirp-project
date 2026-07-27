@@ -38,7 +38,7 @@ export default function AccessGuard({
   mode,
 }: AccessGuardProps): ReactElement {
   const router = useRouter();
-  const params = useParams<{ id: string }>();
+  const { projectId } = useParams<{ projectId: string }>();
   const pathname = usePathname();
   const user = useAppSelector(authSelector.selectUser);
   const status = useAppSelector(authSelector.selectLoadingStatus);
@@ -56,7 +56,7 @@ export default function AccessGuard({
     ? resolver({
         user,
         url: fullUrl,
-        projectId: params?.id,
+        projectId,
         data: access?.data,
         error: access?.error,
       })

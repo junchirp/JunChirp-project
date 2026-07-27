@@ -1,0 +1,9 @@
+@use '@/assets/styles/variables';
+
+.delete-board-popup {
+  &__text {
+    &--green {
+      color: variables.$green-2;
+    }
+  }
+}

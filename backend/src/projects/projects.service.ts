@@ -28,6 +28,9 @@ import { ProjectLogoResponseDto } from './dto/project-logo.response-dto';
 import { ProjectLogoMapper } from '../common/mappers/project-logo.mapper';
 import { DocumentResponseDto } from '../documents/dto/document.response-dto';
 import { DocumentMapper } from '../common/mappers/document.mapper';
+import { DEFAULT_NAMES } from '../common/constants/default-names';
+import { BoardResponseDto } from '../boards/dto/board.response-dto';
+import { BoardMapper } from '../common/mappers/board.mapper';
 
 interface GetProjectsOptionsInterface {
   userId: string;
@@ -181,6 +184,14 @@ export class ProjectsService {
                   },
                 })),
               ],
+            },
+            boards: {
+              create: {
+                boardName: DEFAULT_NAMES[createProjectDto.locale].board,
+                columns: {
+                  create: DEFAULT_NAMES[createProjectDto.locale].defaultColumns,
+                },
+              },
             },
           },
           include: {
@@ -650,8 +661,33 @@ export class ProjectsService {
   ): Promise<DocumentResponseDto[]> {
     const docs = await this.prisma.document.findMany({
       where: { projectId },
+      orderBy: {
+        createdAt: 'asc',
+      },
     });
 
     return docs.map((doc) => DocumentMapper.toResponse(doc));
+  }
+
+  public async getBoardsList(projectId: string): Promise<BoardResponseDto[]> {
+    const boards = await this.prisma.board.findMany({
+      where: { projectId },
+      orderBy: {
+        createdAt: 'asc',
+      },
+      include: {
+        columns: {
+          include: {
+            _count: {
+              select: {
+                tasks: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return boards.map(BoardMapper.toResponse);
   }
 }

@@ -6,9 +6,6 @@ import { Controller, useForm } from 'react-hook-form';
 import { useProjectsFilters } from '@/hooks/useProjectsFilters';
 import { useGetCategoriesQuery } from '@/api/projectsApi';
 import Dropdown from '@/shared/components/Dropdown/Dropdown';
-import { ProjectCategoryInterface } from '@/shared/interfaces/project-category.interface';
-import { ParticipantsOptionsInterface } from '@/shared/interfaces/participants-options.interface';
-import { SelectOptionsInterface } from '@/shared/interfaces/select-options.interface';
 import { useTranslations } from 'next-intl';
 import { useProjectParticipantsOptions } from '@/hooks/useProjectParticipantsOptions';
 import { useProjectStatusOptions } from '@/hooks/useProjectStatusOptions';
@@ -66,7 +63,7 @@ export default function ProjectsFiltersForm(): ReactElement {
             name="categoryId"
             control={form.control}
             render={({ field }) => (
-              <Dropdown<ProjectCategoryInterface>
+              <Dropdown
                 {...field}
                 options={categories}
                 label={`${t('categoryId')}:`}
@@ -92,7 +89,7 @@ export default function ProjectsFiltersForm(): ReactElement {
             name="status"
             control={form.control}
             render={({ field }) => (
-              <Dropdown<SelectOptionsInterface>
+              <Dropdown
                 {...field}
                 options={statusOptions}
                 label={`${t('status')}:`}
@@ -118,7 +115,7 @@ export default function ProjectsFiltersForm(): ReactElement {
             name="participantsRange"
             control={form.control}
             render={({ field }) => (
-              <Dropdown<ParticipantsOptionsInterface>
+              <Dropdown
                 {...field}
                 options={participantsOptions}
                 label={`${t('participantsRange')}:`}

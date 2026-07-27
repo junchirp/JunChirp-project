@@ -21,14 +21,12 @@ import { ProjectRolesModule } from './project-roles/project-roles.module';
 import { DocumentsModule } from './documents/documents.module';
 import { ParticipationsModule } from './participations/participations.module';
 import { BoardsModule } from './boards/boards.module';
-import { TaskStatusesModule } from './task-statuses/task-statuses.module';
 import { TasksModule } from './tasks/tasks.module';
 import { SupportModule } from './support/support.module';
 import { LoggerModule } from './logger/logger.module';
 import { DiscordModule } from './discord/discord.module';
 import { HttpModule } from '@nestjs/axios';
 import { ValidationPipe } from './common/pipes/validation/validation.pipe';
-import { CookieConfigService } from './cookie-config/cookie-config.service';
 import { CookieConfigModule } from './cookie-config/cookie-config.module';
 
 @Module({
@@ -63,7 +61,6 @@ import { CookieConfigModule } from './cookie-config/cookie-config.module';
     DocumentsModule,
     ParticipationsModule,
     BoardsModule,
-    TaskStatusesModule,
     TasksModule,
     SupportModule,
     LoggerModule,

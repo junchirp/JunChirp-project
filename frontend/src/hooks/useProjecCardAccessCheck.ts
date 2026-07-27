@@ -11,7 +11,7 @@ export const useProjectCardAccessCheck = (): {
   error: FetchBaseQueryError | SerializedError | undefined;
   isLoading: boolean;
 } => {
-  const { id } = useParams<{ id: string }>();
-  const { data, error, isLoading } = useGetProjectCardByIdQuery(id);
+  const { projectId } = useParams<{ projectId: string }>();
+  const { data, error, isLoading } = useGetProjectCardByIdQuery(projectId);
   return { data, error, isLoading };
 };

@@ -1,0 +1,62 @@
+@use '@/assets/styles/variables';
+
+.column {
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 224px;
+  height: 100%;
+  background-color: variables.$gray-1;
+  border-radius: 12px;
+
+  &__header {
+    padding: 0 8px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__title-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  &__title {
+    width: 95px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    border-radius: 4px;
+    padding: 7px 4px;
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  &__button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background-color: variables.$white-2;
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+
+    &--drag {
+      cursor: grab;
+    }
+  }
+
+  &__tasks-number {
+    font-weight: 500;
+    font-size: 14px;
+    color: variables.$gray-7;
+  }
+}

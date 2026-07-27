@@ -23,7 +23,6 @@ interface DropdownProps<T> extends Partial<ControllerRenderProps> {
   errorMessage?: string;
   autoFocus?: boolean;
   defaultValue?: string | number | null;
-  onValueChange?: (value: string | number | null) => void;
 }
 
 export default function Dropdown<T>(props: DropdownProps<T>): ReactElement {
@@ -45,7 +44,6 @@ export default function Dropdown<T>(props: DropdownProps<T>): ReactElement {
     errorMessage,
     autoFocus = false,
     defaultValue,
-    onValueChange,
     disabled = false,
   } = props;
 
@@ -53,7 +51,6 @@ export default function Dropdown<T>(props: DropdownProps<T>): ReactElement {
     string | number | null | undefined
   >(defaultValue);
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedLabel, setSelectedLabel] = useState<string | null>(null);
   const id = useId();
   const ref = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -63,22 +60,15 @@ export default function Dropdown<T>(props: DropdownProps<T>): ReactElement {
   const labelFn = getOptionLabel ?? ((opt: unknown): string => String(opt));
   const valueFn = getOptionValue ?? ((opt: unknown): string => String(opt));
 
+  const selectedOption = options.find(
+    (option) => valueFn(option) === currentValue,
+  );
+
   useEffect(() => {
     if (autoFocus) {
       buttonRef.current?.focus();
     }
   }, [autoFocus]);
-
-  useEffect(() => {
-    if (!options.length) {
-      setSelectedLabel(null);
-      return;
-    }
-
-    const selected = options.find((opt) => valueFn(opt) === currentValue);
-
-    setSelectedLabel(selected ? labelFn(selected) : null);
-  }, [currentValue, options, labelFn, valueFn]);
 
   useClickOutside({
     isOpen,
@@ -92,13 +82,11 @@ export default function Dropdown<T>(props: DropdownProps<T>): ReactElement {
   const handleSelect = (option: T): void => {
     const newValue = valueFn(option);
 
-    if (isControlled) {
-      onChange?.(newValue);
-    } else {
+    if (!isControlled) {
       setInternalValue(newValue);
-      onValueChange?.(newValue);
     }
 
+    onChange?.(newValue);
     setIsOpen(false);
   };
 
@@ -137,8 +125,10 @@ export default function Dropdown<T>(props: DropdownProps<T>): ReactElement {
           ref={buttonRef}
           disabled={disabled}
         >
-          {selectedLabel ? (
-            <span className={styles.dropdown__selected}>{selectedLabel}</span>
+          {selectedOption ? (
+            <span className={styles.dropdown__selected}>
+              {labelFn(selectedOption)}
+            </span>
           ) : (
             <span className={styles.dropdown__placeholder}>{placeholder}</span>
           )}
@@ -165,36 +155,42 @@ export default function Dropdown<T>(props: DropdownProps<T>): ReactElement {
         )
       ) : null}
       {isOpen && (
-        <ul
-          className={styles.dropdown__list}
+        <div
+          className={styles['dropdown__list-wrapper']}
           style={{
             top: `${withError ? 'calc(100% - 17px)' : 'calc(100% + 4px)'}`,
           }}
         >
-          {options.map((option) => {
-            const optionLabel = labelFn(option);
-            const optionValue = valueFn(option);
-            const optionDisabled = isOptionDisabled?.(option) ?? false;
-            const isSelected = optionValue === currentValue;
-            return (
-              <li
-                key={optionValue === null ? 'null' : optionValue.toString()}
-                className={`
-                  ${styles.dropdown__item} 
-                  ${optionDisabled ? styles['dropdown__item--disabled'] : ''}
-                  ${isSelected ? styles['dropdown__item--selected'] : ''}  
-                `}
-                onClick={() => {
-                  if (!optionDisabled) {
-                    handleSelect(option);
-                  }
-                }}
-              >
-                {optionLabel}
-              </li>
-            );
-          })}
-        </ul>
+          <ul className={styles.dropdown__list}>
+            {options.map((option) => {
+              const optionLabel = labelFn(option);
+              const optionValue = valueFn(option);
+              const optionDisabled = isOptionDisabled?.(option) ?? false;
+              const isSelected = optionValue === currentValue;
+              const optionClassNames = [
+                styles.dropdown__item,
+                optionDisabled && styles['dropdown__item--disabled'],
+                isSelected && styles['dropdown__item--selected'],
+              ]
+                .filter(Boolean)
+                .join(' ');
+
+              return (
+                <li
+                  key={String(optionValue)}
+                  className={optionClassNames}
+                  onClick={() => {
+                    if (!optionDisabled) {
+                      handleSelect(option);
+                    }
+                  }}
+                >
+                  {optionLabel}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       )}
     </div>
   );
