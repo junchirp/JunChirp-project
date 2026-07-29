@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactElement, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import styles from './BoardsHeader.module.scss';
 import { useParams } from 'next/navigation';
 import {
@@ -25,8 +25,9 @@ import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 import { useShortLocale } from '@/hooks/useShortLocale';
 import { useTranslations } from 'next-intl';
 import DeleteBoardPopup from './DeleteBoardPopup/DeleteBoardPopup';
+import { BoardInterface } from '@/shared/interfaces/board.interface';
 
-export default function BoardsHeader(): ReactElement {
+export default function BoardsHeader(): ReactElement | null {
   const { projectId, boardId } = useParams<{
     projectId: string;
     boardId: string;
@@ -51,13 +52,18 @@ export default function BoardsHeader(): ReactElement {
   const { showToast, isActive } = useToast();
   const locale = useShortLocale();
   const [isOpenPopup, setIsOpenPopup] = useState(false);
-  const isLoading =
-    projectLoading ||
-    boardsLoading ||
-    createBoardLoading ||
-    deleteBoardLoading ||
-    duplicateBoardLoading;
+  const isInitialLoading = projectLoading || boardsLoading;
   const t = useTranslations('boards');
+  const [selectedBoard, setSelectedBoard] = useState<
+    BoardInterface | undefined
+  >();
+  const boardForRender = currentBoard ?? selectedBoard;
+
+  useEffect(() => {
+    if (currentBoard) {
+      setSelectedBoard(currentBoard);
+    }
+  }, [currentBoard]);
 
   const handleAddBoard = async (): Promise<void> => {
     if (isActive(ToastKeysEnum.BOARD)) {
@@ -79,13 +85,17 @@ export default function BoardsHeader(): ReactElement {
   };
 
   const handleCopyBoard = async (): Promise<void> => {
-    if (isActive(ToastKeysEnum.BOARD) || !currentBoard) {
+    if (
+      isActive(ToastKeysEnum.BOARD) ||
+      duplicateBoardLoading ||
+      !boardForRender
+    ) {
       return;
     }
 
     try {
       const board = await duplicateBoard({
-        id: currentBoard.id,
+        id: boardForRender.id,
         data: { locale, projectId },
       }).unwrap();
       router.push(`/projects/${projectId}/dashboard/boards/${board.id}`);
@@ -101,7 +111,7 @@ export default function BoardsHeader(): ReactElement {
   };
 
   const handleDeleteBoard = async (id: string): Promise<void> => {
-    if (isActive(ToastKeysEnum.BOARD)) {
+    if (isActive(ToastKeysEnum.BOARD) || deleteBoardLoading) {
       return;
     }
 
@@ -129,11 +139,11 @@ export default function BoardsHeader(): ReactElement {
   };
 
   const handleDeleteBoardRequest = async (): Promise<void> => {
-    if (!currentBoard) {
+    if (!boardForRender) {
       return;
     }
 
-    const hasTasks = currentBoard.columns.some(
+    const hasTasks = boardForRender.columns.some(
       (column) => column.tasksCount > 0,
     );
 
@@ -142,22 +152,25 @@ export default function BoardsHeader(): ReactElement {
       return;
     }
 
-    await handleDeleteBoard(currentBoard.id);
+    await handleDeleteBoard(boardForRender.id);
   };
 
-  return isLoading || !currentBoard ? (
-    <ListSkeleton itemHeight={160} noPadding columns={1} />
-  ) : (
+  if (isInitialLoading || !boardForRender) {
+    return <ListSkeleton itemHeight={207} noPadding columns={1} />;
+  }
+
+  return (
     <>
       <DataContainer
         title={t('title')}
         counterMaxSize={5}
         counterSize={boards.length}
       >
-        {isEditMode && currentBoard ? (
+        {isEditMode && boardForRender ? (
           <div className={styles['boards-header__dropdown-header']}>
             <BoardForm
-              board={currentBoard}
+              currentBoard={boardForRender}
+              boards={boards}
               onClose={() => setEditMode(false)}
             />
           </div>
@@ -168,7 +181,7 @@ export default function BoardsHeader(): ReactElement {
                 options={boards}
                 getOptionLabel={(o) => o.boardName}
                 getOptionValue={(o) => o.id}
-                value={currentBoard.id}
+                value={boardForRender.id}
                 onChange={(v) => {
                   if (typeof v !== 'string' || v === boardId) {
                     return;
@@ -181,7 +194,7 @@ export default function BoardsHeader(): ReactElement {
               <>
                 <BoardMenu
                   boardsCount={boards.length}
-                  currentBoard={currentBoard}
+                  currentBoard={boardForRender}
                   onDuplicate={handleCopyBoard}
                   onDelete={handleDeleteBoardRequest}
                   onRename={() => setEditMode(true)}
@@ -191,7 +204,7 @@ export default function BoardsHeader(): ReactElement {
                   icon={<Plus />}
                   disabled={boards.length >= 5}
                   onClick={handleAddBoard}
-                  loading={isLoading}
+                  loading={createBoardLoading}
                 />
               </>
             )}
@@ -200,10 +213,10 @@ export default function BoardsHeader(): ReactElement {
       </DataContainer>
       <DeleteBoardPopup
         isOpen={isOpenPopup}
-        board={currentBoard}
+        board={boardForRender}
         onClose={() => setIsOpenPopup(false)}
-        onConfirm={() => handleDeleteBoard(currentBoard.id)}
-        loading={isLoading}
+        onConfirm={() => handleDeleteBoard(boardForRender.id)}
+        loading={deleteBoardLoading}
       />
     </>
   );

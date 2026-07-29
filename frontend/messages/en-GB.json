@@ -803,6 +803,8 @@
   },
   "boards": {
     "title": "Board",
+    "columnBtn": "Add column",
+    "bordNameError": "A board with this name already exists",
     "menu": {
       "rename": "Rename",
       "duplicate": "Duplicate",
@@ -820,10 +822,19 @@
       "error": "Failed to delete board.",
       "errorDetails": "Please try again.",
       "success": "Board deleted."
+    },
+    "deleteColumn": {
+      "error": "Failed to delete column.",
+      "errorDetails": "Please try again.",
+      "success": "Column deleted."
     }
   },
   "deleteBoardPopup": {
     "title": "Delete board",
     "description": "This board contains tasks. Do you really want to delete the board <board>{boardName}</board>? This action cannot be undone."
+  },
+  "deleteColumnPopup": {
+    "title": "Delete column",
+    "description": "This column contains tasks. Do you really want to delete the column <column>{columnName}</column>? This action cannot be undone."
   }
 }

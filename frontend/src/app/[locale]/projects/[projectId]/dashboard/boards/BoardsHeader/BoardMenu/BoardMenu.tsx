@@ -26,6 +26,16 @@ export default function BoardMenu(props: BoardMenuProps): ReactElement {
   const toggleMenu = (): void => setIsOpen((prev) => !prev);
   const closeMenu = (): void => setIsOpen(false);
 
+  const deleteBoard = (): void => {
+    setIsOpen(false);
+    onDelete(currentBoard.id);
+  };
+
+  const duplicateBoard = (): void => {
+    setIsOpen(false);
+    onDuplicate();
+  };
+
   useClickOutside({
     isOpen,
     onOutside: closeMenu,
@@ -59,13 +69,14 @@ export default function BoardMenu(props: BoardMenuProps): ReactElement {
           <button
             className={styles['board-menu__item']}
             disabled={boardsCount >= 5}
-            onClick={onDuplicate}
+            onClick={duplicateBoard}
           >
             {t('duplicate')}
           </button>
           <button
             className={styles['board-menu__item']}
-            onClick={() => onDelete(currentBoard.id)}
+            disabled={boardsCount <= 1}
+            onClick={deleteBoard}
           >
             {t('delete')}
           </button>

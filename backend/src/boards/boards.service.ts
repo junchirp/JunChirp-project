@@ -13,13 +13,14 @@ import { UpdateColumnsOrderDto } from './dto/update-columns-order.dto';
 import { isPrismaError } from '../common/utils/is-prisma-error';
 import { DEFAULT_NAMES } from '../common/constants/default-names';
 import { generateUniqName } from '../common/utils/generate-unique-name';
-// import { CreateTaskStatusDto } from './dto/create-task-status.dto';
-// import { TaskStatusResponseDto } from './dto/task-status.response-dto';
-// import { TaskStatusMapper } from '../common/mappers/task-status.mapper';
-// import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
+import { CreateTaskStatusDto } from './dto/create-task-status.dto';
+import { TaskStatusResponseDto } from './dto/task-status.response-dto';
+import { TaskStatusMapper } from '../common/mappers/task-status.mapper';
+import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
 import { BoardResponseDto } from './dto/board.response-dto';
 import { generateCopyName } from '../common/utils/generate-copy-name';
 import { LocaleDto } from '../common/dto/locale.dto';
+import { ColumnColor } from '@prisma/client';
 
 @Injectable()
 export class BoardsService {
@@ -28,40 +29,33 @@ export class BoardsService {
   public async addBoard(
     createBoardDto: CreateBoardDto,
   ): Promise<BoardResponseDto> {
-    const existingBoards = await this.prisma.board.count({
-      where: { projectId: createBoardDto.projectId },
-    });
-
-    if (existingBoards >= 5) {
-      throw new BadRequestException(
-        'You can only add up to 5 boards in the project',
-      );
-    }
-
     try {
       return this.prisma.$transaction(async (prisma) => {
-        const baseName = DEFAULT_NAMES[createBoardDto.locale].board;
-        const existingBoardNames = await prisma.board.findMany({
+        const existingBoards = await prisma.board.findMany({
           where: {
             projectId: createBoardDto.projectId,
-            OR: [
-              {
-                boardName: baseName,
-              },
-              {
-                boardName: {
-                  startsWith: `${baseName} `,
-                },
-              },
-            ],
           },
           select: {
             boardName: true,
           },
         });
 
+        if (existingBoards.length >= 5) {
+          throw new BadRequestException(
+            'You can only add up to 5 boards in the project',
+          );
+        }
+
+        const baseName = DEFAULT_NAMES[createBoardDto.locale].board;
+
+        const filteredBoards = existingBoards.filter(
+          (board) =>
+            board.boardName.startsWith(`${baseName} `) ||
+            board.boardName === baseName,
+        );
+
         const boardName = generateUniqName(
-          existingBoardNames,
+          filteredBoards,
           (item) => item.boardName,
           baseName,
         );
@@ -374,116 +368,164 @@ export class BoardsService {
       throw error;
     }
   }
-  //
-  // public async addColumn(
-  //   createTaskStatusDto: CreateTaskStatusDto,
-  // ): Promise<TaskStatusResponseDto> {
-  //   await this.getBoardById(createTaskStatusDto.boardId);
-  //
-  //   const existingColumns = await this.prisma.taskStatus.count({
-  //     where: { boardId: createTaskStatusDto.boardId },
-  //   });
-  //
-  //   if (existingColumns >= 5) {
-  //     throw new BadRequestException(
-  //       'You can only add up to 5 columns on the board',
-  //     );
-  //   }
-  //
-  //   try {
-  //     const status = await this.prisma.taskStatus.create({
-  //       data: {
-  //         boardId: createTaskStatusDto.boardId,
-  //         statusName: createTaskStatusDto.statusName,
-  //         columnIndex: existingColumns + 1,
-  //       },
-  //       include: {
-  //         tasks: {
-  //           include: {
-  //             assignees: {
-  //               include: {
-  //                 desiredRoles: true,
-  //               },
-  //             },
-  //           },
-  //         },
-  //       },
-  //     });
-  //
-  //     return TaskStatusMapper.toExpandResponse(status);
-  //   } catch (error) {
-  //     if (isPrismaError(error) && error.code === 'P2002') {
-  //       throw new ConflictException('Column name must be unique on the board');
-  //     }
-  //     throw error;
-  //   }
-  // }
-  //
-  // public async updateColumn(
-  //   id: string,
-  //   updateTaskStatusDto: UpdateTaskStatusDto,
-  // ): Promise<TaskStatusResponseDto> {
-  //   try {
-  //     const status = await this.prisma.taskStatus.update({
-  //       where: { id },
-  //       data: {
-  //         ...updateTaskStatusDto,
-  //       },
-  //     });
-  //
-  //     return TaskStatusMapper.toBaseResponse(status);
-  //   } catch (error) {
-  //     if (isPrismaError(error)) {
-  //       switch (error.code) {
-  //         case 'P2025':
-  //           throw new NotFoundException('Column not found');
-  //         case 'P2002':
-  //           throw new ConflictException(
-  //             'Column name must be unique on the board',
-  //           );
-  //         default:
-  //           throw error;
-  //       }
-  //     }
-  //     throw error;
-  //   }
-  // }
-  //
-  // public async deleteColumn(id: string): Promise<void> {
-  //   try {
-  //     await this.prisma.$transaction(async (prisma) => {
-  //       const deletedColumn = await prisma.taskStatus.delete({
-  //         where: { id },
-  //         select: {
-  //           columnIndex: true,
-  //           boardId: true,
-  //         },
-  //       });
-  //
-  //       const columnsToUpdate = await prisma.taskStatus.findMany({
-  //         where: {
-  //           boardId: deletedColumn.boardId,
-  //           columnIndex: {
-  //             gt: deletedColumn.columnIndex,
-  //           },
-  //         },
-  //       });
-  //
-  //       for (const column of columnsToUpdate) {
-  //         await prisma.taskStatus.update({
-  //           where: { id: column.id },
-  //           data: {
-  //             columnIndex: column.columnIndex - 1,
-  //           },
-  //         });
-  //       }
-  //     });
-  //   } catch (error) {
-  //     if (isPrismaError(error) && error.code === 'P2025') {
-  //       throw new NotFoundException('Column not found');
-  //     }
-  //
-  //     throw error;
-  //   }
-  // }
+
+  public async addColumn(
+    createTaskStatusDto: CreateTaskStatusDto,
+  ): Promise<TaskStatusResponseDto> {
+    try {
+      return await this.prisma.$transaction(async (prisma) => {
+        const existingColumns = await prisma.taskStatus.findMany({
+          where: {
+            boardId: createTaskStatusDto.boardId,
+          },
+          select: {
+            statusName: true,
+            color: true,
+          },
+        });
+
+        if (existingColumns.length >= 5) {
+          throw new BadRequestException(
+            'You can only add up to 5 columns on the board',
+          );
+        }
+
+        const baseName = DEFAULT_NAMES[createTaskStatusDto.locale].column;
+
+        const filteredColumns = existingColumns.filter(
+          (column) =>
+            column.statusName.startsWith(`${baseName} `) ||
+            column.statusName === baseName,
+        );
+
+        const statusName = generateUniqName(
+          filteredColumns,
+          (column) => column.statusName,
+          baseName,
+        );
+
+        const usedColors = new Set(
+          existingColumns.map((column) => column.color),
+        );
+
+        const availableColors = Object.values(ColumnColor).filter(
+          (color) => !usedColors.has(color),
+        );
+
+        const color =
+          availableColors[Math.floor(Math.random() * availableColors.length)];
+
+        const status = await prisma.taskStatus.create({
+          data: {
+            boardId: createTaskStatusDto.boardId,
+            statusName,
+            color,
+            columnIndex: existingColumns.length + 1,
+          },
+          include: {
+            _count: {
+              select: {
+                tasks: true,
+              },
+            },
+          },
+        });
+
+        return TaskStatusMapper.toBaseResponse(status);
+      });
+    } catch (error) {
+      if (isPrismaError(error) && error.code === 'P2002') {
+        throw new ConflictException('Column name must be unique on the board');
+      }
+
+      throw error;
+    }
+  }
+
+  public async updateColumn(
+    id: string,
+    updateTaskStatusDto: UpdateTaskStatusDto,
+  ): Promise<TaskStatusResponseDto> {
+    try {
+      const status = await this.prisma.taskStatus.update({
+        where: { id },
+        data: {
+          ...updateTaskStatusDto,
+        },
+        include: {
+          _count: {
+            select: {
+              tasks: true,
+            },
+          },
+        },
+      });
+
+      return TaskStatusMapper.toBaseResponse(status);
+    } catch (error) {
+      if (isPrismaError(error)) {
+        switch (error.code) {
+          case 'P2025':
+            throw new NotFoundException('Column not found');
+          case 'P2002':
+            throw new ConflictException(
+              'Column name must be unique on the board',
+            );
+          default:
+            throw error;
+        }
+      }
+      throw error;
+    }
+  }
+
+  public async deleteColumn(id: string): Promise<void> {
+    try {
+      await this.prisma.$transaction(async (prisma) => {
+        const column = await prisma.taskStatus.findUniqueOrThrow({
+          where: { id },
+          select: {
+            columnIndex: true,
+            boardId: true,
+          },
+        });
+
+        const columnsCount = await prisma.taskStatus.count({
+          where: {
+            boardId: column.boardId,
+          },
+        });
+
+        if (columnsCount <= 1) {
+          throw new BadRequestException(
+            'A board must have at least one column',
+          );
+        }
+
+        await prisma.taskStatus.delete({
+          where: { id },
+        });
+
+        await prisma.taskStatus.updateMany({
+          where: {
+            boardId: column.boardId,
+            columnIndex: {
+              gt: column.columnIndex,
+            },
+          },
+          data: {
+            columnIndex: {
+              decrement: 1,
+            },
+          },
+        });
+      });
+    } catch (error) {
+      if (isPrismaError(error) && error.code === 'P2025') {
+        throw new NotFoundException('Column not found');
+      }
+
+      throw error;
+    }
+  }
 }

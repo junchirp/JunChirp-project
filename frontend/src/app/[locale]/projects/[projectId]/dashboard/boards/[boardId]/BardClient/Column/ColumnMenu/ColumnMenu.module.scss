@@ -1,19 +1,17 @@
 @use '@/assets/styles/variables';
 
-.board-menu {
+.column-menu {
   position: relative;
 
   &__menu {
     position: absolute;
-    top: 44px;
-    right: -100px;
-    border-radius: 32px;
-    border: 4px solid variables.$gray-1;
-    padding: 20px;
+    top: 24px;
+    right: -32px;
+    border-radius: 16px;
+    border: 2px solid variables.$gray-1;
     display: flex;
     flex-direction: column;
     background-color: variables.$white-2;
-    z-index: 10;
   }
 
   &__item {
@@ -37,5 +35,16 @@
       background-color: variables.$white-2;
       color: variables.$green-1;
     }
+  }
+
+  &__button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background-color: variables.$white-2;
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
   }
 }
