@@ -29,4 +29,5 @@ export enum ToastKeysEnum {
   MEMBER = 'member',
   PROJECT_ROLE = 'project role',
   BOARD = 'board',
+  STATUS = 'status',
 }

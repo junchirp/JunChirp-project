@@ -1,0 +1,9 @@
+@use '@/assets/styles/variables';
+
+.delete-column-popup {
+  &__text {
+    &--green {
+      color: variables.$green-2;
+    }
+  }
+}

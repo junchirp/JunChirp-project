@@ -4,6 +4,7 @@ import { ReactElement, useEffect, useState } from 'react';
 import styles from './BoardClient.module.scss';
 import { useParams } from 'next/navigation';
 import {
+  useCreateColumnMutation,
   useGetBoardQuery,
   useUpdateColumnsOrderMutation,
 } from '@/api/boardsApi';
@@ -18,6 +19,10 @@ import { useGetProjectByIdQuery } from '@/api/projectsApi';
 import { useAppSelector } from '@/hooks/reduxHooks';
 import authSelector from '@/redux/auth/authSelector';
 import { TaskStatusInterface } from '@/shared/interfaces/task-status.interface';
+import { useToast } from '@/hooks/useToast';
+import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
+import { useShortLocale } from '@/hooks/useShortLocale';
+import { useTranslations } from 'next-intl';
 
 export default function BoardClient(): ReactElement {
   const { projectId, boardId } = useParams<{
@@ -34,6 +39,11 @@ export default function BoardClient(): ReactElement {
   const isOwner = project?.ownerId === user.id;
   const [reorderColumns] = useUpdateColumnsOrderMutation();
   const isLoading = projectLoading || boardLoading;
+  const [createColumn, { isLoading: createColumnLoading }] =
+    useCreateColumnMutation();
+  const { showToast, isActive } = useToast();
+  const locale = useShortLocale();
+  const t = useTranslations('boards');
 
   useEffect(() => {
     if (!isLoading && !board) {
@@ -46,6 +56,23 @@ export default function BoardClient(): ReactElement {
       setColumns(board.columns);
     }
   }, [board]);
+
+  const addColumn = async (): Promise<void> => {
+    if (isActive(ToastKeysEnum.STATUS)) {
+      return;
+    }
+
+    try {
+      await createColumn({ boardId, locale }).unwrap();
+    } catch {
+      showToast({
+        severity: 'error',
+        summary: 'Помилка створення колонки',
+        life: 3000,
+        actionKey: ToastKeysEnum.BOARD,
+      });
+    }
+  };
 
   const handleDragEnd = async (event: DragEndEvent): Promise<void> => {
     if (event.canceled) {
@@ -62,6 +89,7 @@ export default function BoardClient(): ReactElement {
       return;
     }
 
+    const previousColumns = columns;
     const newColumns = [...columns];
 
     const [movedColumn] = newColumns.splice(initialIndex, 1);
@@ -69,7 +97,7 @@ export default function BoardClient(): ReactElement {
 
     const reorderedColumns = newColumns.map((column, columnIndex) => ({
       ...column,
-      columnIndex: columnIndex + 1, // якщо бекенд очікує індекси з 1
+      columnIndex: columnIndex + 1,
     }));
 
     setColumns(reorderedColumns);
@@ -87,13 +115,13 @@ export default function BoardClient(): ReactElement {
           },
         }).unwrap();
       } catch {
-        return;
+        setColumns(previousColumns);
       }
     }
   };
 
   return isLoading ? (
-    <ListSkeleton itemHeight={160} noPadding columns={1} />
+    <ListSkeleton itemHeight={44} noPadding columns={1} />
   ) : (
     <DragDropProvider onDragEnd={handleDragEnd}>
       <div className={styles['board-client__wrapper']}>
@@ -102,7 +130,8 @@ export default function BoardClient(): ReactElement {
             {columns.map((column, index) => (
               <Column
                 key={column.id}
-                column={column}
+                currentColumn={column}
+                columns={columns}
                 index={index}
                 isOwner={isOwner}
               />
@@ -114,8 +143,10 @@ export default function BoardClient(): ReactElement {
               variant="secondary-frame"
               icon={<Plus />}
               disabled={buttonDisabled}
+              loading={createColumnLoading}
+              onClick={addColumn}
             >
-              {!buttonDisabled && 'Додати колонку'}
+              {!buttonDisabled && t('columnBtn')}
             </Button>
           )}
         </div>

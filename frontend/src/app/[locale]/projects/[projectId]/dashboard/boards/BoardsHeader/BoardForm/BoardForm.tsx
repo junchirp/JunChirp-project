@@ -7,6 +7,7 @@ import { Controller, useForm } from 'react-hook-form';
 import Input from '@/shared/components/Input/Input';
 import { normalizeInputValue } from '@/shared/utils/normalizeInputValue';
 import { useUpdateBoardMutation } from '@/api/boardsApi';
+import { useTranslations } from 'next-intl';
 
 interface FormData {
   boardName: string;
@@ -15,18 +16,20 @@ interface FormData {
 }
 
 interface BoardFormProps {
-  board: BoardInterface;
+  currentBoard: BoardInterface;
+  boards: BoardInterface[];
   onClose: () => void;
 }
 
 export default function BoardForm(props: BoardFormProps): ReactElement {
-  const { board, onClose } = props;
-  const { handleSubmit, control, setFocus } = useForm<FormData>({
+  const { currentBoard, boards, onClose } = props;
+  const t = useTranslations('boards');
+  const { handleSubmit, control, setFocus, setError } = useForm<FormData>({
     mode: 'onBlur',
     defaultValues: {
-      boardName: board.boardName,
-      projectId: board.projectId,
-      id: board.id,
+      boardName: currentBoard.boardName,
+      projectId: currentBoard.projectId,
+      id: currentBoard.id,
     },
   });
 
@@ -45,8 +48,14 @@ export default function BoardForm(props: BoardFormProps): ReactElement {
           projectId: data.projectId,
         },
       }).unwrap();
-    } finally {
       onClose();
+    } catch {
+      setError('boardName', {
+        type: 'server',
+        message: t('bordNameError'),
+      });
+
+      setFocus('boardName');
     }
   };
 
@@ -56,10 +65,23 @@ export default function BoardForm(props: BoardFormProps): ReactElement {
         <Controller
           name="boardName"
           control={control}
-          render={({ field }) => (
+          rules={{
+            validate: (value) => {
+              const normalizedValue = value.trim();
+              const isDuplicate = boards.some(
+                (item) =>
+                  item.id !== currentBoard.id &&
+                  item.boardName.trim() === normalizedValue,
+              );
+              return isDuplicate ? t('bordNameError') : true;
+            },
+          }}
+          render={({ field, fieldState }) => (
             <Input
               {...field}
               maxLength={50}
+              withError={fieldState.invalid}
+              errorMessage={fieldState.error?.message}
               onChange={(e) => {
                 const normalized = normalizeInputValue(e.target.value);
                 field.onChange(normalized);

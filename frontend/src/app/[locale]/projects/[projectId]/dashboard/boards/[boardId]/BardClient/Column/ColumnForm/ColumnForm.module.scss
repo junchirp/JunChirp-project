@@ -1,0 +1,36 @@
+@use '@/assets/styles/variables';
+
+.column-form {
+  &__fieldset {
+    width: 95px;
+  }
+
+  &__input {
+    white-space: nowrap;
+    border-radius: 4px;
+    padding: 0 4px;
+    font-weight: 600;
+    font-size: 14px;
+    background-color: variables.$white-2;
+    width: 100%;
+    border: 1px solid variables.$gray-8;
+    outline: none;
+    line-height: 1.4;
+    height: 28px;
+    box-sizing: border-box;
+
+    &:focus {
+      border-color: variables.$green-6;
+      box-shadow: 0 0 0 4px variables.$green-4;
+    }
+
+    &--invalid {
+      border: 1px solid variables.$red-8;
+
+      &:focus {
+        border-color: variables.$red-8;
+        box-shadow: 0 0 0 4px variables.$red-3;
+      }
+    }
+  }
+}
