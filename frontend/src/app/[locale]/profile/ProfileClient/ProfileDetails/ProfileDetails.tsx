@@ -23,7 +23,6 @@ interface ProfileDetailsProps<
     | SocialInterface,
 > {
   title: string;
-  isEditable?: boolean;
   items: T[];
   maxSize: number;
   handleAddItem: () => void;
@@ -38,7 +37,6 @@ export default function ProfileDetails<T extends WithIdInterface>(
 ): ReactElement {
   const {
     title,
-    isEditable = false,
     items,
     maxSize,
     handleAddItem,
@@ -66,7 +64,7 @@ export default function ProfileDetails<T extends WithIdInterface>(
                 {visibleItems.map((item) => (
                   <ProfileDetailsItem<T>
                     item={item}
-                    isEditable={isEditable}
+                    isDeletable={items.length > 1}
                     key={item.id}
                     handleEditItem={handleEditItem}
                     handleDeleteItem={handleDeleteItem}

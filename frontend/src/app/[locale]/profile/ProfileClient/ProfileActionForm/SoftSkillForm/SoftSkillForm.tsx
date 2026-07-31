@@ -12,6 +12,7 @@ import { useToast } from '@/hooks/useToast';
 import {
   useAddSoftSkillMutation,
   useLazyGetSoftSkillsListQuery,
+  useUpdateSoftSkillMutation,
 } from '@/api/softSkillsApi';
 import {
   softSkillSchema,
@@ -21,42 +22,71 @@ import { useTranslations } from 'next-intl';
 import Autocomplete from '@/shared/components/Autocomplete/Autocomplete';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 import { normalizeInputValue } from '@/shared/utils/normalizeInputValue';
+import { SoftSkillInterface } from '@/shared/interfaces/soft-skill.interface';
 
 type FormData = z.infer<typeof softSkillSchemaStatic>;
 
 interface SoftSkillFormProps {
+  initialValues?: SoftSkillInterface;
   onCancel: () => void;
 }
 
 export default function SoftSkillForm(props: SoftSkillFormProps): ReactElement {
-  const [addSoftSkill, { isLoading }] = useAddSoftSkillMutation();
+  const [addSoftSkill, { isLoading: addSkillLoading }] =
+    useAddSoftSkillMutation();
+  const [updateSoftSkill, { isLoading: updateSkillLoading }] =
+    useUpdateSoftSkillMutation();
   const [getSkills] = useLazyGetSoftSkillsListQuery();
   const { showToast, isActive } = useToast();
-  const { onCancel } = props;
+  const { initialValues, onCancel } = props;
   const tForms = useTranslations('forms');
   const tButtons = useTranslations('buttons');
   const {
     handleSubmit,
+    reset,
     setFocus,
     control,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(softSkillSchema(tForms)),
     mode: 'onChange',
+    defaultValues: {
+      softSkillName: '',
+    },
   });
 
   useEffect(() => {
     setFocus('softSkillName');
   }, [setFocus]);
 
+  useEffect(() => {
+    if (initialValues) {
+      reset({
+        softSkillName: initialValues.softSkillName,
+      });
+    } else {
+      reset({
+        softSkillName: '',
+      });
+    }
+  }, [initialValues, reset]);
+
   const onSubmit = async (data: FormData): Promise<void> => {
     if (isActive(ToastKeysEnum.SOFT_SKILL)) {
       return;
     }
 
+    const trimmedData = { softSkillName: data.softSkillName.trim() };
+
     try {
-      const trimmedData = { softSkillName: data.softSkillName.trim() };
-      await addSoftSkill(trimmedData).unwrap();
+      if (initialValues) {
+        await updateSoftSkill({
+          id: initialValues.id,
+          data: trimmedData,
+        }).unwrap();
+      } else {
+        await addSoftSkill(trimmedData).unwrap();
+      }
 
       showToast({
         severity: 'success',
@@ -73,21 +103,15 @@ export default function SoftSkillForm(props: SoftSkillFormProps): ReactElement {
         | undefined;
       const status = errorData?.status;
 
-      if (status === 409) {
-        showToast({
-          severity: 'error',
-          summary: tForms('softSkillForm.error409'),
-          life: 3000,
-          actionKey: ToastKeysEnum.SOFT_SKILL,
-        });
-      } else {
-        showToast({
-          severity: 'error',
-          summary: tForms('softSkillForm.error'),
-          life: 3000,
-          actionKey: ToastKeysEnum.SOFT_SKILL,
-        });
-      }
+      showToast({
+        severity: 'error',
+        summary:
+          status === 409
+            ? tForms('softSkillForm.error409')
+            : tForms('softSkillForm.error'),
+        life: 3000,
+        actionKey: ToastKeysEnum.SOFT_SKILL,
+      });
     }
   };
 
@@ -98,7 +122,7 @@ export default function SoftSkillForm(props: SoftSkillFormProps): ReactElement {
     >
       <fieldset
         className={styles['soft-skill-form__fieldset']}
-        disabled={isLoading}
+        disabled={addSkillLoading || updateSkillLoading}
       >
         <Controller
           name="softSkillName"
@@ -129,7 +153,11 @@ export default function SoftSkillForm(props: SoftSkillFormProps): ReactElement {
         >
           {tButtons('cancel')}
         </Button>
-        <Button type="submit" color="green" loading={isLoading}>
+        <Button
+          type="submit"
+          color="green"
+          loading={addSkillLoading || updateSkillLoading}
+        >
           {tButtons('save')}
         </Button>
       </div>

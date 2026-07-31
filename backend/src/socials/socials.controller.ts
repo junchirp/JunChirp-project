@@ -18,6 +18,7 @@ import { Request } from 'express';
 import { UserWithPasswordResponseDto } from '../users/dto/user-with-password.response-dto';
 import { User } from '../auth/decorators/user.decorator';
 import { UUIDParam } from '../common/decorators/UUID-param.decorator';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
 
 @User()
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
@@ -67,7 +68,7 @@ export class SocialsController {
 
   @ApiOperation({ summary: 'Update social network profile' })
   @ApiOkResponse({ type: SocialResponseDto })
-  @ApiNotFoundResponse({ description: 'Profile not found' })
+  @ApiNotFoundResponse({ description: 'Social profile not found' })
   @ApiConflictResponse({
     description: 'Profile with this network already exists',
   })
@@ -82,9 +83,10 @@ export class SocialsController {
   @Put(':id')
   public async updateSocialNetwork(
     @UUIDParam('id') id: string,
+    @CurrentUser('id') userId: string,
     @Body() updateSocialDto: UpdateSocialDto,
   ): Promise<SocialResponseDto> {
-    return this.socialsService.updateSocialNetwork(id, updateSocialDto);
+    return this.socialsService.updateSocialNetwork(id, userId, updateSocialDto);
   }
 
   @ApiOperation({ summary: 'Delete social network profile' })
@@ -92,7 +94,10 @@ export class SocialsController {
   @ApiForbiddenResponse({
     description: 'Access denied: email not confirmed / Invalid CSRF token',
   })
-  @ApiNotFoundResponse({ description: 'Profile not found' })
+  @ApiNotFoundResponse({ description: 'Social profile not found' })
+  @ApiBadRequestResponse({
+    description: 'You must have at least one social profile',
+  })
   @ApiHeader({
     name: 'x-csrf-token',
     description: 'CSRF token for the request',
@@ -101,7 +106,8 @@ export class SocialsController {
   @Delete(':id')
   public async deleteSocialNetwork(
     @UUIDParam('id') id: string,
+    @CurrentUser('id') userId: string,
   ): Promise<string> {
-    return this.socialsService.deleteSocialNetwork(id);
+    return this.socialsService.deleteSocialNetwork(userId, id);
   }
 }

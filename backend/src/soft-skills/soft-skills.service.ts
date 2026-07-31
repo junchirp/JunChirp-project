@@ -9,7 +9,7 @@ import { UpdateSoftSkillDto } from './dto/update-soft-skill.dto';
 import { SoftSkillResponseDto } from './dto/soft-skill.response-dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { SoftSkillMapper } from '../common/mappers/soft-skill.mapper';
-import { isPrismaError } from '../common/utils/is-prisma-error';
+import { throwPrismaError } from '../common/utils/throw-prisma-error';
 
 @Injectable()
 export class SoftSkillsService {
@@ -48,81 +48,112 @@ export class SoftSkillsService {
     });
 
     if (userSoftSkillsCount >= 20) {
-      throw new BadRequestException('You can only add up to 20 soft skills.');
+      throw new BadRequestException('You can only add up to 20 soft skills');
     }
 
-    return this.prisma.$transaction(async (prisma) => {
-      try {
-        const softSkill = await this.prisma.userSoftSkill.create({
+    try {
+      return await this.prisma.$transaction(async (prisma) => {
+        const softSkill = await prisma.userSoftSkill.create({
           data: {
             ...createSoftSkillDto,
             userId,
           },
         });
 
-        const record = await prisma.softSkill.findFirst({
+        await prisma.softSkill.upsert({
           where: {
+            softSkillName: createSoftSkillDto.softSkillName,
+          },
+          update: {},
+          create: {
             softSkillName: createSoftSkillDto.softSkillName,
           },
         });
 
-        if (!record) {
-          await prisma.softSkill.create({
-            data: {
-              softSkillName: createSoftSkillDto.softSkillName,
-            },
-          });
-        }
-
         return SoftSkillMapper.toResponse(softSkill);
-      } catch (error) {
-        if (isPrismaError(error) && error.code === 'P2002') {
-          throw new ConflictException('Soft skill is already in list');
-        }
-        throw error;
-      }
-    });
+      });
+    } catch (error) {
+      throwPrismaError(error, {
+        code: 'P2002',
+        exception: ConflictException,
+        message: 'Soft skill is already in user list',
+      });
+    }
   }
 
   public async updateSoftSkill(
     id: string,
+    userId: string,
     updateSoftSkillDto: UpdateSoftSkillDto,
   ): Promise<SoftSkillResponseDto> {
     try {
-      const softSkill = await this.prisma.userSoftSkill.update({
-        where: { id },
-        data: {
-          ...updateSoftSkillDto,
-        },
-      });
+      return await this.prisma.$transaction(async (prisma) => {
+        const { count } = await prisma.userSoftSkill.updateMany({
+          where: {
+            id,
+            userId,
+          },
+          data: updateSoftSkillDto,
+        });
 
-      return SoftSkillMapper.toResponse(softSkill);
-    } catch (error) {
-      if (isPrismaError(error)) {
-        switch (error.code) {
-          case 'P2025':
-            throw new NotFoundException('Soft skill not found');
-          case 'P2002':
-            throw new ConflictException('Soft skill is already in list');
-          default:
-            throw error;
+        if (count === 0) {
+          throw new NotFoundException('Soft skill not found');
         }
-      }
-      throw error;
+
+        await prisma.softSkill.upsert({
+          where: {
+            softSkillName: updateSoftSkillDto.softSkillName,
+          },
+          update: {},
+          create: {
+            softSkillName: updateSoftSkillDto.softSkillName,
+          },
+        });
+
+        const softSkill = await prisma.userSoftSkill.findUniqueOrThrow({
+          where: { id },
+        });
+
+        return SoftSkillMapper.toResponse(softSkill);
+      });
+    } catch (error) {
+      throwPrismaError(error, [
+        {
+          code: 'P2025',
+          exception: NotFoundException,
+          message: 'Soft skill not found',
+        },
+        {
+          code: 'P2002',
+          exception: ConflictException,
+          message: 'Soft skill is already in user list',
+        },
+      ]);
     }
   }
 
-  public async deleteSoftSkill(id: string): Promise<string> {
-    try {
-      await this.prisma.userSoftSkill.delete({
-        where: { id },
+  public async deleteSoftSkill(userId: string, id: string): Promise<string> {
+    return this.prisma.$transaction(async (prisma) => {
+      const userSoftSkillsCount = await prisma.userSoftSkill.count({
+        where: { userId },
       });
-      return id;
-    } catch (error) {
-      if (isPrismaError(error) && error.code === 'P2025') {
+
+      if (userSoftSkillsCount <= 1) {
+        throw new BadRequestException('You must have at least one soft skill');
+      }
+
+      const { count } = await prisma.userSoftSkill.deleteMany({
+        where: {
+          id,
+          userId,
+        },
+      });
+
+      if (count === 0) {
         throw new NotFoundException('Soft skill not found');
       }
-      throw error;
-    }
+
+      return id;
+    });
   }
 }

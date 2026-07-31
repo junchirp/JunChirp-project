@@ -27,6 +27,7 @@ import { UserWithPasswordResponseDto } from '../users/dto/user-with-password.res
 import { EducationResponseDto } from './dto/education.response-dto';
 import { User } from '../auth/decorators/user.decorator';
 import { UUIDParam } from '../common/decorators/UUID-param.decorator';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
 
 @User()
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
@@ -78,7 +79,7 @@ export class EducationsController {
     description:
       'You can only add up to 5 educations / Specialization not found',
   })
-  @ApiConflictResponse({ description: 'Education is already in list' })
+  @ApiConflictResponse({ description: 'Education is already in user list' })
   @ApiForbiddenResponse({
     description: 'Access denied: email not confirmed / Invalid CSRF token',
   })
@@ -100,7 +101,7 @@ export class EducationsController {
   @ApiOperation({ summary: 'Update education' })
   @ApiOkResponse({ type: EducationResponseDto })
   @ApiNotFoundResponse({ description: 'Education not found' })
-  @ApiConflictResponse({ description: 'Education is already in list' })
+  @ApiConflictResponse({ description: 'Education is already in user list' })
   @ApiBadRequestResponse({ description: 'Specialization not found' })
   @ApiHeader({
     name: 'x-csrf-token',
@@ -113,14 +114,22 @@ export class EducationsController {
   @Put(':id')
   public async updateEducation(
     @UUIDParam('id') id: string,
+    @CurrentUser('id') userId: string,
     @Body() updateEducationDto: UpdateEducationDto,
   ): Promise<EducationResponseDto> {
-    return this.educationsService.updateEducation(id, updateEducationDto);
+    return this.educationsService.updateEducation(
+      id,
+      userId,
+      updateEducationDto,
+    );
   }
 
   @ApiOperation({ summary: 'Delete education' })
   @ApiOkResponse({ type: String })
   @ApiNotFoundResponse({ description: 'Education not found' })
+  @ApiBadRequestResponse({
+    description: 'You must have at least one education record',
+  })
   @ApiForbiddenResponse({
     description: 'Access denied: email not confirmed / Invalid CSRF token',
   })
@@ -130,7 +139,10 @@ export class EducationsController {
     required: true,
   })
   @Delete(':id')
-  public async deleteEducation(@UUIDParam('id') id: string): Promise<string> {
-    return this.educationsService.deleteEducation(id);
+  public async deleteEducation(
+    @UUIDParam('id') id: string,
+    @CurrentUser('id') userId: string,
+  ): Promise<string> {
+    return this.educationsService.deleteEducation(userId, id);
   }
 }

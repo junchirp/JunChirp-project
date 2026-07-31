@@ -34,6 +34,17 @@ export const hardSkillsApi = mainApi.injectEndpoints({
         url: `hard-skills/list?skill=${encodeURIComponent(fragment)}`,
       }),
     }),
+    updateHardSkill: builder.mutation<
+      HardSkillInterface,
+      { id: string; data: CreateHardSkillInterface }
+    >({
+      query: ({ id, data }) => ({
+        url: `hard-skills/${id}`,
+        method: 'PUT',
+        body: data,
+      }),
+      invalidatesTags: [{ type: 'hard-skills', id: 'LIST' }],
+    }),
   }),
 });
 
@@ -42,4 +53,5 @@ export const {
   useDeleteHardSkillMutation,
   useGetHardSkillsQuery,
   useLazyGetHardSkillsListQuery,
+  useUpdateHardSkillMutation,
 } = hardSkillsApi;

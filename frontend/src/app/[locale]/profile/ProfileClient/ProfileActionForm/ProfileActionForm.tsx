@@ -56,6 +56,18 @@ export default function ProfileActionForm(
       content = <UserNameForm initialValues={user} onCancel={onCancel} />;
       break;
     }
+    case 'edit-soft-skill': {
+      content = (
+        <SoftSkillForm initialValues={action.item} onCancel={onCancel} />
+      );
+      break;
+    }
+    case 'edit-hard-skill': {
+      content = (
+        <HardSkillForm initialValues={action.item} onCancel={onCancel} />
+      );
+      break;
+    }
     case undefined:
     default: {
       content = allField ? (

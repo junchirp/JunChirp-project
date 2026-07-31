@@ -12,6 +12,7 @@ import { useToast } from '@/hooks/useToast';
 import {
   useAddHardSkillMutation,
   useLazyGetHardSkillsListQuery,
+  useUpdateHardSkillMutation,
 } from '@/api/hardSkillsApi';
 import {
   hardSkillSchema,
@@ -21,42 +22,71 @@ import { useTranslations } from 'next-intl';
 import Autocomplete from '@/shared/components/Autocomplete/Autocomplete';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 import { normalizeInputValue } from '@/shared/utils/normalizeInputValue';
+import { HardSkillInterface } from '@/shared/interfaces/hard-skill.interface';
 
 type FormData = z.infer<typeof hardSkillSchemaStatic>;
 
 interface HardSkillFormProps {
+  initialValues?: HardSkillInterface;
   onCancel: () => void;
 }
 
 export default function HardSkillForm(props: HardSkillFormProps): ReactElement {
-  const [addHardSkill, { isLoading }] = useAddHardSkillMutation();
+  const [addHardSkill, { isLoading: addSkillLoading }] =
+    useAddHardSkillMutation();
+  const [updateHardSkill, { isLoading: updateSkillLoading }] =
+    useUpdateHardSkillMutation();
   const [getSkills] = useLazyGetHardSkillsListQuery();
   const { showToast, isActive } = useToast();
-  const { onCancel } = props;
+  const { initialValues, onCancel } = props;
   const tForms = useTranslations('forms');
   const tButtons = useTranslations('buttons');
   const {
     handleSubmit,
+    reset,
     setFocus,
     control,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(hardSkillSchema(tForms)),
     mode: 'onChange',
+    defaultValues: {
+      hardSkillName: '',
+    },
   });
 
   useEffect(() => {
     setFocus('hardSkillName');
   }, [setFocus]);
 
+  useEffect(() => {
+    if (initialValues) {
+      reset({
+        hardSkillName: initialValues.hardSkillName,
+      });
+    } else {
+      reset({
+        hardSkillName: '',
+      });
+    }
+  }, [initialValues, reset]);
+
   const onSubmit = async (data: FormData): Promise<void> => {
     if (isActive(ToastKeysEnum.HARD_SKILL)) {
       return;
     }
 
+    const trimmedData = { hardSkillName: data.hardSkillName.trim() };
+
     try {
-      const trimmedData = { hardSkillName: data.hardSkillName.trim() };
-      await addHardSkill(trimmedData).unwrap();
+      if (initialValues) {
+        await updateHardSkill({
+          id: initialValues.id,
+          data: trimmedData,
+        }).unwrap();
+      } else {
+        await addHardSkill(trimmedData).unwrap();
+      }
 
       showToast({
         severity: 'success',
@@ -73,21 +103,15 @@ export default function HardSkillForm(props: HardSkillFormProps): ReactElement {
         | undefined;
       const status = errorData?.status;
 
-      if (status === 409) {
-        showToast({
-          severity: 'error',
-          summary: tForms('hardSkillForm.error409'),
-          life: 3000,
-          actionKey: ToastKeysEnum.HARD_SKILL,
-        });
-      } else {
-        showToast({
-          severity: 'error',
-          summary: tForms('hardSkillForm.error'),
-          life: 3000,
-          actionKey: ToastKeysEnum.HARD_SKILL,
-        });
-      }
+      showToast({
+        severity: 'error',
+        summary:
+          status === 409
+            ? tForms('hardSkillForm.error409')
+            : tForms('hardSkillForm.error'),
+        life: 3000,
+        actionKey: ToastKeysEnum.HARD_SKILL,
+      });
     }
   };
 
@@ -98,7 +122,7 @@ export default function HardSkillForm(props: HardSkillFormProps): ReactElement {
     >
       <fieldset
         className={styles['hard-skill-form__fieldset']}
-        disabled={isLoading}
+        disabled={addSkillLoading || updateSkillLoading}
       >
         <Controller
           name="hardSkillName"
@@ -129,7 +153,11 @@ export default function HardSkillForm(props: HardSkillFormProps): ReactElement {
         >
           {tButtons('cancel')}
         </Button>
-        <Button type="submit" color="green" loading={isLoading}>
+        <Button
+          type="submit"
+          color="green"
+          loading={addSkillLoading || updateSkillLoading}
+        >
           {tButtons('save')}
         </Button>
       </div>
