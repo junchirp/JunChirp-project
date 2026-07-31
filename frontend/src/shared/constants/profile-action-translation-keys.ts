@@ -11,4 +11,6 @@ export const profileActionTranslationKeys: Record<
   'edit-education': 'actions.editEducation',
   'add-soft-skill': 'actions.addSoftSkill',
   'add-hard-skill': 'actions.addHardSkill',
+  'edit-soft-skill': 'actions.addSoftSkill',
+  'edit-hard-skill': 'actions.addHardSkill',
 };
