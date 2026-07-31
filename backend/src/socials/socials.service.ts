@@ -9,7 +9,7 @@ import { UpdateSocialDto } from './dto/update-social.dto';
 import { SocialResponseDto } from './dto/social.response-dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { SocialMapper } from '../common/mappers/social.mapper';
-import { isPrismaError } from '../common/utils/is-prisma-error';
+import { throwPrismaError } from '../common/utils/throw-prisma-error';
 
 @Injectable()
 export class SocialsService {
@@ -41,56 +41,82 @@ export class SocialsService {
 
       return SocialMapper.toResponse(social);
     } catch (error) {
-      if (isPrismaError(error) && error.code === 'P2002') {
-        throw new ConflictException(
-          'You have already added a profile in this social network',
-        );
-      }
-      throw error;
+      throwPrismaError(error, {
+        code: 'P2002',
+        exception: ConflictException,
+        message: 'You have already added a profile in this social network',
+      });
     }
   }
 
   public async updateSocialNetwork(
     id: string,
+    userId: string,
     updateSocialDto: UpdateSocialDto,
   ): Promise<SocialResponseDto> {
     try {
-      const social = await this.prisma.social.update({
-        where: { id },
-        data: {
-          ...updateSocialDto,
-        },
-      });
+      return await this.prisma.$transaction(async (prisma) => {
+        const { count } = await prisma.social.updateMany({
+          where: {
+            id,
+            userId,
+          },
+          data: updateSocialDto,
+        });
 
-      return SocialMapper.toResponse(social);
-    } catch (error) {
-      if (isPrismaError(error)) {
-        switch (error.code) {
-          case 'P2025':
-            throw new NotFoundException('Profile not found');
-          case 'P2002':
-            throw new ConflictException(
-              'Profile with this network already exists',
-            );
-          default:
-            throw error;
+        if (count === 0) {
+          throw new NotFoundException('Social profile not found');
         }
-      }
-      throw error;
+
+        const social = await prisma.social.findUniqueOrThrow({
+          where: { id },
+        });
+
+        return SocialMapper.toResponse(social);
+      });
+    } catch (error) {
+      throwPrismaError(error, [
+        {
+          code: 'P2025',
+          exception: NotFoundException,
+          message: 'Social profile not found',
+        },
+        {
+          code: 'P2002',
+          exception: ConflictException,
+          message: 'Profile with this network already exists',
+        },
+      ]);
     }
   }
 
-  public async deleteSocialNetwork(id: string): Promise<string> {
-    try {
-      await this.prisma.social.delete({
-        where: { id },
+  public async deleteSocialNetwork(
+    userId: string,
+    id: string,
+  ): Promise<string> {
+    return this.prisma.$transaction(async (prisma) => {
+      const social = await prisma.social.count({
+        where: { userId },
       });
-      return id;
-    } catch (error) {
-      if (isPrismaError(error) && error.code === 'P2025') {
-        throw new NotFoundException('Profile not found');
+
+      if (social <= 1) {
+        throw new BadRequestException(
+          'You must have at least one social profile',
+        );
       }
-      throw error;
-    }
+
+      const { count } = await prisma.social.deleteMany({
+        where: {
+          id,
+          userId,
+        },
+      });
+
+      if (count === 0) {
+        throw new NotFoundException('Social profile not found');
+      }
+
+      return id;
+    });
   }
 }

@@ -44,6 +44,8 @@
       "addSocial": "Add social network",
       "addSoftSkill": "Add Soft Skill",
       "addHardSkill": "Add Hard Skill",
+      "editSoftSkill": "Edit Soft Skill",
+      "editHardSkill": "Edit Hard Skill",
       "empty": "Complete your profile to showcase your strengths and unlock amazing opportunities!",
       "full": {
         "firstFragment": "Profile is ready — ",

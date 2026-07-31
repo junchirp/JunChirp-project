@@ -84,47 +84,31 @@ export default function EducationForm(props: EducationFormProps): ReactElement {
       specialization: data.specialization.trim(),
     };
 
-    if (initialValues) {
-      try {
+    try {
+      if (initialValues) {
         await updateEducation({
           id: initialValues.id,
           data: trimmedData,
         }).unwrap();
-
-        showToast({
-          severity: 'success',
-          summary: tForms('educationForm.success'),
-          life: 3000,
-          actionKey: ToastKeysEnum.EDUCATION,
-        });
-        onCancel();
-      } catch {
-        showToast({
-          severity: 'error',
-          summary: tForms('educationForm.error'),
-          life: 3000,
-          actionKey: ToastKeysEnum.EDUCATION,
-        });
-      }
-    } else {
-      try {
+      } else {
         await addEducation(trimmedData).unwrap();
-
-        showToast({
-          severity: 'success',
-          summary: tForms('educationForm.success'),
-          life: 3000,
-          actionKey: ToastKeysEnum.EDUCATION,
-        });
-        onCancel();
-      } catch {
-        showToast({
-          severity: 'error',
-          summary: tForms('educationForm.error'),
-          life: 3000,
-          actionKey: ToastKeysEnum.EDUCATION,
-        });
       }
+
+      showToast({
+        severity: 'success',
+        summary: tForms('educationForm.success'),
+        life: 3000,
+        actionKey: ToastKeysEnum.EDUCATION,
+      });
+
+      onCancel();
+    } catch {
+      showToast({
+        severity: 'error',
+        summary: tForms('educationForm.error'),
+        life: 3000,
+        actionKey: ToastKeysEnum.EDUCATION,
+      });
     }
   };
 

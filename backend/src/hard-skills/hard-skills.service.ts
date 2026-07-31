@@ -9,7 +9,7 @@ import { UpdateHardSkillDto } from './dto/update-hard-skill.dto';
 import { HardSkillResponseDto } from './dto/hard-skill.response-dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { HardSkillMapper } from '../common/mappers/hard-skill.mapper';
-import { isPrismaError } from '../common/utils/is-prisma-error';
+import { throwPrismaError } from '../common/utils/throw-prisma-error';
 
 @Injectable()
 export class HardSkillsService {
@@ -28,7 +28,6 @@ export class HardSkillsService {
       },
       take: 10,
     });
-
     return results.map((skill) => skill.hardSkillName);
   }
 
@@ -48,81 +47,112 @@ export class HardSkillsService {
     });
 
     if (userHardSkillsCount >= 20) {
-      throw new BadRequestException('You can only add up to 20 hard skills.');
+      throw new BadRequestException('You can only add up to 20 hard skills');
     }
 
-    return this.prisma.$transaction(async (prisma) => {
-      try {
-        const hardSkill = await this.prisma.userHardSkill.create({
+    try {
+      return await this.prisma.$transaction(async (prisma) => {
+        const hardSkill = await prisma.userHardSkill.create({
           data: {
             ...createHardSkillDto,
             userId,
           },
         });
 
-        const record = await prisma.hardSkill.findFirst({
+        await prisma.hardSkill.upsert({
           where: {
+            hardSkillName: createHardSkillDto.hardSkillName,
+          },
+          update: {},
+          create: {
             hardSkillName: createHardSkillDto.hardSkillName,
           },
         });
 
-        if (!record) {
-          await prisma.hardSkill.create({
-            data: {
-              hardSkillName: createHardSkillDto.hardSkillName,
-            },
-          });
-        }
-
         return HardSkillMapper.toResponse(hardSkill);
-      } catch (error) {
-        if (isPrismaError(error) && error.code === 'P2002') {
-          throw new ConflictException('Hard skill is already in list');
-        }
-        throw error;
-      }
-    });
+      });
+    } catch (error) {
+      throwPrismaError(error, {
+        code: 'P2002',
+        exception: ConflictException,
+        message: 'Hard skill is already in user list',
+      });
+    }
   }
 
   public async updateHardSkill(
     id: string,
+    userId: string,
     updateHardSkillDto: UpdateHardSkillDto,
   ): Promise<HardSkillResponseDto> {
     try {
-      const hardSkill = await this.prisma.userHardSkill.update({
-        where: { id },
-        data: {
-          ...updateHardSkillDto,
-        },
-      });
+      return await this.prisma.$transaction(async (prisma) => {
+        const { count } = await prisma.userHardSkill.updateMany({
+          where: {
+            id,
+            userId,
+          },
+          data: updateHardSkillDto,
+        });
 
-      return HardSkillMapper.toResponse(hardSkill);
-    } catch (error) {
-      if (isPrismaError(error)) {
-        switch (error.code) {
-          case 'P2025':
-            throw new NotFoundException('Hard skill not found');
-          case 'P2002':
-            throw new ConflictException('Hard skill is already in list');
-          default:
-            throw error;
+        if (count === 0) {
+          throw new NotFoundException('Hard skill not found');
         }
-      }
-      throw error;
+
+        await prisma.hardSkill.upsert({
+          where: {
+            hardSkillName: updateHardSkillDto.hardSkillName,
+          },
+          update: {},
+          create: {
+            hardSkillName: updateHardSkillDto.hardSkillName,
+          },
+        });
+
+        const hardSkill = await prisma.userHardSkill.findUniqueOrThrow({
+          where: { id },
+        });
+
+        return HardSkillMapper.toResponse(hardSkill);
+      });
+    } catch (error) {
+      throwPrismaError(error, [
+        {
+          code: 'P2025',
+          exception: NotFoundException,
+          message: 'Hard skill not found',
+        },
+        {
+          code: 'P2002',
+          exception: ConflictException,
+          message: 'Hard skill is already in user list',
+        },
+      ]);
     }
   }
 
-  public async deleteHardSkill(id: string): Promise<string> {
-    try {
-      await this.prisma.userHardSkill.delete({
-        where: { id },
+  public async deleteHardSkill(userId: string, id: string): Promise<string> {
+    return this.prisma.$transaction(async (prisma) => {
+      const userHardSkillsCount = await prisma.userHardSkill.count({
+        where: { userId },
       });
-      return id;
-    } catch (error) {
-      if (isPrismaError(error) && error.code === 'P2025') {
+
+      if (userHardSkillsCount <= 1) {
+        throw new BadRequestException('You must have at least one hard skill');
+      }
+
+      const { count } = await prisma.userHardSkill.deleteMany({
+        where: {
+          id,
+          userId,
+        },
+      });
+
+      if (count === 0) {
         throw new NotFoundException('Hard skill not found');
       }
-      throw error;
-    }
+
+      return id;
+    });
   }
 }

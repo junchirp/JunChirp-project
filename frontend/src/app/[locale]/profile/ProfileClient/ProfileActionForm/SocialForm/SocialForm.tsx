@@ -8,10 +8,7 @@ import Input from '@/shared/components/Input/Input';
 import Button from '@/shared/components/Button/Button';
 import styles from './SocialForm.module.scss';
 import { socialNetworks } from '@/shared/constants/social-networks';
-import {
-  ClientSocialInterface,
-  SocialInterface,
-} from '@/shared/interfaces/social.interface';
+import { SocialInterface } from '@/shared/interfaces/social.interface';
 import {
   useAddSocialMutation,
   useUpdateSocialMutation,
@@ -93,79 +90,41 @@ export default function SocialForm(props: SocialFormProps): ReactElement {
     }
     const preparedData = { ...data, url };
 
-    if (initialValues) {
-      try {
+    try {
+      if (initialValues) {
         await updateSocial({
           id: initialValues.id,
           data: preparedData,
         }).unwrap();
-
-        showToast({
-          severity: 'success',
-          summary: tForms('socialForm.success'),
-          life: 3000,
-          actionKey: ToastKeysEnum.SOCIAL,
-        });
-        onCancel();
-      } catch (error) {
-        const errorData = error as
-          | ((FetchBaseQueryError | SerializedError) & {
-              status: number;
-            })
-          | undefined;
-        const status = errorData?.status;
-
-        if (status === 409) {
-          showToast({
-            severity: 'error',
-            summary: tForms('socialForm.error409'),
-            life: 3000,
-            actionKey: ToastKeysEnum.SOCIAL,
-          });
-        } else {
-          showToast({
-            severity: 'error',
-            summary: tForms('socialForm.error'),
-            life: 3000,
-            actionKey: ToastKeysEnum.SOCIAL,
-          });
-        }
-      }
-    } else {
-      try {
+      } else {
         await addSocial(preparedData).unwrap();
-
-        showToast({
-          severity: 'success',
-          summary: tForms('socialForm.success'),
-          life: 3000,
-          actionKey: ToastKeysEnum.SOCIAL,
-        });
-        onCancel();
-      } catch (error) {
-        const errorData = error as
-          | ((FetchBaseQueryError | SerializedError) & {
-              status: number;
-            })
-          | undefined;
-        const status = errorData?.status;
-
-        if (status === 409) {
-          showToast({
-            severity: 'error',
-            summary: tForms('socialForm.error409'),
-            life: 3000,
-            actionKey: ToastKeysEnum.SOCIAL,
-          });
-        } else {
-          showToast({
-            severity: 'error',
-            summary: tForms('socialForm.error'),
-            life: 3000,
-            actionKey: ToastKeysEnum.SOCIAL,
-          });
-        }
       }
+
+      showToast({
+        severity: 'success',
+        summary: tForms('socialForm.success'),
+        life: 3000,
+        actionKey: ToastKeysEnum.SOCIAL,
+      });
+
+      onCancel();
+    } catch (error) {
+      const errorData = error as
+        | ((FetchBaseQueryError | SerializedError) & {
+            status: number;
+          })
+        | undefined;
+      const status = errorData?.status;
+
+      showToast({
+        severity: 'error',
+        summary:
+          status === 409
+            ? tForms('socialForm.error409')
+            : tForms('socialForm.error'),
+        life: 3000,
+        actionKey: ToastKeysEnum.SOCIAL,
+      });
     }
   };
 

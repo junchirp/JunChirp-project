@@ -134,6 +134,20 @@ export default function ProfileClient(): ReactElement {
       key: profileActionTranslationKeys['add-soft-skill'],
     });
 
+  const handleEditHardSkill = (item: HardSkillInterface): void =>
+    setAction({
+      type: 'edit-hard-skill',
+      key: profileActionTranslationKeys['edit-hard-skill'],
+      item,
+    });
+
+  const handleEditSoftSkill = (item: SoftSkillInterface): void =>
+    setAction({
+      type: 'edit-soft-skill',
+      key: profileActionTranslationKeys['edit-soft-skill'],
+      item,
+    });
+
   const handleEditSocial = (item: SocialInterface): void =>
     setAction({
       type: 'edit-social',
@@ -376,7 +390,6 @@ export default function ProfileClient(): ReactElement {
             <ProfileBaseInfo user={user} handleEditName={handleEditName} />
             <ProfileDetails<SocialInterface>
               title={t('socials')}
-              isEditable
               items={socials}
               maxSize={5}
               handleAddItem={handleAddSocial}
@@ -385,7 +398,6 @@ export default function ProfileClient(): ReactElement {
             />
             <ProfileDetails<EducationInterface>
               title={t('educations')}
-              isEditable
               items={educations}
               maxSize={5}
               handleAddItem={handleAddEducation}
@@ -397,6 +409,7 @@ export default function ProfileClient(): ReactElement {
               items={hardSkills}
               maxSize={20}
               handleAddItem={handleAddHardSkill}
+              handleEditItem={handleEditHardSkill}
               handleDeleteItem={openModal}
             />
             <ProfileDetails<SoftSkillInterface>
@@ -404,6 +417,7 @@ export default function ProfileClient(): ReactElement {
               items={softSkills}
               maxSize={20}
               handleAddItem={handleAddSoftSkill}
+              handleEditItem={handleEditSoftSkill}
               handleDeleteItem={openModal}
             />
           </div>

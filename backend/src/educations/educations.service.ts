@@ -9,7 +9,7 @@ import { UpdateEducationDto } from './dto/update-education.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { EducationResponseDto } from './dto/education.response-dto';
 import { EducationMapper } from '../common/mappers/education.mapper';
-import { isPrismaError } from '../common/utils/is-prisma-error';
+import { throwPrismaError } from '../common/utils/throw-prisma-error';
 
 @Injectable()
 export class EducationsService {
@@ -28,7 +28,6 @@ export class EducationsService {
       },
       take: 10,
     });
-
     return results.map((institution) => institution.institutionName);
   }
 
@@ -47,7 +46,6 @@ export class EducationsService {
       },
       take: 10,
     });
-
     return results.map((specialization) => specialization.specializationName);
   }
 
@@ -55,7 +53,6 @@ export class EducationsService {
     const educations = await this.prisma.education.findMany({
       where: { userId },
     });
-
     return educations.map((edu) => EducationMapper.toResponse(edu));
   }
 
@@ -71,8 +68,8 @@ export class EducationsService {
       throw new BadRequestException('You can only add up to 5 educations.');
     }
 
-    return this.prisma.$transaction(async (prisma) => {
-      try {
+    try {
+      return await this.prisma.$transaction(async (prisma) => {
         const education = await prisma.education.create({
           data: {
             ...createEducationDto,
@@ -80,113 +77,122 @@ export class EducationsService {
           },
         });
 
-        const recordInstitution = await prisma.institution.findFirst({
+        await prisma.institution.upsert({
           where: {
+            institutionName: createEducationDto.institution,
+          },
+          update: {},
+          create: {
             institutionName: createEducationDto.institution,
           },
         });
 
-        if (!recordInstitution) {
-          await prisma.institution.create({
-            data: {
-              institutionName: createEducationDto.institution,
-            },
-          });
-        }
-
-        const recordSpecialization = await prisma.specialization.findFirst({
+        await prisma.specialization.upsert({
           where: {
+            specializationName: createEducationDto.specialization,
+          },
+          update: {},
+          create: {
             specializationName: createEducationDto.specialization,
           },
         });
 
-        if (!recordSpecialization) {
-          await prisma.specialization.create({
-            data: {
-              specializationName: createEducationDto.specialization,
-            },
-          });
-        }
-
         return EducationMapper.toResponse(education);
-      } catch (error) {
-        if (isPrismaError(error) && error.code === 'P2002') {
-          throw new ConflictException('Education is already in list');
-        }
-        throw error;
-      }
-    });
+      });
+    } catch (error) {
+      throwPrismaError(error, {
+        code: 'P2002',
+        exception: ConflictException,
+        message: 'Education is already in user list',
+      });
+    }
   }
 
   public async updateEducation(
     id: string,
+    userId: string,
     updateEducationDto: UpdateEducationDto,
   ): Promise<EducationResponseDto> {
-    return this.prisma.$transaction(async (prisma) => {
-      try {
-        const recordInstitution = await prisma.institution.findFirst({
+    try {
+      return await this.prisma.$transaction(async (prisma) => {
+        const { count } = await prisma.education.updateMany({
           where: {
+            id,
+            userId,
+          },
+          data: updateEducationDto,
+        });
+
+        if (count === 0) {
+          throw new NotFoundException('Hard skill not found');
+        }
+
+        await prisma.institution.upsert({
+          where: {
+            institutionName: updateEducationDto.institution,
+          },
+          update: {},
+          create: {
             institutionName: updateEducationDto.institution,
           },
         });
 
-        if (!recordInstitution) {
-          await prisma.institution.create({
-            data: {
-              institutionName: updateEducationDto.institution,
-            },
-          });
-        }
-
-        const recordSpecialization = await prisma.specialization.findFirst({
+        await prisma.specialization.upsert({
           where: {
+            specializationName: updateEducationDto.specialization,
+          },
+          update: {},
+          create: {
             specializationName: updateEducationDto.specialization,
           },
         });
 
-        if (!recordSpecialization) {
-          await prisma.specialization.create({
-            data: {
-              specializationName: updateEducationDto.specialization,
-            },
-          });
-        }
-
-        const education = await prisma.education.update({
+        const education = await prisma.education.findUniqueOrThrow({
           where: { id },
-          data: {
-            ...updateEducationDto,
-          },
         });
 
         return EducationMapper.toResponse(education);
-      } catch (error) {
-        if (isPrismaError(error)) {
-          switch (error.code) {
-            case 'P2025':
-              throw new NotFoundException('Education not found');
-            case 'P2002':
-              throw new ConflictException('Education is already in list');
-            default:
-              throw error;
-          }
-        }
-        throw error;
-      }
-    });
+      });
+    } catch (error) {
+      throwPrismaError(error, [
+        {
+          code: 'P2025',
+          exception: NotFoundException,
+          message: 'Education not found',
+        },
+        {
+          code: 'P2002',
+          exception: ConflictException,
+          message: 'Education is already in user list',
+        },
+      ]);
+    }
   }
 
-  public async deleteEducation(id: string): Promise<string> {
-    try {
-      await this.prisma.education.delete({
-        where: { id },
+  public async deleteEducation(userId: string, id: string): Promise<string> {
+    return this.prisma.$transaction(async (prisma) => {
+      const educationsCount = await prisma.education.count({
+        where: { userId },
       });
-      return id;
-    } catch (error) {
-      if (isPrismaError(error) && error.code === 'P2025') {
+
+      if (educationsCount <= 1) {
+        throw new BadRequestException(
+          'You must have at least one education record',
+        );
+      }
+
+      const { count } = await prisma.education.deleteMany({
+        where: {
+          id,
+          userId,
+        },
+      });
+
+      if (count === 0) {
         throw new NotFoundException('Education not found');
       }
-      throw error;
-    }
+
+      return id;
+    });
   }
 }

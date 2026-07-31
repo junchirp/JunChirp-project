@@ -17,7 +17,7 @@ import { Link } from '@/i18n/routing';
 
 interface ProfileDetailItemProps<T> {
   item: T;
-  isEditable?: boolean;
+  isDeletable: boolean;
   handleEditItem?: (item: T) => void;
   handleDeleteItem: (item: T) => void;
 }
@@ -25,7 +25,7 @@ interface ProfileDetailItemProps<T> {
 export default function ProfileDetailsItem<T>(
   props: ProfileDetailItemProps<T>,
 ): ReactElement {
-  const { item, isEditable = false, handleEditItem, handleDeleteItem } = props;
+  const { item, isDeletable, handleEditItem, handleDeleteItem } = props;
   let content = <></>;
 
   if (isSocial(item)) {
@@ -90,20 +90,20 @@ export default function ProfileDetailsItem<T>(
     <li className={styles['profile-details-item']}>
       {content}
       <div className={styles['profile-details-item__actions']}>
-        {isEditable ? (
-          <Button
-            size="ssm"
-            variant="link"
-            icon={<Edit />}
-            onClick={() => handleEditItem?.(item)}
-          />
-        ) : null}
         <Button
           size="ssm"
           variant="link"
-          icon={<Trash />}
-          onClick={() => handleDeleteItem(item)}
+          icon={<Edit />}
+          onClick={() => handleEditItem?.(item)}
         />
+        {isDeletable && (
+          <Button
+            size="ssm"
+            variant="link"
+            icon={<Trash />}
+            onClick={() => handleDeleteItem(item)}
+          />
+        )}
       </div>
     </li>
   );

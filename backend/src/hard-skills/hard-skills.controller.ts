@@ -27,6 +27,7 @@ import { UserWithPasswordResponseDto } from '../users/dto/user-with-password.res
 import { HardSkillResponseDto } from './dto/hard-skill.response-dto';
 import { User } from '../auth/decorators/user.decorator';
 import { UUIDParam } from 'src/common/decorators/UUID-param.decorator';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
 
 @User()
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
@@ -68,7 +69,7 @@ export class HardSkillsController {
   @ApiForbiddenResponse({
     description: 'Access denied: email not confirmed / Invalid CSRF token',
   })
-  @ApiConflictResponse({ description: 'Hard skill is already in list' })
+  @ApiConflictResponse({ description: 'Hard skill is already in user list' })
   @ApiHeader({
     name: 'x-csrf-token',
     description: 'CSRF token for the request',
@@ -90,7 +91,7 @@ export class HardSkillsController {
   @ApiForbiddenResponse({
     description: 'Access denied: email not confirmed / Invalid CSRF token',
   })
-  @ApiConflictResponse({ description: 'Hard skill is already in list' })
+  @ApiConflictResponse({ description: 'Hard skill is already in user list' })
   @ApiHeader({
     name: 'x-csrf-token',
     description: 'CSRF token for the request',
@@ -99,14 +100,22 @@ export class HardSkillsController {
   @Put(':id')
   public async updateHardSkill(
     @UUIDParam('id') id: string,
+    @CurrentUser('id') userId: string,
     @Body() updateHardSkillDto: UpdateHardSkillDto,
   ): Promise<HardSkillResponseDto> {
-    return this.hardSkillsService.updateHardSkill(id, updateHardSkillDto);
+    return this.hardSkillsService.updateHardSkill(
+      id,
+      userId,
+      updateHardSkillDto,
+    );
   }
 
   @ApiOperation({ summary: 'Delete hard skill' })
   @ApiOkResponse({ type: String })
   @ApiNotFoundResponse({ description: 'Hard skill not found' })
+  @ApiBadRequestResponse({
+    description: 'You must have at least one hard skill',
+  })
   @ApiForbiddenResponse({
     description: 'Access denied: email not confirmed / Invalid CSRF token',
   })
@@ -116,7 +125,10 @@ export class HardSkillsController {
     required: true,
   })
   @Delete(':id')
-  public async deleteHardSkill(@UUIDParam('id') id: string): Promise<string> {
-    return this.hardSkillsService.deleteHardSkill(id);
+  public async deleteHardSkill(
+    @UUIDParam('id') id: string,
+    @CurrentUser('id') userId: string,
+  ): Promise<string> {
+    return this.hardSkillsService.deleteHardSkill(userId, id);
   }
 }
