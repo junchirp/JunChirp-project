@@ -16,7 +16,7 @@
     align-items: center;
     background-color: variables.$white-2;
     border: 1px solid variables.$gray-8;
-    padding: 6px 16px;
+    padding: 4px 16px 4px 4px;
     border-radius: 8px;
     font-size: 16px;
     line-height: 1.4;
@@ -164,14 +164,15 @@
     display: flex;
     align-items: center;
     gap: 4px;
-    background-color: variables.$gray-8;
-    border-radius: 14px;
-    padding: 2px 8px;
+    height: 34px;
+    background-color: variables.$gray-5;
+    border-radius: 4px;
+    padding: 0 8px 0 12px;
+    color: variables.$gray-10;
   }
 
   &__chip-label {
-    font-size: 16px;
-    line-height: 1.4;
-    font-weight: 500;
+    font-size: 14px;
+    line-height: 1.2;
   }
 }

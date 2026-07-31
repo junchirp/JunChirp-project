@@ -148,7 +148,7 @@ export default function MultiSelectWithChips<T>(
                     </span>
                     <Button
                       icon={<X />}
-                      color="black"
+                      color="gray-3"
                       size="ssm"
                       variant="link"
                       onClick={() => removeSelected(optionValue)}
