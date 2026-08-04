@@ -26,6 +26,9 @@ export class SocialsService {
   ): Promise<SocialResponseDto> {
     const userProfilesCount = await this.prisma.social.count({
       where: { userId },
+      orderBy: {
+        createdAt: 'asc',
+      },
     });
 
     if (userProfilesCount >= 5) {

@@ -28,16 +28,8 @@ export default function DocItem(props: DocItemProps): ReactElement {
           rel="noopener noreferrer"
         >
           <Image
-            className={`${styles['doc-item__image']} ${styles['doc-item__image--default']}`}
-            src="/images/doc-default.svg"
+            src="/images/doc.svg"
             alt="doc-default"
-            width={80}
-            height={80}
-          />
-          <Image
-            className={`${styles['doc-item__image']} ${styles['doc-item__image--hover']}`}
-            src="/images/doc-hover.svg"
-            alt="doc-hover"
             width={80}
             height={80}
           />
