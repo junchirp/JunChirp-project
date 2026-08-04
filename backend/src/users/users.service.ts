@@ -42,6 +42,7 @@ import { ConfirmEmailWithLocaleDto } from './dto/confirm-email-with-locale.dto';
 import { isPrismaError } from '../common/utils/is-prisma-error';
 import { IdResponseDto } from './dto/id.response-dto';
 import { CountResponseDto } from './dto/count.response-dto';
+import { throwPrismaError } from '../common/utils/throw-prisma-error';
 
 interface GetUsersOptionsInterface {
   activeProjectsCount: number;
@@ -164,10 +165,11 @@ export class UsersService {
         ? UserMapper.toAuthResponse(user)
         : UserMapper.toFullResponse(user, false);
     } catch (error) {
-      if (isPrismaError(error) && error.code === 'P2025') {
-        throw new NotFoundException('User not found');
-      }
-      throw error;
+      throwPrismaError(error, {
+        code: 'P2025',
+        exception: NotFoundException,
+        message: 'User not found',
+      });
     }
   }
 
@@ -612,10 +614,11 @@ export class UsersService {
 
       return UserMapper.toAuthResponse(updatedUser);
     } catch (error) {
-      if (isPrismaError(error) && error.code === 'P2025') {
-        throw new NotFoundException('User not found');
-      }
-      throw error;
+      throwPrismaError(error, {
+        code: 'P2025',
+        exception: NotFoundException,
+        message: 'User not found',
+      });
     }
   }
 
@@ -674,18 +677,18 @@ export class UsersService {
 
       return newUser;
     } catch (error) {
-      if (isPrismaError(error)) {
-        switch (error.code) {
-          case 'P2025':
-            throw new NotFoundException('User not found');
-          case 'P2002':
-            throw new ConflictException('Email is already in use');
-          default:
-            throw error;
-        }
-      }
-
-      throw error;
+      throwPrismaError(error, [
+        {
+          code: 'P2025',
+          exception: NotFoundException,
+          message: 'User not found',
+        },
+        {
+          code: 'P2002',
+          exception: ConflictException,
+          message: 'Email is already in use',
+        },
+      ]);
     }
   }
 
@@ -780,10 +783,11 @@ export class UsersService {
         },
       });
     } catch (error) {
-      if (isPrismaError(error) && error.code === 'P2025') {
-        throw new NotFoundException('User not found');
-      }
-      throw error;
+      throwPrismaError(error, {
+        code: 'P2025',
+        exception: NotFoundException,
+        message: 'User not found',
+      });
     }
   }
 
@@ -825,10 +829,11 @@ export class UsersService {
         where: { token: hashedToken },
       });
     } catch (error) {
-      if (isPrismaError(error) && error.code === 'P2025') {
-        throw new NotFoundException('Token not found');
-      }
-      throw error;
+      throwPrismaError(error, {
+        code: 'P2025',
+        exception: NotFoundException,
+        message: 'Token not found',
+      });
     }
   }
 
@@ -842,10 +847,11 @@ export class UsersService {
         email: token.email,
       };
     } catch (error) {
-      if (isPrismaError(error) && error.code === 'P2025') {
-        throw new NotFoundException('Token not found');
-      }
-      throw error;
+      throwPrismaError(error, {
+        code: 'P2025',
+        exception: NotFoundException,
+        message: 'Token not found',
+      });
     }
   }
 

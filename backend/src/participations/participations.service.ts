@@ -19,7 +19,7 @@ import { DiscordService } from '../discord/discord.service';
 import { UserCardResponseDto } from '../users/dto/user-card.response-dto';
 import { UserMapper } from '../common/mappers/user.mapper';
 import { UsersService } from '../users/users.service';
-import { isPrismaError } from '../common/utils/is-prisma-error';
+import { throwPrismaError } from '../common/utils/throw-prisma-error';
 
 @Injectable()
 export class ParticipationsService {
@@ -168,19 +168,18 @@ export class ParticipationsService {
 
       return ProjectParticipationMapper.toResponse(invite);
     } catch (error) {
-      if (isPrismaError(error)) {
-        switch (error.code) {
-          case 'P2003':
-            throw new NotFoundException('User or project role not found');
-          case 'P2002':
-            throw new ConflictException(
-              'User has already been invited to this project',
-            );
-          default:
-            throw error;
-        }
-      }
-      throw error;
+      throwPrismaError(error, [
+        {
+          code: 'P2003',
+          exception: NotFoundException,
+          message: 'User or project role not found',
+        },
+        {
+          code: 'P2002',
+          exception: ConflictException,
+          message: 'User has already been invited to this project',
+        },
+      ]);
     }
   }
 
@@ -317,19 +316,18 @@ export class ParticipationsService {
 
       return ProjectParticipationMapper.toResponse(request);
     } catch (error) {
-      if (isPrismaError(error)) {
-        switch (error.code) {
-          case 'P2003':
-            throw new NotFoundException('Project role not found');
-          case 'P2002':
-            throw new ConflictException(
-              'You have already sent a request to this project',
-            );
-          default:
-            throw error;
-        }
-      }
-      throw error;
+      throwPrismaError(error, [
+        {
+          code: 'P2003',
+          exception: NotFoundException,
+          message: 'Project role not found',
+        },
+        {
+          code: 'P2002',
+          exception: ConflictException,
+          message: 'You have already sent a request to this project',
+        },
+      ]);
     }
   }
 
@@ -411,10 +409,11 @@ export class ParticipationsService {
 
       return UserMapper.toCardResponse(user);
     } catch (error) {
-      if (isPrismaError(error) && error.code === 'P2025') {
-        throw new NotFoundException('Invite not found');
-      }
-      throw error;
+      throwPrismaError(error, {
+        code: 'P2025',
+        exception: NotFoundException,
+        message: 'Invite not found',
+      });
     }
   }
 
@@ -424,10 +423,11 @@ export class ParticipationsService {
         where: { id, userId },
       });
     } catch (error) {
-      if (isPrismaError(error) && error.code === 'P2025') {
-        throw new NotFoundException('Invite not found');
-      }
-      throw error;
+      throwPrismaError(error, {
+        code: 'P2025',
+        exception: NotFoundException,
+        message: 'Invite not found',
+      });
     }
   }
 
@@ -501,11 +501,11 @@ export class ParticipationsService {
         await this.discordService.addRoleToUser(discordId, discordMemberRoleId);
       }
     } catch (error) {
-      if (isPrismaError(error) && error.code === 'P2025') {
-        throw new NotFoundException('Request not found');
-      }
-
-      throw error;
+      throwPrismaError(error, {
+        code: 'P2025',
+        exception: NotFoundException,
+        message: 'Request not found',
+      });
     }
   }
 
@@ -515,10 +515,11 @@ export class ParticipationsService {
         where: { id },
       });
     } catch (error) {
-      if (isPrismaError(error) && error.code === 'P2025') {
-        throw new NotFoundException('Request not found');
-      }
-      throw error;
+      throwPrismaError(error, {
+        code: 'P2025',
+        exception: NotFoundException,
+        message: 'Request not found',
+      });
     }
   }
 
@@ -528,10 +529,11 @@ export class ParticipationsService {
         where: { id, userId },
       });
     } catch (error) {
-      if (isPrismaError(error) && error.code === 'P2025') {
-        throw new NotFoundException('Request not found');
-      }
-      throw error;
+      throwPrismaError(error, {
+        code: 'P2025',
+        exception: NotFoundException,
+        message: 'Request not found',
+      });
     }
   }
 
@@ -541,10 +543,11 @@ export class ParticipationsService {
         where: { id },
       });
     } catch (error) {
-      if (isPrismaError(error) && error.code === 'P2025') {
-        throw new NotFoundException('Invite not found');
-      }
-      throw error;
+      throwPrismaError(error, {
+        code: 'P2025',
+        exception: NotFoundException,
+        message: 'Invite not found',
+      });
     }
   }
 

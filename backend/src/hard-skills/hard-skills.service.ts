@@ -34,6 +34,9 @@ export class HardSkillsService {
   public async getHardSkills(userId: string): Promise<HardSkillResponseDto[]> {
     const skills = await this.prisma.userHardSkill.findMany({
       where: { userId },
+      orderBy: {
+        createdAt: 'asc',
+      },
     });
     return skills.map((skill) => HardSkillMapper.toResponse(skill));
   }

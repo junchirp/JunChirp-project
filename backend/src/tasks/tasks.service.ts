@@ -5,7 +5,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { TaskMapper } from '../common/mappers/task.mapper';
 import { TaskWithStatusResponseDto } from './dto/task-with-status.response-dto';
 import { UpdateStatusTaskDto } from './dto/update-status-task.dto';
-import { isPrismaError } from '../common/utils/is-prisma-error';
+import { throwPrismaError } from '../common/utils/throw-prisma-error';
 
 @Injectable()
 export class TasksService {
@@ -40,10 +40,11 @@ export class TasksService {
 
       return TaskMapper.toExpandResponse(task);
     } catch (error) {
-      if (isPrismaError(error) && error.code === 'P2003') {
-        throw new NotFoundException('Task status not found');
-      }
-      throw error;
+      throwPrismaError(error, {
+        code: 'P2003',
+        exception: NotFoundException,
+        message: 'Task status not found',
+      });
     }
   }
 
@@ -71,10 +72,11 @@ export class TasksService {
 
       return TaskMapper.toExpandResponse(task);
     } catch (error) {
-      if (isPrismaError(error) && error.code === 'P2025') {
-        throw new NotFoundException('Task not found');
-      }
-      throw error;
+      throwPrismaError(error, {
+        code: 'P2025',
+        exception: NotFoundException,
+        message: 'Task not found',
+      });
     }
   }
 
@@ -106,10 +108,11 @@ export class TasksService {
 
       return TaskMapper.toExpandResponse(task);
     } catch (error) {
-      if (isPrismaError(error) && error.code === 'P2025') {
-        throw new NotFoundException('Task not found');
-      }
-      throw error;
+      throwPrismaError(error, {
+        code: 'P2025',
+        exception: NotFoundException,
+        message: 'Task not found',
+      });
     }
   }
 
@@ -119,10 +122,11 @@ export class TasksService {
         where: { id },
       });
     } catch (error) {
-      if (isPrismaError(error) && error.code === 'P2025') {
-        throw new NotFoundException('Task not found');
-      }
-      throw error;
+      throwPrismaError(error, {
+        code: 'P2025',
+        exception: NotFoundException,
+        message: 'Task not found',
+      });
     }
   }
 
@@ -158,10 +162,11 @@ export class TasksService {
 
       return TaskMapper.toExpandResponse(task);
     } catch (error) {
-      if (isPrismaError(error) && error.code === 'P2025') {
-        throw new NotFoundException('Task or status not found');
-      }
-      throw error;
+      throwPrismaError(error, {
+        code: 'P2025',
+        exception: NotFoundException,
+        message: 'Task or status not found',
+      });
     }
   }
 }
