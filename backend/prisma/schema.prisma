@@ -235,24 +235,22 @@ model LogEvent {
 }
 
 model Education {
-  id             String   @id @default(dbgenerated("gen_random_uuid()"))
-  userId         String   @map("user_id")
+  id             String @id @default(dbgenerated("gen_random_uuid()"))
+  userId         String @map("user_id")
   institution    String
   specialization String
-  createdAt      DateTime @default(now()) @map("created_at")
-  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user           User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, institution, specialization])
   @@map("educations")
 }
 
 model Social {
-  id        String   @id @default(dbgenerated("gen_random_uuid()"))
-  userId    String   @map("user_id")
-  url       String
-  network   String
-  createdAt DateTime @default(now()) @map("created_at")
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id      String @id @default(dbgenerated("gen_random_uuid()"))
+  userId  String @map("user_id")
+  url     String
+  network String
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, network])
   @@map("socials")
@@ -269,22 +267,20 @@ model LoginAttempt {
 }
 
 model UserHardSkill {
-  id            String   @id @default(dbgenerated("gen_random_uuid()"))
-  hardSkillName String   @map("skill_name")
-  createdAt     DateTime @default(now()) @map("created_at")
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId        String   @map("user_id")
+  id            String @id @default(dbgenerated("gen_random_uuid()"))
+  hardSkillName String @map("skill_name")
+  user          User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        String @map("user_id")
 
   @@unique([userId, hardSkillName])
   @@map("user_hard_skills")
 }
 
 model UserSoftSkill {
-  id            String   @id @default(dbgenerated("gen_random_uuid()"))
-  softSkillName String   @map("skill_name")
-  createdAt     DateTime @default(now()) @map("created_at")
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId        String   @map("user_id")
+  id            String @id @default(dbgenerated("gen_random_uuid()"))
+  softSkillName String @map("skill_name")
+  user          User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        String @map("user_id")
 
   @@unique([userId, softSkillName])
   @@map("user_soft_skills")

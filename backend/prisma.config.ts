@@ -1,12 +1,6 @@
-import dotenv from 'dotenv';
+import 'dotenv/config';
 import type { PrismaConfig } from 'prisma';
 import { env } from 'prisma/config';
-
-if (process.env.NODE_ENV !== 'production') {
-  dotenv.config({
-    path: '../.env.development.local',
-  });
-}
 
 export default {
   schema: 'prisma/schema.prisma',
