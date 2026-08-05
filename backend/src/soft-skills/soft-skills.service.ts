@@ -35,9 +35,6 @@ export class SoftSkillsService {
   public async getSoftSkills(userId: string): Promise<SoftSkillResponseDto[]> {
     const skills = await this.prisma.userSoftSkill.findMany({
       where: { userId },
-      orderBy: {
-        createdAt: 'asc',
-      },
     });
     return skills.map((skill) => SoftSkillMapper.toResponse(skill));
   }

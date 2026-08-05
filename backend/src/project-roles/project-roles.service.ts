@@ -7,10 +7,10 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma } from '@prisma/client';
 import { ProjectRoleTypeResponseDto } from './dto/project-role-type.response-dto';
+import { isPrismaError } from 'src/common/utils/is-prisma-error';
 import { ProjectRoleMapper } from '../common/mappers/project-role.mapper';
 import { CreateProjectRoleDto } from './dto/create-project-role.dto';
 import { ProjectRoleResponseDto } from './dto/project-role.response-dto';
-import { throwPrismaError } from '../common/utils/throw-prisma-error';
 
 @Injectable()
 export class ProjectRolesService {
@@ -39,18 +39,17 @@ export class ProjectRolesService {
 
       return ProjectRoleMapper.toBaseResponse(role);
     } catch (error) {
-      throwPrismaError(error, [
-        {
-          code: 'P2003',
-          exception: NotFoundException,
-          message: 'Project or role type not found',
-        },
-        {
-          code: 'P2002',
-          exception: ConflictException,
-          message: 'This role already exists in the project',
-        },
-      ]);
+      if (isPrismaError(error)) {
+        switch (error.code) {
+          case 'P2002':
+            throw new ConflictException(
+              'This role already exists in the project',
+            );
+          case 'P2003':
+            throw new NotFoundException('Project or role type not found');
+        }
+      }
+      throw error;
     }
   }
 
@@ -70,11 +69,10 @@ export class ProjectRolesService {
 
       return ProjectRoleMapper.toBaseResponse(role);
     } catch (error) {
-      throwPrismaError(error, {
-        code: 'P2025',
-        exception: NotFoundException,
-        message: 'Project role not found',
-      });
+      if (isPrismaError(error) && error.code === 'P2025') {
+        throw new NotFoundException('Project role not found');
+      }
+      throw error;
     }
   }
 
@@ -122,11 +120,10 @@ export class ProjectRolesService {
         });
       });
     } catch (error) {
-      throwPrismaError(error, {
-        code: 'P2025',
-        exception: NotFoundException,
-        message: 'Project role not found',
-      });
+      if (isPrismaError(error) && error.code === 'P2025') {
+        throw new NotFoundException('Project role not found');
+      }
+      throw error;
     }
   }
 
@@ -174,18 +171,19 @@ export class ProjectRolesService {
         });
       }
     } catch (error) {
-      throwPrismaError(error, [
-        {
-          code: 'P2025',
-          exception: NotFoundException,
-          message: 'Project role not found or already removed',
-        },
-        {
-          code: 'P2003',
-          exception: BadRequestException,
-          message: 'Cannot update or delete roles due to related constraints',
-        },
-      ]);
+      if (isPrismaError(error)) {
+        switch (error.code) {
+          case 'P2025':
+            throw new NotFoundException(
+              'Project roles not found or already removed',
+            );
+          case 'P2003':
+            throw new BadRequestException(
+              'Cannot update or delete roles due to related constraints',
+            );
+        }
+      }
+      throw error;
     }
   }
 }

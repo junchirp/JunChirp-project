@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Prisma, Role } from '@prisma/client';
+import { Prisma, PrismaClient, Role } from '@prisma/client';
+import { DefaultArgs } from '@prisma/client/runtime/client';
 
 @Injectable()
 export class RolesService {
@@ -8,7 +9,10 @@ export class RolesService {
 
   public async findOrCreateRole(
     roleName: string,
-    prisma: Prisma.TransactionClient = this.prisma,
+    prisma: Omit<
+      PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>,
+      '$connect' | '$disconnect' | '$on' | '$transaction' | '$use' | '$extends'
+    > = this.prisma,
   ): Promise<Role> {
     return prisma.role.upsert({
       where: { roleName },

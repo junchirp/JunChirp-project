@@ -15,6 +15,7 @@ import {
   inviteSchemaStatic,
 } from '@/shared/forms/schemas/inviteSchema';
 import Dropdown from '@/shared/components/Dropdown/Dropdown';
+import { RoleWithUserInterface } from '@/shared/interfaces/role-with-user.interface';
 import { useTranslations } from 'next-intl';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 import { useShortLocale } from '@/hooks/useShortLocale';

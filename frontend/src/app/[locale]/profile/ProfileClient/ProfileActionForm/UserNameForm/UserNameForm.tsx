@@ -100,7 +100,6 @@ export default function UserNameForm(props: UserNameFormProps): ReactElement {
             <Input
               label={tForms('userNameForm.firstName')}
               placeholder={tForms('userNameForm.placeholders.firstName')}
-              autoComplete="given-name"
               {...field}
               value={field.value ?? ''}
               onChange={(e) => {
@@ -119,7 +118,6 @@ export default function UserNameForm(props: UserNameFormProps): ReactElement {
             <Input
               label={tForms('userNameForm.lastName')}
               placeholder={tForms('userNameForm.placeholders.lastName')}
-              autoComplete="family-name"
               {...field}
               value={field.value ?? ''}
               onChange={(e) => {

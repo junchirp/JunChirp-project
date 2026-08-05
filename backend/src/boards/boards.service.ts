@@ -10,6 +10,7 @@ import { UpdateBoardDto } from './dto/update-board.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { BoardMapper } from '../common/mappers/board.mapper';
 import { UpdateColumnsOrderDto } from './dto/update-columns-order.dto';
+import { isPrismaError } from '../common/utils/is-prisma-error';
 import { DEFAULT_NAMES } from '../common/constants/default-names';
 import { generateUniqName } from '../common/utils/generate-unique-name';
 import { CreateTaskStatusDto } from './dto/create-task-status.dto';
@@ -20,7 +21,6 @@ import { BoardResponseDto } from './dto/board.response-dto';
 import { generateCopyName } from '../common/utils/generate-copy-name';
 import { LocaleDto } from '../common/dto/locale.dto';
 import { ColumnColor } from '@prisma/client';
-import { throwPrismaError } from '../common/utils/throw-prisma-error';
 
 @Injectable()
 export class BoardsService {
@@ -83,11 +83,10 @@ export class BoardsService {
         return BoardMapper.toResponse(board);
       });
     } catch (error) {
-      throwPrismaError(error, {
-        code: 'P2002',
-        exception: ConflictException,
-        message: 'Board with this name already exists',
-      });
+      if (isPrismaError(error) && error.code === 'P2002') {
+        throw new ConflictException('Board with this name already exists');
+      }
+      throw error;
     }
   }
 
@@ -111,11 +110,10 @@ export class BoardsService {
 
       return BoardMapper.toResponse(board);
     } catch (error) {
-      throwPrismaError(error, {
-        code: 'P2025',
-        exception: NotFoundException,
-        message: 'Board not found',
-      });
+      if (isPrismaError(error) && error.code === 'P2025') {
+        throw new NotFoundException('Board not found');
+      }
+      throw error;
     }
   }
 
@@ -142,18 +140,17 @@ export class BoardsService {
 
       return BoardMapper.toResponse(board);
     } catch (error) {
-      throwPrismaError(error, [
-        {
-          code: 'P2025',
-          exception: NotFoundException,
-          message: 'Board not found',
-        },
-        {
-          code: 'P2002',
-          exception: ConflictException,
-          message: 'Board with this name already exists',
-        },
-      ]);
+      if (isPrismaError(error)) {
+        switch (error.code) {
+          case 'P2025':
+            throw new NotFoundException('Board not found');
+          case 'P2002':
+            throw new ConflictException('Board with this name already exists');
+          default:
+            throw error;
+        }
+      }
+      throw error;
     }
   }
 
@@ -184,11 +181,10 @@ export class BoardsService {
         });
       });
     } catch (error) {
-      throwPrismaError(error, {
-        code: 'P2025',
-        exception: NotFoundException,
-        message: 'Board not found',
-      });
+      if (isPrismaError(error) && error.code === 'P2025') {
+        throw new NotFoundException('Board not found');
+      }
+      throw error;
     }
   }
 
@@ -359,18 +355,17 @@ export class BoardsService {
         return BoardMapper.toResponse(newBoard);
       });
     } catch (error) {
-      throwPrismaError(error, [
-        {
-          code: 'P2025',
-          exception: NotFoundException,
-          message: 'Board not found',
-        },
-        {
-          code: 'P2002',
-          exception: ConflictException,
-          message: 'Board with this name already exists',
-        },
-      ]);
+      if (isPrismaError(error)) {
+        switch (error.code) {
+          case 'P2025':
+            throw new NotFoundException('Board not found');
+          case 'P2002':
+            throw new ConflictException('Board with this name already exists');
+          default:
+            throw error;
+        }
+      }
+      throw error;
     }
   }
 
@@ -439,11 +434,11 @@ export class BoardsService {
         return TaskStatusMapper.toBaseResponse(status);
       });
     } catch (error) {
-      throwPrismaError(error, {
-        code: 'P2002',
-        exception: ConflictException,
-        message: 'Column name must be unique on the board',
-      });
+      if (isPrismaError(error) && error.code === 'P2002') {
+        throw new ConflictException('Column name must be unique on the board');
+      }
+
+      throw error;
     }
   }
 
@@ -468,18 +463,19 @@ export class BoardsService {
 
       return TaskStatusMapper.toBaseResponse(status);
     } catch (error) {
-      throwPrismaError(error, [
-        {
-          code: 'P2025',
-          exception: NotFoundException,
-          message: 'Column not found',
-        },
-        {
-          code: 'P2002',
-          exception: ConflictException,
-          message: 'Column name must be unique on the board',
-        },
-      ]);
+      if (isPrismaError(error)) {
+        switch (error.code) {
+          case 'P2025':
+            throw new NotFoundException('Column not found');
+          case 'P2002':
+            throw new ConflictException(
+              'Column name must be unique on the board',
+            );
+          default:
+            throw error;
+        }
+      }
+      throw error;
     }
   }
 
@@ -525,11 +521,11 @@ export class BoardsService {
         });
       });
     } catch (error) {
-      throwPrismaError(error, {
-        code: 'P2025',
-        exception: NotFoundException,
-        message: 'Column not found',
-      });
+      if (isPrismaError(error) && error.code === 'P2025') {
+        throw new NotFoundException('Column not found');
+      }
+
+      throw error;
     }
   }
 }
