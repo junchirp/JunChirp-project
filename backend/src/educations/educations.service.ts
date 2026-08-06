@@ -52,6 +52,9 @@ export class EducationsService {
   public async getEducations(userId: string): Promise<EducationResponseDto[]> {
     const educations = await this.prisma.education.findMany({
       where: { userId },
+      orderBy: {
+        createdAt: 'asc',
+      },
     });
     return educations.map((edu) => EducationMapper.toResponse(edu));
   }

@@ -6,7 +6,6 @@ import MultiSelect from '@/shared/components/MultiSelect/MultiSelect';
 import styles from './UsersFiltersForm.module.scss';
 import { useUsersFilters } from '@/hooks/useUsersFilters';
 import ActiveUsersFilters from './ActiveUsersFilters/ActiveUsersFilters';
-import { SelectOptionsInterface } from '@/shared/interfaces/select-options.interface';
 import Dropdown from '@/shared/components/Dropdown/Dropdown';
 import { useGetProjectRolesListQuery } from '@/api/projectRolesApi';
 import { useActiveProjectsOptions } from '@/hooks/useActiveProjectsOptions';
