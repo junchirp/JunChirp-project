@@ -9,7 +9,7 @@ import { UpdateDocumentDto } from './dto/update-document.dto';
 import { DocumentResponseDto } from './dto/document.response-dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { DocumentMapper } from '../common/mappers/document.mapper';
-import { isPrismaError } from '../common/utils/is-prisma-error';
+import { throwPrismaError } from '../common/utils/throw-prisma-error';
 
 @Injectable()
 export class DocumentsService {
@@ -37,10 +37,11 @@ export class DocumentsService {
 
       return DocumentMapper.toResponse(document);
     } catch (error) {
-      if (isPrismaError(error) && error.code === 'P2002') {
-        throw new ConflictException('Duplicate document url');
-      }
-      throw error;
+      throwPrismaError(error, {
+        code: 'P2002',
+        exception: ConflictException,
+        message: 'Duplicate document url',
+      });
     }
   }
 
@@ -56,17 +57,18 @@ export class DocumentsService {
 
       return DocumentMapper.toResponse(document);
     } catch (error) {
-      if (isPrismaError(error)) {
-        switch (error.code) {
-          case 'P2025':
-            throw new NotFoundException('Document not found');
-          case 'P2002':
-            throw new ConflictException('Duplicate document url');
-          default:
-            throw error;
-        }
-      }
-      throw error;
+      throwPrismaError(error, [
+        {
+          code: 'P2025',
+          exception: NotFoundException,
+          message: 'Document not found',
+        },
+        {
+          code: 'P2002',
+          exception: ConflictException,
+          message: 'Duplicate document url',
+        },
+      ]);
     }
   }
 
@@ -76,10 +78,11 @@ export class DocumentsService {
         where: { id },
       });
     } catch (error) {
-      if (isPrismaError(error) && error.code === 'P2025') {
-        throw new NotFoundException('Document not found');
-      }
-      throw error;
+      throwPrismaError(error, {
+        code: 'P2025',
+        exception: NotFoundException,
+        message: 'Document not found',
+      });
     }
   }
 }

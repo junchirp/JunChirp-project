@@ -22,7 +22,6 @@ import { DiscordService } from '../discord/discord.service';
 import { UsersService } from '../users/users.service';
 import { ProjectCardResponseDto } from './dto/project-card.response-dto';
 import { ProjectCategoryMapper } from '../common/mappers/project-category.mapper';
-import { isPrismaError } from '../common/utils/is-prisma-error';
 import imageSize from 'image-size';
 import { ProjectLogoResponseDto } from './dto/project-logo.response-dto';
 import { ProjectLogoMapper } from '../common/mappers/project-logo.mapper';
@@ -31,6 +30,7 @@ import { DocumentMapper } from '../common/mappers/document.mapper';
 import { DEFAULT_NAMES } from '../common/constants/default-names';
 import { BoardResponseDto } from '../boards/dto/board.response-dto';
 import { BoardMapper } from '../common/mappers/board.mapper';
+import { throwPrismaError } from '../common/utils/throw-prisma-error';
 
 interface GetProjectsOptionsInterface {
   userId: string;
@@ -112,33 +112,31 @@ export class ProjectsService {
       }),
     };
 
-    const [projects, total] = await this.prisma.$transaction([
-      this.prisma.project.findMany({
-        where,
-        skip,
-        take: limit,
-        include: {
-          logo: true,
-          category: {
-            include: {
-              translations: true,
-            },
+    const projects = await this.prisma.project.findMany({
+      where,
+      skip,
+      take: limit,
+      include: {
+        logo: true,
+        category: {
+          include: {
+            translations: true,
           },
-          roles: {
-            include: {
-              roleType: true,
-              users: {
-                include: {
-                  desiredRoles: true,
-                },
+        },
+        roles: {
+          include: {
+            roleType: true,
+            users: {
+              include: {
+                desiredRoles: true,
               },
             },
           },
         },
-        orderBy: { createdAt: 'desc' },
-      }),
-      this.prisma.project.count({ where }),
-    ]);
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+    const total = await this.prisma.project.count({ where });
 
     return {
       total,
@@ -246,13 +244,11 @@ export class ProjectsService {
         memberRoleId,
       );
 
-      if (isPrismaError(error) && error.code === 'P2003') {
-        throw new BadRequestException(
-          'Some role type IDs or category ID are invalid',
-        );
-      }
-
-      throw error;
+      throwPrismaError(error, {
+        code: 'P2003',
+        exception: BadRequestException,
+        message: 'Some role type IDs or category ID are invalid',
+      });
     }
   }
 
@@ -298,10 +294,11 @@ export class ProjectsService {
         ? ProjectMapper.toFullResponse(project)
         : ProjectMapper.toCardResponse(project);
     } catch (error) {
-      if (isPrismaError(error) && error.code === 'P2025') {
-        throw new NotFoundException('Project not found');
-      }
-      throw error;
+      throwPrismaError(error, {
+        code: 'P2025',
+        exception: NotFoundException,
+        message: 'Project not found',
+      });
     }
   }
 
@@ -369,19 +366,18 @@ export class ProjectsService {
 
       return ProjectMapper.toFullResponse(updatedProject);
     } catch (error) {
-      if (isPrismaError(error)) {
-        switch (error.code) {
-          case 'P2003':
-            throw new BadRequestException(
-              'Some role type IDs or category ID are invalid',
-            );
-          case 'P2025':
-            throw new NotFoundException('Project not found');
-          default:
-            throw error;
-        }
-      }
-      throw error;
+      throwPrismaError(error, [
+        {
+          code: 'P2025',
+          exception: NotFoundException,
+          message: 'Project not found',
+        },
+        {
+          code: 'P2003',
+          exception: BadRequestException,
+          message: 'Some role type IDs or category ID are invalid',
+        },
+      ]);
     }
   }
 
@@ -445,11 +441,11 @@ export class ProjectsService {
 
       return ProjectMapper.toFullResponse(closedProject);
     } catch (error) {
-      if (isPrismaError(error) && error.code === 'P2025') {
-        throw new NotFoundException('Project, role or user in team not found');
-      }
-
-      throw error;
+      throwPrismaError(error, {
+        code: 'P2025',
+        exception: NotFoundException,
+        message: 'Project, role or user in team not found',
+      });
     }
   }
 
@@ -506,10 +502,11 @@ export class ProjectsService {
         deletedProject.discordMemberRoleId,
       );
     } catch (error) {
-      if (isPrismaError(error) && error.code === 'P2025') {
-        throw new NotFoundException('Project or user in team not found');
-      }
-      throw error;
+      throwPrismaError(error, {
+        code: 'P2025',
+        exception: NotFoundException,
+        message: 'Project or user in team not found',
+      });
     }
   }
 
@@ -642,17 +639,18 @@ export class ProjectsService {
         );
       }
     } catch (error) {
-      if (isPrismaError(error)) {
-        switch (error.code) {
-          case 'P2025':
-            throw new NotFoundException('User is not in the team');
-          case 'P2003':
-            throw new BadRequestException(
-              'User is no longer part of this project',
-            );
-        }
-      }
-      throw error;
+      throwPrismaError(error, [
+        {
+          code: 'P2025',
+          exception: NotFoundException,
+          message: 'User is not in the team',
+        },
+        {
+          code: 'P2003',
+          exception: BadRequestException,
+          message: 'User is no longer part of this project',
+        },
+      ]);
     }
   }
 
