@@ -49,6 +49,6 @@ export const socialNetworks: ClientSocialInterface[] = [
     network: 'YouTube',
     icon: '/images/youtube.svg',
     urlRegex:
-      /^(https?:\/\/)?(www\.)?youtube\.com\/(c|channel|user)\/[A-Za-z0-9_-]+\/?$/i,
+      /^https?:\/\/(?:www\.)?youtube\.com\/(?:@[\w.-]+|channel\/[A-Za-z0-9_-]+|c\/[\w.-]+|user\/[\w.-]+)\/?$/i,
   },
 ];
