@@ -30,7 +30,7 @@ const socialNetworks: SocialNetworkInterface = {
   linkedin:
     /^(https?:\/\/)?(www\.)?linkedin\.com\/(in|company)\/[A-Za-z0-9_-]+\/?$/i,
   youtube:
-    /^https:\/\/(www\.)?youtube\.com\/(@[\w.-]+|c\/[\w-]+|channel\/UC[a-zA-Z0-9_-]{21,})\/?$/i,
+    /^https?:\/\/(?:www\.)?youtube\.com\/(?:@[\w.-]+|channel\/[A-Za-z0-9_-]+|c\/[\w.-]+|user\/[\w.-]+)\/?$/i,
   // tiktok: /^https:\/\/(www\.)?tiktok\.com\/@[a-zA-Z0-9_]+$/,
   // pinterest: /^https:\/\/(www\.)?pinterest\.com\/[a-zA-Z0-9_]+$/,
   // reddit: /^https:\/\/(www\.)?reddit\.com\/u\/[a-zA-Z0-9_]+$/,
