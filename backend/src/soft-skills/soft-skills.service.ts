@@ -91,17 +91,13 @@ export class SoftSkillsService {
   ): Promise<SoftSkillResponseDto> {
     try {
       return await this.prisma.$transaction(async (prisma) => {
-        const { count } = await prisma.userSoftSkill.updateMany({
+        const softSkill = await prisma.userSoftSkill.update({
           where: {
             id,
             userId,
           },
           data: updateSoftSkillDto,
         });
-
-        if (count === 0) {
-          throw new NotFoundException('Soft skill not found');
-        }
 
         await prisma.softSkill.upsert({
           where: {
@@ -111,10 +107,6 @@ export class SoftSkillsService {
           create: {
             softSkillName: updateSoftSkillDto.softSkillName,
           },
-        });
-
-        const softSkill = await prisma.userSoftSkill.findUniqueOrThrow({
-          where: { id },
         });
 
         return SoftSkillMapper.toResponse(softSkill);
@@ -136,27 +128,33 @@ export class SoftSkillsService {
   }
 
   public async deleteSoftSkill(userId: string, id: string): Promise<string> {
-    return this.prisma.$transaction(async (prisma) => {
-      const userSoftSkillsCount = await prisma.userSoftSkill.count({
-        where: { userId },
+    try {
+      return await this.prisma.$transaction(async (prisma) => {
+        const userSoftSkillsCount = await prisma.userSoftSkill.count({
+          where: { userId },
+        });
+
+        if (userSoftSkillsCount <= 1) {
+          throw new BadRequestException(
+            'You must have at least one soft skill',
+          );
+        }
+
+        await prisma.userSoftSkill.delete({
+          where: {
+            id,
+            userId,
+          },
+        });
+
+        return id;
       });
-
-      if (userSoftSkillsCount <= 1) {
-        throw new BadRequestException('You must have at least one soft skill');
-      }
-
-      const { count } = await prisma.userSoftSkill.deleteMany({
-        where: {
-          id,
-          userId,
-        },
+    } catch (error) {
+      throwPrismaError(error, {
+        code: 'P2025',
+        exception: NotFoundException,
+        message: 'Soft skill not found',
       });
-
-      if (count === 0) {
-        throw new NotFoundException('Soft skill not found');
-      }
-
-      return id;
-    });
+    }
   }
 }

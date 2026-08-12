@@ -58,25 +58,14 @@ export class SocialsService {
     updateSocialDto: UpdateSocialDto,
   ): Promise<SocialResponseDto> {
     try {
-      return await this.prisma.$transaction(async (prisma) => {
-        const { count } = await prisma.social.updateMany({
-          where: {
-            id,
-            userId,
-          },
-          data: updateSocialDto,
-        });
-
-        if (count === 0) {
-          throw new NotFoundException('Social profile not found');
-        }
-
-        const social = await prisma.social.findUniqueOrThrow({
-          where: { id },
-        });
-
-        return SocialMapper.toResponse(social);
+      const social = await this.prisma.social.update({
+        where: {
+          id,
+          userId,
+        },
+        data: updateSocialDto,
       });
+      return SocialMapper.toResponse(social);
     } catch (error) {
       throwPrismaError(error, [
         {
@@ -97,29 +86,33 @@ export class SocialsService {
     userId: string,
     id: string,
   ): Promise<string> {
-    return this.prisma.$transaction(async (prisma) => {
-      const social = await prisma.social.count({
-        where: { userId },
+    try {
+      return await this.prisma.$transaction(async (prisma) => {
+        const social = await prisma.social.count({
+          where: { userId },
+        });
+
+        if (social <= 1) {
+          throw new BadRequestException(
+            'You must have at least one social profile',
+          );
+        }
+
+        await prisma.social.delete({
+          where: {
+            id,
+            userId,
+          },
+        });
+
+        return id;
       });
-
-      if (social <= 1) {
-        throw new BadRequestException(
-          'You must have at least one social profile',
-        );
-      }
-
-      const { count } = await prisma.social.deleteMany({
-        where: {
-          id,
-          userId,
-        },
+    } catch (error) {
+      throwPrismaError(error, {
+        code: 'P2025',
+        exception: NotFoundException,
+        message: 'Social profile not found',
       });
-
-      if (count === 0) {
-        throw new NotFoundException('Social profile not found');
-      }
-
-      return id;
-    });
+    }
   }
 }

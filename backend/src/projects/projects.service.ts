@@ -1,7 +1,5 @@
 import {
   BadRequestException,
-  forwardRef,
-  Inject,
   Injectable,
   MethodNotAllowedException,
   NotFoundException,
@@ -16,8 +14,6 @@ import { ProjectMapper } from '../common/mappers/project.mapper';
 import { Prisma, ProjectStatus } from '@prisma/client';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { ProjectRolesService } from '../project-roles/project-roles.service';
-import { ParticipationsService } from '../participations/participations.service';
-import { UserParticipationResponseDto } from '../participations/dto/user-participation.response-dto';
 import { DiscordService } from '../discord/discord.service';
 import { UsersService } from '../users/users.service';
 import { ProjectCardResponseDto } from './dto/project-card.response-dto';
@@ -48,9 +44,7 @@ export class ProjectsService {
     private readonly prisma: PrismaService,
     private readonly cloudinaryService: CloudinaryService,
     private readonly projectRolesService: ProjectRolesService,
-    private readonly participationsService: ParticipationsService,
     private readonly discordService: DiscordService,
-    @Inject(forwardRef(() => UsersService))
     private readonly usersService: UsersService,
   ) {}
 
@@ -389,7 +383,7 @@ export class ProjectsService {
         const project = await prisma.project.update({
           where: { id },
           data: {
-            status: 'done',
+            status: ProjectStatus.done,
             finishedAt: new Date(),
           },
           include: {
@@ -570,87 +564,6 @@ export class ProjectsService {
       await this.prisma.projectLogo.delete({
         where: { projectId: id },
       });
-    }
-  }
-
-  public async getInvites(
-    projectId: string,
-  ): Promise<UserParticipationResponseDto[]> {
-    return this.participationsService.getInvitesWithUsers(projectId);
-  }
-
-  public async getRequests(
-    projectId: string,
-  ): Promise<UserParticipationResponseDto[]> {
-    return this.participationsService.getRequestsWithUsers(projectId);
-  }
-
-  public async handleUserRemovalFromProject(
-    projectId: string,
-    userId: string,
-  ): Promise<void> {
-    try {
-      const result = await this.prisma.$transaction(async (prisma) => {
-        const role = await prisma.projectRole.findFirstOrThrow({
-          where: {
-            projectId: projectId,
-            users: {
-              some: {
-                id: userId,
-              },
-            },
-          },
-          include: {
-            project: true,
-          },
-        });
-
-        const user = await prisma.user.update({
-          where: { id: userId },
-          data: {
-            projectRoles: {
-              disconnect: { id: role.id },
-            },
-            activeProjectsCount: {
-              decrement: 1,
-            },
-          },
-        });
-
-        await prisma.project.update({
-          where: { id: role.projectId },
-          data: {
-            participantsCount: {
-              decrement: 1,
-            },
-          },
-        });
-
-        return {
-          discordId: user.discordId,
-          discordRoleId: role.project.discordMemberRoleId,
-        };
-      });
-
-      if (result.discordId && result.discordRoleId) {
-        await this.discordService.removeRoleFromUser(
-          result.discordId,
-          result.discordRoleId,
-        );
-      }
-    } catch (error) {
-      throwPrismaError(error, [
-        {
-          code: 'P2025',
-          exception: NotFoundException,
-          message: 'User is not in the team',
-        },
-        {
-          code: 'P2003',
-          exception: BadRequestException,
-          message: 'User is no longer part of this project',
-        },
-      ]);
     }
   }
 

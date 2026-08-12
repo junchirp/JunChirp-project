@@ -7,7 +7,6 @@ import {
   Param,
   Delete,
   Query,
-  Req,
   UploadedFile,
   UseInterceptors,
   HttpCode,
@@ -35,14 +34,11 @@ import {
 import { ProjectsListResponseDto } from './dto/projects-list.response-dto';
 import { ProjectsFilterDto } from './dto/projects-filter.dto';
 import { ProjectResponseDto } from './dto/project.response-dto';
-import { Request } from 'express';
-import { UserWithPasswordResponseDto } from '../users/dto/user-with-password.response-dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ParseImageFilePipe } from '../common/pipes/parse-image-file/parse-image-file.pipe';
 import { Owner } from '../auth/decorators/owner.decorator';
 import { ParseUUIDv4Pipe } from '../common/pipes/parse-UUIDv4/parse-UUIDv4.pipe';
 import { Member } from '../auth/decorators/member.decorator';
-import { UserParticipationResponseDto } from '../participations/dto/user-participation.response-dto';
 import { User } from '../auth/decorators/user.decorator';
 import { ProjectCardResponseDto } from './dto/project-card.response-dto';
 import { UUIDParam } from '../common/decorators/UUID-param.decorator';
@@ -51,6 +47,7 @@ import { NoMember } from '../auth/decorators/no-member.decorator';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { DocumentResponseDto } from '../documents/dto/document.response-dto';
 import { BoardResponseDto } from '../boards/dto/board.response-dto';
+import { UserProjectsFilterDto } from '../users/dto/user-projects-filter.dto';
 
 @User()
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
@@ -96,12 +93,10 @@ export class ProjectsController {
   })
   @Post('')
   public async createProject(
-    @Req() req: Request,
+    @CurrentUser('id') userId: string,
     @Body() createProjectDto: CreateProjectDto,
   ): Promise<ProjectResponseDto> {
-    const user: UserWithPasswordResponseDto =
-      req.user as UserWithPasswordResponseDto;
-    return this.projectsService.createProject(user.id, createProjectDto);
+    return this.projectsService.createProject(userId, createProjectDto);
   }
 
   @Owner()
@@ -230,38 +225,6 @@ export class ProjectsController {
     return this.projectsService.deleteProjectLogo(id);
   }
 
-  @Member()
-  @ApiOperation({
-    summary: 'Get current project invites',
-  })
-  @ApiOkResponse({ type: [UserParticipationResponseDto] })
-  @ApiForbiddenResponse({
-    description:
-      'Access denied: you are not a participant of this project / Access denied: email not confirmed / Access denied: discord not confirmed',
-  })
-  @Get(':id/invites')
-  public async getInvites(
-    @Param('id', ParseUUIDv4Pipe) id: string,
-  ): Promise<UserParticipationResponseDto[]> {
-    return this.projectsService.getInvites(id);
-  }
-
-  @Member()
-  @ApiOperation({
-    summary: 'Get current project requests',
-  })
-  @ApiOkResponse({ type: [UserParticipationResponseDto] })
-  @ApiForbiddenResponse({
-    description:
-      'Access denied: you are not a participant of this project / Access denied: email not confirmed / Access denied: discord not confirmed',
-  })
-  @Get(':id/requests')
-  public async getRequests(
-    @Param('id', ParseUUIDv4Pipe) id: string,
-  ): Promise<UserParticipationResponseDto[]> {
-    return this.projectsService.getRequests(id);
-  }
-
   @NoMember()
   @ApiOperation({ summary: 'Get project card by project id' })
   @ApiOkResponse({ type: ProjectCardResponseDto })
@@ -293,53 +256,6 @@ export class ProjectsController {
   }
 
   @Member()
-  @ApiOperation({ summary: 'User leaves project' })
-  @ApiNoContentResponse()
-  @ApiNotFoundResponse({ description: 'User is not in the team' })
-  @ApiForbiddenResponse({
-    description:
-      'Access denied: you are not a participant of this project / Access denied: email not confirmed / Access denied: discord not confirmed / Invalid CSRF token',
-  })
-  @ApiBadRequestResponse({
-    description: 'User is no longer part of this project',
-  })
-  @ApiHeader({
-    name: 'x-csrf-token',
-    description: 'CSRF token for the request',
-    required: true,
-  })
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @Delete(':id/leave')
-  public async leaveProject(
-    @UUIDParam('id') id: string,
-    @CurrentUser('id') userId: string,
-  ): Promise<void> {
-    return this.projectsService.handleUserRemovalFromProject(id, userId);
-  }
-
-  @Owner()
-  @ApiOperation({ summary: 'Remove user from project team' })
-  @ApiNoContentResponse()
-  @ApiNotFoundResponse({ description: 'User is not in the team' })
-  @ApiForbiddenResponse({
-    description:
-      'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Invalid CSRF token',
-  })
-  @ApiHeader({
-    name: 'x-csrf-token',
-    description: 'CSRF token for the request',
-    required: true,
-  })
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @Delete(':id/users/:userId')
-  public async removeUserFromProject(
-    @UUIDParam('id') id: string,
-    @UUIDParam('userId') userId: string,
-  ): Promise<void> {
-    return this.projectsService.handleUserRemovalFromProject(id, userId);
-  }
-
-  @Member()
   @ApiOperation({ summary: 'Get documents list by project id' })
   @ApiOkResponse({ type: [DocumentResponseDto] })
   @ApiForbiddenResponse({
@@ -365,5 +281,31 @@ export class ProjectsController {
     @UUIDParam('id') id: string,
   ): Promise<BoardResponseDto[]> {
     return this.projectsService.getBoardsList(id);
+  }
+
+  @ApiOperation({
+    summary: 'Get projects of current user',
+  })
+  @ApiOkResponse({ type: ProjectsListResponseDto })
+  @ApiForbiddenResponse({ description: 'Access denied: email not confirmed' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @Get('my-projects')
+  public async getMyProjects(
+    @CurrentUser('id') id: string,
+    @Query() query: UserProjectsFilterDto,
+  ): Promise<ProjectsListResponseDto> {
+    return this.projectsService.getProjects({ userId: id, ...query });
+  }
+
+  @ApiOperation({ summary: 'Get user projects' })
+  @ApiOkResponse({ type: ProjectsListResponseDto })
+  @ApiForbiddenResponse({ description: 'Access denied: email not confirmed' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @Get('users/:id')
+  public async getUserProjects(
+    @UUIDParam('id') id: string,
+    @Query() query: UserProjectsFilterDto,
+  ): Promise<ProjectsListResponseDto> {
+    return this.projectsService.getProjects({ userId: id, ...query });
   }
 }
