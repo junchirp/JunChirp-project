@@ -7,7 +7,10 @@ import Page404 from '@/shared/components/Page404/Page404';
 import { useAppSelector } from '@/hooks/reduxHooks';
 import authSelector from '@/redux/auth/authSelector';
 import { useGetProjectCardByIdQuery } from '@/api/projectsApi';
-import { useGetMyInvitesQuery, useGetMyRequestsQuery } from '@/api/usersApi';
+import {
+  useGetMyInvitesQuery,
+  useGetMyRequestsQuery,
+} from '@/api/participationsApi';
 import ProjectCardLarge from './ProjectCardLarge/ProjectCardLarge';
 
 export default function ProjectClient(): ReactElement {
@@ -20,7 +23,7 @@ export default function ProjectClient(): ReactElement {
     useGetMyRequestsQuery(user.id);
   const { data: invites = [], isLoading: invitesLoading } =
     useGetMyInvitesQuery(user.id);
-  const isLoading = projectLoading || requestsLoading || invitesLoading;
+  const isLoading = projectLoading ?? requestsLoading ?? invitesLoading;
 
   return (
     <>

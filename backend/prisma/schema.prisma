@@ -307,13 +307,15 @@ model Specialization {
 }
 
 model ParticipationInvite {
-  id            String      @id @default(dbgenerated("gen_random_uuid()"))
-  userId        String      @map("user_id")
-  projectId     String      @map("project_id")
-  projectRoleId String      @map("project_role_id")
-  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  projectRole   ProjectRole @relation(fields: [projectRoleId], references: [id], onDelete: Cascade)
-  createdAt     DateTime    @default(now()) @map("created_at")
+  id            String              @id @default(dbgenerated("gen_random_uuid()"))
+  userId        String              @map("user_id")
+  projectId     String              @map("project_id")
+  projectRoleId String              @map("project_role_id")
+  status        ParticipationStatus @default(pending)
+  user          User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projectRole   ProjectRole         @relation(fields: [projectRoleId], references: [id], onDelete: Cascade)
+  createdAt     DateTime            @default(now()) @map("created_at")
+  updatedAt     DateTime            @default(now()) @map("updated_at")
 
   @@unique([userId, projectId])
   @@unique([userId, projectRoleId])
@@ -321,13 +323,15 @@ model ParticipationInvite {
 }
 
 model ParticipationRequest {
-  id            String      @id @default(dbgenerated("gen_random_uuid()"))
-  userId        String      @map("user_id")
-  projectId     String      @map("project_id")
-  projectRoleId String      @map("project_role_id")
-  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  projectRole   ProjectRole @relation(fields: [projectRoleId], references: [id], onDelete: Cascade)
-  createdAt     DateTime    @default(now()) @map("created_at")
+  id            String              @id @default(dbgenerated("gen_random_uuid()"))
+  userId        String              @map("user_id")
+  projectId     String              @map("project_id")
+  projectRoleId String              @map("project_role_id")
+  status        ParticipationStatus @default(pending)
+  user          User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projectRole   ProjectRole         @relation(fields: [projectRoleId], references: [id], onDelete: Cascade)
+  createdAt     DateTime            @default(now()) @map("created_at")
+  updatedAt     DateTime            @default(now()) @map("updated_at")
 
   @@unique([userId, projectId])
   @@unique([userId, projectRoleId])
@@ -372,4 +376,11 @@ enum ColumnColor {
   cyan
   lime
   amber
+}
+
+enum ParticipationStatus {
+  pending
+  canceled
+  accepted
+  rejected
 }

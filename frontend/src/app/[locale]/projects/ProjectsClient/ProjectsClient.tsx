@@ -4,15 +4,14 @@ import { ReactElement } from 'react';
 import styles from './ProjectsClient.module.scss';
 import Image from 'next/image';
 import MyProjects from './MyProjects/MyProjects';
-import { useGetProjectsQuery } from '@/api/projectsApi';
+import { useGetMyProjectsQuery, useGetProjectsQuery } from '@/api/projectsApi';
 import Pagination from '@/shared/components/Pagination/Pagination';
 import ListSkeleton from '@/shared/components/ListSkeleton/ListSkeleton';
 import ProjectsList from './ProjectsList/ProjectsList';
 import {
   useGetMyInvitesQuery,
-  useGetMyProjectsQuery,
   useGetMyRequestsQuery,
-} from '@/api/usersApi';
+} from '@/api/participationsApi';
 import ProjectsFilters from './ProjectsFilters/ProjectsFilters';
 import { useProjectsFilters } from '@/hooks/useProjectsFilters';
 import { useAppSelector } from '@/hooks/reduxHooks';
@@ -39,7 +38,7 @@ export default function ProjectsClient(): ReactElement {
     useGetMyProjectsQuery(user.id);
 
   const isLoading =
-    listLoading || requestsLoading || invitesLoading || myProjectsLoading;
+    listLoading ?? requestsLoading ?? invitesLoading ?? myProjectsLoading;
 
   return (
     <div className={styles['projects-client']}>

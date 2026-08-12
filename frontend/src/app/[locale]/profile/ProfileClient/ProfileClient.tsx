@@ -36,7 +36,10 @@ import {
 } from '@/api/hardSkillsApi';
 import { useAppSelector } from '@/hooks/reduxHooks';
 import DiscordBanner from '@/shared/components/DiscordBanner/DiscordBanner';
-import { useGetMyInvitesQuery, useGetMyRequestsQuery } from '@/api/usersApi';
+import {
+  useGetMyInvitesQuery,
+  useGetMyRequestsQuery,
+} from '@/api/participationsApi';
 import MyRequests from './MyRequests/MyRequests';
 import MyInvites from './MyInvites/MyInvites';
 import Button from '@/shared/components/Button/Button';
@@ -81,11 +84,11 @@ export default function ProfileClient(): ReactElement {
   const [isBanner, setBanner] = useState(false);
   const desiredRoles = user.desiredRoles;
   const isLoading =
-    socialsLoading ||
-    softSkillsLoading ||
-    hardSkillsLoading ||
-    educationsLoading ||
-    requestsLoading ||
+    socialsLoading ??
+    softSkillsLoading ??
+    hardSkillsLoading ??
+    educationsLoading ??
+    requestsLoading ??
     invitesLoading;
 
   const allFilled = [
@@ -388,7 +391,7 @@ export default function ProfileClient(): ReactElement {
               </Button>
             </div>
             <ProfileBaseInfo user={user} handleEditName={handleEditName} />
-            <ProfileDetails<SocialInterface>
+            <ProfileDetails
               title={t('socials')}
               items={socials}
               maxSize={5}
@@ -396,7 +399,7 @@ export default function ProfileClient(): ReactElement {
               handleEditItem={handleEditSocial}
               handleDeleteItem={openModal}
             />
-            <ProfileDetails<EducationInterface>
+            <ProfileDetails
               title={t('educations')}
               items={educations}
               maxSize={5}
@@ -404,7 +407,7 @@ export default function ProfileClient(): ReactElement {
               handleEditItem={handleEditEducation}
               handleDeleteItem={openModal}
             />
-            <ProfileDetails<HardSkillInterface>
+            <ProfileDetails
               title={t('hardSkills')}
               items={hardSkills}
               maxSize={20}
@@ -412,7 +415,7 @@ export default function ProfileClient(): ReactElement {
               handleEditItem={handleEditHardSkill}
               handleDeleteItem={openModal}
             />
-            <ProfileDetails<SoftSkillInterface>
+            <ProfileDetails
               title={t('softSkills')}
               items={softSkills}
               maxSize={20}

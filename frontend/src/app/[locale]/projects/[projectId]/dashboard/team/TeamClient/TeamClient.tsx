@@ -5,12 +5,7 @@ import styles from './TeamClient.module.scss';
 import { useParams, useSearchParams } from 'next/navigation';
 import { useAppSelector } from '@/hooks/reduxHooks';
 import authSelector from '@/redux/auth/authSelector';
-import {
-  useDeleteUserFromProjectMutation,
-  useGetInvitesByProjectIdQuery,
-  useGetProjectByIdQuery,
-  useGetRequestsByProjectIdQuery,
-} from '@/api/projectsApi';
+import { useGetProjectByIdQuery } from '@/api/projectsApi';
 import { buildTeamViewModel } from '@/shared/utils/biuldTeamViewModel';
 import { useRouter } from '@/i18n/routing';
 import { getValidParam } from '@/shared/utils/getValidParam';
@@ -37,6 +32,9 @@ import {
   useAcceptRequestMutation,
   useCancelInviteMutation,
   useDeclineRequestMutation,
+  useDeleteUserFromProjectMutation,
+  useGetInvitesByProjectIdQuery,
+  useGetRequestsByProjectIdQuery,
 } from '@/api/participationsApi';
 import { useTranslations } from 'next-intl';
 import { UserParticipationInterface } from '@/shared/interfaces/user-participation.interface';
@@ -62,7 +60,7 @@ export default function TeamClient(): ReactElement {
     useGetInvitesByProjectIdQuery(projectId);
   const { data: requests = [], isLoading: requestsLoading } =
     useGetRequestsByProjectIdQuery(projectId);
-  const isLoading = projectLoading || invitesLoading || requestsLoading;
+  const isLoading = projectLoading ?? invitesLoading ?? requestsLoading;
   const isOwner = user.id === project?.ownerId;
   const router = useRouter();
   const [member, setMember] = useState<UserCardInterface | null>(null);

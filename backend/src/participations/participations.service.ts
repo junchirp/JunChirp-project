@@ -1,8 +1,6 @@
 import {
   BadRequestException,
   ConflictException,
-  forwardRef,
-  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -20,6 +18,7 @@ import { UserCardResponseDto } from '../users/dto/user-card.response-dto';
 import { UserMapper } from '../common/mappers/user.mapper';
 import { UsersService } from '../users/users.service';
 import { throwPrismaError } from '../common/utils/throw-prisma-error';
+import { ParticipationStatus } from '@prisma/client';
 
 @Injectable()
 export class ParticipationsService {
@@ -28,7 +27,6 @@ export class ParticipationsService {
     private readonly mailService: MailService,
     private readonly configService: ConfigService,
     private readonly discordService: DiscordService,
-    @Inject(forwardRef(() => UsersService))
     private readonly usersService: UsersService,
   ) {}
 
@@ -97,6 +95,7 @@ export class ParticipationsService {
         const existingRequest = await prisma.participationRequest.findFirst({
           where: {
             userId: createInviteDto.userId,
+            status: ParticipationStatus.pending,
             projectRole: { projectId: createInviteDto.projectId },
           },
         });
@@ -110,6 +109,7 @@ export class ParticipationsService {
         const existingInvite = await prisma.participationInvite.findFirst({
           where: {
             userId: createInviteDto.userId,
+            status: ParticipationStatus.pending,
             projectRole: { projectId: createInviteDto.projectId },
           },
         });
@@ -246,6 +246,7 @@ export class ParticipationsService {
         const existingInvite = await prisma.participationInvite.findFirst({
           where: {
             userId,
+            status: ParticipationStatus.pending,
             projectRole: { projectId: createRequestDto.projectId },
           },
         });
@@ -259,6 +260,7 @@ export class ParticipationsService {
         const existingRequest = await prisma.participationRequest.findFirst({
           where: {
             userId,
+            status: ParticipationStatus.pending,
             projectRole: { projectId: createRequestDto.projectId },
           },
         });
@@ -338,8 +340,12 @@ export class ParticipationsService {
     try {
       const { user, discordId, discordMemberRoleId } =
         await this.prisma.$transaction(async (prisma) => {
-          const invite = await prisma.participationInvite.findUniqueOrThrow({
-            where: { id, userId },
+          const invite = await prisma.participationInvite.findFirstOrThrow({
+            where: {
+              id,
+              userId,
+              status: ParticipationStatus.pending,
+            },
             include: {
               projectRole: {
                 include: {
@@ -350,13 +356,14 @@ export class ParticipationsService {
               user: true,
             },
           });
+
           if (invite.user.activeProjectsCount >= 2) {
             throw new BadRequestException(
               'User cannot have more than 2 active projects',
             );
           }
 
-          if (invite.projectRole.users.length === invite.projectRole.slots) {
+          if (invite.projectRole.users.length >= invite.projectRole.slots) {
             throw new ConflictException('The role has no empty slots');
           }
 
@@ -381,7 +388,7 @@ export class ParticipationsService {
           });
 
           const updatedUser = await prisma.user.update({
-            where: { id: userId },
+            where: { id: invite.userId },
             data: {
               activeProjectsCount: {
                 increment: 1,
@@ -392,8 +399,12 @@ export class ParticipationsService {
             },
           });
 
-          await prisma.participationInvite.delete({
+          await prisma.participationInvite.update({
             where: { id },
+            data: {
+              status: ParticipationStatus.accepted,
+              updatedAt: new Date(),
+            },
           });
 
           return {
@@ -412,15 +423,16 @@ export class ParticipationsService {
       throwPrismaError(error, {
         code: 'P2025',
         exception: NotFoundException,
-        message: 'Invite not found',
+        message: 'Invite not found or its status is not "pending"',
       });
     }
   }
 
-  public async declineInvite(id: string, userId: string): Promise<void> {
+  public async rejectInvite(id: string, userId: string): Promise<void> {
     try {
-      await this.prisma.participationInvite.delete({
-        where: { id, userId },
+      await this.prisma.participationInvite.update({
+        where: { id, userId, status: ParticipationStatus.pending },
+        data: { status: ParticipationStatus.rejected, updatedAt: new Date() },
       });
     } catch (error) {
       throwPrismaError(error, {
@@ -435,8 +447,11 @@ export class ParticipationsService {
     try {
       const { discordId, discordMemberRoleId } = await this.prisma.$transaction(
         async (prisma) => {
-          const request = await prisma.participationRequest.findUniqueOrThrow({
-            where: { id },
+          const request = await prisma.participationRequest.findFirstOrThrow({
+            where: {
+              id,
+              status: ParticipationStatus.pending,
+            },
             include: {
               projectRole: {
                 include: {
@@ -485,8 +500,12 @@ export class ParticipationsService {
             },
           });
 
-          await prisma.participationRequest.delete({
+          await prisma.participationRequest.update({
             where: { id },
+            data: {
+              status: ParticipationStatus.accepted,
+              updatedAt: new Date(),
+            },
           });
 
           return {
@@ -504,15 +523,19 @@ export class ParticipationsService {
       throwPrismaError(error, {
         code: 'P2025',
         exception: NotFoundException,
-        message: 'Request not found',
+        message: 'Request not found or its status is not "pending"',
       });
     }
   }
 
-  public async declineRequest(id: string): Promise<void> {
+  public async rejectRequest(id: string): Promise<void> {
     try {
-      await this.prisma.participationRequest.delete({
-        where: { id },
+      await this.prisma.participationRequest.update({
+        where: { id, status: ParticipationStatus.pending },
+        data: {
+          status: ParticipationStatus.rejected,
+          updatedAt: new Date(),
+        },
       });
     } catch (error) {
       throwPrismaError(error, {
@@ -525,8 +548,12 @@ export class ParticipationsService {
 
   public async cancelRequest(id: string, userId: string): Promise<void> {
     try {
-      await this.prisma.participationRequest.delete({
-        where: { id, userId },
+      await this.prisma.participationRequest.update({
+        where: { id, userId, status: ParticipationStatus.pending },
+        data: {
+          status: ParticipationStatus.canceled,
+          updatedAt: new Date(),
+        },
       });
     } catch (error) {
       throwPrismaError(error, {
@@ -539,8 +566,12 @@ export class ParticipationsService {
 
   public async cancelInvite(id: string): Promise<void> {
     try {
-      await this.prisma.participationInvite.delete({
-        where: { id },
+      await this.prisma.participationInvite.update({
+        where: { id, status: ParticipationStatus.pending },
+        data: {
+          status: ParticipationStatus.canceled,
+          updatedAt: new Date(),
+        },
       });
     } catch (error) {
       throwPrismaError(error, {
@@ -565,6 +596,9 @@ export class ParticipationsService {
             },
           },
         }),
+      },
+      orderBy: {
+        createdAt: 'desc',
       },
       include: {
         projectRole: {
@@ -607,6 +641,7 @@ export class ParticipationsService {
     const requests = await this.prisma.participationRequest.findMany({
       where: {
         userId,
+        status: ParticipationStatus.pending,
         ...(ownerId && {
           projectRole: {
             project: {
@@ -614,6 +649,9 @@ export class ParticipationsService {
             },
           },
         }),
+      },
+      orderBy: {
+        createdAt: 'desc',
       },
       include: {
         projectRole: {
@@ -653,7 +691,10 @@ export class ParticipationsService {
     projectId: string,
   ): Promise<UserParticipationResponseDto[]> {
     const invites = await this.prisma.participationInvite.findMany({
-      where: { projectRole: { projectId } },
+      where: {
+        projectRole: { projectId },
+        status: ParticipationStatus.pending,
+      },
       include: {
         user: {
           include: {
@@ -675,7 +716,10 @@ export class ParticipationsService {
     projectId: string,
   ): Promise<UserParticipationResponseDto[]> {
     const requests = await this.prisma.participationRequest.findMany({
-      where: { projectRole: { projectId } },
+      where: {
+        projectRole: { projectId },
+        status: ParticipationStatus.pending,
+      },
       include: {
         user: {
           include: {
@@ -696,14 +740,12 @@ export class ParticipationsService {
   }
 
   public async getRequestsInMyProjects(
-    authId: string,
+    ownerId: string,
   ): Promise<ProjectParticipationResponseDto[]> {
     const requests = await this.prisma.participationRequest.findMany({
       where: {
         projectRole: {
-          project: {
-            ownerId: authId,
-          },
+          project: { ownerId },
         },
       },
       include: {
@@ -745,6 +787,7 @@ export class ParticipationsService {
   ): Promise<ProjectParticipationResponseDto[]> {
     const invites = await this.prisma.participationInvite.findMany({
       where: {
+        status: ParticipationStatus.pending,
         projectRole: {
           project: {
             ownerId: authId,
@@ -783,5 +826,74 @@ export class ParticipationsService {
     return invites.map((invite) =>
       ProjectParticipationMapper.toResponse(invite),
     );
+  }
+
+  public async handleUserRemovalFromProject(
+    projectId: string,
+    userId: string,
+  ): Promise<void> {
+    try {
+      const result = await this.prisma.$transaction(async (prisma) => {
+        const role = await prisma.projectRole.findFirstOrThrow({
+          where: {
+            projectId: projectId,
+            users: {
+              some: {
+                id: userId,
+              },
+            },
+          },
+          include: {
+            project: true,
+          },
+        });
+
+        const user = await prisma.user.update({
+          where: { id: userId },
+          data: {
+            projectRoles: {
+              disconnect: { id: role.id },
+            },
+            activeProjectsCount: {
+              decrement: 1,
+            },
+          },
+        });
+
+        await prisma.project.update({
+          where: { id: role.projectId },
+          data: {
+            participantsCount: {
+              decrement: 1,
+            },
+          },
+        });
+
+        return {
+          discordId: user.discordId,
+          discordRoleId: role.project.discordMemberRoleId,
+        };
+      });
+
+      if (result.discordId && result.discordRoleId) {
+        await this.discordService.removeRoleFromUser(
+          result.discordId,
+          result.discordRoleId,
+        );
+      }
+    } catch (error) {
+      throwPrismaError(error, [
+        {
+          code: 'P2025',
+          exception: NotFoundException,
+          message: 'User is not in the team',
+        },
+        {
+          code: 'P2003',
+          exception: BadRequestException,
+          message: 'User is no longer part of this project',
+        },
+      ]);
+    }
   }
 }

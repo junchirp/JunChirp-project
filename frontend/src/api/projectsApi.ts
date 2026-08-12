@@ -5,7 +5,6 @@ import { ProjectsFiltersInterface } from '@/shared/interfaces/projects-filters.i
 import { ProjectInterface } from '@/shared/interfaces/project.interface';
 import { CreateProjectInterface } from '@/shared/interfaces/create-project.interface';
 import { ProjectLogoInterface } from '@/shared/interfaces/project-logo.interface';
-import { UserParticipationInterface } from '@/shared/interfaces/user-participation.interface';
 import { UpdateProjectInterface } from '@/shared/interfaces/update-project.interface';
 
 export const projectsApi = mainApi.injectEndpoints({
@@ -114,18 +113,6 @@ export const projectsApi = mainApi.injectEndpoints({
         { type: 'my-projects', id: 'LIST' },
       ],
     }),
-    leaveProject: builder.mutation<void, string>({
-      query: (id) => ({
-        url: `projects/${id}/leave`,
-        method: 'DELETE',
-      }),
-      invalidatesTags: (_result, _error, id) => [
-        { type: 'project-cards', id: 'LIST' },
-        { type: 'project-cards', id },
-        { type: 'my-projects', id: 'LIST' },
-        { type: 'auth', id: 'CURRENT' },
-      ],
-    }),
     deleteProject: builder.mutation<void, string>({
       query: (id) => ({
         url: `projects/${id}`,
@@ -149,39 +136,33 @@ export const projectsApi = mainApi.injectEndpoints({
         { type: 'auth', id: 'CURRENT' },
       ],
     }),
-    getInvitesByProjectId: builder.query<UserParticipationInterface[], string>({
-      query: (id) => {
+    getMyProjects: builder.query<ProjectsListInterface, string>({
+      query: () => {
         return {
-          url: `/projects/${id}/invites`,
+          url: 'projects/my-projects?status=active',
         };
       },
-      providesTags: (_result, _error, id) => [{ type: 'invites', id }],
+      providesTags: [{ type: 'my-projects', id: 'LIST' }],
     }),
-    getRequestsByProjectId: builder.query<UserParticipationInterface[], string>(
-      {
-        query: (id) => {
-          return {
-            url: `/projects/${id}/requests`,
-          };
-        },
-        providesTags: (_result, _error, id) => [{ type: 'requests', id }],
-      },
-    ),
-    deleteUserFromProject: builder.mutation<
-      void,
-      { id: string; userId: string }
+    getUserProjects: builder.query<
+      ProjectsListInterface,
+      { id: string; params: ProjectsFiltersInterface }
     >({
-      query: ({ id, userId }) => ({
-        url: `projects/${id}/users/${userId}`,
-        method: 'DELETE',
-      }),
-      invalidatesTags: (_result, _error, { id, userId }) => [
-        { type: 'project-cards', id: 'LIST' },
-        { type: 'project-cards', id },
-        { type: 'projects', id },
-        { type: 'my-projects', id: 'LIST' },
-        { type: 'users', id: 'LIST' },
-        { type: 'users', id: userId },
+      query: ({ id, params }) => {
+        const query = new URLSearchParams();
+        Object.entries(params).forEach(([key, value]) => {
+          if (value == null) {
+            return;
+          }
+
+          query.set(key, value.toString());
+        });
+        return {
+          url: `projects/users/${id}?${query.toString()}`,
+        };
+      },
+      providesTags: (_result, _error, { id }) => [
+        { type: 'user-projects', id },
       ],
     }),
   }),
@@ -196,10 +177,8 @@ export const {
   useUpdateProjectMutation,
   useUpdateProjectLogoMutation,
   useDeleteProjectLogoMutation,
-  useLeaveProjectMutation,
   useDeleteProjectMutation,
   useCompleteProjectMutation,
-  useGetInvitesByProjectIdQuery,
-  useGetRequestsByProjectIdQuery,
-  useDeleteUserFromProjectMutation,
+  useGetMyProjectsQuery,
+  useGetUserProjectsQuery,
 } = projectsApi;

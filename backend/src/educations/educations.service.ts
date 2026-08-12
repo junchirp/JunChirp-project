@@ -118,17 +118,13 @@ export class EducationsService {
   ): Promise<EducationResponseDto> {
     try {
       return await this.prisma.$transaction(async (prisma) => {
-        const { count } = await prisma.education.updateMany({
+        const education = await prisma.education.update({
           where: {
             id,
             userId,
           },
           data: updateEducationDto,
         });
-
-        if (count === 0) {
-          throw new NotFoundException('Hard skill not found');
-        }
 
         await prisma.institution.upsert({
           where: {
@@ -150,10 +146,6 @@ export class EducationsService {
           },
         });
 
-        const education = await prisma.education.findUniqueOrThrow({
-          where: { id },
-        });
-
         return EducationMapper.toResponse(education);
       });
     } catch (error) {
@@ -173,29 +165,33 @@ export class EducationsService {
   }
 
   public async deleteEducation(userId: string, id: string): Promise<string> {
-    return this.prisma.$transaction(async (prisma) => {
-      const educationsCount = await prisma.education.count({
-        where: { userId },
+    try {
+      return await this.prisma.$transaction(async (prisma) => {
+        const educationsCount = await prisma.education.count({
+          where: { userId },
+        });
+
+        if (educationsCount <= 1) {
+          throw new BadRequestException(
+            'You must have at least one education record',
+          );
+        }
+
+        await prisma.education.delete({
+          where: {
+            id,
+            userId,
+          },
+        });
+
+        return id;
       });
-
-      if (educationsCount <= 1) {
-        throw new BadRequestException(
-          'You must have at least one education record',
-        );
-      }
-
-      const { count } = await prisma.education.deleteMany({
-        where: {
-          id,
-          userId,
-        },
+    } catch (error) {
+      throwPrismaError(error, {
+        code: 'P2025',
+        exception: NotFoundException,
+        message: 'Education not found',
       });
-
-      if (count === 0) {
-        throw new NotFoundException('Education not found');
-      }
-
-      return id;
-    });
+    }
   }
 }

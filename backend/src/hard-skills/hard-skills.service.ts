@@ -90,17 +90,13 @@ export class HardSkillsService {
   ): Promise<HardSkillResponseDto> {
     try {
       return await this.prisma.$transaction(async (prisma) => {
-        const { count } = await prisma.userHardSkill.updateMany({
+        const hardSkill = await prisma.userHardSkill.update({
           where: {
             id,
             userId,
           },
           data: updateHardSkillDto,
         });
-
-        if (count === 0) {
-          throw new NotFoundException('Hard skill not found');
-        }
 
         await prisma.hardSkill.upsert({
           where: {
@@ -110,10 +106,6 @@ export class HardSkillsService {
           create: {
             hardSkillName: updateHardSkillDto.hardSkillName,
           },
-        });
-
-        const hardSkill = await prisma.userHardSkill.findUniqueOrThrow({
-          where: { id },
         });
 
         return HardSkillMapper.toResponse(hardSkill);
@@ -135,27 +127,33 @@ export class HardSkillsService {
   }
 
   public async deleteHardSkill(userId: string, id: string): Promise<string> {
-    return this.prisma.$transaction(async (prisma) => {
-      const userHardSkillsCount = await prisma.userHardSkill.count({
-        where: { userId },
+    try {
+      return await this.prisma.$transaction(async (prisma) => {
+        const userHardSkillsCount = await prisma.userHardSkill.count({
+          where: { userId },
+        });
+
+        if (userHardSkillsCount <= 1) {
+          throw new BadRequestException(
+            'You must have at least one hard skill',
+          );
+        }
+
+        await prisma.userHardSkill.delete({
+          where: {
+            id,
+            userId,
+          },
+        });
+
+        return id;
       });
-
-      if (userHardSkillsCount <= 1) {
-        throw new BadRequestException('You must have at least one hard skill');
-      }
-
-      const { count } = await prisma.userHardSkill.deleteMany({
-        where: {
-          id,
-          userId,
-        },
+    } catch (error) {
+      throwPrismaError(error, {
+        code: 'P2025',
+        exception: NotFoundException,
+        message: 'Hard skill not found',
       });
-
-      if (count === 0) {
-        throw new NotFoundException('Hard skill not found');
-      }
-
-      return id;
-    });
+    }
   }
 }

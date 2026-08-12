@@ -2,12 +2,12 @@ import {
   Controller,
   Post,
   Body,
-  Delete,
-  Req,
-  Put,
   HttpCode,
   HttpStatus,
   Get,
+  Patch,
+  Param,
+  Delete,
 } from '@nestjs/common';
 import { ParticipationsService } from './participations.service';
 import { CreateInviteDto } from './dto/create-invite.dto';
@@ -25,13 +25,14 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { ProjectParticipationResponseDto } from './dto/project-participation.response-dto';
-import { Request } from 'express';
-import { UserWithPasswordResponseDto } from '../users/dto/user-with-password.response-dto';
 import { User } from '../auth/decorators/user.decorator';
 import { UserCardResponseDto } from '../users/dto/user-card.response-dto';
 import { CreateRequestDto } from './dto/create-request.dto';
 import { UUIDParam } from '../common/decorators/UUID-param.decorator';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
+import { UserParticipationResponseDto } from './dto/user-participation.response-dto';
+import { ParseUUIDv4Pipe } from '../common/pipes/parse-UUIDv4/parse-UUIDv4.pipe';
+import { Member } from '../auth/decorators/member.decorator';
 
 @User()
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
@@ -62,7 +63,7 @@ export class ParticipationsController {
     description: 'CSRF token for the request',
     required: true,
   })
-  @Post('invite')
+  @Post('invites')
   public async createInvite(
     @Body() createInviteDto: CreateInviteDto,
   ): Promise<ProjectParticipationResponseDto> {
@@ -90,20 +91,20 @@ export class ParticipationsController {
     description: 'CSRF token for the request',
     required: true,
   })
-  @Post('request')
+  @Post('requests')
   public async createRequest(
     @Body() createRequestDto: CreateRequestDto,
-    @Req() req: Request,
+    @CurrentUser('id') userId: string,
   ): Promise<ProjectParticipationResponseDto> {
-    const user: UserWithPasswordResponseDto =
-      req.user as UserWithPasswordResponseDto;
-    return this.participationsService.createRequest(createRequestDto, user.id);
+    return this.participationsService.createRequest(createRequestDto, userId);
   }
 
   @User('discord')
   @ApiOperation({ summary: 'Accept invite (user)' })
   @ApiNoContentResponse()
-  @ApiNotFoundResponse({ description: 'Invite not found' })
+  @ApiNotFoundResponse({
+    description: 'Invite not found or its status is not "pending"',
+  })
   @ApiConflictResponse({ description: 'The role has no empty slots' })
   @ApiForbiddenResponse({
     description:
@@ -118,17 +119,15 @@ export class ParticipationsController {
     required: true,
   })
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Put('invite/:id/accept')
+  @Patch('invites/:id/accept')
   public async acceptInvite(
-    @Req() req: Request,
+    @CurrentUser('id') userId: string,
     @UUIDParam('id') id: string,
   ): Promise<UserCardResponseDto> {
-    const user: UserWithPasswordResponseDto =
-      req.user as UserWithPasswordResponseDto;
-    return this.participationsService.acceptInvite(id, user.id);
+    return this.participationsService.acceptInvite(id, userId);
   }
 
-  @ApiOperation({ summary: 'Decline invite (user)' })
+  @ApiOperation({ summary: 'Reject invite (user)' })
   @ApiNoContentResponse()
   @ApiNotFoundResponse({ description: 'Invite not found' })
   @ApiForbiddenResponse({
@@ -140,20 +139,20 @@ export class ParticipationsController {
     required: true,
   })
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Delete('invite/:id/decline')
-  public async declineInvite(
-    @Req() req: Request,
+  @Patch('invites/:id/reject')
+  public async rejectInvite(
+    @CurrentUser('id') userId: string,
     @UUIDParam('id') id: string,
   ): Promise<void> {
-    const user: UserWithPasswordResponseDto =
-      req.user as UserWithPasswordResponseDto;
-    return this.participationsService.declineInvite(id, user.id);
+    return this.participationsService.rejectInvite(id, userId);
   }
 
   @Owner('params', 'id', 'participationRequest')
   @ApiOperation({ summary: 'Accept request (owner)' })
   @ApiNoContentResponse()
-  @ApiNotFoundResponse({ description: 'Request not found' })
+  @ApiNotFoundResponse({
+    description: 'Request not found or its status is not "pending"',
+  })
   @ApiConflictResponse({ description: 'The role has no empty slots' })
   @ApiForbiddenResponse({
     description:
@@ -168,13 +167,13 @@ export class ParticipationsController {
     required: true,
   })
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Put('request/:id/accept')
+  @Patch('requests/:id/accept')
   public async acceptRequest(@UUIDParam('id') id: string): Promise<void> {
     return this.participationsService.acceptRequest(id);
   }
 
   @Owner('params', 'id', 'participationRequest')
-  @ApiOperation({ summary: 'Decline request (owner)' })
+  @ApiOperation({ summary: 'Reject request (owner)' })
   @ApiNoContentResponse()
   @ApiNotFoundResponse({ description: 'Request not found' })
   @ApiForbiddenResponse({
@@ -187,9 +186,9 @@ export class ParticipationsController {
     required: true,
   })
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Delete('request/:id/decline')
-  public async declineRequest(@UUIDParam('id') id: string): Promise<void> {
-    return this.participationsService.declineRequest(id);
+  @Patch('requests/:id/reject')
+  public async rejectRequest(@UUIDParam('id') id: string): Promise<void> {
+    return this.participationsService.rejectRequest(id);
   }
 
   @ApiOperation({ summary: 'Cancel request (user)' })
@@ -205,14 +204,12 @@ export class ParticipationsController {
     required: true,
   })
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Delete('request/:id/cancel')
+  @Patch('requests/:id/cancel')
   public async cancelRequest(
-    @Req() req: Request,
+    @CurrentUser('id') userId: string,
     @UUIDParam('id') id: string,
   ): Promise<void> {
-    const user: UserWithPasswordResponseDto =
-      req.user as UserWithPasswordResponseDto;
-    return this.participationsService.cancelRequest(id, user.id);
+    return this.participationsService.cancelRequest(id, userId);
   }
 
   @Owner('params', 'id', 'participationInvite')
@@ -229,7 +226,7 @@ export class ParticipationsController {
     required: true,
   })
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Delete('invite/:id/cancel')
+  @Patch('invites/:id/cancel')
   public async cancelInvite(@UUIDParam('id') id: string): Promise<void> {
     return this.participationsService.cancelInvite(id);
   }
@@ -237,7 +234,7 @@ export class ParticipationsController {
   @ApiOperation({ summary: `Get all invites in current user's projects` })
   @ApiOkResponse({ type: [ProjectParticipationResponseDto] })
   @ApiForbiddenResponse({ description: 'Access denied: email not confirmed' })
-  @Get('invites')
+  @Get('my-projects/invites')
   public async getInvitesInMyProjects(
     @CurrentUser('id') ownerId: string,
   ): Promise<ProjectParticipationResponseDto[]> {
@@ -247,10 +244,143 @@ export class ParticipationsController {
   @ApiOperation({ summary: `Get all requests in current user's projects` })
   @ApiOkResponse({ type: [ProjectParticipationResponseDto] })
   @ApiForbiddenResponse({ description: 'Access denied: email not confirmed' })
-  @Get('requests')
+  @Get('my-projects/requests')
   public async getRequestsInMyProjects(
     @CurrentUser('id') ownerId: string,
   ): Promise<ProjectParticipationResponseDto[]> {
     return this.participationsService.getRequestsInMyProjects(ownerId);
+  }
+
+  @Owner()
+  @ApiOperation({
+    summary: 'Get current project invites',
+  })
+  @ApiOkResponse({ type: [UserParticipationResponseDto] })
+  @ApiForbiddenResponse({
+    description:
+      'Access denied: you are not a participant of this project / Access denied: email not confirmed / Access denied: discord not confirmed',
+  })
+  @Get('projects/:id/invites')
+  public async getInvitesInCurrentProject(
+    @Param('id', ParseUUIDv4Pipe) id: string,
+  ): Promise<UserParticipationResponseDto[]> {
+    return this.participationsService.getInvitesWithUsers(id);
+  }
+
+  @Owner()
+  @ApiOperation({
+    summary: 'Get current project requests',
+  })
+  @ApiOkResponse({ type: [UserParticipationResponseDto] })
+  @ApiForbiddenResponse({
+    description:
+      'Access denied: you are not a participant of this project / Access denied: email not confirmed / Access denied: discord not confirmed',
+  })
+  @Get('projects/:id/requests')
+  public async getRequestsInCurrentProject(
+    @Param('id', ParseUUIDv4Pipe) id: string,
+  ): Promise<UserParticipationResponseDto[]> {
+    return this.participationsService.getRequestsWithUsers(id);
+  }
+
+  @Member()
+  @ApiOperation({ summary: 'User leaves project' })
+  @ApiNoContentResponse()
+  @ApiNotFoundResponse({ description: 'User is not in the team' })
+  @ApiForbiddenResponse({
+    description:
+      'Access denied: you are not a participant of this project / Access denied: email not confirmed / Access denied: discord not confirmed / Invalid CSRF token',
+  })
+  @ApiBadRequestResponse({
+    description: 'User is no longer part of this project',
+  })
+  @ApiHeader({
+    name: 'x-csrf-token',
+    description: 'CSRF token for the request',
+    required: true,
+  })
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Delete('projects/:id/leave')
+  public async leaveProject(
+    @UUIDParam('id') id: string,
+    @CurrentUser('id') userId: string,
+  ): Promise<void> {
+    return this.participationsService.handleUserRemovalFromProject(id, userId);
+  }
+
+  @Owner()
+  @ApiOperation({ summary: 'Remove user from project team' })
+  @ApiNoContentResponse()
+  @ApiNotFoundResponse({ description: 'User is not in the team' })
+  @ApiForbiddenResponse({
+    description:
+      'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Invalid CSRF token',
+  })
+  @ApiHeader({
+    name: 'x-csrf-token',
+    description: 'CSRF token for the request',
+    required: true,
+  })
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Delete('projects/:id/users/:userId')
+  public async removeUserFromProject(
+    @UUIDParam('id') id: string,
+    @UUIDParam('userId') userId: string,
+  ): Promise<void> {
+    return this.participationsService.handleUserRemovalFromProject(id, userId);
+  }
+
+  @ApiOperation({
+    summary: 'Get current user invites',
+  })
+  @ApiOkResponse({ type: [ProjectParticipationResponseDto] })
+  @ApiForbiddenResponse({ description: 'Access denied: email not confirmed' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @Get('me/invites')
+  public async getInvitesMe(
+    @CurrentUser('id') id: string,
+  ): Promise<ProjectParticipationResponseDto[]> {
+    return this.participationsService.getInvitesWithProjects(id);
+  }
+
+  @ApiOperation({
+    summary: 'Get current user requests',
+  })
+  @ApiOkResponse({ type: [ProjectParticipationResponseDto] })
+  @ApiForbiddenResponse({ description: 'Access denied: email not confirmed' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @Get('me/requests')
+  public async getRequestsMe(
+    @CurrentUser('id') id: string,
+  ): Promise<ProjectParticipationResponseDto[]> {
+    return this.participationsService.getRequestsWithProjects(id);
+  }
+
+  @ApiOperation({
+    summary: `Get requests by user id in current user's projects`,
+  })
+  @ApiOkResponse({ type: [ProjectParticipationResponseDto] })
+  @ApiForbiddenResponse({ description: 'Access denied: email not confirmed' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @Get('users/:id/requests')
+  public async getRequestsByUserId(
+    @UUIDParam('id') id: string,
+    @CurrentUser('id') ownerId: string,
+  ): Promise<ProjectParticipationResponseDto[]> {
+    return this.participationsService.getRequestsWithProjects(id, ownerId);
+  }
+
+  @ApiOperation({
+    summary: `Get invites by user id in current user's projects`,
+  })
+  @ApiOkResponse({ type: [ProjectParticipationResponseDto] })
+  @ApiForbiddenResponse({ description: 'Access denied: email not confirmed' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @Get('users/:id/invites')
+  public async getInvitesByUserId(
+    @UUIDParam('id') id: string,
+    @CurrentUser('id') ownerId: string,
+  ): Promise<ProjectParticipationResponseDto[]> {
+    return this.participationsService.getInvitesWithProjects(id, ownerId);
   }
 }

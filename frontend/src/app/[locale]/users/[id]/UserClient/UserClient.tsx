@@ -6,15 +6,7 @@ import Button from '@/shared/components/Button/Button';
 import ArrowUpRight from '@/assets/icons/arrow-up-right.svg';
 import UserBaseInfo from './UserBaseInfo/UserBaseInfo';
 import { useParams } from 'next/navigation';
-import {
-  useGetUserInvitesInMyProjectsQuery,
-  useGetMyInvitesQuery,
-  useGetMyProjectsQuery,
-  useGetMyRequestsQuery,
-  useGetUserRequestsInMyProjectsQuery,
-  useGetUserByIdQuery,
-  useGetUserProjectsQuery,
-} from '@/api/usersApi';
+import { useGetUserByIdQuery } from '@/api/usersApi';
 import UserDetails from './UserDetails/UserDetails';
 import UserSkeleton from './UserSkeleton/UserSkeleton';
 import Page404 from '@/shared/components/Page404/Page404';
@@ -27,6 +19,16 @@ import UserRequests from './UserRequests/UserRequests';
 import DataContainer from '@/shared/components/DataContainer/DataContainer';
 import { useTranslations } from 'next-intl';
 import UserInvites from './UserInvites/UserInvites';
+import {
+  useGetMyProjectsQuery,
+  useGetUserProjectsQuery,
+} from '@/api/projectsApi';
+import {
+  useGetMyInvitesQuery,
+  useGetMyRequestsQuery,
+  useGetUserInvitesInMyProjectsQuery,
+  useGetUserRequestsInMyProjectsQuery,
+} from '@/api/participationsApi';
 
 export default function UserClient(): ReactElement {
   const params = useParams();
@@ -62,11 +64,11 @@ export default function UserClient(): ReactElement {
   const { data: invites = [], isLoading: invitesLoading } =
     useGetUserInvitesInMyProjectsQuery(userId);
   const isLoading =
-    projectsLoading ||
-    userLoading ||
-    requestsLoading ||
-    invitesLoading ||
-    myRequestsLoading ||
+    projectsLoading ??
+    userLoading ??
+    requestsLoading ??
+    invitesLoading ??
+    myRequestsLoading ??
     myInvitesLoading;
   const usersActiveProjects = list?.projects ?? [];
   const usersActiveProjectsWithMeOwner = usersActiveProjects.filter(

@@ -1,8 +1,8 @@
 import {
+  BadRequestException,
   ForbiddenException,
-  forwardRef,
-  Inject,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { LoginDto } from './dto/login.dto';
@@ -25,11 +25,24 @@ import { localeArray, LocaleType } from '../common/types/locale.type';
 import { TokenPayloadInterface } from '../common/interfaces/token-payload.interface';
 import { CookieConfigService } from '../cookie-config/cookie-config.service';
 import { CsrfService } from '../csrf/csrf.service';
+import { UserMapper } from '../common/mappers/user.mapper';
+import { isPrismaError } from '../common/utils/is-prisma-error';
+import { throwPrismaError } from '../common/utils/throw-prisma-error';
+import { CryptoTokenInterface } from '../common/interfaces/crypto-token.interface';
+import { ResetPasswordToken } from '@prisma/client';
+import { ConfirmEmailWithLocaleDto } from '../users/dto/confirm-email-with-locale.dto';
+import * as crypto from 'crypto';
+import { ConfirmEmailDto } from '../users/dto/confirm-email.dto';
+import { EmailWithLocaleDto } from '../users/dto/email-with-locale.dto';
+import { IdResponseDto } from '../users/dto/id.response-dto';
+import { ResetPasswordDto } from '../users/dto/reset-password.dto';
+import { EmailValidationResponseDto } from '../users/dto/email-validation.response-dto';
+import { TokenValidationResponseDto } from '../users/dto/token-validation.response-dto';
+import { EmailResponseDto } from '../users/dto/email.response-dto';
 
 @Injectable()
 export class AuthService {
   public constructor(
-    @Inject(forwardRef(() => UsersService))
     private readonly usersService: UsersService,
     private readonly mailService: MailService,
     private readonly configService: ConfigService,
@@ -725,6 +738,367 @@ export class AuthService {
 
     if (data.status === 'failure' && data.error) {
       urlObj.searchParams.set('error', data.error);
+    }
+  }
+
+  public async sendConfirmationEmail(
+    ip: string,
+    locale: LocaleType,
+    user: AuthResponseDto,
+  ): Promise<MessageResponseDto> {
+    const token = this.usersService.createCryptoToken();
+    await this.usersService.createVerificationEmailRecords(ip, user, token);
+    const params = new URLSearchParams({
+      token: token.raw,
+    });
+    const url = `${this.configService.get('BASE_FRONTEND_URL')}/verify-email?${params.toString()}`;
+
+    await this.mailService.sendVerificationMail(user.email, url, locale);
+
+    await this.loggerService.log(
+      ip,
+      user.email,
+      'confirmation email',
+      'Confirmation email sent successfully',
+    );
+
+    return { message: 'Confirmation email sent. Please check your inbox.' };
+  }
+
+  public async resendConfirmationEmail(
+    ip: string,
+    confirmEmailWithLocaleDto: ConfirmEmailWithLocaleDto,
+  ): Promise<MessageResponseDto> {
+    const { token, locale } = confirmEmailWithLocaleDto;
+    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+
+    const record = await this.prisma.verificationToken.findUnique({
+      where: { token: hashedToken },
+      include: {
+        user: {
+          include: {
+            role: true,
+            desiredRoles: true,
+          },
+        },
+      },
+    });
+
+    if (!record) {
+      throw new NotFoundException('Token not found');
+    }
+
+    const user = UserMapper.toAuthResponse(record.user);
+    const newToken = this.usersService.createCryptoToken();
+    await this.usersService.createVerificationEmailRecords(ip, user, newToken);
+    const params = new URLSearchParams({
+      token: newToken.raw,
+    });
+    const url = `${this.configService.get('BASE_FRONTEND_URL')}/verify-email?${params.toString()}`;
+
+    await this.mailService.sendVerificationMail(user.email, url, locale);
+
+    await this.loggerService.log(
+      ip,
+      record.user.email,
+      'confirmation email',
+      'Confirmation email sent successfully',
+    );
+
+    return { message: 'Confirmation email sent. Please check your inbox.' };
+  }
+
+  public async confirmEmail(
+    ip: string,
+    confirmEmailDto: ConfirmEmailDto,
+    req: Request,
+    res: Response,
+  ): Promise<MessageResponseDto> {
+    const { token } = confirmEmailDto;
+    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+
+    const verificationToken = await this.prisma.verificationToken.findUnique({
+      where: { token: hashedToken },
+      include: { user: true },
+    });
+
+    if (!verificationToken) {
+      await this.loggerService.log(
+        ip,
+        '',
+        'confirmation email',
+        'Token not found',
+      );
+      throw new NotFoundException('Token not found');
+    } else if (verificationToken.used) {
+      await this.loggerService.log(
+        ip,
+        verificationToken.user.email,
+        'confirmation email',
+        'Token expired',
+      );
+      throw new BadRequestException('Token expired');
+    } else {
+      try {
+        await this.prisma.$transaction(async (prisma) => {
+          await prisma.verificationToken.deleteMany({
+            where: { userId: verificationToken.userId },
+          });
+
+          await prisma.user.update({
+            where: { id: verificationToken.userId },
+            data: { isVerified: true },
+          });
+
+          await this.loggerService.log(
+            ip,
+            verificationToken.user.email,
+            'confirmation email',
+            'Email verified successfully',
+          );
+        });
+
+        const refreshToken = req.cookies['refreshToken'];
+
+        await this.clearTokens(refreshToken, req, res);
+
+        return { message: 'Email verified successfully' };
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        if (isPrismaError(error) && error.code === 'P2025') {
+          await this.loggerService.log(
+            ip,
+            verificationToken.user.email,
+            'confirmation email',
+            'User not found',
+          );
+          throw new NotFoundException('User not found');
+        }
+        await this.loggerService.log(
+          ip,
+          verificationToken.user.email,
+          'confirmation email',
+          message,
+        );
+        throw error;
+      }
+    }
+  }
+
+  public async sendPasswordResetUrl(
+    ip: string,
+    emailDto: EmailWithLocaleDto,
+  ): Promise<IdResponseDto> {
+    const token = this.usersService.createCryptoToken();
+    const record = await this.createPasswordResetRecords(
+      ip,
+      emailDto.email,
+      token,
+    );
+    const params = new URLSearchParams({
+      token: token.raw,
+    });
+    const url = `${this.configService.get('BASE_FRONTEND_URL')}/reset-password?${params.toString()}`;
+
+    await this.mailService.sendResetPasswordMail(
+      emailDto.email,
+      url,
+      emailDto.locale,
+    );
+
+    await this.loggerService.log(
+      ip,
+      emailDto.email,
+      'reset password',
+      'Password reset link sent successfully',
+    );
+
+    return { id: record.id };
+  }
+
+  public async createPasswordResetRecords(
+    ip: string,
+    email: string,
+    token: CryptoTokenInterface,
+  ): Promise<ResetPasswordToken> {
+    const attempts = await this.prisma.resetPasswordAttempt.findMany({
+      where: { ip },
+      orderBy: { createdAt: 'asc' },
+      take: 5,
+    });
+
+    if (attempts.length >= 5) {
+      const oldestAttempt = attempts[0];
+      const nextAttemptAt = new Date(
+        oldestAttempt.createdAt.getTime() + 60 * 60 * 1000,
+      );
+
+      throw new TooManyRequestsException(
+        'You have used up all your attempts. Please try again later.',
+        attempts.length,
+        nextAttemptAt,
+      );
+    }
+
+    await this.prisma.resetPasswordAttempt.create({
+      data: {
+        ip,
+        createdAt: new Date(),
+      },
+    });
+
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (user.isBlocked) {
+      throw new ForbiddenException('User is blocked');
+    }
+
+    return this.prisma.resetPasswordToken.upsert({
+      where: { email },
+      update: {
+        token: token.hashed,
+        createdAt: token.createdAt,
+      },
+      create: {
+        email,
+        token: token.hashed,
+        createdAt: token.createdAt,
+      },
+    });
+  }
+
+  public async resetPassword(
+    ip: string,
+    resetPasswordDto: ResetPasswordDto,
+  ): Promise<MessageResponseDto> {
+    const hashedToken = crypto
+      .createHash('sha256')
+      .update(resetPasswordDto.token)
+      .digest('hex');
+
+    const resetPasswordToken = await this.prisma.resetPasswordToken.findUnique({
+      where: { token: hashedToken },
+    });
+
+    if (!resetPasswordToken) {
+      await this.loggerService.log(
+        ip,
+        '',
+        'reset password',
+        'Invalid or expired token',
+      );
+      throw new BadRequestException('Invalid or expired token');
+    }
+
+    try {
+      await this.prisma.$transaction(async (prisma) => {
+        const email = resetPasswordToken.email;
+        const hashPassword = await bcrypt.hash(resetPasswordDto.password, 10);
+
+        const user = await prisma.user.update({
+          where: { email: resetPasswordToken.email },
+          data: { password: hashPassword },
+        });
+        await prisma.resetPasswordToken.delete({ where: { email } });
+
+        await this.loggerService.log(
+          ip,
+          user.email,
+          'reset password',
+          'Password reset successfully',
+        );
+      });
+
+      return { message: 'Password has been reset successfully.' };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      await this.loggerService.log(ip, '', 'reset password', message);
+
+      if (isPrismaError(error) && error.code === 'P2025') {
+        throw new BadRequestException('Invalid or expired token');
+      }
+      throw error;
+    }
+  }
+
+  public async updateEmail(
+    id: string,
+    ip: string,
+    emailDto: EmailWithLocaleDto,
+  ): Promise<AuthResponseDto> {
+    return this.usersService.updateEmail(id, ip, emailDto);
+  }
+
+  public async checkEmailAvailable(
+    email: string,
+  ): Promise<EmailValidationResponseDto> {
+    const user = await this.usersService.getUserByEmail(email, false);
+    return { isAvailable: !user, isConfirmed: !!user?.isVerified };
+  }
+
+  public async validateToken(
+    token: string,
+  ): Promise<TokenValidationResponseDto> {
+    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+
+    try {
+      const resetPasswordToken =
+        await this.prisma.resetPasswordToken.findUniqueOrThrow({
+          where: { token: hashedToken },
+        });
+      const user = await this.usersService.getUserByEmail(
+        resetPasswordToken.email,
+        false,
+      );
+      return user
+        ? {
+            isValid: true,
+            firstName: user.firstName,
+            lastName: user.lastName,
+          }
+        : { isValid: false };
+    } catch {
+      return { isValid: false };
+    }
+  }
+
+  public async cancelResetPassword(token: string): Promise<void> {
+    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+
+    try {
+      await this.prisma.resetPasswordToken.delete({
+        where: { token: hashedToken },
+      });
+    } catch (error) {
+      throwPrismaError(error, {
+        code: 'P2025',
+        exception: NotFoundException,
+        message: 'Token not found',
+      });
+    }
+  }
+
+  public async getPasswordResetToken(id: string): Promise<EmailResponseDto> {
+    try {
+      const token = await this.prisma.resetPasswordToken.findUniqueOrThrow({
+        where: { id },
+      });
+      return {
+        id,
+        email: token.email,
+      };
+    } catch (error) {
+      throwPrismaError(error, {
+        code: 'P2025',
+        exception: NotFoundException,
+        message: 'Token not found',
+      });
     }
   }
 }
