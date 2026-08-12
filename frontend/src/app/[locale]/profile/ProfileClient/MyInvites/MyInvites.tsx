@@ -11,6 +11,7 @@ import { useTranslations } from 'next-intl';
 import DiscordBanner from '@/shared/components/DiscordBanner/DiscordBanner';
 import { useToast } from '@/hooks/useToast';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
+import { useRouter } from '@/i18n/routing';
 
 interface MyInvitesProps {
   invites: ProjectParticipationInterface[];
@@ -29,6 +30,7 @@ export default function MyInvites({
   const tTable = useTranslations('participationsTable');
   const tInvite = useTranslations('acceptInvite');
   const { showToast, isActive } = useToast();
+  const router = useRouter();
 
   const openModal = (inv: ProjectParticipationInterface): void => {
     setInvite(inv);
@@ -61,6 +63,8 @@ export default function MyInvites({
         life: 3000,
         actionKey: ToastKeysEnum.PARTICIPATION_INVITE,
       });
+
+      router.push(`/projects/${inv.projectRole.project.id}/dashboard`);
     } catch {
       showToast({
         severity: 'error',
