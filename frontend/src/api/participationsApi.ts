@@ -1,8 +1,8 @@
 import mainApi from './mainApi';
-import { usersApi } from './usersApi';
 import { CreateInviteInterface } from '@/shared/interfaces/create-invite.interface';
 import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
 import { CreateRequestInterface } from '@/shared/interfaces/create-request.interface';
+import { UserParticipationInterface } from '@/shared/interfaces/user-participation.interface';
 
 export const participationsApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -19,7 +19,7 @@ export const participationsApi = mainApi.injectEndpoints({
         try {
           const { data: newInvite } = await queryFulfilled;
           dispatch(
-            usersApi.util.updateQueryData(
+            participationsApi.util.updateQueryData(
               'getUserInvitesInMyProjects',
               arg.userId,
               (draft: ProjectParticipationInterface[]) => {
@@ -50,7 +50,7 @@ export const participationsApi = mainApi.injectEndpoints({
         try {
           const { data: newRequest } = await queryFulfilled;
           dispatch(
-            usersApi.util.updateQueryData(
+            participationsApi.util.updateQueryData(
               'getMyRequests',
               arg.userId,
               (draft: ProjectParticipationInterface[]) => {
@@ -76,7 +76,7 @@ export const participationsApi = mainApi.injectEndpoints({
         try {
           await queryFulfilled;
           dispatch(
-            usersApi.util.updateQueryData(
+            participationsApi.util.updateQueryData(
               'getMyInvites',
               userId,
               (draft: ProjectParticipationInterface[]) => {
@@ -120,7 +120,7 @@ export const participationsApi = mainApi.injectEndpoints({
         try {
           await queryFulfilled;
           dispatch(
-            usersApi.util.updateQueryData(
+            participationsApi.util.updateQueryData(
               'getUserRequestsInMyProjects',
               userId,
               (draft: ProjectParticipationInterface[]) => {
@@ -161,7 +161,7 @@ export const participationsApi = mainApi.injectEndpoints({
         try {
           await queryFulfilled;
           dispatch(
-            usersApi.util.updateQueryData(
+            participationsApi.util.updateQueryData(
               'getUserRequestsInMyProjects',
               userId,
               (draft: ProjectParticipationInterface[]) => {
@@ -196,7 +196,7 @@ export const participationsApi = mainApi.injectEndpoints({
         try {
           await queryFulfilled;
           dispatch(
-            usersApi.util.updateQueryData(
+            participationsApi.util.updateQueryData(
               'getMyRequests',
               userId,
               (draft: ProjectParticipationInterface[]) => {
@@ -230,7 +230,7 @@ export const participationsApi = mainApi.injectEndpoints({
         try {
           await queryFulfilled;
           dispatch(
-            usersApi.util.updateQueryData(
+            participationsApi.util.updateQueryData(
               'getUserInvitesInMyProjects',
               userId,
               (draft: ProjectParticipationInterface[]) => {
@@ -275,6 +275,96 @@ export const participationsApi = mainApi.injectEndpoints({
       },
       providesTags: [{ type: 'requests-in-my-projects', id: 'LIST' }],
     }),
+
+    getMyInvites: builder.query<ProjectParticipationInterface[], string>({
+      query: () => {
+        return {
+          url: 'participations/me/invites',
+        };
+      },
+      providesTags: [{ type: 'invites-me-in-projects', id: 'LIST' }],
+    }),
+    getMyRequests: builder.query<ProjectParticipationInterface[], string>({
+      query: () => {
+        return {
+          url: 'participations/me/requests',
+        };
+      },
+      providesTags: [{ type: 'my-requests-in-projects', id: 'LIST' }],
+    }),
+    getUserRequestsInMyProjects: builder.query<
+      ProjectParticipationInterface[],
+      string
+    >({
+      query: (id) => {
+        return {
+          url: `participations/users/${id}/requests`,
+        };
+      },
+      providesTags: (_result, _error, id) => [
+        { type: 'requests-in-my-projects', id },
+      ],
+    }),
+    getUserInvitesInMyProjects: builder.query<
+      ProjectParticipationInterface[],
+      string
+    >({
+      query: (id) => {
+        return {
+          url: `participations/users/${id}/invites`,
+        };
+      },
+      providesTags: (_result, _error, id) => [
+        { type: 'invites-in-my-projects', id },
+      ],
+    }),
+    getInvitesByProjectId: builder.query<UserParticipationInterface[], string>({
+      query: (id) => {
+        return {
+          url: `participations/projects/${id}/invites`,
+        };
+      },
+      providesTags: (_result, _error, id) => [{ type: 'invites', id }],
+    }),
+    getRequestsByProjectId: builder.query<UserParticipationInterface[], string>(
+      {
+        query: (id) => {
+          return {
+            url: `participations/projects/${id}/requests`,
+          };
+        },
+        providesTags: (_result, _error, id) => [{ type: 'requests', id }],
+      },
+    ),
+    deleteUserFromProject: builder.mutation<
+      void,
+      { id: string; userId: string }
+    >({
+      query: ({ id, userId }) => ({
+        url: `participations/projects/${id}/users/${userId}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: (_result, _error, { id, userId }) => [
+        { type: 'project-cards', id: 'LIST' },
+        { type: 'project-cards', id },
+        { type: 'projects', id },
+        { type: 'my-projects', id: 'LIST' },
+        { type: 'users', id: 'LIST' },
+        { type: 'users', id: userId },
+      ],
+    }),
+    leaveProject: builder.mutation<void, string>({
+      query: (id) => ({
+        url: `participations/projects/${id}/leave`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: (_result, _error, id) => [
+        { type: 'project-cards', id: 'LIST' },
+        { type: 'project-cards', id },
+        { type: 'my-projects', id: 'LIST' },
+        { type: 'auth', id: 'CURRENT' },
+      ],
+    }),
   }),
 });
 
@@ -289,4 +379,12 @@ export const {
   useCancelInviteMutation,
   useGetInvitesInMyProjectsQuery,
   useGetRequestsInMyProjectsQuery,
+  useGetMyInvitesQuery,
+  useGetMyRequestsQuery,
+  useGetUserRequestsInMyProjectsQuery,
+  useGetUserInvitesInMyProjectsQuery,
+  useLeaveProjectMutation,
+  useGetInvitesByProjectIdQuery,
+  useGetRequestsByProjectIdQuery,
+  useDeleteUserFromProjectMutation,
 } = participationsApi;

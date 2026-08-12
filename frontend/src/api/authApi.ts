@@ -69,7 +69,7 @@ export const authApi = mainApi.injectEndpoints({
     }),
     sendConfirmationEmail: builder.mutation<MessageInterface, LocaleInterface>({
       query: (data) => ({
-        url: 'users/send-confirmation-email',
+        url: 'auth/send-confirmation-email',
         method: 'POST',
         body: data,
       }),
@@ -80,7 +80,7 @@ export const authApi = mainApi.injectEndpoints({
       ConfirmEmailWithLocaleInterface
     >({
       query: (data) => ({
-        url: 'users/send-confirmation-email/resend',
+        url: 'auth/send-confirmation-email/resend',
         method: 'POST',
         body: data,
       }),
@@ -88,7 +88,7 @@ export const authApi = mainApi.injectEndpoints({
     }),
     confirmEmail: builder.mutation<MessageInterface, ConfirmEmailInterface>({
       query: (data) => ({
-        url: 'users/confirm',
+        url: 'auth/confirm',
         method: 'POST',
         body: data,
       }),
@@ -102,7 +102,7 @@ export const authApi = mainApi.injectEndpoints({
       EmailWithLocaleInterface
     >({
       query: (data) => ({
-        url: 'users/request-password-reset',
+        url: 'auth/request-password-reset',
         method: 'POST',
         body: data,
       }),
@@ -121,7 +121,7 @@ export const authApi = mainApi.injectEndpoints({
     }),
     updateEmail: builder.mutation<AuthInterface, EmailWithLocaleInterface>({
       query: (data) => ({
-        url: 'users/me/email',
+        url: 'auth/email',
         method: 'PATCH',
         body: data,
       }),
@@ -129,25 +129,25 @@ export const authApi = mainApi.injectEndpoints({
     }),
     validateToken: builder.query<TokenValidationInterface, string>({
       query: (token) => ({
-        url: `users/validate-password-token?token=${encodeURIComponent(token)}`,
+        url: `auth/validate-password-token?token=${encodeURIComponent(token)}`,
       }),
     }),
     resetPassword: builder.mutation<MessageInterface, ResetPasswordInterface>({
       query: (data) => ({
-        url: 'users/reset-password',
+        url: 'auth/reset-password',
         method: 'POST',
         body: data,
       }),
     }),
     cancelResetPassword: builder.mutation<void, string>({
       query: (token) => ({
-        url: `users/password-token?token=${encodeURIComponent(token)}`,
+        url: `auth/password-token?token=${encodeURIComponent(token)}`,
         method: 'DELETE',
       }),
     }),
     getPasswordResetToken: builder.query<EmailWithIdInterface, string>({
       query: (id) => ({
-        url: `users/password-reset-token?requestId=${id}`,
+        url: `auth/password-reset-token?requestId=${id}`,
       }),
     }),
     getProjectsCount: builder.query<{ count: number }, void>({

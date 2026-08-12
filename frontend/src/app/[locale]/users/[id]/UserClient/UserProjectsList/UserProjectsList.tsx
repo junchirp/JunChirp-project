@@ -2,7 +2,7 @@
 
 import { ReactElement, useEffect, useMemo, useState } from 'react';
 import { ProjectCardInterface } from '@/shared/interfaces/project-card.interface';
-import { useGetUserProjectsQuery } from '@/api/usersApi';
+import { useGetUserProjectsQuery } from '@/api/projectsApi';
 import styles from './UserProjectsList.module.scss';
 import Button from '@/shared/components/Button/Button';
 import Image from 'next/image';

@@ -10,7 +10,6 @@ import { ProjectInterface } from '@/shared/interfaces/project.interface';
 import {
   useCompleteProjectMutation,
   useDeleteProjectMutation,
-  useLeaveProjectMutation,
 } from '@/api/projectsApi';
 import LeaveProjectPopup from './LeaveProjectPopup/LeaveProjectPopup';
 import { useToast } from '@/hooks/useToast';
@@ -19,6 +18,7 @@ import { useRouter } from '@/i18n/routing';
 import DeleteProjectPopup from './DeleteProjectPopup/DeleteProjectPopup';
 import CompleteProjectPopup from './CompleteProjectPopup/CompleteProjectPopup';
 import { useShortLocale } from '@/hooks/useShortLocale';
+import { useLeaveProjectMutation } from '@/api/participationsApi';
 
 interface OverviewViewProps {
   project: ProjectInterface;

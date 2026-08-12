@@ -6,7 +6,7 @@ import Image from 'next/image';
 import UsersFilters from './UsersFilters/UsersFilters';
 import UsersList from './UsersList/UsersList';
 import { useUsersFilters } from '@/hooks/useUsersFilters';
-import { useGetMyProjectsQuery, useGetUsersQuery } from '@/api/usersApi';
+import { useGetUsersQuery } from '@/api/usersApi';
 import ListSkeleton from '@/shared/components/ListSkeleton/ListSkeleton';
 import Pagination from '@/shared/components/Pagination/Pagination';
 import { useAppSelector } from '@/hooks/reduxHooks';
@@ -16,6 +16,7 @@ import {
   useGetInvitesInMyProjectsQuery,
   useGetRequestsInMyProjectsQuery,
 } from '@/api/participationsApi';
+import { useGetMyProjectsQuery } from '@/api/projectsApi';
 
 export default function UsersClient(): ReactElement {
   const { filters, updateFilters } = useUsersFilters();
@@ -35,7 +36,7 @@ export default function UsersClient(): ReactElement {
   const { data: requests = [], isLoading: requestsLoading } =
     useGetRequestsInMyProjectsQuery(user.id);
   const isLoading =
-    usersLoading || myProjectsLoading || invitesLoading || requestsLoading;
+    usersLoading ?? myProjectsLoading ?? invitesLoading ?? requestsLoading;
 
   const onPageChange = (page: number): void => {
     updateFilters({ page });

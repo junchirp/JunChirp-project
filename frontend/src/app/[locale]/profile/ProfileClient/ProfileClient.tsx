@@ -36,7 +36,10 @@ import {
 } from '@/api/hardSkillsApi';
 import { useAppSelector } from '@/hooks/reduxHooks';
 import DiscordBanner from '@/shared/components/DiscordBanner/DiscordBanner';
-import { useGetMyInvitesQuery, useGetMyRequestsQuery } from '@/api/usersApi';
+import {
+  useGetMyInvitesQuery,
+  useGetMyRequestsQuery,
+} from '@/api/participationsApi';
 import MyRequests from './MyRequests/MyRequests';
 import MyInvites from './MyInvites/MyInvites';
 import Button from '@/shared/components/Button/Button';
@@ -81,11 +84,11 @@ export default function ProfileClient(): ReactElement {
   const [isBanner, setBanner] = useState(false);
   const desiredRoles = user.desiredRoles;
   const isLoading =
-    socialsLoading ||
-    softSkillsLoading ||
-    hardSkillsLoading ||
-    educationsLoading ||
-    requestsLoading ||
+    socialsLoading ??
+    softSkillsLoading ??
+    hardSkillsLoading ??
+    educationsLoading ??
+    requestsLoading ??
     invitesLoading;
 
   const allFilled = [
