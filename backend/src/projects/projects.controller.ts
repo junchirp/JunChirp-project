@@ -225,6 +225,32 @@ export class ProjectsController {
     return this.projectsService.deleteProjectLogo(id);
   }
 
+  @ApiOperation({
+    summary: 'Get projects of current user',
+  })
+  @ApiOkResponse({ type: ProjectsListResponseDto })
+  @ApiForbiddenResponse({ description: 'Access denied: email not confirmed' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @Get('my-projects')
+  public async getMyProjects(
+    @CurrentUser('id') id: string,
+    @Query() query: UserProjectsFilterDto,
+  ): Promise<ProjectsListResponseDto> {
+    return this.projectsService.getProjects({ userId: id, ...query });
+  }
+
+  @ApiOperation({ summary: 'Get user projects' })
+  @ApiOkResponse({ type: ProjectsListResponseDto })
+  @ApiForbiddenResponse({ description: 'Access denied: email not confirmed' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @Get('users/:id')
+  public async getUserProjects(
+    @UUIDParam('id') id: string,
+    @Query() query: UserProjectsFilterDto,
+  ): Promise<ProjectsListResponseDto> {
+    return this.projectsService.getProjects({ userId: id, ...query });
+  }
+
   @NoMember()
   @ApiOperation({ summary: 'Get project card by project id' })
   @ApiOkResponse({ type: ProjectCardResponseDto })
@@ -281,31 +307,5 @@ export class ProjectsController {
     @UUIDParam('id') id: string,
   ): Promise<BoardResponseDto[]> {
     return this.projectsService.getBoardsList(id);
-  }
-
-  @ApiOperation({
-    summary: 'Get projects of current user',
-  })
-  @ApiOkResponse({ type: ProjectsListResponseDto })
-  @ApiForbiddenResponse({ description: 'Access denied: email not confirmed' })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @Get('my-projects')
-  public async getMyProjects(
-    @CurrentUser('id') id: string,
-    @Query() query: UserProjectsFilterDto,
-  ): Promise<ProjectsListResponseDto> {
-    return this.projectsService.getProjects({ userId: id, ...query });
-  }
-
-  @ApiOperation({ summary: 'Get user projects' })
-  @ApiOkResponse({ type: ProjectsListResponseDto })
-  @ApiForbiddenResponse({ description: 'Access denied: email not confirmed' })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @Get('users/:id')
-  public async getUserProjects(
-    @UUIDParam('id') id: string,
-    @Query() query: UserProjectsFilterDto,
-  ): Promise<ProjectsListResponseDto> {
-    return this.projectsService.getProjects({ userId: id, ...query });
   }
 }

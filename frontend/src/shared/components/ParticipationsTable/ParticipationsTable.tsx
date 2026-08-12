@@ -86,6 +86,7 @@ export default function ParticipationsTable(
                 <Link
                   className={styles['participations-table__link']}
                   href={`/projects/${item.projectRole.project.id}`}
+                  target="_blank"
                 >
                   {item.projectRole.project.projectName}
                 </Link>
