@@ -11,7 +11,7 @@ export const participationsApi = mainApi.injectEndpoints({
       CreateInviteInterface
     >({
       query: (data) => ({
-        url: 'participations/invite',
+        url: 'participations/invites',
         method: 'POST',
         body: data,
       }),
@@ -42,7 +42,7 @@ export const participationsApi = mainApi.injectEndpoints({
       CreateRequestInterface & { userId: string }
     >({
       query: (data) => ({
-        url: 'participations/request',
+        url: 'participations/requests',
         method: 'POST',
         body: data,
       }),
@@ -66,7 +66,7 @@ export const participationsApi = mainApi.injectEndpoints({
     }),
     rejectInvite: builder.mutation<void, { id: string; userId: string }>({
       query: ({ id }) => ({
-        url: `participations/invite/${id}/decline`,
+        url: `participations/invites/${id}/decline`,
         method: 'DELETE',
       }),
       async onQueryStarted(
@@ -97,7 +97,7 @@ export const participationsApi = mainApi.injectEndpoints({
     }),
     acceptInvite: builder.mutation<void, string>({
       query: (id) => ({
-        url: `participations/invite/${id}/accept`,
+        url: `participations/invites/${id}/accept`,
         method: 'PUT',
       }),
       invalidatesTags: [
@@ -110,7 +110,7 @@ export const participationsApi = mainApi.injectEndpoints({
       { id: string; userId: string; projectId: string }
     >({
       query: ({ id }) => ({
-        url: `participations/request/${id}/accept`,
+        url: `participations/requests/${id}/accept`,
         method: 'PUT',
       }),
       async onQueryStarted(
@@ -151,7 +151,7 @@ export const participationsApi = mainApi.injectEndpoints({
       { id: string; userId: string; projectId: string }
     >({
       query: ({ id }) => ({
-        url: `participations/request/${id}/decline`,
+        url: `participations/requests/${id}/decline`,
         method: 'DELETE',
       }),
       async onQueryStarted(
@@ -186,7 +186,7 @@ export const participationsApi = mainApi.injectEndpoints({
     }),
     cancelRequest: builder.mutation<void, { id: string; userId: string }>({
       query: ({ id }) => ({
-        url: `participations/request/${id}/cancel`,
+        url: `participations/requests/${id}/cancel`,
         method: 'DELETE',
       }),
       async onQueryStarted(
@@ -220,7 +220,7 @@ export const participationsApi = mainApi.injectEndpoints({
       { id: string; userId: string; projectId: string }
     >({
       query: ({ id }) => ({
-        url: `participations/invite/${id}/cancel`,
+        url: `participations/invites/${id}/cancel`,
         method: 'DELETE',
       }),
       async onQueryStarted(
@@ -259,7 +259,7 @@ export const participationsApi = mainApi.injectEndpoints({
     >({
       query: () => {
         return {
-          url: 'participations/invites',
+          url: 'participations/my-projects/invites',
         };
       },
       providesTags: [{ type: 'invites-in-my-projects', id: 'LIST' }],
@@ -270,12 +270,11 @@ export const participationsApi = mainApi.injectEndpoints({
     >({
       query: () => {
         return {
-          url: 'participations/requests',
+          url: 'participations/my-projects/requests',
         };
       },
       providesTags: [{ type: 'requests-in-my-projects', id: 'LIST' }],
     }),
-
     getMyInvites: builder.query<ProjectParticipationInterface[], string>({
       query: () => {
         return {
