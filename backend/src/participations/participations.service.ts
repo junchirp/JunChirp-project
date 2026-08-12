@@ -597,6 +597,9 @@ export class ParticipationsService {
           },
         }),
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
       include: {
         projectRole: {
           include: {
