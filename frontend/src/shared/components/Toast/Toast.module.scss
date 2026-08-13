@@ -1,0 +1,152 @@
+.toast {
+  position: fixed;
+  z-index: 2000;
+
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 586px;
+  pointer-events: none;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+//.toast {
+//  position: relative;
+//
+//  display: flex;
+//  align-items: flex-start;
+//  gap: 0.75rem;
+//
+//  width: 25rem;
+//  max-width: calc(100vw - 2rem);
+//
+//  padding: 1rem;
+//
+//  border: 1px solid;
+//  border-radius: 0.5rem;
+//
+//  background: white;
+//
+//  box-shadow:
+//    0 0.5rem 1rem rgb(0 0 0 / 10%),
+//    0 0.125rem 0.25rem rgb(0 0 0 / 6%);
+//
+//  pointer-events: auto;
+//
+//  animation: toast-enter 200ms ease-out;
+//}
+//
+//.toast--closing {
+//  animation: toast-leave 200ms ease-in forwards;
+//}
+//
+//.toast__content {
+//  min-width: 0;
+//  flex: 1;
+//}
+//
+//.toast__summary {
+//  margin-bottom: 0.25rem;
+//
+//  font-size: 0.95rem;
+//  font-weight: 600;
+//  line-height: 1.25;
+//}
+//
+//.toast__detail {
+//  font-size: 0.875rem;
+//  line-height: 1.4;
+//  overflow-wrap: anywhere;
+//}
+//
+//.toast__close {
+//  flex: 0 0 auto;
+//
+//  display: flex;
+//  align-items: center;
+//  justify-content: center;
+//
+//  width: 1.5rem;
+//  height: 1.5rem;
+//  padding: 0;
+//
+//  border: 0;
+//  border-radius: 0.25rem;
+//
+//  background: transparent;
+//
+//  cursor: pointer;
+//}
+//
+//.toast__close:hover {
+//  background: rgb(0 0 0 / 7%);
+//}
+//
+//.toast__close-icon {
+//  width: 1rem;
+//  height: 1rem;
+//}
+//
+///* severity */
+//
+//.toast--success {
+//  border-color: #86efac;
+//  color: #166534;
+//  background: #f0fdf4;
+//}
+//
+//.toast--info {
+//  border-color: #93c5fd;
+//  color: #1e40af;
+//  background: #eff6ff;
+//}
+//
+//.toast--warn {
+//  border-color: #fcd34d;
+//  color: #92400e;
+//  background: #fffbeb;
+//}
+//
+//.toast--error {
+//  border-color: #fca5a5;
+//  color: #991b1b;
+//  background: #fef2f2;
+//}
+//
+//.toast--secondary {
+//  border-color: #d1d5db;
+//  color: #374151;
+//  background: #f9fafb;
+//}
+//
+//.toast--contrast {
+//  border-color: #374151;
+//  color: white;
+//  background: #111827;
+//}
+//
+//@keyframes toast-enter {
+//  from {
+//    opacity: 0;
+//    transform: translateY(-0.5rem) scale(0.98);
+//  }
+//
+//  to {
+//    opacity: 1;
+//    transform: translateY(0) scale(1);
+//  }
+//}
+//
+//@keyframes toast-leave {
+//  from {
+//    opacity: 1;
+//    transform: translateY(0) scale(1);
+//  }
+//
+//  to {
+//    opacity: 0;
+//    transform: translateY(-0.5rem) scale(0.98);
+//  }
+//}
