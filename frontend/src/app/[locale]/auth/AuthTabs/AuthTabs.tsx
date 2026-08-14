@@ -1,11 +1,11 @@
 'use client';
 
-import { TabMenu } from 'primereact/tabmenu';
+import TabMenu from '@/shared/components/TabMenu/TabMenu';
 import React, { ReactElement } from 'react';
 import { usePathname, useRouter } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
 
-export default function TabMenuWrapper(): ReactElement {
+export default function AuthTabs(): ReactElement {
   const router = useRouter();
   const pathname = usePathname();
   const t = useTranslations('auth');
@@ -27,11 +27,5 @@ export default function TabMenuWrapper(): ReactElement {
     },
   ];
 
-  return (
-    <TabMenu
-      className={'tab-menu-wrapper'}
-      model={items}
-      activeIndex={activeIndex}
-    />
-  );
+  return <TabMenu variant="auth" model={items} activeIndex={activeIndex} />;
 }

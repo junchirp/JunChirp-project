@@ -1,7 +1,7 @@
 import { ReactElement, ReactNode } from 'react';
 import styles from './layout.module.scss';
 import Image from 'next/image';
-import TabMenuWrapper from './TabMenuWrapper/TabMenuWrapper';
+import AuthTabs from '@/app/[locale]/auth/AuthTabs/AuthTabs';
 
 export default function AuthLayout({
   children,
@@ -20,7 +20,7 @@ export default function AuthLayout({
         />
       </div>
       <div className={styles['auth-layout__routes-wrapper']}>
-        <TabMenuWrapper />
+        <AuthTabs />
         <div>{children}</div>
       </div>
     </div>
