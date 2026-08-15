@@ -1,0 +1,17 @@
+@use '@/assets/styles/variables';
+
+.toolbar-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  border: none;
+  width: 24px;
+  height: 22px;
+  background-color: variables.$gray-1;
+  box-sizing: border-box;
+
+  &--active {
+    border: 1px solid variables.$black-2;
+  }
+}

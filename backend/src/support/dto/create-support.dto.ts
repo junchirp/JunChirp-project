@@ -8,6 +8,7 @@ import {
   Matches,
 } from 'class-validator';
 import { localeArray, LocaleType } from '../../common/types/locale.type';
+import { Prisma } from '@prisma/client';
 
 export class CreateSupportDto {
   @ApiProperty({ example: 'email@mail.com', description: 'Email' })
@@ -33,11 +34,10 @@ export class CreateSupportDto {
   public readonly requestText: string;
 
   @ApiProperty({
-    example: '<p>Request template</p>',
+    example: {},
     description: 'Request template',
   })
-  @IsString({ message: 'Must be a string' })
-  public readonly requestHtml: string;
+  public readonly request: Prisma.InputJsonValue;
 
   @ApiProperty({
     example: 'en',

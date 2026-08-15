@@ -1,0 +1,66 @@
+@use '@/assets/styles/variables';
+
+.lexical-editor {
+  width: 100%;
+  background-color: variables.$white-2;
+  border-radius: 8px;
+  border: 1px solid variables.$gray-8;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  &--focused:not(&--invalid) {
+    border-color: variables.$green-6;
+    box-shadow: 0 0 0 4px variables.$green-4;
+  }
+
+  &--invalid:not(&--focused) {
+    border-color: variables.$red-8;
+  }
+
+  &--invalid.lexical-editor--focused {
+    border-color: variables.$red-8;
+    box-shadow: 0 0 0 4px variables.$red-3;
+  }
+
+  &__bold {
+    font-weight: 700;
+  }
+
+  &__italic {
+    font-style: italic;
+  }
+
+  &__paragraph {
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.4;
+  }
+
+  &__content {
+    min-height: 150px;
+    padding: 8px 12px;
+    outline: none;
+    font-size: 14px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-word;
+    border-radius: 4px;
+    border: 1px solid variables.$gray-8;
+  }
+
+  &__content-wrapper {
+    position: relative;
+  }
+
+  &__placeholder {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    pointer-events: none;
+    font-size: 16px;
+    line-height: 1.4;
+    color: variables.$gray-4;
+  }
+}

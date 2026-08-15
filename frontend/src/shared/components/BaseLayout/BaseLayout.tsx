@@ -3,11 +3,6 @@ import Header from './Header/Header';
 import styles from './BaseLayout.module.scss';
 import ReduxProvider from '@/providers/ReduxProvider';
 import UserLoader from '@/shared/components/BaseLayout/UserLoader/UserLoader';
-import { PrimeReactProvider } from 'primereact/api';
-import 'primereact/resources/themes/saga-blue/theme.css';
-import 'primereact/resources/primereact.min.css';
-import 'primeicons/primeicons.css';
-import 'primeflex/primeflex.css';
 import { MessageProvider } from '@/providers/MessageProvider';
 import FooterWrapper from './FooterWrapper/FooterWrapper';
 import { SupportProvider } from '@/providers/SupportProvider';
@@ -29,20 +24,18 @@ export default function BaseLayout({
       <body className={styles.body}>
         <NextIntlClientProvider>
           <ReduxProvider>
-            <PrimeReactProvider>
-              <MessageProvider>
-                <SupportProvider>
-                  <UserLoader />
-                  <OAuthDiscordHandler />
-                  <OAuthGoogleHandler />
-                  <div className={styles.body__container}>
-                    <Header />
-                    <div className={styles.body__inner}>{children}</div>
-                    <FooterWrapper />
-                  </div>
-                </SupportProvider>
-              </MessageProvider>
-            </PrimeReactProvider>
+            <MessageProvider>
+              <SupportProvider>
+                <UserLoader />
+                <OAuthDiscordHandler />
+                <OAuthGoogleHandler />
+                <div className={styles.body__container}>
+                  <Header />
+                  <div className={styles.body__inner}>{children}</div>
+                  <FooterWrapper />
+                </div>
+              </SupportProvider>
+            </MessageProvider>
           </ReduxProvider>
         </NextIntlClientProvider>
       </body>

@@ -17,7 +17,6 @@ import {
 } from '@/shared/forms/schemas/supportSchema';
 import { useTranslations } from 'next-intl';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
-import { normalizeInputValue } from '@/shared/utils/normalizeInputValue';
 import { useShortLocale } from '@/hooks/useShortLocale';
 
 type FormData = z.infer<typeof supportSchemaStatic>;
@@ -46,7 +45,16 @@ export default function SupportForm(props: SupportFormProps): ReactElement {
     defaultValues: {
       email: '',
       requestText: '',
-      requestHtml: '',
+      request: {
+        root: {
+          children: [],
+          direction: null,
+          format: '',
+          indent: 0,
+          type: 'root',
+          version: 1,
+        },
+      },
     },
   });
 
@@ -55,7 +63,16 @@ export default function SupportForm(props: SupportFormProps): ReactElement {
       reset({
         email: user.email,
         requestText: '',
-        requestHtml: '',
+        request: {
+          root: {
+            children: [],
+            direction: null,
+            format: '',
+            indent: 0,
+            type: 'root',
+            version: 1,
+          },
+        },
       });
     }
   }, [user, reset]);
@@ -100,10 +117,9 @@ export default function SupportForm(props: SupportFormProps): ReactElement {
           render={({ field }) => (
             <RichEditor
               value={field.value ?? ''}
-              onChange={(html, text) => {
-                const normalized = normalizeInputValue(text);
-                field.onChange(normalized);
-                setValue('requestHtml', html, { shouldValidate: true });
+              onChange={(v, text) => {
+                field.onChange(text);
+                setValue('request', v, { shouldValidate: true });
               }}
               label={t('supportForm.requestText')}
               placeholder={t('supportForm.placeholders.requestText')}
