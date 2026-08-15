@@ -5,10 +5,11 @@ import styles from './Toolbar.module.scss';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $getSelection, $isRangeSelection, FORMAT_TEXT_COMMAND } from 'lexical';
 import ToolbarButton from './ToolbarButton/ToolbarButton';
+import { useTranslations } from 'next-intl';
 
 export default function Toolbar(): ReactElement {
   const [editor] = useLexicalComposerContext();
-
+  const t = useTranslations('support');
   const [isBold, setIsBold] = useState(false);
   const [isItalic, setIsItalic] = useState(false);
 
@@ -40,10 +41,10 @@ export default function Toolbar(): ReactElement {
   return (
     <div className={styles.toolbar}>
       <ToolbarButton active={isBold} label="Bold" onClick={handleBold}>
-        <span className={styles.toolbar__bold}>B</span>
+        <span className={styles.toolbar__bold}>{t('bold')}</span>
       </ToolbarButton>
       <ToolbarButton active={isItalic} label="Italic" onClick={handleItalic}>
-        <span className={styles.toolbar__italic}>I</span>
+        <span className={styles.toolbar__italic}>{t('italic')}</span>
       </ToolbarButton>
     </div>
   );
