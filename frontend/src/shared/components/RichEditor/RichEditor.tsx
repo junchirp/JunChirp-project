@@ -1,13 +1,14 @@
 'use client';
 
 import { ReactElement } from 'react';
-import { Editor, EditorTextChangeEvent } from 'primereact/editor';
 import styles from './RichEditor.module.scss';
 import Image from 'next/image';
+import LexicalEditor from './LexicalEditor/LexicalEditor';
+import { SerializedEditorState } from 'lexical';
 
 interface RichEditorProps {
   value: string;
-  onChange: (html: string, text: string) => void;
+  onChange: (value: SerializedEditorState, text: string) => void;
   label?: string;
   labelSize?: number;
   labelHeight?: number;
@@ -20,7 +21,6 @@ interface RichEditorProps {
 
 export function RichEditor(props: RichEditorProps): ReactElement {
   const {
-    value,
     onChange,
     label,
     labelSize = 14,
@@ -31,33 +31,12 @@ export function RichEditor(props: RichEditorProps): ReactElement {
     errorMessage,
     withError = false,
   } = props;
-  const header = (
-    <div className={styles['rich-editor__header']}>
-      <span className="ql-formats">
-        <button className="ql-bold" />
-        <button className="ql-italic" />
-      </span>
-    </div>
-  );
 
   const labelStyle = {
     fontSize: `${labelSize}px`,
     lineHeight: labelHeight,
     fontWeight: labelWeight,
     marginBottom: `${labelMargin}px`,
-  };
-
-  const editorClassNames = [
-    styles['rich-editor__editor'],
-    withError && !!errorMessage && styles['rich-editor__editor--invalid'],
-  ]
-    .filter(Boolean)
-    .join(' ');
-
-  const handleTextChange = (e: EditorTextChangeEvent): void => {
-    const html = e.htmlValue ?? '';
-    const text = e.textValue ?? '';
-    onChange(html, text);
   };
 
   return (
@@ -67,12 +46,11 @@ export function RichEditor(props: RichEditorProps): ReactElement {
           {label}
         </span>
       )}
-      <Editor
-        className={editorClassNames}
-        value={value}
+      <LexicalEditor
         placeholder={placeholder}
-        headerTemplate={header}
-        onTextChange={handleTextChange}
+        onChange={onChange}
+        withError
+        errorMessage={errorMessage}
       />
       {withError ? (
         errorMessage ? (

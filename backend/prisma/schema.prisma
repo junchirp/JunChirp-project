@@ -218,7 +218,7 @@ model Task {
 model SupportRequest {
   id      String @id @default(dbgenerated("gen_random_uuid()"))
   email   String
-  request String
+  request Json
 
   @@map("support_requests")
 }

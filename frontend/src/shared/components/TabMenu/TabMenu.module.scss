@@ -1,0 +1,51 @@
+@use '@/assets/styles/variables';
+
+.tab-menu {
+  display: flex;
+  width: 100%;
+  height: 48px;
+  border-bottom-style: solid;
+  border-bottom-color: variables.$gray-7;
+
+  &--default {
+    justify-content: space-between;
+    border-bottom-width: 2px;
+  }
+
+  &--auth {
+    border-bottom-width: 4px;
+  }
+
+  &__item {
+    border: none;
+    border-bottom-style: solid;
+    border-bottom-color: variables.$gray-7;
+    color: variables.$gray-7;
+    background-color: transparent;
+
+    &--default {
+      border-bottom-width: 2px;
+      padding: 10px 12px 8px;
+      margin-bottom: -2px;
+      font-weight: 500;
+      font-size: 20px;
+      line-height: 1.4;
+    }
+
+    &--auth {
+      flex: 1 1 0;
+      min-width: 0;
+      border-bottom-width: 4px;
+      padding-bottom: 9px;
+      margin-bottom: -4px;
+      font-weight: 700;
+      font-size: 32px;
+      line-height: 1.2;
+    }
+
+    &--active {
+      color: variables.$green-1;
+      border-bottom-color: variables.$green-1;
+    }
+  }
+}

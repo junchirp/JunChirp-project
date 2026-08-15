@@ -373,7 +373,9 @@
   },
   "support": {
     "title": "Have a question? We’re here to help!",
-    "description": "Write to us – we’ll find a solution together!"
+    "description": "Write to us – we’ll find a solution together!",
+    "bold": "B",
+    "italic": "I"
   },
   "status": {
     "active": "Active",

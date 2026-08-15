@@ -1,13 +1,13 @@
 'use client';
 
 import { ReactElement } from 'react';
-import { TabMenu } from 'primereact/tabmenu';
 import { useParams } from 'next/navigation';
 import { usePathname, useRouter } from '@/i18n/routing';
 import Button from '@/shared/components/Button/Button';
 import styles from './ProjectTabs.module.scss';
 import Arrow from '@/assets/icons/arrow-up-right.svg';
 import { useTranslations } from 'next-intl';
+import TabMenu from '@/shared/components/TabMenu/TabMenu';
 
 export default function ProjectTabs(): ReactElement {
   const router = useRouter();
@@ -60,11 +60,7 @@ export default function ProjectTabs(): ReactElement {
 
   return (
     <div className={styles['project-tabs']}>
-      <TabMenu
-        className={'project-tabs__menu'}
-        model={items}
-        activeIndex={activeIndex}
-      />
+      <TabMenu variant="default" model={items} activeIndex={activeIndex} />
       <Button color="green" size="md" iconPosition="right" icon={<Arrow />}>
         {t('chat')}
       </Button>
