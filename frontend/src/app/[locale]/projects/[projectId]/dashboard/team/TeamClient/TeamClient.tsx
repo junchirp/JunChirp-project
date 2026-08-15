@@ -235,6 +235,7 @@ export default function TeamClient(): ReactElement {
       });
     } catch {
       showToast({
+        severity: 'error',
         summary: t('addRole.error'),
         detail: t('addRole.errorDetails'),
         life: 3000,
