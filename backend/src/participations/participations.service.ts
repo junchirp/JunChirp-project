@@ -589,6 +589,7 @@ export class ParticipationsService {
     const invites = await this.prisma.participationInvite.findMany({
       where: {
         userId,
+        status: ParticipationStatus.pending,
         ...(ownerId && {
           projectRole: {
             project: {
@@ -744,6 +745,7 @@ export class ParticipationsService {
   ): Promise<ProjectParticipationResponseDto[]> {
     const requests = await this.prisma.participationRequest.findMany({
       where: {
+        status: ParticipationStatus.pending,
         projectRole: {
           project: { ownerId },
         },
