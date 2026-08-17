@@ -31,7 +31,7 @@ import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 import {
   useAcceptRequestMutation,
   useCancelInviteMutation,
-  useDeclineRequestMutation,
+  useRejectRequestMutation,
   useDeleteUserFromProjectMutation,
   useGetInvitesByProjectIdQuery,
   useGetRequestsByProjectIdQuery,
@@ -73,8 +73,8 @@ export default function TeamClient(): ReactElement {
     useAcceptRequestMutation();
   const [cancelInvite, { isLoading: cancelInviteLoading }] =
     useCancelInviteMutation();
-  const [declineRequest, { isLoading: declineRequestLoading }] =
-    useDeclineRequestMutation();
+  const [rejectRequest, { isLoading: rejectRequestLoading }] =
+    useRejectRequestMutation();
   const { showToast, isActive } = useToast();
   const t = useTranslations('team');
   const { data: systemRolesList = [] } = useGetProjectRolesListQuery();
@@ -244,7 +244,7 @@ export default function TeamClient(): ReactElement {
     }
   };
 
-  const handleDeclineRequest = async (
+  const handleRejectRequest = async (
     requestId: string,
     userId: string,
   ): Promise<void> => {
@@ -253,7 +253,7 @@ export default function TeamClient(): ReactElement {
     }
 
     try {
-      await declineRequest({ id: requestId, userId, projectId }).unwrap();
+      await rejectRequest({ id: requestId, userId, projectId }).unwrap();
 
       showToast({
         severity: 'success',
@@ -420,8 +420,8 @@ export default function TeamClient(): ReactElement {
         <DeclineRequestPopup
           onClose={closeDeclineRequestPopup}
           isOpen={!!(request && project)}
-          loading={declineRequestLoading}
-          onConfirm={handleDeclineRequest}
+          loading={rejectRequestLoading}
+          onConfirm={handleRejectRequest}
           data={{
             id: request.id,
             userId: request.user.id,
