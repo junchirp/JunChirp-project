@@ -8,10 +8,14 @@
   border: none;
   width: 24px;
   height: 22px;
-  background-color: variables.$gray-1;
+  background-color: variables.$gray-2;
   box-sizing: border-box;
 
   &--active {
-    border: 1px solid variables.$black-2;
+    box-shadow: 0 0 0 2px variables.$green-4;
+  }
+
+  &:hover {
+    background-color: variables.$gray-13;
   }
 }

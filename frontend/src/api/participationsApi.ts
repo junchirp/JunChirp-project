@@ -66,8 +66,8 @@ export const participationsApi = mainApi.injectEndpoints({
     }),
     rejectInvite: builder.mutation<void, { id: string; userId: string }>({
       query: ({ id }) => ({
-        url: `participations/invites/${id}/decline`,
-        method: 'DELETE',
+        url: `participations/invites/${id}/reject`,
+        method: 'PATCH',
       }),
       async onQueryStarted(
         { id: inviteId, userId },
@@ -98,7 +98,7 @@ export const participationsApi = mainApi.injectEndpoints({
     acceptInvite: builder.mutation<void, string>({
       query: (id) => ({
         url: `participations/invites/${id}/accept`,
-        method: 'PUT',
+        method: 'PATCH',
       }),
       invalidatesTags: [
         { type: 'invites-me-in-projects', id: 'LIST' },
@@ -111,7 +111,7 @@ export const participationsApi = mainApi.injectEndpoints({
     >({
       query: ({ id }) => ({
         url: `participations/requests/${id}/accept`,
-        method: 'PUT',
+        method: 'PATCH',
       }),
       async onQueryStarted(
         { id: requestId, userId },
@@ -146,13 +146,13 @@ export const participationsApi = mainApi.injectEndpoints({
         { type: 'projects', id: projectId },
       ],
     }),
-    declineRequest: builder.mutation<
+    rejectRequest: builder.mutation<
       void,
       { id: string; userId: string; projectId: string }
     >({
       query: ({ id }) => ({
-        url: `participations/requests/${id}/decline`,
-        method: 'DELETE',
+        url: `participations/requests/${id}/reject`,
+        method: 'PATCH',
       }),
       async onQueryStarted(
         { id: requestId, userId },
@@ -187,7 +187,7 @@ export const participationsApi = mainApi.injectEndpoints({
     cancelRequest: builder.mutation<void, { id: string; userId: string }>({
       query: ({ id }) => ({
         url: `participations/requests/${id}/cancel`,
-        method: 'DELETE',
+        method: 'PATCH',
       }),
       async onQueryStarted(
         { id: requestId, userId },
@@ -221,7 +221,7 @@ export const participationsApi = mainApi.injectEndpoints({
     >({
       query: ({ id }) => ({
         url: `participations/invites/${id}/cancel`,
-        method: 'DELETE',
+        method: 'PATCH',
       }),
       async onQueryStarted(
         { id: inviteId, userId },
@@ -372,7 +372,7 @@ export const {
   useAcceptInviteMutation,
   useRejectInviteMutation,
   useCreateRequestMutation,
-  useDeclineRequestMutation,
+  useRejectRequestMutation,
   useAcceptRequestMutation,
   useCancelRequestMutation,
   useCancelInviteMutation,

@@ -6,7 +6,7 @@ import DeclineRequestPopup from '@/shared/components/DeclineRequestPopup/Decline
 import { UserInterface } from '@/shared/interfaces/user.interface';
 import {
   useAcceptRequestMutation,
-  useDeclineRequestMutation,
+  useRejectRequestMutation,
 } from '@/api/participationsApi';
 import ParticipationsTable from '@/shared/components/ParticipationsTable/ParticipationsTable';
 import DataContainer from '@/shared/components/DataContainer/DataContainer';
@@ -32,7 +32,7 @@ export default function UserRequests({
   const tPopup = useTranslations('declineRequestPopup');
   const tRequest = useTranslations('acceptRequest');
   const [declineRequest, { isLoading: declineRequestLoading }] =
-    useDeclineRequestMutation();
+    useRejectRequestMutation();
   const { showToast, isActive } = useToast();
 
   const openModal = (req: ProjectParticipationInterface): void => {
