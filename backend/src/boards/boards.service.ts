@@ -50,7 +50,7 @@ export class BoardsService {
 
         const filteredBoards = existingBoards.filter(
           (board) =>
-            board.boardName.startsWith(`${baseName} `) ||
+            board.boardName.startsWith(`${baseName} `) ??
             board.boardName === baseName,
         );
 
@@ -399,7 +399,7 @@ export class BoardsService {
 
         const filteredColumns = existingColumns.filter(
           (column) =>
-            column.statusName.startsWith(`${baseName} `) ||
+            column.statusName.startsWith(`${baseName} `) ??
             column.statusName === baseName,
         );
 
