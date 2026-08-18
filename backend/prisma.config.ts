@@ -5,6 +5,7 @@ import { env } from 'prisma/config';
 if (process.env.NODE_ENV !== 'production') {
   dotenv.config({
     path: '../.env.development.local',
+    quiet: true,
   });
 }
 

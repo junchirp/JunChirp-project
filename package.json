@@ -35,13 +35,15 @@
     "neon:reset": "cross-env DATABASE_URL=\"postgresql://neondb_owner:npg_dr5CuzD3agML@ep-jolly-river-asamnhuk-pooler.c-4.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require\" npx prisma migrate reset --config backend/prisma.config.ts",
     "neon:reset:force": "cross-env DATABASE_URL=\"postgresql://neondb_owner:npg_dr5CuzD3agML@ep-jolly-river-asamnhuk-pooler.c-4.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require\" npx prisma migrate reset --force --config backend/prisma.config.ts",
     "neon:generate": "cross-env DATABASE_URL=\"postgresql://neondb_owner:npg_dr5CuzD3agML@ep-jolly-river-asamnhuk-pooler.c-4.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require\" npx prisma generate --config backend/prisma.config.ts",
-    "neon:migrate:create": "cross-env DATABASE_URL=\"postgresql://neondb_owner:npg_dr5CuzD3agML@ep-jolly-river-asamnhuk-pooler.c-4.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require\" npx prisma migrate dev --create-only --name --config backend/prisma.config.ts",
-    "neon:migrate:dev": "cross-env DATABASE_URL=\"postgresql://neondb_owner:npg_dr5CuzD3agML@ep-jolly-river-asamnhuk-pooler.c-4.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require\" npx prisma migrate dev --name --config backend/prisma.config.ts",
+    "neon:migrate:create": "cross-env DATABASE_URL=\"postgresql://neondb_owner:npg_dr5CuzD3agML@ep-jolly-river-asamnhuk-pooler.c-4.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require\" npx prisma migrate dev --create-only --config backend/prisma.config.ts",
+    "neon:migrate:dev": "cross-env DATABASE_URL=\"postgresql://neondb_owner:npg_dr5CuzD3agML@ep-jolly-river-asamnhuk-pooler.c-4.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require\" npx prisma migrate dev --config backend/prisma.config.ts",
     "neon:migrate:deploy": "cross-env DATABASE_URL=\"postgresql://neondb_owner:npg_dr5CuzD3agML@ep-jolly-river-asamnhuk-pooler.c-4.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require\" npx prisma migrate deploy --config backend/prisma.config.ts",
     "neon:db:push": "cross-env DATABASE_URL=\"postgresql://neondb_owner:npg_dr5CuzD3agML@ep-jolly-river-asamnhuk-pooler.c-4.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require\" npx prisma db push --config backend/prisma.config.ts",
     "neon:db:pull": "cross-env DATABASE_URL=\"postgresql://neondb_owner:npg_dr5CuzD3agML@ep-jolly-river-asamnhuk-pooler.c-4.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require\" npx prisma db pull --config backend/prisma.config.ts",
-    "neon:generate:local": "cross-env DATABASE_URL=\"postgresql://postgres:postgres@localhost:5432/JunChirp\" npx prisma generate --config backend/prisma.config.ts",
-    "neon:db:push:local": "cross-env DATABASE_URL=\"postgresql://postgres:postgres@localhost:5432/JunChirp\" npx prisma db push --config backend/prisma.config.ts"
+    "local:generate": "cross-env DATABASE_URL=\"postgresql://postgres:postgres@localhost:5432/JunChirp\" npx prisma generate --config backend/prisma.config.ts",
+    "local:db:push": "cross-env DATABASE_URL=\"postgresql://postgres:postgres@localhost:5432/JunChirp\" npx prisma db push --config backend/prisma.config.ts",
+    "local:migrate:create": "cross-env DATABASE_URL=\"postgresql://postgres:postgres@localhost:5432/JunChirp\" npx prisma migrate dev --create-only --config backend/prisma.config.ts",
+    "local:migrate:deploy": "cross-env DATABASE_URL=\"postgresql://postgres:postgres@localhost:5432/JunChirp\" npx prisma migrate deploy --config backend/prisma.config.ts"
   },
   "dependencies": {
     "@dnd-kit/react": "^0.5.0",
