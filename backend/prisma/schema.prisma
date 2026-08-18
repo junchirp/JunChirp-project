@@ -317,8 +317,13 @@ model ParticipationInvite {
   createdAt     DateTime            @default(now()) @map("created_at")
   updatedAt     DateTime            @default(now()) @map("updated_at")
 
-  @@unique([userId, projectId])
-  @@unique([userId, projectRoleId])
+  // Only one pending invite per user/project.
+  // PostgreSQL partial unique index:
+  // CREATE UNIQUE INDEX "participation_invite_pending_user_project_unique"
+  // ON "participation_invites" ("user_id", "project_id")
+  // WHERE "status" = 'pending';
+  // Historical canceled/rejected invites are allowed
+
   @@map("participation_invites")
 }
 
@@ -333,8 +338,13 @@ model ParticipationRequest {
   createdAt     DateTime            @default(now()) @map("created_at")
   updatedAt     DateTime            @default(now()) @map("updated_at")
 
-  @@unique([userId, projectId])
-  @@unique([userId, projectRoleId])
+  // Only one pending request per user/project.
+  // PostgreSQL partial unique index:
+  // CREATE UNIQUE INDEX "participation_request_pending_user_project_unique"
+  // ON "participation_requests" ("user_id", "project_id")
+  // WHERE "status" = 'pending';
+  // Historical canceled/rejected requests are allowed
+
   @@map("participation_requests")
 }
 
@@ -383,4 +393,5 @@ enum ParticipationStatus {
   canceled
   accepted
   rejected
+  reserved
 }
