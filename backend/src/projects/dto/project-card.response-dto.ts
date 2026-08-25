@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { ProjectStatus } from '@prisma/client';
 import { ProjectCategoryResponseDto } from './project-category.response-dto';
 import { ProjectLogoResponseDto } from './project-logo.response-dto';
-import { ProjectRoleWithUserResponseDto } from '../../project-roles/dto/project-role-with-user.response-dto';
+import { ProjectRoleWithUsersResponseDto } from '../../project-roles/dto/project-role-with-users.response-dto';
 
 export class ProjectCardResponseDto {
   @ApiProperty({
@@ -44,13 +44,14 @@ export class ProjectCardResponseDto {
   })
   public readonly ownerId: string;
 
-  @ApiProperty({ type: () => ProjectLogoResponseDto })
+  @ApiProperty({ type: () => ProjectLogoResponseDto, nullable: true })
   public readonly logo: ProjectLogoResponseDto | null;
 
   @ApiProperty({
     example: 'www.project-public-url.com',
     description: 'Project public url',
     type: String,
+    nullable: true,
   })
   public readonly publicUrl: string | null;
 
@@ -58,12 +59,13 @@ export class ProjectCardResponseDto {
     example: 22,
     description: 'Project duration',
     type: Number,
+    nullable: true,
   })
   public readonly duration: number | null;
 
   @ApiProperty({ type: () => ProjectCategoryResponseDto })
   public readonly category: ProjectCategoryResponseDto;
 
-  @ApiProperty({ type: () => [ProjectRoleWithUserResponseDto] })
-  public readonly roles: ProjectRoleWithUserResponseDto[];
+  @ApiProperty({ type: () => [ProjectRoleWithUsersResponseDto] })
+  public readonly roles: ProjectRoleWithUsersResponseDto[];
 }

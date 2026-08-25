@@ -1,8 +1,8 @@
 'use client';
 
 import { ReactElement } from 'react';
-import { ProjectCardInterface } from '@/shared/interfaces/project-card.interface';
-import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
+import { ProjectCardExpandedInterface } from '@/shared/interfaces/project-card-expanded.interface';
+import { MyParticipationInterface } from '@/shared/interfaces/my-participation.interface';
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import { ProjectRoleInterface } from '@/shared/interfaces/project-role.interface';
 import ParticipationRequestForm from './ParticipationRequestForm/ParticipationRequestForm';
@@ -13,17 +13,15 @@ import GuestClosedFooter from './GuestClosedFooter/GuestClosedFooter';
 import GuestEmptyFooter from './GuestEmptyFooter/GuestEmptyFooter';
 
 type FooterResultType =
-  | { variant: 'guest-invite'; invite: ProjectParticipationInterface }
-  | { variant: 'guest-request'; request: ProjectParticipationInterface }
+  | { variant: 'guest-invite'; invite: MyParticipationInterface }
+  | { variant: 'guest-request'; request: MyParticipationInterface }
   | { variant: 'guest-active-roles' }
   | { variant: 'member' }
   | { variant: 'guest-closed' }
   | { variant: 'guest-active-empty' };
 
 interface ProjectCardFooterProps {
-  project: ProjectCardInterface;
-  invites: ProjectParticipationInterface[];
-  requests: ProjectParticipationInterface[];
+  project: ProjectCardExpandedInterface;
   user: AuthInterface;
   size: 'small' | 'large';
   className?: string;
@@ -31,18 +29,16 @@ interface ProjectCardFooterProps {
 
 export default function ProjectCardFooter({
   project,
-  invites,
-  requests,
   user,
   size,
   className,
 }: ProjectCardFooterProps): ReactElement {
-  const currentInvite = invites.find(
-    (invite) => invite.projectRole.project.id === project.id,
-  );
-  const currentRequest = requests.find(
-    (req) => req.projectRole.project.id === project.id,
-  );
+  const currentInvite =
+    project.myParticipation?.type === 'invite' ? project.myParticipation : null;
+  const currentRequest =
+    project.myParticipation?.type === 'request'
+      ? project.myParticipation
+      : null;
   const vacantRoles: ProjectRoleInterface[] = project.roles
     .filter((role) => role.users.length < role.slots)
     .map((role) => ({
@@ -88,6 +84,7 @@ export default function ProjectCardFooter({
           user={user}
           className={className}
           size={size}
+          project={project}
         />
       );
     case 'guest-request':

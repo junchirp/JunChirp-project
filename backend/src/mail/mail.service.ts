@@ -8,7 +8,7 @@ import {
   SupportRequest,
   User,
 } from '@prisma/client';
-import { Participation } from '../common/types/participation.type';
+import { ParticipationModelType } from '../common/types/participation-model.type';
 import {
   LocaleEmailSubjectType,
   LocaleType,
@@ -145,7 +145,7 @@ export class MailService {
 
   public async sendParticipationInvite(
     url: string,
-    invite: Participation & {
+    invite: ParticipationModelType & {
       projectRole: ProjectRole & {
         roleType: ProjectRoleType;
         project: Project & {
@@ -184,7 +184,7 @@ export class MailService {
 
   public async sendParticipationRequest(
     url: string,
-    request: Participation & {
+    request: ParticipationModelType & {
       projectRole: ProjectRole & {
         roleType: ProjectRoleType;
         project: Project & { owner: User };

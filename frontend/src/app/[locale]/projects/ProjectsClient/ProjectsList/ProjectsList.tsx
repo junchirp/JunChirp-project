@@ -2,23 +2,18 @@
 
 import { ReactElement } from 'react';
 import styles from './ProjectsList.module.scss';
-import { ProjectCardInterface } from '@/shared/interfaces/project-card.interface';
-import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import { useTranslations } from 'next-intl';
 import ProjectCardSmall from '@/shared/components/ProjectCardSmall/ProjectCardSmall';
+import { ProjectCardExpandedInterface } from '@/shared/interfaces/project-card-expanded.interface';
 
 interface ProjectsListProps {
-  projects: ProjectCardInterface[];
-  invites: ProjectParticipationInterface[];
-  requests: ProjectParticipationInterface[];
+  projects: ProjectCardExpandedInterface[];
   user: AuthInterface;
 }
 
 export default function ProjectsList({
   projects,
-  invites,
-  requests,
   user,
 }: ProjectsListProps): ReactElement {
   const t = useTranslations('projectsPage');
@@ -27,14 +22,8 @@ export default function ProjectsList({
     <div className={styles['projects-list']}>
       <h3 className={styles['projects-list__title']}>{t('projectList')}</h3>
       <div className={styles['projects-list__list']}>
-        {projects.map((project: ProjectCardInterface) => (
-          <ProjectCardSmall
-            key={project.id}
-            project={project}
-            invites={invites}
-            requests={requests}
-            user={user}
-          />
+        {projects.map((project) => (
+          <ProjectCardSmall key={project.id} project={project} user={user} />
         ))}
       </div>
     </div>

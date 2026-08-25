@@ -104,8 +104,13 @@
     "colFirst": "No",
     "colProject": "Project name",
     "colRole": "Role",
-    "colDate": "Date",
-    "colActions": "Actions"
+    "colStatus": "Status",
+    "colActions": "Actions",
+    "pending": "Pending",
+    "accepted": "Accepted",
+    "canceled": "Canceled",
+    "rejected": "Rejected",
+    "reserved": "Reserved"
   },
   "rejectInvitePopup": {
     "title": "Decline invitation?",

@@ -38,8 +38,7 @@ import {
 } from '@/api/participationsApi';
 import { useTranslations } from 'next-intl';
 import { UserParticipationInterface } from '@/shared/interfaces/user-participation.interface';
-import { UserCardInterface } from '@/shared/interfaces/user-card.interface';
-import DeclineRequestPopup from '@/shared/components/DeclineRequestPopup/DeclineRequestPopup';
+import RejectRequestPopup from '@/shared/components/RejectRequestPopup/RejectRequestPopup';
 import {
   useAddProjectRoleMutation,
   useAddSlotMutation,
@@ -47,6 +46,7 @@ import {
   useGetProjectRolesListQuery,
 } from '@/api/projectRolesApi';
 import VacanciesManagementSection from './VacanciesManagementSection/VacanciesManagementSection';
+import { UserBaseInterface } from '@/shared/interfaces/user-base.interface';
 
 export default function TeamClient(): ReactElement {
   const { projectId } = useParams<{ projectId: string }>();
@@ -63,7 +63,7 @@ export default function TeamClient(): ReactElement {
   const isLoading = projectLoading ?? invitesLoading ?? requestsLoading;
   const isOwner = user.id === project?.ownerId;
   const router = useRouter();
-  const [member, setMember] = useState<UserCardInterface | null>(null);
+  const [member, setMember] = useState<UserBaseInterface | null>(null);
   const [request, setRequest] = useState<UserParticipationInterface | null>(
     null,
   );
@@ -417,7 +417,7 @@ export default function TeamClient(): ReactElement {
         />
       )}
       {request && project && (
-        <DeclineRequestPopup
+        <RejectRequestPopup
           onClose={closeDeclineRequestPopup}
           isOpen={!!(request && project)}
           loading={rejectRequestLoading}

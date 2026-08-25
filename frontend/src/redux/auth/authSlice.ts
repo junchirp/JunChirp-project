@@ -20,22 +20,11 @@ export const authSlice = createSlice({
       state.user = action.payload;
       state.loadingStatus = 'loaded';
     },
-    logout: (state) => {
-      state.user = null;
-      state.loadingStatus = 'loaded';
-    },
   },
   extraReducers: (builder) => {
     builder.addMatcher(authApi.endpoints.register.matchPending, (state) => {
       state.loadingStatus = 'loading';
     });
-    builder.addMatcher(
-      authApi.endpoints.register.matchFulfilled,
-      (state, action) => {
-        state.user = action.payload;
-        state.loadingStatus = 'loaded';
-      },
-    );
     builder.addMatcher(authApi.endpoints.register.matchRejected, (state) => {
       state.user = null;
       state.loadingStatus = 'loaded';
@@ -43,13 +32,6 @@ export const authSlice = createSlice({
     builder.addMatcher(authApi.endpoints.login.matchPending, (state) => {
       state.loadingStatus = 'loading';
     });
-    // builder.addMatcher(
-    //   authApi.endpoints.login.matchFulfilled,
-    //   (state, action) => {
-    //     state.user = action.payload;
-    //     state.loadingStatus = 'loaded';
-    //   },
-    // );
     builder.addMatcher(authApi.endpoints.login.matchRejected, (state) => {
       state.user = null;
       state.loadingStatus = 'loaded';
@@ -69,9 +51,7 @@ export const authSlice = createSlice({
       state.loadingStatus = 'loaded';
     });
     builder.addMatcher(
-      (action) =>
-        authApi.endpoints.logout.matchFulfilled(action) ||
-        authApi.endpoints.logout.matchRejected(action),
+      (action) => authApi.endpoints.logout.matchFulfilled(action),
       (state) => {
         state.user = null;
         state.loadingStatus = 'loaded';
@@ -113,5 +93,5 @@ export const authSlice = createSlice({
   },
 });
 
-export const { setUser, logout } = authSlice.actions;
+export const { setUser } = authSlice.actions;
 export default authSlice.reducer;

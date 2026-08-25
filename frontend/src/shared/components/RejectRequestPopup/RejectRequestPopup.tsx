@@ -1,25 +1,25 @@
 'use client';
 
 import { ReactElement } from 'react';
-import styles from './DeclineRequestPopup.module.scss';
+import styles from './RejectRequestPopup.module.scss';
 import Button from '@/shared/components/Button/Button';
 import { useTranslations } from 'next-intl';
 import DialogHeader from '@/shared/components/Dialog/DialogHeader/DialogHeader';
 import DialogBody from '@/shared/components/Dialog/DialogBody/DialogBody';
 import DialogFooter from '@/shared/components/Dialog/DialogFooter/DialogFooter';
 import Dialog from '@/shared/components/Dialog/Dialog';
-import { DeclineRequestDataInterface } from '@/shared/interfaces/decline-request-data.interface';
+import { RejectRequestDataInterface } from '@/shared/interfaces/reject-request-data.interface';
 
-interface DeclineRequestPopupProps {
-  data: DeclineRequestDataInterface;
+interface RejectRequestPopupProps {
+  data: RejectRequestDataInterface;
   onClose: () => void;
   isOpen: boolean;
   onConfirm: (requestId: string, userId: string, projectId: string) => void;
   loading: boolean;
 }
 
-export default function DeclineRequestPopup(
-  props: DeclineRequestPopupProps,
+export default function RejectRequestPopup(
+  props: RejectRequestPopupProps,
 ): ReactElement {
   const { data, onClose, isOpen, onConfirm, loading } = props;
   const t = useTranslations('declineRequestPopup');
@@ -30,12 +30,12 @@ export default function DeclineRequestPopup(
       <DialogBody>
         {t.rich('description', {
           project: (chunks) => (
-            <span className={styles['decline-request-popup__text--green']}>
+            <span className={styles['reject-request-popup__text--green']}>
               [{chunks}]
             </span>
           ),
           user: (chunks) => (
-            <span className={styles['decline-request-popup__text--green']}>
+            <span className={styles['reject-request-popup__text--green']}>
               [{chunks}]
             </span>
           ),

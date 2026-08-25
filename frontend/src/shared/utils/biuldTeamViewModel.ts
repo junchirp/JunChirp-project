@@ -9,10 +9,10 @@ import {
   TeamViewInterface,
 } from '@/shared/interfaces/team-view-interface';
 import { ProjectInterface } from '@/shared/interfaces/project.interface';
-import { RoleWithUserInterface } from '@/shared/interfaces/role-with-user.interface';
+import { RoleWithUsersInterface } from '@/shared/interfaces/role-with-users.interface';
 
 function groupByRole<T>(
-  roles: RoleWithUserInterface[],
+  roles: RoleWithUsersInterface[],
   items: T[],
   getRoleId: (item: T) => string,
 ): TeamRoleGroupInterface<T>[] {
@@ -39,7 +39,7 @@ function groupByRole<T>(
 }
 
 function groupAllByRole(
-  roles: RoleWithUserInterface[],
+  roles: RoleWithUsersInterface[],
   members: TeamMemberInterface[],
   requests: TeamRequestInterface[],
   invitations: TeamInviteInterface[],
@@ -109,7 +109,7 @@ export function buildTeamViewModel(params: {
     };
   }
 
-  const ownerRole: RoleWithUserInterface = {
+  const ownerRole: RoleWithUsersInterface = {
     id: 'owner',
     roleType: {
       id: 'owner',

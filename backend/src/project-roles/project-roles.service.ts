@@ -17,13 +17,7 @@ export class ProjectRolesService {
   public constructor(private readonly prisma: PrismaService) {}
 
   public async getProjectRoleTypes(): Promise<ProjectRoleTypeResponseDto[]> {
-    return this.prisma.projectRoleType.findMany({
-      where: {
-        roleName: {
-          not: 'Project owner',
-        },
-      },
-    });
+    return this.prisma.projectRoleType.findMany();
   }
 
   public async createProjectRole(

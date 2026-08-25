@@ -17,7 +17,7 @@ export class TaskMapper {
       deadline: task.deadline,
       priority: task.priority,
       assignees: task.assignees.map((assignee) =>
-        UserMapper.toCardResponse(assignee),
+        UserMapper.toBaseResponse(assignee),
       ),
       taskStatusId: task.taskStatusId,
       taskIndex: task.taskIndex,
@@ -41,7 +41,7 @@ export class TaskMapper {
       deadline: task.deadline,
       priority: task.priority,
       assignees: task.assignees.map((assignee) =>
-        UserMapper.toCardResponse(assignee),
+        UserMapper.toBaseResponse(assignee),
       ),
       taskStatus: TaskStatusMapper.toBaseResponse(task.taskStatus),
       taskIndex: task.taskIndex,

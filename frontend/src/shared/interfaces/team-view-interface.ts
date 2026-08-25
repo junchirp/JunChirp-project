@@ -1,10 +1,10 @@
-import { UserCardInterface } from '@/shared/interfaces/user-card.interface';
 import { UserParticipationInterface } from '@/shared/interfaces/user-participation.interface';
 import { TeamCtxInterface } from '@/shared/constants/team';
+import { UserBaseInterface } from '@/shared/interfaces/user-base.interface';
 
 export interface TeamMemberInterface {
   type: 'member';
-  user: UserCardInterface;
+  user: UserBaseInterface;
   roleId: string;
   roleName: string;
 }

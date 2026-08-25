@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ProjectCardResponseDto } from './project-card.response-dto';
-import { UserCardResponseDto } from '../../users/dto/user-card.response-dto';
+import { UserBaseResponseDto } from '../../users/dto/user-base.response-dto';
+import { MyParticipationResponseDto } from '../../participations/dto/my-participation.response-dto';
 
 export class ProjectResponseDto extends ProjectCardResponseDto {
   @ApiProperty({
@@ -9,6 +10,9 @@ export class ProjectResponseDto extends ProjectCardResponseDto {
   })
   public readonly discordUrl: string;
 
-  @ApiProperty({ type: () => UserCardResponseDto })
-  public readonly owner: UserCardResponseDto;
+  @ApiProperty({ type: () => UserBaseResponseDto })
+  public readonly owner: UserBaseResponseDto;
+
+  @ApiProperty({ type: () => MyParticipationResponseDto, nullable: true })
+  public readonly myParticipation: MyParticipationResponseDto | null;
 }

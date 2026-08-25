@@ -1,13 +1,14 @@
 import {
-  Controller,
-  Post,
   Body,
+  Controller,
+  Delete,
+  Get,
   HttpCode,
   HttpStatus,
-  Get,
-  Patch,
   Param,
-  Delete,
+  Patch,
+  Post,
+  Query,
 } from '@nestjs/common';
 import { ParticipationsService } from './participations.service';
 import { CreateInviteDto } from './dto/create-invite.dto';
@@ -26,13 +27,15 @@ import {
 } from '@nestjs/swagger';
 import { ProjectParticipationResponseDto } from './dto/project-participation.response-dto';
 import { User } from '../auth/decorators/user.decorator';
-import { UserCardResponseDto } from '../users/dto/user-card.response-dto';
 import { CreateRequestDto } from './dto/create-request.dto';
 import { UUIDParam } from '../common/decorators/UUID-param.decorator';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { UserParticipationResponseDto } from './dto/user-participation.response-dto';
 import { ParseUUIDv4Pipe } from '../common/pipes/parse-UUIDv4/parse-UUIDv4.pipe';
 import { Member } from '../auth/decorators/member.decorator';
+import { PaginationDto } from '../common/dto/pagination.dto';
+import { InvitesListResponseDto } from './dto/invites-list.response-dto';
+import { RequestsListResponseDto } from './dto/requests-list.response-dto';
 
 @User()
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
@@ -102,9 +105,7 @@ export class ParticipationsController {
   @User('discord')
   @ApiOperation({ summary: 'Accept invite (user)' })
   @ApiNoContentResponse()
-  @ApiNotFoundResponse({
-    description: 'Invite not found or its status is not "pending"',
-  })
+  @ApiNotFoundResponse({ description: 'Invite not found' })
   @ApiConflictResponse({ description: 'The role has no empty slots' })
   @ApiForbiddenResponse({
     description:
@@ -123,7 +124,7 @@ export class ParticipationsController {
   public async acceptInvite(
     @CurrentUser('id') userId: string,
     @UUIDParam('id') id: string,
-  ): Promise<UserCardResponseDto> {
+  ): Promise<void> {
     return this.participationsService.acceptInvite(id, userId);
   }
 
@@ -150,9 +151,7 @@ export class ParticipationsController {
   @Owner('params', 'id', 'participationRequest')
   @ApiOperation({ summary: 'Accept request (owner)' })
   @ApiNoContentResponse()
-  @ApiNotFoundResponse({
-    description: 'Request not found or its status is not "pending"',
-  })
+  @ApiNotFoundResponse({ description: 'Request not found' })
   @ApiConflictResponse({ description: 'The role has no empty slots' })
   @ApiForbiddenResponse({
     description:
@@ -229,26 +228,6 @@ export class ParticipationsController {
   @Patch('invites/:id/cancel')
   public async cancelInvite(@UUIDParam('id') id: string): Promise<void> {
     return this.participationsService.cancelInvite(id);
-  }
-
-  @ApiOperation({ summary: `Get all invites in current user's projects` })
-  @ApiOkResponse({ type: [ProjectParticipationResponseDto] })
-  @ApiForbiddenResponse({ description: 'Access denied: email not confirmed' })
-  @Get('my-projects/invites')
-  public async getInvitesInMyProjects(
-    @CurrentUser('id') ownerId: string,
-  ): Promise<ProjectParticipationResponseDto[]> {
-    return this.participationsService.getInvitesInMyProjects(ownerId);
-  }
-
-  @ApiOperation({ summary: `Get all requests in current user's projects` })
-  @ApiOkResponse({ type: [ProjectParticipationResponseDto] })
-  @ApiForbiddenResponse({ description: 'Access denied: email not confirmed' })
-  @Get('my-projects/requests')
-  public async getRequestsInMyProjects(
-    @CurrentUser('id') ownerId: string,
-  ): Promise<ProjectParticipationResponseDto[]> {
-    return this.participationsService.getRequestsInMyProjects(ownerId);
   }
 
   @Owner()
@@ -333,54 +312,66 @@ export class ParticipationsController {
   @ApiOperation({
     summary: 'Get current user invites',
   })
-  @ApiOkResponse({ type: [ProjectParticipationResponseDto] })
+  @ApiOkResponse({ type: InvitesListResponseDto })
   @ApiForbiddenResponse({ description: 'Access denied: email not confirmed' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Get('me/invites')
   public async getInvitesMe(
+    @Query() query: PaginationDto,
     @CurrentUser('id') id: string,
-  ): Promise<ProjectParticipationResponseDto[]> {
-    return this.participationsService.getInvitesWithProjects(id);
+  ): Promise<InvitesListResponseDto> {
+    return this.participationsService.getInvitesWithProjects(query, id);
   }
 
   @ApiOperation({
     summary: 'Get current user requests',
   })
-  @ApiOkResponse({ type: [ProjectParticipationResponseDto] })
+  @ApiOkResponse({ type: RequestsListResponseDto })
   @ApiForbiddenResponse({ description: 'Access denied: email not confirmed' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Get('me/requests')
   public async getRequestsMe(
+    @Query() query: PaginationDto,
     @CurrentUser('id') id: string,
-  ): Promise<ProjectParticipationResponseDto[]> {
-    return this.participationsService.getRequestsWithProjects(id);
+  ): Promise<RequestsListResponseDto> {
+    return this.participationsService.getRequestsWithProjects(query, id);
   }
 
   @ApiOperation({
     summary: `Get requests by user id in current user's projects`,
   })
-  @ApiOkResponse({ type: [ProjectParticipationResponseDto] })
+  @ApiOkResponse({ type: RequestsListResponseDto })
   @ApiForbiddenResponse({ description: 'Access denied: email not confirmed' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Get('users/:id/requests')
   public async getRequestsByUserId(
+    @Query() query: PaginationDto,
     @UUIDParam('id') id: string,
     @CurrentUser('id') ownerId: string,
-  ): Promise<ProjectParticipationResponseDto[]> {
-    return this.participationsService.getRequestsWithProjects(id, ownerId);
+  ): Promise<RequestsListResponseDto> {
+    return this.participationsService.getRequestsWithProjects(
+      query,
+      id,
+      ownerId,
+    );
   }
 
   @ApiOperation({
     summary: `Get invites by user id in current user's projects`,
   })
-  @ApiOkResponse({ type: [ProjectParticipationResponseDto] })
+  @ApiOkResponse({ type: InvitesListResponseDto })
   @ApiForbiddenResponse({ description: 'Access denied: email not confirmed' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Get('users/:id/invites')
   public async getInvitesByUserId(
+    @Query() query: PaginationDto,
     @UUIDParam('id') id: string,
     @CurrentUser('id') ownerId: string,
-  ): Promise<ProjectParticipationResponseDto[]> {
-    return this.participationsService.getInvitesWithProjects(id, ownerId);
+  ): Promise<InvitesListResponseDto> {
+    return this.participationsService.getInvitesWithProjects(
+      query,
+      id,
+      ownerId,
+    );
   }
 }

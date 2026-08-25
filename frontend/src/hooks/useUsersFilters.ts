@@ -1,50 +1,28 @@
 'use client';
 
 import { UsersFiltersInterface } from '@/shared/interfaces/users-filters.interface';
-import { useSearchParams } from 'next/navigation';
-import { useMemo } from 'react';
-import { useRouter } from '@/i18n/routing';
+import { useUrlFilters, UseUrlFiltersResult } from '@/hooks/useUrlFilters';
 
-interface UsersFiltersResultInterface {
-  filters: UsersFiltersInterface;
-  updateFilters: (
-    newParams: Record<string, string | string[] | number | undefined | null>,
-  ) => void;
-}
+const USER_FILTER_KEYS = [
+  'page',
+  'limit',
+  'activeProjectsCount',
+  'desiredRolesIds',
+] as const satisfies readonly (keyof UsersFiltersInterface)[];
 
-export const useUsersFilters = (): UsersFiltersResultInterface => {
-  const searchParams = useSearchParams();
-  const router = useRouter();
+const parse = (searchParams: URLSearchParams): UsersFiltersInterface => ({
+  page: Number(searchParams.get('page') ?? 1),
+  limit: Number(searchParams.get('limit') ?? 20),
+  activeProjectsCount: searchParams.get('activeProjectsCount')
+    ? Number(searchParams.get('activeProjectsCount'))
+    : undefined,
+  desiredRolesIds: searchParams.getAll('desiredRolesIds'),
+});
 
-  const filters = useMemo(() => {
-    return {
-      page: Number(searchParams.get('page') ?? 1),
-      limit: Number(searchParams.get('limit') ?? 20),
-      activeProjectsCount: searchParams.get('activeProjectsCount')
-        ? Number(searchParams.get('activeProjectsCount'))
-        : undefined,
-      desiredRolesIds: searchParams.getAll('desiredRolesIds'),
-    };
-  }, [searchParams]);
-
-  const updateFilters = (
-    newParams: Record<string, string | string[] | number | undefined | null>,
-  ): void => {
-    const current = new URLSearchParams(searchParams.toString());
-
-    Object.entries(newParams).forEach(([key, value]) => {
-      if (value === undefined || value === null || value === '') {
-        current.delete(key);
-      } else if (Array.isArray(value)) {
-        current.delete(key);
-        value.forEach((v) => current.append(key, String(v)));
-      } else {
-        current.set(key, String(value));
-      }
+export const useUsersFilters =
+  (): UseUrlFiltersResult<UsersFiltersInterface> => {
+    return useUrlFilters<UsersFiltersInterface>({
+      keys: USER_FILTER_KEYS,
+      parse,
     });
-
-    router.push(`?${current.toString()}`, { scroll: false });
   };
-
-  return { filters, updateFilters };
-};

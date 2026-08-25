@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ProjectCardResponseDto } from './project-card.response-dto';
+import { ProjectCardExpandedResponseDto } from './project-card-expanded.response-dto';
 
 export class ProjectsListResponseDto {
   @ApiProperty({
@@ -8,6 +8,6 @@ export class ProjectsListResponseDto {
   })
   public readonly total: number;
 
-  @ApiProperty({ type: () => [ProjectCardResponseDto] })
-  public readonly projects: ProjectCardResponseDto[];
+  @ApiProperty({ type: () => [ProjectCardExpandedResponseDto] })
+  public readonly projects: ProjectCardExpandedResponseDto[];
 }

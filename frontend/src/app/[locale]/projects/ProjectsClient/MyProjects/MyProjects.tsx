@@ -3,7 +3,6 @@
 import { ReactElement, useState } from 'react';
 import styles from './MyProjects.module.scss';
 import Button from '@/shared/components/Button/Button';
-import { ProjectCardInterface } from '@/shared/interfaces/project-card.interface';
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import DiscordBanner from '@/shared/components/DiscordBanner/DiscordBanner';
 import { useRouter } from '@/i18n/routing';
@@ -13,20 +12,16 @@ import { useLazyGetProjectsCountQuery } from '@/api/authApi';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 import { useToast } from '@/hooks/useToast';
 import ProjectCardSmall from '@/shared/components/ProjectCardSmall/ProjectCardSmall';
-import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
+import { ProjectCardExpandedInterface } from '@/shared/interfaces/project-card-expanded.interface';
 
 interface MyProjectsProps {
-  myProjects: ProjectCardInterface[];
+  myProjects: ProjectCardExpandedInterface[];
   user: AuthInterface;
-  invites: ProjectParticipationInterface[];
-  requests: ProjectParticipationInterface[];
 }
 
 export default function MyProjects({
   myProjects,
   user,
-  invites,
-  requests,
 }: MyProjectsProps): ReactElement {
   const [isBanner, setBanner] = useState(false);
   const router = useRouter();
@@ -89,8 +84,6 @@ export default function MyProjects({
                 <ProjectCardSmall
                   key={project.id}
                   project={project}
-                  invites={invites}
-                  requests={requests}
                   user={user}
                 />
               ))}

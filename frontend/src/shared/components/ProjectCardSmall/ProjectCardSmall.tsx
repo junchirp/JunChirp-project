@@ -2,8 +2,6 @@
 
 import { ReactElement } from 'react';
 import styles from './ProjectCardSmall.module.scss';
-import { ProjectCardInterface } from '@/shared/interfaces/project-card.interface';
-import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import Image from 'next/image';
 import { Link } from '@/i18n/routing';
@@ -12,18 +10,15 @@ import { membersPipe } from '@/shared/utils/membersPipe';
 import { projectDurationPipe } from '@/shared/utils/projectDurationPipe';
 import ProjectCardFooter from '@/shared/components/ProjectCardFooter/ProjectCardFooter';
 import { useShortLocale } from '@/hooks/useShortLocale';
+import { ProjectCardExpandedInterface } from '@/shared/interfaces/project-card-expanded.interface';
 
 interface ProjectCardSmallProps {
-  project: ProjectCardInterface;
-  invites: ProjectParticipationInterface[];
-  requests: ProjectParticipationInterface[];
+  project: ProjectCardExpandedInterface;
   user: AuthInterface;
 }
 
 export default function ProjectCardSmall({
   project,
-  invites,
-  requests,
   user,
 }: ProjectCardSmallProps): ReactElement {
   const isMyProject = project.roles.some((role) =>
@@ -123,8 +118,6 @@ export default function ProjectCardSmall({
       </div>
       <ProjectCardFooter
         project={project}
-        invites={invites}
-        requests={requests}
         user={user}
         size="small"
         className={styles['project-card__label']}

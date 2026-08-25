@@ -43,7 +43,7 @@ export class UsersController {
   public async getCurrentUser(
     @CurrentUser('id') id: string,
   ): Promise<AuthResponseDto> {
-    return this.usersService.getUserById(id, 'edit');
+    return this.usersService.getUserById(id);
   }
 
   @User()
@@ -76,8 +76,9 @@ export class UsersController {
   @Get(':id')
   public async getUserById(
     @UUIDParam('id') id: string,
+    @CurrentUser('id') authId: string,
   ): Promise<UserResponseDto> {
-    return this.usersService.getUserById(id, 'view');
+    return this.usersService.getUserById(id, authId);
   }
 
   @User()
@@ -90,7 +91,8 @@ export class UsersController {
   @Get('')
   public async getUsers(
     @Query() query: UsersFilterDto,
+    @CurrentUser('id') authId: string,
   ): Promise<UsersListResponseDto> {
-    return this.usersService.getUsers(query);
+    return this.usersService.getUsers(query, authId);
   }
 }

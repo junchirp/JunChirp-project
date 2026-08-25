@@ -71,8 +71,9 @@ export class ProjectsController {
   @Get('')
   public async getProjects(
     @Query() query: ProjectsFilterDto,
+    @CurrentUser('id') id: string,
   ): Promise<ProjectsListResponseDto> {
-    return this.projectsService.getProjects(query);
+    return this.projectsService.getProjects(query, id);
   }
 
   @User('discord')
@@ -236,7 +237,7 @@ export class ProjectsController {
     @CurrentUser('id') id: string,
     @Query() query: UserProjectsFilterDto,
   ): Promise<ProjectsListResponseDto> {
-    return this.projectsService.getProjects({ userId: id, ...query });
+    return this.projectsService.getProjects({ userId: id, ...query }, id);
   }
 
   @ApiOperation({ summary: 'Get user projects' })
@@ -245,10 +246,11 @@ export class ProjectsController {
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Get('users/:id')
   public async getUserProjects(
-    @UUIDParam('id') id: string,
+    @UUIDParam('id') userId: string,
     @Query() query: UserProjectsFilterDto,
+    @CurrentUser('id') authId: string,
   ): Promise<ProjectsListResponseDto> {
-    return this.projectsService.getProjects({ userId: id, ...query });
+    return this.projectsService.getProjects({ userId, ...query }, authId);
   }
 
   @NoMember()
@@ -262,8 +264,9 @@ export class ProjectsController {
   @Get(':id/card')
   public async getProjectCardById(
     @Param('id', ParseUUIDv4Pipe) id: string,
+    @CurrentUser('id') userId: string,
   ): Promise<ProjectCardResponseDto> {
-    return this.projectsService.getProjectById(id, false);
+    return this.projectsService.getProjectById(id, false, userId);
   }
 
   @Member()
@@ -277,8 +280,9 @@ export class ProjectsController {
   @Get(':id')
   public async getProjectById(
     @Param('id', ParseUUIDv4Pipe) id: string,
+    @CurrentUser('id') userId: string,
   ): Promise<ProjectResponseDto> {
-    return this.projectsService.getProjectById(id, true);
+    return this.projectsService.getProjectById(id, true, userId);
   }
 
   @Member()

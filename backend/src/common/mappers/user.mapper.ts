@@ -12,9 +12,11 @@ import { EducationMapper } from './education.mapper';
 import { SocialMapper } from './social.mapper';
 import { SoftSkillMapper } from './soft-skill.mapper';
 import { HardSkillMapper } from './hard-skill.mapper';
-import { UserWithPasswordResponseDto } from '../../users/dto/user-with-password.response-dto';
+import { AuthWithPasswordResponseDto } from '../../users/dto/auth-with-password.response-dto';
 import { UserCardResponseDto } from '../../users/dto/user-card.response-dto';
 import { AuthResponseDto } from '../../users/dto/auth.response-dto';
+import { UserParticipationInMyProjectsResponseDto } from '../../users/dto/user-participation-in-my-projects.response-dto';
+import { UserBaseResponseDto } from '../../users/dto/user-base.response-dto';
 
 export class UserMapper {
   public static toFullResponse(
@@ -26,9 +28,9 @@ export class UserMapper {
       hardSkills: UserHardSkill[];
       desiredRoles: ProjectRoleType[];
     },
-    withPassword: boolean,
-  ): UserResponseDto | UserWithPasswordResponseDto {
-    const base = {
+    projectParticipationSummary: UserParticipationInMyProjectsResponseDto,
+  ): UserResponseDto {
+    return {
       id: user.id,
       googleId: user.googleId,
       discordId: user.discordId,
@@ -52,20 +54,15 @@ export class UserMapper {
         HardSkillMapper.toResponse(skill),
       ),
       desiredRoles: user.desiredRoles,
+      projectParticipationSummary,
     };
-
-    return withPassword
-      ? {
-          ...base,
-          password: user.password,
-        }
-      : base;
   }
 
   public static toCardResponse(
     user: User & {
       desiredRoles: ProjectRoleType[];
     },
+    projectParticipationSummary: UserParticipationInMyProjectsResponseDto,
   ): UserCardResponseDto {
     return {
       id: user.id,
@@ -75,6 +72,7 @@ export class UserMapper {
       desiredRoles: user.desiredRoles,
       activeProjectsCount: user.activeProjectsCount,
       doneProjectsCount: user.doneProjectsCount,
+      projectParticipationSummary,
     };
   }
 
@@ -83,8 +81,9 @@ export class UserMapper {
       role: Role;
       desiredRoles: ProjectRoleType[];
     },
-  ): AuthResponseDto {
-    return {
+    withPassword: boolean,
+  ): AuthResponseDto | AuthWithPasswordResponseDto {
+    const base = {
       id: user.id,
       googleId: user.googleId,
       discordId: user.discordId,
@@ -95,6 +94,29 @@ export class UserMapper {
       isVerified: user.isVerified,
       isBlocked: user.isBlocked,
       role: user.role,
+      activeProjectsCount: user.activeProjectsCount,
+      doneProjectsCount: user.doneProjectsCount,
+      desiredRoles: user.desiredRoles,
+    };
+
+    return withPassword
+      ? {
+          ...base,
+          password: user.password,
+        }
+      : base;
+  }
+
+  public static toBaseResponse(
+    user: User & {
+      desiredRoles: ProjectRoleType[];
+    },
+  ): UserBaseResponseDto {
+    return {
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      avatarUrl: user.avatarUrl,
       activeProjectsCount: user.activeProjectsCount,
       doneProjectsCount: user.doneProjectsCount,
       desiredRoles: user.desiredRoles,

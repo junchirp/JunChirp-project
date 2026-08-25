@@ -174,12 +174,12 @@ const mainApi = createApi({
 
     // invitations
     'invites-me-in-projects', // LIST
-    'invites-in-my-projects', // LIST | userId
+    'invites-in-my-projects', // userId
     'invites', // projectId
 
     // requests
     'my-requests-in-projects', // LIST
-    'requests-in-my-projects', // LIST | userId
+    'requests-in-my-projects', // userId
     'requests', // projectId
 
     // documents

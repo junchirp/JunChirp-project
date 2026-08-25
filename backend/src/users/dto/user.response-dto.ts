@@ -11,6 +11,7 @@ export class UserResponseDto extends UserCardResponseDto {
     example: '113273902301932041645',
     description: 'Google identifier',
     type: String,
+    nullable: true,
   })
   public readonly googleId: string | null;
 
@@ -18,6 +19,7 @@ export class UserResponseDto extends UserCardResponseDto {
     example: '113273902301932041645',
     description: 'Discord identifier',
     type: String,
+    nullable: true,
   })
   public readonly discordId: string | null;
 

@@ -5,10 +5,13 @@ import styles from './ParticipationsTable.module.scss';
 import { Link } from '@/i18n/routing';
 import Button from '@/shared/components/Button/Button';
 import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
-import { useFormatter, useTranslations } from 'next-intl';
+import { useTranslations } from 'next-intl';
+import ParticipationTooltip from './ParticipationTooltip/ParticipationTooltip';
 
 interface ParticipationsTableProps {
   items: ProjectParticipationInterface[];
+  page: number;
+  limit: number;
   openModal?: (item: ProjectParticipationInterface) => void;
   accept?: (item: ProjectParticipationInterface) => void;
   cancel?: (item: ProjectParticipationInterface) => void;
@@ -19,12 +22,19 @@ interface ParticipationsTableProps {
 export default function ParticipationsTable(
   props: ParticipationsTableProps,
 ): ReactElement {
-  const { items, openModal, accept, isLoading, actionColumnWidth, cancel } =
-    props;
+  const {
+    items,
+    page,
+    limit,
+    openModal,
+    accept,
+    isLoading,
+    actionColumnWidth,
+    cancel,
+  } = props;
   const tTable = useTranslations('participationsTable');
   const tButtons = useTranslations('buttons');
   const cancelEvent = openModal ?? cancel;
-  const format = useFormatter();
 
   return (
     <table className={styles['participations-table']}>
@@ -56,7 +66,7 @@ export default function ParticipationsTable(
           <th
             className={`${styles['participations-table__cell']} ${styles['participations-table__cell--header']}`}
           >
-            {tTable('colDate')}
+            {tTable('colStatus')}
           </th>
           <th
             className={`${styles['participations-table__cell']} ${styles['participations-table__cell--header']}`}
@@ -67,18 +77,14 @@ export default function ParticipationsTable(
       </thead>
       <tbody>
         {items.map((item, index) => {
-          const formattedDate = format.dateTime(new Date(item.createdAt), {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-          });
+          const totalIndex = (page - 1) * limit + index + 1;
 
           return (
             <tr key={item.id} className={styles['participations-table__row']}>
               <td
                 className={`${styles['participations-table__cell']} ${styles['participations-table__cell--body']}`}
               >
-                {index < 9 ? `0${index + 1}` : `${index + 1}`}
+                {totalIndex < 10 ? `0${totalIndex}` : `${totalIndex}`}
               </td>
               <td
                 className={`${styles['participations-table__cell']} ${styles['participations-table__cell--body']}`}
@@ -97,46 +103,61 @@ export default function ParticipationsTable(
                 {item.projectRole.roleType.roleName}
               </td>
               <td
-                className={`${styles['participations-table__cell']} ${styles['participations-table__cell--body']}`}
+                className={`
+                  ${styles['participations-table__cell']}
+                  ${styles['participations-table__cell--body']}
+                  ${styles['participations-table__cell--status']}
+                `}
               >
-                {formattedDate}
+                <div className={styles['participations-table__tooltip']}>
+                  <ParticipationTooltip
+                    createdAt={item.createdAt}
+                    acceptedAt={item.acceptedAt}
+                    canceledAt={item.canceledAt}
+                    rejectedAt={item.rejectedAt}
+                    reservedAt={item.reservedAt}
+                  />
+                </div>
+                <span>{tTable(item.status)}</span>
               </td>
               <td
                 className={`${styles['participations-table__cell']} ${styles['participations-table__cell--body']}`}
               >
-                <div className={styles['participations-table__actions']}>
-                  {accept ? (
-                    <>
+                {(item.status === 'pending' || item.status === 'reserved') && (
+                  <div className={styles['participations-table__actions']}>
+                    {accept ? (
+                      <>
+                        <Button
+                          variant="link"
+                          size="ssm"
+                          color="gray-2"
+                          onClick={() => cancelEvent?.(item)}
+                        >
+                          {tButtons('decline')}
+                        </Button>{' '}
+                        /{' '}
+                        <Button
+                          variant="link"
+                          size="ssm"
+                          color="green"
+                          loading={isLoading}
+                          onClick={() => accept(item)}
+                        >
+                          {tButtons('accept')}
+                        </Button>
+                      </>
+                    ) : (
                       <Button
                         variant="link"
                         size="ssm"
                         color="gray-2"
                         onClick={() => cancelEvent?.(item)}
                       >
-                        {tButtons('decline')}
-                      </Button>{' '}
-                      /{' '}
-                      <Button
-                        variant="link"
-                        size="ssm"
-                        color="green"
-                        loading={isLoading}
-                        onClick={() => accept(item)}
-                      >
-                        {tButtons('accept')}
+                        {tButtons('cancel')}
                       </Button>
-                    </>
-                  ) : (
-                    <Button
-                      variant="link"
-                      size="ssm"
-                      color="gray-2"
-                      onClick={() => cancelEvent?.(item)}
-                    >
-                      {tButtons('cancel')}
-                    </Button>
-                  )}
-                </div>
+                    )}
+                  </div>
+                )}
               </td>
             </tr>
           );

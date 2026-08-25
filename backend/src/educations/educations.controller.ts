@@ -23,7 +23,7 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Request } from 'express';
-import { UserWithPasswordResponseDto } from '../users/dto/user-with-password.response-dto';
+import { AuthWithPasswordResponseDto } from '../users/dto/auth-with-password.response-dto';
 import { EducationResponseDto } from './dto/education.response-dto';
 import { User } from '../auth/decorators/user.decorator';
 import { UUIDParam } from '../common/decorators/UUID-param.decorator';
@@ -68,8 +68,8 @@ export class EducationsController {
   public async getEducations(
     @Req() req: Request,
   ): Promise<EducationResponseDto[]> {
-    const user: UserWithPasswordResponseDto =
-      req.user as UserWithPasswordResponseDto;
+    const user: AuthWithPasswordResponseDto =
+      req.user as AuthWithPasswordResponseDto;
     return this.educationsService.getEducations(user.id);
   }
 
@@ -93,8 +93,8 @@ export class EducationsController {
     @Req() req: Request,
     @Body() createEducationDto: CreateEducationDto,
   ): Promise<EducationResponseDto> {
-    const user: UserWithPasswordResponseDto =
-      req.user as UserWithPasswordResponseDto;
+    const user: AuthWithPasswordResponseDto =
+      req.user as AuthWithPasswordResponseDto;
     return this.educationsService.addEducation(user.id, createEducationDto);
   }
 

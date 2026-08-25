@@ -5,35 +5,27 @@ import styles from './UserItem.module.scss';
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import Button from '@/shared/components/Button/Button';
 import Image from 'next/image';
-import { ProjectCardInterface } from '@/shared/interfaces/project-card.interface';
 import InvitePopup from '@/shared/components/InvitePopup/InvitePopup';
 import { UserCardInterface } from '@/shared/interfaces/user-card.interface';
 import { useRouter } from '@/i18n/routing';
-import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
 import { useTranslations } from 'next-intl';
+import { ProjectCardExpandedInterface } from '@/shared/interfaces/project-card-expanded.interface';
 
 interface UserItemProps {
   user: UserCardInterface;
   currentUser: AuthInterface;
-  myProjects: ProjectCardInterface[];
-  requests: ProjectParticipationInterface[];
-  invites: ProjectParticipationInterface[];
+  myProjects: ProjectCardExpandedInterface[];
 }
 
 export default function UserItem({
   user,
   currentUser,
   myProjects,
-  requests,
-  invites,
 }: UserItemProps): ReactElement {
   const [isModalOpen, setModalOpen] = useState(false);
   const router = useRouter();
   const tPage = useTranslations('usersPage');
   const tButtons = useTranslations('buttons');
-  const projectsCount = myProjects.filter((project) =>
-    project.roles.some((role) => role.users.some((u) => u.id === user.id)),
-  ).length;
 
   const handleRedirect = (): void => {
     router.push(user.id === currentUser.id ? '/profile' : `/users/${user.id}`);
@@ -80,19 +72,19 @@ export default function UserItem({
                 {user.doneProjectsCount}
               </span>
             </p>
-            {!!requests.length && (
+            {!!user.projectParticipationSummary.activeRequestsCount && (
               <p className={styles['user-item__projects-text']}>
                 {tPage('requests')}:
                 <span className={styles['user-item__projects-count']}>
-                  {requests.length}
+                  {user.projectParticipationSummary.activeRequestsCount}
                 </span>
               </p>
             )}
-            {!!invites.length && (
+            {!!user.projectParticipationSummary.activeInvitesCount && (
               <p className={styles['user-item__projects-text']}>
                 {tPage('invites')}:
                 <span className={styles['user-item__projects-count']}>
-                  {invites.length}
+                  {user.projectParticipationSummary.activeInvitesCount}
                 </span>
               </p>
             )}
@@ -115,7 +107,9 @@ export default function UserItem({
               user.id === currentUser.id ||
               myProjects.length === 0 ||
               myProjects.length ===
-                requests.length + invites.length + projectsCount
+                user.projectParticipationSummary.activeRequestsCount +
+                  user.projectParticipationSummary.activeInvitesCount +
+                  user.projectParticipationSummary.participationsCount
             }
             onClick={openModal}
           >

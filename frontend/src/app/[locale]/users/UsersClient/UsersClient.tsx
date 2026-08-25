@@ -12,10 +12,6 @@ import Pagination from '@/shared/components/Pagination/Pagination';
 import { useAppSelector } from '@/hooks/reduxHooks';
 import authSelector from '@/redux/auth/authSelector';
 import { useTranslations } from 'next-intl';
-import {
-  useGetInvitesInMyProjectsQuery,
-  useGetRequestsInMyProjectsQuery,
-} from '@/api/participationsApi';
 import { useGetMyProjectsQuery } from '@/api/projectsApi';
 
 export default function UsersClient(): ReactElement {
@@ -31,12 +27,7 @@ export default function UsersClient(): ReactElement {
   const myProjects =
     myProjectsList?.projects.filter((project) => project.ownerId === user.id) ??
     [];
-  const { data: invites = [], isLoading: invitesLoading } =
-    useGetInvitesInMyProjectsQuery(user.id);
-  const { data: requests = [], isLoading: requestsLoading } =
-    useGetRequestsInMyProjectsQuery(user.id);
-  const isLoading =
-    usersLoading ?? myProjectsLoading ?? invitesLoading ?? requestsLoading;
+  const isLoading = usersLoading ?? myProjectsLoading;
 
   const onPageChange = (page: number): void => {
     updateFilters({ page });
@@ -66,12 +57,7 @@ export default function UsersClient(): ReactElement {
         {isLoading ? (
           <ListSkeleton itemHeight={288} rows={10} />
         ) : usersList?.users.length ? (
-          <UsersList
-            users={usersList.users}
-            myProjects={myProjects}
-            invites={invites}
-            requests={requests}
-          />
+          <UsersList users={usersList.users} myProjects={myProjects} />
         ) : null}
         {!!usersList?.users.length && (
           <Pagination

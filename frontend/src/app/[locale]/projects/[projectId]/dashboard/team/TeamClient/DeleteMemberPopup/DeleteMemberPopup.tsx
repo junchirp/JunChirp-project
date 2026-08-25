@@ -8,12 +8,12 @@ import DialogFooter from '@/shared/components/Dialog/DialogFooter/DialogFooter';
 import Button from '@/shared/components/Button/Button';
 import styles from './DeleteMemberPopup.module.scss';
 import { useTranslations } from 'next-intl';
-import { UserCardInterface } from '@/shared/interfaces/user-card.interface';
+import { UserBaseInterface } from '@/shared/interfaces/user-base.interface';
 
 interface DeleteMemberPopupProps {
   isOpen: boolean;
   onClose: () => void;
-  member: UserCardInterface;
+  member: UserBaseInterface;
   onDelete: (id: string) => void;
   loading: boolean;
 }

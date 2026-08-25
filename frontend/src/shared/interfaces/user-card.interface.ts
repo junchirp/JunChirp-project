@@ -1,11 +1,6 @@
-import { ProjectRoleTypeInterface } from './project-role-type.interface';
+import { UserBaseInterface } from '@/shared/interfaces/user-base.interface';
+import { UserParticipationInMyProjectsInterface } from '@/shared/interfaces/user-participation-in-my-projects.interface';
 
-export interface UserCardInterface {
-  id: string;
-  firstName: string;
-  lastName: string;
-  avatarUrl: string;
-  activeProjectsCount: number;
-  doneProjectsCount: number;
-  desiredRoles: ProjectRoleTypeInterface[];
+export interface UserCardInterface extends UserBaseInterface {
+  projectParticipationSummary: UserParticipationInMyProjectsInterface;
 }

@@ -11,7 +11,7 @@ import { ProjectCategoryResponseDto } from './dto/project-category.response-dto'
 import { ProjectResponseDto } from './dto/project.response-dto';
 import { ProjectsListResponseDto } from './dto/projects-list.response-dto';
 import { ProjectMapper } from '../common/mappers/project.mapper';
-import { Prisma, ProjectStatus } from '@prisma/client';
+import { ParticipationStatus, Prisma, ProjectStatus } from '@prisma/client';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { ProjectRolesService } from '../project-roles/project-roles.service';
 import { DiscordService } from '../discord/discord.service';
@@ -27,6 +27,7 @@ import { DEFAULT_NAMES } from '../common/constants/default-names';
 import { BoardResponseDto } from '../boards/dto/board.response-dto';
 import { BoardMapper } from '../common/mappers/board.mapper';
 import { throwPrismaError } from '../common/utils/throw-prisma-error';
+import { MyParticipationResponseDto } from '../participations/dto/my-participation.response-dto';
 
 interface GetProjectsOptionsInterface {
   userId: string;
@@ -62,6 +63,7 @@ export class ProjectsService {
 
   public async getProjects(
     options: Partial<GetProjectsOptionsInterface>,
+    authId: string,
   ): Promise<ProjectsListResponseDto> {
     const {
       userId,
@@ -132,10 +134,19 @@ export class ProjectsService {
     });
     const total = await this.prisma.project.count({ where });
 
+    const projectsIds = projects.map((project) => project.id);
+    const myParticipations = await this.getMyActiveParticipations(
+      authId,
+      projectsIds,
+    );
+
     return {
       total,
       projects: projects.map((project) =>
-        ProjectMapper.toCardResponse(project),
+        ProjectMapper.toExpandedCardResponse(
+          project,
+          myParticipations.get(project.id) ?? null,
+        ),
       ),
     };
   }
@@ -144,7 +155,7 @@ export class ProjectsService {
     userId: string,
     createProjectDto: CreateProjectDto,
   ): Promise<ProjectResponseDto> {
-    const user = await this.usersService.getUserById(userId, 'edit');
+    const user = await this.usersService.getUserById(userId);
 
     if (user.activeProjectsCount >= 2) {
       throw new BadRequestException(
@@ -230,7 +241,7 @@ export class ProjectsService {
         );
       }
 
-      return ProjectMapper.toFullResponse(newProject);
+      return ProjectMapper.toFullResponse(newProject, null);
     } catch (error) {
       await this.discordService.deleteProjectChannel(
         channelId,
@@ -249,11 +260,13 @@ export class ProjectsService {
   public async getProjectById<T extends boolean>(
     id: string,
     withDetails: T,
+    authId: string,
   ): Promise<T extends true ? ProjectResponseDto : ProjectCardResponseDto>;
 
   public async getProjectById(
     id: string,
     withDetails: boolean,
+    authId: string,
   ): Promise<ProjectResponseDto | ProjectCardResponseDto> {
     try {
       const project = await this.prisma.project.findUniqueOrThrow({
@@ -284,9 +297,11 @@ export class ProjectsService {
         },
       });
 
+      const myParticipation = await this.getMyActiveParticipation(authId, id);
+
       return withDetails
-        ? ProjectMapper.toFullResponse(project)
-        : ProjectMapper.toCardResponse(project);
+        ? ProjectMapper.toFullResponse(project, myParticipation)
+        : ProjectMapper.toExpandedCardResponse(project, myParticipation);
     } catch (error) {
       throwPrismaError(error, {
         code: 'P2025',
@@ -358,7 +373,7 @@ export class ProjectsService {
         );
       }
 
-      return ProjectMapper.toFullResponse(updatedProject);
+      return ProjectMapper.toFullResponse(updatedProject, null);
     } catch (error) {
       throwPrismaError(error, [
         {
@@ -433,7 +448,7 @@ export class ProjectsService {
         return project;
       });
 
-      return ProjectMapper.toFullResponse(closedProject);
+      return ProjectMapper.toFullResponse(closedProject, null);
     } catch (error) {
       throwPrismaError(error, {
         code: 'P2025',
@@ -600,5 +615,157 @@ export class ProjectsService {
     });
 
     return boards.map(BoardMapper.toResponse);
+  }
+
+  public async getMyActiveParticipation(
+    authId: string,
+    projectId: string,
+  ): Promise<MyParticipationResponseDto | null> {
+    const request = await this.prisma.participationRequest.findFirst({
+      where: {
+        userId: authId,
+        status: {
+          in: [ParticipationStatus.pending, ParticipationStatus.reserved],
+        },
+        projectRole: {
+          projectId,
+        },
+      },
+      select: {
+        id: true,
+        projectRole: {
+          select: {
+            id: true,
+            slots: true,
+            roleType: {
+              select: {
+                id: true,
+                roleName: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (request) {
+      return { type: 'request', ...request };
+    }
+
+    const invite = await this.prisma.participationInvite.findFirst({
+      where: {
+        userId: authId,
+        status: {
+          in: [ParticipationStatus.pending, ParticipationStatus.reserved],
+        },
+        projectRole: {
+          projectId,
+        },
+      },
+      select: {
+        id: true,
+        projectRole: {
+          select: {
+            id: true,
+            slots: true,
+            roleType: {
+              select: {
+                id: true,
+                roleName: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (invite) {
+      return { type: 'invite', ...invite };
+    }
+
+    return null;
+  }
+
+  public async getMyActiveParticipations(
+    authId: string,
+    projectIds: string[],
+  ): Promise<Map<string, MyParticipationResponseDto>> {
+    const requests = await this.prisma.participationRequest.findMany({
+      where: {
+        userId: authId,
+        status: {
+          in: [ParticipationStatus.pending, ParticipationStatus.reserved],
+        },
+        projectRole: {
+          projectId: {
+            in: projectIds,
+          },
+        },
+      },
+      select: {
+        id: true,
+        projectRole: {
+          select: {
+            projectId: true,
+            id: true,
+            slots: true,
+            roleType: {
+              select: {
+                id: true,
+                roleName: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const invites = await this.prisma.participationInvite.findMany({
+      where: {
+        userId: authId,
+        status: {
+          in: [ParticipationStatus.pending, ParticipationStatus.reserved],
+        },
+        projectRole: {
+          projectId: {
+            in: projectIds,
+          },
+        },
+      },
+      select: {
+        id: true,
+        projectRole: {
+          select: {
+            projectId: true,
+            id: true,
+            slots: true,
+            roleType: {
+              select: {
+                id: true,
+                roleName: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const participations = new Map<string, MyParticipationResponseDto>();
+
+    for (const request of requests) {
+      participations.set(request.projectRole.projectId, {
+        ...request,
+        type: 'request',
+      });
+    }
+
+    for (const invite of invites) {
+      participations.set(invite.projectRole.projectId, {
+        ...invite,
+        type: 'invite',
+      });
+    }
+
+    return participations;
   }
 }

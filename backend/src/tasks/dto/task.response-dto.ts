@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { TaskPriority } from '@prisma/client';
-import { UserCardResponseDto } from '../../users/dto/user-card.response-dto';
+import { UserBaseResponseDto } from '../../users/dto/user-base.response-dto';
 
 export class TaskResponseDto {
   @ApiProperty({
@@ -40,9 +40,9 @@ export class TaskResponseDto {
   public readonly deadline: Date;
 
   @ApiProperty({
-    type: () => [UserCardResponseDto],
+    type: () => [UserBaseResponseDto],
   })
-  public readonly assignees: UserCardResponseDto[];
+  public readonly assignees: UserBaseResponseDto[];
 
   @ApiProperty({
     example: '6446ff53-d993-46b3-a837-25d55fac1392',

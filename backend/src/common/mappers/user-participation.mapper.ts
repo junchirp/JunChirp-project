@@ -2,11 +2,11 @@ import { ProjectRole, ProjectRoleType, User } from '@prisma/client';
 import { UserParticipationResponseDto } from '../../participations/dto/user-participation.response-dto';
 import { UserMapper } from './user.mapper';
 import { ProjectRoleMapper } from './project-role.mapper';
-import { Participation } from '../types/participation.type';
+import { ParticipationModelType } from '../types/participation-model.type';
 
 export class UserParticipationMapper {
   public static toResponse(
-    participation: Participation & {
+    participation: ParticipationModelType & {
       user: User & {
         desiredRoles: ProjectRoleType[];
       };
@@ -16,7 +16,7 @@ export class UserParticipationMapper {
     return {
       id: participation.id,
       createdAt: participation.createdAt,
-      user: UserMapper.toCardResponse(participation.user),
+      user: UserMapper.toBaseResponse(participation.user),
       projectRole: ProjectRoleMapper.toBaseResponse(participation.projectRole),
     };
   }

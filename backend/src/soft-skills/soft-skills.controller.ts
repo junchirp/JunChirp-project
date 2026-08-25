@@ -23,7 +23,7 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Request } from 'express';
-import { UserWithPasswordResponseDto } from '../users/dto/user-with-password.response-dto';
+import { AuthWithPasswordResponseDto } from '../users/dto/auth-with-password.response-dto';
 import { SoftSkillResponseDto } from './dto/soft-skill.response-dto';
 import { User } from '../auth/decorators/user.decorator';
 import { UUIDParam } from '../common/decorators/UUID-param.decorator';
@@ -56,8 +56,8 @@ export class SoftSkillsController {
   public async getSoftSkills(
     @Req() req: Request,
   ): Promise<SoftSkillResponseDto[]> {
-    const user: UserWithPasswordResponseDto =
-      req.user as UserWithPasswordResponseDto;
+    const user: AuthWithPasswordResponseDto =
+      req.user as AuthWithPasswordResponseDto;
     return this.softSkillsService.getSoftSkills(user.id);
   }
 
@@ -80,8 +80,8 @@ export class SoftSkillsController {
     @Req() req: Request,
     @Body() createSoftSkillDto: CreateSoftSkillDto,
   ): Promise<SoftSkillResponseDto> {
-    const user: UserWithPasswordResponseDto =
-      req.user as UserWithPasswordResponseDto;
+    const user: AuthWithPasswordResponseDto =
+      req.user as AuthWithPasswordResponseDto;
     return this.softSkillsService.addSoftSkill(user.id, createSoftSkillDto);
   }
 

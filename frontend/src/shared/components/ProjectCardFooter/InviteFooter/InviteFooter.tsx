@@ -5,7 +5,6 @@ import styles from './InviteFooter.module.scss';
 import VacantRoles from '@/shared/components/VacantRoles/VacantRoles';
 import ProjectCardActionsWrapper from '@/shared/components/ProjectCardActionsWrapper/ProjectCardActionsWrapper';
 import Button from '@/shared/components/Button/Button';
-import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
 import { ProjectRoleInterface } from '@/shared/interfaces/project-role.interface';
 import RejectInvitePopup from '@/shared/components/RejectInvitePopup/RejectInvitePopup';
 import DiscordBanner from '@/shared/components/DiscordBanner/DiscordBanner';
@@ -17,9 +16,12 @@ import { SerializedError } from '@reduxjs/toolkit';
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import { useToast } from '@/hooks/useToast';
 import { useRouter } from '@/i18n/routing';
+import { MyParticipationInterface } from '@/shared/interfaces/my-participation.interface';
+import { ProjectCardExpandedInterface } from '@/shared/interfaces/project-card-expanded.interface';
 
 interface InviteFooterProps {
-  currentInvite: ProjectParticipationInterface;
+  project: ProjectCardExpandedInterface;
+  currentInvite: MyParticipationInterface;
   vacantRoles: ProjectRoleInterface[];
   size: 'small' | 'large';
   user: AuthInterface;
@@ -27,6 +29,7 @@ interface InviteFooterProps {
 }
 
 export default function InviteFooter({
+  project,
   currentInvite,
   vacantRoles,
   size,
@@ -40,7 +43,6 @@ export default function InviteFooter({
   const [acceptInvite, { isLoading: inviteLoading }] =
     useAcceptInviteMutation();
   const { showToast, isActive } = useToast();
-  const project = currentInvite.projectRole.project;
   const isMyProject = project.roles.some((role) =>
     role.users.some((u) => u.id === user?.id),
   );
@@ -124,7 +126,8 @@ export default function InviteFooter({
         <RejectInvitePopup
           isOpen={isInvitePopupOpen}
           onClose={closeInvitePopup}
-          invite={currentInvite}
+          inviteId={currentInvite.id}
+          projectName={project.projectName}
           user={user}
         />
       )}
