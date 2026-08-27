@@ -1,7 +1,8 @@
 'use client';
 
 import { ReactElement } from 'react';
-import { useFormatter } from 'next-intl';
+import styles from './ParticipationTooltip.module.scss';
+import { useFormatter, useTranslations } from 'next-intl';
 
 interface ParticipationTooltipProps {
   createdAt: Date;
@@ -25,14 +26,33 @@ export default function ParticipationTooltip({
       month: '2-digit',
       year: 'numeric',
     });
+  const t = useTranslations('participationsTable');
 
   return (
-    <div>
-      <div>Надіслано - {formattedDate(createdAt)}</div>
-      {reservedAt && <div>В резерві - {formattedDate(reservedAt)}</div>}
-      {acceptedAt && <div>Прийнято - {formattedDate(acceptedAt)}</div>}
-      {rejectedAt && <div>Відхилено - {formattedDate(rejectedAt)}</div>}
-      {canceledAt && <div>Відмінено - {formattedDate(canceledAt)}</div>}
+    <div className={styles['participation-tooltip']}>
+      <div>
+        {t('created')} - {formattedDate(createdAt)}
+      </div>
+      {reservedAt && (
+        <div>
+          {t('reserved')} - {formattedDate(reservedAt)}
+        </div>
+      )}
+      {acceptedAt && (
+        <div>
+          {t('accepted')} - {formattedDate(acceptedAt)}
+        </div>
+      )}
+      {rejectedAt && (
+        <div>
+          {t('rejected')} - {formattedDate(rejectedAt)}
+        </div>
+      )}
+      {canceledAt && (
+        <div>
+          {t('canceled')} - {formattedDate(canceledAt)}
+        </div>
+      )}
     </div>
   );
 }

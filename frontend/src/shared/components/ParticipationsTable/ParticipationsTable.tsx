@@ -7,6 +7,7 @@ import Button from '@/shared/components/Button/Button';
 import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
 import { useTranslations } from 'next-intl';
 import ParticipationTooltip from './ParticipationTooltip/ParticipationTooltip';
+import Tooltip from '@/shared/components/ParticipationsTable/Tooltip/Tooltip';
 
 interface ParticipationsTableProps {
   items: ProjectParticipationInterface[];
@@ -106,19 +107,21 @@ export default function ParticipationsTable(
                 className={`
                   ${styles['participations-table__cell']}
                   ${styles['participations-table__cell--body']}
-                  ${styles['participations-table__cell--status']}
                 `}
               >
-                <div className={styles['participations-table__tooltip']}>
-                  <ParticipationTooltip
-                    createdAt={item.createdAt}
-                    acceptedAt={item.acceptedAt}
-                    canceledAt={item.canceledAt}
-                    rejectedAt={item.rejectedAt}
-                    reservedAt={item.reservedAt}
-                  />
-                </div>
-                <span>{tTable(item.status)}</span>
+                <Tooltip
+                  content={
+                    <ParticipationTooltip
+                      createdAt={item.createdAt}
+                      acceptedAt={item.acceptedAt}
+                      canceledAt={item.canceledAt}
+                      rejectedAt={item.rejectedAt}
+                      reservedAt={item.reservedAt}
+                    />
+                  }
+                >
+                  <span>{tTable(item.status)}</span>
+                </Tooltip>
               </td>
               <td
                 className={`${styles['participations-table__cell']} ${styles['participations-table__cell--body']}`}

@@ -106,9 +106,10 @@
     "colRole": "Роль",
     "colStatus": "Статус",
     "colActions": "Дії",
+    "created": "Створено",
     "pending": "На розгляді",
     "accepted": "Прийнято",
-    "canceled": "Відмінено",
+    "canceled": "Скасовано",
     "rejected": "Відхилено",
     "reserved": "В резерві"
   },

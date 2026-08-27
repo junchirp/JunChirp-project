@@ -1,0 +1,39 @@
+@use '@/assets/styles/variables';
+
+.tooltip {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  z-index: 100;
+  transform: translateX(-50%);
+  width: 100%;
+  border-radius: 6px;
+  background-color: variables.$green-4;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 150ms ease,
+    visibility 150ms ease;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-top: 6px solid variables.$green-4;
+    border-right: 6px solid transparent;
+    border-left: 6px solid transparent;
+  }
+
+  &__wrapper {
+    position: relative;
+    cursor: help;
+
+    &:hover .tooltip {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+}

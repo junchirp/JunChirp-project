@@ -106,6 +106,7 @@
     "colRole": "Role",
     "colStatus": "Status",
     "colActions": "Actions",
+    "created": "Created",
     "pending": "Pending",
     "accepted": "Accepted",
     "canceled": "Canceled",
