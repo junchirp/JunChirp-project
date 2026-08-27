@@ -82,11 +82,11 @@ export class ProjectsService {
       ...(categoryId && { categoryId }),
       ...(minParticipants || maxParticipants
         ? {
-            participantsCount: {
-              ...(minParticipants && { gte: minParticipants }),
-              ...(maxParticipants && { lte: maxParticipants }),
-            },
-          }
+          participantsCount: {
+            ...(minParticipants && { gte: minParticipants }),
+            ...(maxParticipants && { lte: maxParticipants }),
+          },
+        }
         : {}),
       ...(userId && {
         OR: [
@@ -241,7 +241,7 @@ export class ProjectsService {
         );
       }
 
-      return ProjectMapper.toFullResponse(newProject, null);
+      return ProjectMapper.toFullResponse(newProject);
     } catch (error) {
       await this.discordService.deleteProjectChannel(
         channelId,
@@ -300,7 +300,7 @@ export class ProjectsService {
       const myParticipation = await this.getMyActiveParticipation(authId, id);
 
       return withDetails
-        ? ProjectMapper.toFullResponse(project, myParticipation)
+        ? ProjectMapper.toFullResponse(project)
         : ProjectMapper.toExpandedCardResponse(project, myParticipation);
     } catch (error) {
       throwPrismaError(error, {
@@ -373,7 +373,7 @@ export class ProjectsService {
         );
       }
 
-      return ProjectMapper.toFullResponse(updatedProject, null);
+      return ProjectMapper.toFullResponse(updatedProject);
     } catch (error) {
       throwPrismaError(error, [
         {
@@ -448,7 +448,7 @@ export class ProjectsService {
         return project;
       });
 
-      return ProjectMapper.toFullResponse(closedProject, null);
+      return ProjectMapper.toFullResponse(closedProject);
     } catch (error) {
       throwPrismaError(error, {
         code: 'P2025',

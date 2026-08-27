@@ -2,12 +2,12 @@
 
 import { useParams } from 'next/navigation';
 import { useGetProjectCardByIdQuery } from '@/api/projectsApi';
-import { ProjectInterface } from '@/shared/interfaces/project.interface';
+import { ProjectCardExpandedInterface } from '@/shared/interfaces/project-card-expanded.interface';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
 
 export const useProjectCardAccessCheck = (): {
-  data: ProjectInterface | undefined;
+  data: ProjectCardExpandedInterface | undefined;
   error: FetchBaseQueryError | SerializedError | undefined;
   isLoading: boolean;
 } => {

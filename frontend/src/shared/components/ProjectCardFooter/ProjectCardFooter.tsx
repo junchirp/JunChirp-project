@@ -92,9 +92,9 @@ export default function ProjectCardFooter({
         <RequestFooter
           currentRequest={footer.request}
           vacantRoles={vacantRoles}
-          user={user}
           className={className}
           size={size}
+          projectId={project.id}
         />
       );
     case 'guest-active-roles':

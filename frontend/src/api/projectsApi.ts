@@ -6,6 +6,7 @@ import { ProjectInterface } from '@/shared/interfaces/project.interface';
 import { CreateProjectInterface } from '@/shared/interfaces/create-project.interface';
 import { ProjectLogoInterface } from '@/shared/interfaces/project-logo.interface';
 import { UpdateProjectInterface } from '@/shared/interfaces/update-project.interface';
+import { ProjectCardExpandedInterface } from '@/shared/interfaces/project-card-expanded.interface';
 
 export const projectsApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -36,7 +37,7 @@ export const projectsApi = mainApi.injectEndpoints({
       },
       keepUnusedDataFor: 3600 * 24,
     }),
-    getProjectCardById: builder.query<ProjectInterface, string>({
+    getProjectCardById: builder.query<ProjectCardExpandedInterface, string>({
       query: (id) => {
         return {
           url: `/projects/${id}/card`,

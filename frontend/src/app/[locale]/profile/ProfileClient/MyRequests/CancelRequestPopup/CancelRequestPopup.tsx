@@ -5,7 +5,6 @@ import styles from './CancelRequestPopup.module.scss';
 import Button from '@/shared/components/Button/Button';
 import { useCancelRequestMutation } from '@/api/participationsApi';
 import { useToast } from '@/hooks/useToast';
-import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import { useTranslations } from 'next-intl';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 import Dialog from '@/shared/components/Dialog/Dialog';
@@ -17,14 +16,14 @@ interface CancelRequestPopupProps {
   requestId: string;
   projectName: string;
   onClose: () => void;
-  user: AuthInterface;
+  projectId: string;
   isOpen: boolean;
 }
 
 export default function CancelRequestPopup(
   props: CancelRequestPopupProps,
 ): ReactElement {
-  const { requestId, projectName, onClose, user, isOpen } = props;
+  const { requestId, projectName, onClose, projectId, isOpen } = props;
   const [cancelRequest, { isLoading }] = useCancelRequestMutation();
   const { showToast, isActive } = useToast();
   const t = useTranslations('cancelRequestPopup');
@@ -35,7 +34,7 @@ export default function CancelRequestPopup(
     }
 
     try {
-      await cancelRequest({ id: requestId, userId: user.id }).unwrap();
+      await cancelRequest({ id: requestId, projectId }).unwrap();
 
       showToast({
         severity: 'success',

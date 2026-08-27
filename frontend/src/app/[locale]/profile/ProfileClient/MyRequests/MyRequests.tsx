@@ -95,7 +95,7 @@ export default function MyRequests({
           onClose={closeModal}
           requestId={request.id}
           projectName={request.projectRole.project.projectName}
-          user={user}
+          projectId={request.projectRole.project.id}
           isOpen={!!request}
         />
       )}
