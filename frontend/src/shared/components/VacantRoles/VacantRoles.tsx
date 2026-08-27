@@ -2,9 +2,9 @@
 
 import { Fragment, ReactElement } from 'react';
 import styles from './VacantRoles.module.scss';
-import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
 import { ProjectRoleInterface } from '@/shared/interfaces/project-role.interface';
 import { useTranslations } from 'next-intl';
+import { MyParticipationInterface } from '@/shared/interfaces/my-participation.interface';
 
 type VacantRolesProps = {
   vacantRoles: ProjectRoleInterface[];
@@ -12,12 +12,12 @@ type VacantRolesProps = {
   className?: string;
 } & (
   | {
-      currentInvite: ProjectParticipationInterface;
+      currentInvite: MyParticipationInterface;
       currentRequest?: never;
     }
   | {
       currentInvite?: never;
-      currentRequest: ProjectParticipationInterface;
+      currentRequest: MyParticipationInterface;
     }
   | {
       currentInvite?: never;

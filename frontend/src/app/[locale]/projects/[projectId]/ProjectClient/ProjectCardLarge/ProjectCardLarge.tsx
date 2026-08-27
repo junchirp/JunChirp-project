@@ -2,8 +2,6 @@
 
 import { ReactElement } from 'react';
 import styles from './ProjectCardLarge.module.scss';
-import { ProjectCardInterface } from '@/shared/interfaces/project-card.interface';
-import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import ProjectCardFooter from '@/shared/components/ProjectCardFooter/ProjectCardFooter';
 import Image from 'next/image';
@@ -11,18 +9,15 @@ import { useFormatter, useTranslations } from 'next-intl';
 import { membersPipe } from '@/shared/utils/membersPipe';
 import { projectDurationPipe } from '@/shared/utils/projectDurationPipe';
 import { useShortLocale } from '@/hooks/useShortLocale';
+import { ProjectCardExpandedInterface } from '@/shared/interfaces/project-card-expanded.interface';
 
 interface ProjectCardLargeProps {
-  project: ProjectCardInterface;
-  invites: ProjectParticipationInterface[];
-  requests: ProjectParticipationInterface[];
+  project: ProjectCardExpandedInterface;
   user: AuthInterface;
 }
 
 export default function ProjectCardLarge({
   project,
-  invites,
-  requests,
   user,
 }: ProjectCardLargeProps): ReactElement {
   const tStatus = useTranslations('status');
@@ -112,13 +107,7 @@ export default function ProjectCardLarge({
             </p>
           )}
         </div>
-        <ProjectCardFooter
-          project={project}
-          invites={invites}
-          requests={requests}
-          user={user}
-          size="large"
-        />
+        <ProjectCardFooter project={project} user={user} size="large" />
       </div>
     </div>
   );

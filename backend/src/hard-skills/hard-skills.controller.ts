@@ -23,7 +23,7 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Request } from 'express';
-import { UserWithPasswordResponseDto } from '../users/dto/user-with-password.response-dto';
+import { AuthWithPasswordResponseDto } from '../users/dto/auth-with-password.response-dto';
 import { HardSkillResponseDto } from './dto/hard-skill.response-dto';
 import { User } from '../auth/decorators/user.decorator';
 import { UUIDParam } from 'src/common/decorators/UUID-param.decorator';
@@ -56,8 +56,8 @@ export class HardSkillsController {
   public async getHardSkills(
     @Req() req: Request,
   ): Promise<HardSkillResponseDto[]> {
-    const user: UserWithPasswordResponseDto =
-      req.user as UserWithPasswordResponseDto;
+    const user: AuthWithPasswordResponseDto =
+      req.user as AuthWithPasswordResponseDto;
     return this.hardSkillsService.getHardSkills(user.id);
   }
 
@@ -80,8 +80,8 @@ export class HardSkillsController {
     @Req() req: Request,
     @Body() createHardSkillDto: CreateHardSkillDto,
   ): Promise<HardSkillResponseDto> {
-    const user: UserWithPasswordResponseDto =
-      req.user as UserWithPasswordResponseDto;
+    const user: AuthWithPasswordResponseDto =
+      req.user as AuthWithPasswordResponseDto;
     return this.hardSkillsService.addHardSkill(user.id, createHardSkillDto);
   }
 

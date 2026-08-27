@@ -1,11 +1,12 @@
 'use client';
 
-import { ReactElement, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
-import DeclineRequestPopup from '@/shared/components/DeclineRequestPopup/DeclineRequestPopup';
+import RejectRequestPopup from '@/shared/components/RejectRequestPopup/RejectRequestPopup';
 import { UserInterface } from '@/shared/interfaces/user.interface';
 import {
   useAcceptRequestMutation,
+  useGetUserRequestsInMyProjectsQuery,
   useRejectRequestMutation,
 } from '@/api/participationsApi';
 import ParticipationsTable from '@/shared/components/ParticipationsTable/ParticipationsTable';
@@ -13,16 +14,24 @@ import DataContainer from '@/shared/components/DataContainer/DataContainer';
 import { useTranslations } from 'next-intl';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 import { useToast } from '@/hooks/useToast';
+import { useRequestsFilters } from '@/hooks/useRequestsFilters';
+import Pagination from '@/shared/components/Pagination/Pagination';
 
 interface UserRequestsProps {
-  requests: ProjectParticipationInterface[];
   user: UserInterface;
 }
 
 export default function UserRequests({
-  requests,
   user,
-}: UserRequestsProps): ReactElement {
+}: UserRequestsProps): ReactElement | null {
+  const { filters, updateFilters } = useRequestsFilters();
+  const { data: list } = useGetUserRequestsInMyProjectsQuery({
+    id: user.id,
+    params: {
+      page: filters.requestsPage,
+      limit: filters.requestsLimit,
+    },
+  });
   const [request, setRequest] = useState<ProjectParticipationInterface | null>(
     null,
   );
@@ -105,19 +114,60 @@ export default function UserRequests({
     }
   };
 
+  const onPageChange = (page: number): void => {
+    if (!list) {
+      return;
+    }
+
+    const totalPages = Math.ceil(list.total / filters.requestsLimit);
+    const validPage = Math.max(1, Math.min(page, totalPages));
+
+    updateFilters({
+      requestsPage: validPage,
+    });
+  };
+
+  useEffect(() => {
+    if (!list || list.total === 0) {
+      return;
+    }
+
+    const totalPages = Math.ceil(list.total / filters.requestsLimit);
+
+    if (filters.requestsPage > totalPages) {
+      updateFilters({
+        requestsPage: totalPages,
+      });
+    }
+  }, [list, filters.requestsPage, filters.requestsLimit, updateFilters]);
+
+  if (!list || list?.total === 0) {
+    return null;
+  }
+
   return (
     <>
       <DataContainer title={t('userRequests')}>
         <ParticipationsTable
-          items={requests}
+          items={list.requests}
           openModal={openModal}
           isLoading={acceptRequestLoading}
           actionColumnWidth={280}
           accept={handleAcceptRequest}
+          limit={filters.requestsLimit}
+          page={filters.requestsPage}
         />
+        {list.total > filters.requestsLimit && (
+          <Pagination
+            total={list.total}
+            limit={filters.requestsLimit}
+            page={filters.requestsPage}
+            onPageChange={onPageChange}
+          />
+        )}
       </DataContainer>
       {request && (
-        <DeclineRequestPopup
+        <RejectRequestPopup
           onClose={closeModal}
           isOpen={!!request}
           loading={declineRequestLoading}

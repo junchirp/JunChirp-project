@@ -4,10 +4,10 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { ParticipationStatus, Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UserWithPasswordResponseDto } from './dto/user-with-password.response-dto';
+import { AuthWithPasswordResponseDto } from './dto/auth-with-password.response-dto';
 import { ConfigService } from '@nestjs/config';
 import { MailService } from '../mail/mail.service';
 import { UserResponseDto } from './dto/user.response-dto';
@@ -26,6 +26,8 @@ import { CryptoTokenInterface } from '../common/interfaces/crypto-token.interfac
 import { isPrismaError } from '../common/utils/is-prisma-error';
 import { CountResponseDto } from './dto/count.response-dto';
 import { throwPrismaError } from '../common/utils/throw-prisma-error';
+import { UserParticipationInMyProjectsResponseDto } from './dto/user-participation-in-my-projects.response-dto';
+import { UserCardResponseDto } from './dto/user-card.response-dto';
 
 interface GetUsersOptionsInterface {
   activeProjectsCount: number;
@@ -48,7 +50,7 @@ export class UsersService {
   public async createUser(
     createUserDto: CreateUserDto,
     ip: string,
-  ): Promise<UserResponseDto> {
+  ): Promise<AuthResponseDto> {
     try {
       return await this.prisma.$transaction(async (prisma) => {
         const role = await this.rolesService.findOrCreateRole('user', prisma);
@@ -68,15 +70,11 @@ export class UsersService {
           },
           include: {
             role: true,
-            educations: true,
-            socials: true,
-            softSkills: true,
-            hardSkills: true,
             desiredRoles: true,
           },
         });
 
-        return UserMapper.toFullResponse(user, false);
+        return UserMapper.toAuthResponse(user, false);
       });
     } catch (error) {
       if (isPrismaError(error) && error.code === 'P2002') {
@@ -104,29 +102,28 @@ export class UsersService {
   public async getUserByEmail(
     email: string,
     withPassword: boolean,
-  ): Promise<UserWithPasswordResponseDto | UserResponseDto | null> {
+  ): Promise<AuthWithPasswordResponseDto | AuthResponseDto | null> {
     const user = await this.prisma.user.findUnique({
       where: { email },
       include: {
         role: true,
-        educations: true,
-        socials: true,
-        softSkills: true,
-        hardSkills: true,
         desiredRoles: true,
       },
     });
 
-    return user ? UserMapper.toFullResponse(user, withPassword) : null;
+    return user ? UserMapper.toAuthResponse(user, withPassword) : null;
   }
 
-  public async getUserById(id: string, mode: 'edit'): Promise<AuthResponseDto>;
-
-  public async getUserById(id: string, mode: 'view'): Promise<UserResponseDto>;
+  public async getUserById(id: string): Promise<AuthResponseDto>;
 
   public async getUserById(
     id: string,
-    mode: 'edit' | 'view',
+    authId: string,
+  ): Promise<UserResponseDto>;
+
+  public async getUserById(
+    id: string,
+    authId?: string,
   ): Promise<UserResponseDto | AuthResponseDto> {
     try {
       const user = await this.prisma.user.findUniqueOrThrow({
@@ -141,9 +138,14 @@ export class UsersService {
         },
       });
 
-      return mode === 'edit'
-        ? UserMapper.toAuthResponse(user)
-        : UserMapper.toFullResponse(user, false);
+      if (!authId) {
+        return UserMapper.toAuthResponse(user, false);
+      }
+
+      const projectParticipationSummary =
+        await this.getUserParticipationSummaryInOwnerProjects(id, authId);
+
+      return UserMapper.toFullResponse(user, projectParticipationSummary);
     } catch (error) {
       throwPrismaError(error, {
         code: 'P2025',
@@ -231,9 +233,9 @@ export class UsersService {
 
   public async createOrUpdateGoogleUser(
     createGoogleUserDto: CreateGoogleUserDto,
-  ): Promise<{ user: UserResponseDto; authType: 'registration' | 'login' }> {
+  ): Promise<{ user: AuthResponseDto; authType: 'registration' | 'login' }> {
     const user = await this.getUserByEmail(createGoogleUserDto.email, false);
-    let updatedUser: UserResponseDto;
+    let updatedUser: AuthResponseDto;
     let authType: 'registration' | 'login';
 
     if (!user) {
@@ -253,14 +255,10 @@ export class UsersService {
         },
         include: {
           role: true,
-          educations: true,
-          socials: true,
-          softSkills: true,
-          hardSkills: true,
           desiredRoles: true,
         },
       });
-      updatedUser = UserMapper.toFullResponse(userFromDB, false);
+      updatedUser = UserMapper.toAuthResponse(userFromDB, false);
     } else if (user && !user.googleId) {
       authType = user.isVerified ? 'login' : 'registration';
       const userFromDB = await this.prisma.user.update({
@@ -275,7 +273,7 @@ export class UsersService {
           desiredRoles: true,
         },
       });
-      updatedUser = UserMapper.toFullResponse(userFromDB, false);
+      updatedUser = UserMapper.toAuthResponse(userFromDB, false);
     } else {
       updatedUser = user;
       authType = 'login';
@@ -306,7 +304,7 @@ export class UsersService {
         },
       });
 
-      return UserMapper.toAuthResponse(updatedUser);
+      return UserMapper.toAuthResponse(updatedUser, false);
     } catch (error) {
       throwPrismaError(error, {
         code: 'P2025',
@@ -321,7 +319,7 @@ export class UsersService {
     ip: string,
     emailDto: EmailWithLocaleDto,
   ): Promise<AuthResponseDto> {
-    const user = await this.getUserById(id, 'edit');
+    const user = await this.getUserById(id);
 
     if (user.isVerified) {
       throw new BadRequestException('Email is verified');
@@ -351,7 +349,7 @@ export class UsersService {
           );
         }
 
-        return UserMapper.toAuthResponse(updatedUser);
+        return UserMapper.toAuthResponse(updatedUser, false);
       });
 
       const params = new URLSearchParams({
@@ -388,6 +386,7 @@ export class UsersService {
 
   public async getUsers(
     options: Partial<GetUsersOptionsInterface>,
+    authId: string,
   ): Promise<UsersListResponseDto> {
     const {
       activeProjectsCount,
@@ -433,9 +432,27 @@ export class UsersService {
       }),
     ]);
 
+    const usersIds = users.map((user) => user.id);
+    const projectsParticipationsSummary =
+      await this.getUsersParticipationsSummaryInOwnerProjects(usersIds, authId);
+
+    const usersWithSummary: UserCardResponseDto[] = [];
+    for (const user of users) {
+      usersWithSummary.push(
+        UserMapper.toCardResponse(
+          user,
+          projectsParticipationsSummary.get(user.id) ?? {
+            participationsCount: 0,
+            activeRequestsCount: 0,
+            activeInvitesCount: 0,
+          },
+        ),
+      );
+    }
+
     return {
       total,
-      users: users.map((user) => UserMapper.toCardResponse(user)),
+      users: usersWithSummary,
     };
   }
 
@@ -475,5 +492,178 @@ export class UsersService {
       select: { activeProjectsCount: true },
     });
     return { count: countData?.activeProjectsCount ?? 0 };
+  }
+
+  private async getUserParticipationSummaryInOwnerProjects(
+    userId: string,
+    ownerId: string,
+  ): Promise<UserParticipationInMyProjectsResponseDto> {
+    const projectsCount = await this.prisma.project.count({
+      where: {
+        ownerId,
+        roles: {
+          some: {
+            users: {
+              some: {
+                id: userId,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const invitesCount = await this.prisma.participationInvite.count({
+      where: {
+        userId,
+        status: {
+          in: [ParticipationStatus.pending, ParticipationStatus.reserved],
+        },
+        projectRole: {
+          project: {
+            ownerId,
+          },
+        },
+      },
+    });
+
+    const requestsCount = await this.prisma.participationRequest.count({
+      where: {
+        userId,
+        status: {
+          in: [ParticipationStatus.pending, ParticipationStatus.reserved],
+        },
+        projectRole: {
+          project: {
+            ownerId,
+          },
+        },
+      },
+    });
+
+    return {
+      participationsCount: projectsCount,
+      activeRequestsCount: requestsCount,
+      activeInvitesCount: invitesCount,
+    };
+  }
+
+  private async getUsersParticipationsSummaryInOwnerProjects(
+    userIds: string[],
+    ownerId: string,
+  ): Promise<Map<string, UserParticipationInMyProjectsResponseDto>> {
+    const participations = await this.prisma.project.findMany({
+      where: {
+        ownerId,
+        roles: {
+          some: {
+            users: {
+              some: {
+                id: {
+                  in: userIds,
+                },
+              },
+            },
+          },
+        },
+      },
+      select: {
+        roles: {
+          select: {
+            users: {
+              where: {
+                id: {
+                  in: userIds,
+                },
+              },
+              select: {
+                id: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const requests = await this.prisma.participationRequest.findMany({
+      where: {
+        userId: {
+          in: userIds,
+        },
+        status: {
+          in: [ParticipationStatus.pending, ParticipationStatus.reserved],
+        },
+        projectRole: {
+          project: {
+            ownerId,
+          },
+        },
+      },
+      select: {
+        userId: true,
+      },
+    });
+
+    const invites = await this.prisma.participationInvite.findMany({
+      where: {
+        userId: {
+          in: userIds,
+        },
+        status: {
+          in: [ParticipationStatus.pending, ParticipationStatus.reserved],
+        },
+        projectRole: {
+          project: {
+            ownerId,
+          },
+        },
+      },
+      select: {
+        userId: true,
+      },
+    });
+
+    const summaries = new Map<
+      string,
+      UserParticipationInMyProjectsResponseDto
+    >();
+
+    for (const userId of userIds) {
+      summaries.set(userId, {
+        participationsCount: 0,
+        activeRequestsCount: 0,
+        activeInvitesCount: 0,
+      });
+    }
+
+    for (const project of participations) {
+      for (const role of project.roles) {
+        for (const user of role.users) {
+          const summary = summaries.get(user.id);
+
+          if (summary) {
+            summary.participationsCount++;
+          }
+        }
+      }
+    }
+
+    for (const request of requests) {
+      const summary = summaries.get(request.userId);
+
+      if (summary) {
+        summary.activeRequestsCount++;
+      }
+    }
+
+    for (const invite of invites) {
+      const summary = summaries.get(invite.userId);
+
+      if (summary) {
+        summary.activeInvitesCount++;
+      }
+    }
+
+    return summaries;
   }
 }

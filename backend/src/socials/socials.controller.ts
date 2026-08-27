@@ -15,7 +15,7 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Request } from 'express';
-import { UserWithPasswordResponseDto } from '../users/dto/user-with-password.response-dto';
+import { AuthWithPasswordResponseDto } from '../users/dto/auth-with-password.response-dto';
 import { User } from '../auth/decorators/user.decorator';
 import { UUIDParam } from '../common/decorators/UUID-param.decorator';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
@@ -35,8 +35,8 @@ export class SocialsController {
   public async getHardSkills(
     @Req() req: Request,
   ): Promise<SocialResponseDto[]> {
-    const user: UserWithPasswordResponseDto =
-      req.user as UserWithPasswordResponseDto;
+    const user: AuthWithPasswordResponseDto =
+      req.user as AuthWithPasswordResponseDto;
     return this.socialsService.getSocialNetworks(user.id);
   }
 
@@ -61,8 +61,8 @@ export class SocialsController {
     @Req() req: Request,
     @Body() createSocialDto: CreateSocialDto,
   ): Promise<SocialResponseDto> {
-    const user: UserWithPasswordResponseDto =
-      req.user as UserWithPasswordResponseDto;
+    const user: AuthWithPasswordResponseDto =
+      req.user as AuthWithPasswordResponseDto;
     return this.socialsService.addSocialNetwork(user.id, createSocialDto);
   }
 

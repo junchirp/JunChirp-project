@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { UserCardResponseDto } from '../../users/dto/user-card.response-dto';
 import { ProjectRoleResponseDto } from '../../project-roles/dto/project-role.response-dto';
+import { UserBaseResponseDto } from '../../users/dto/user-base.response-dto';
 
 export class UserParticipationResponseDto {
   @ApiProperty({
@@ -9,8 +9,8 @@ export class UserParticipationResponseDto {
   })
   public readonly id: string;
 
-  @ApiProperty({ type: () => UserCardResponseDto })
-  public readonly user: UserCardResponseDto;
+  @ApiProperty({ type: () => UserBaseResponseDto })
+  public readonly user: UserBaseResponseDto;
 
   @ApiProperty({
     example: '2025-04-11 11:51:05.224',

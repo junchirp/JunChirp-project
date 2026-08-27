@@ -1,4 +1,4 @@
-import { UserCardInterface } from '@/shared/interfaces/user-card.interface';
+import { UserBaseInterface } from '@/shared/interfaces/user-base.interface';
 
 export interface TaskInterface {
   id: string;
@@ -6,7 +6,7 @@ export interface TaskInterface {
   description: string;
   priority: 'high' | 'low' | 'normal';
   deadline: Date;
-  assignees: UserCardInterface[];
+  assignees: UserBaseInterface[];
   taskStatusId: string;
   taskIndex: number;
 }

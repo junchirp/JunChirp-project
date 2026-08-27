@@ -1,9 +1,7 @@
 'use client';
 
-import { useSearchParams } from 'next/navigation';
-import { useRouter } from '@/i18n/routing';
-import { useMemo } from 'react';
 import { ProjectsFiltersInterface } from '@/shared/interfaces/projects-filters.interface';
+import { useUrlFilters } from './useUrlFilters';
 
 interface ProjectsFiltersResultInterface {
   filters: ProjectsFiltersInterface;
@@ -15,43 +13,57 @@ interface ProjectsFiltersResultInterface {
   ) => void;
 }
 
-export const useProjectsFilters = (): ProjectsFiltersResultInterface => {
-  const searchParams = useSearchParams();
-  const router = useRouter();
+const PROJECT_FILTER_KEYS = [
+  'page',
+  'limit',
+  'status',
+  'categoryId',
+  'minParticipants',
+  'maxParticipants',
+] as const satisfies readonly (keyof ProjectsFiltersInterface)[];
+
+const parse = (searchParams: URLSearchParams): ProjectsFiltersInterface => {
   const min = searchParams.get('minParticipants');
   const max = searchParams.get('maxParticipants');
 
-  const filters = useMemo(() => {
-    return {
-      page: Number(searchParams.get('page') ?? 1),
-      limit: Number(searchParams.get('limit') ?? 20),
-      status: (searchParams.get('status') as 'active' | 'done') ?? undefined,
-      categoryId: searchParams.get('categoryId') ?? undefined,
-      minParticipants: min !== null ? Number(min) : undefined,
-      maxParticipants: max !== null ? Number(max) : undefined,
-    };
-  }, [searchParams]);
+  return {
+    page: Number(searchParams.get('page') ?? 1),
+    limit: Number(searchParams.get('limit') ?? 20),
+    status: (searchParams.get('status') as 'active' | 'done') ?? undefined,
+    categoryId: searchParams.get('categoryId') ?? undefined,
+    minParticipants: min !== null ? Number(min) : undefined,
+    maxParticipants: max !== null ? Number(max) : undefined,
+  };
+};
+
+export const useProjectsFilters = (): ProjectsFiltersResultInterface => {
+  const result = useUrlFilters<ProjectsFiltersInterface>({
+    keys: PROJECT_FILTER_KEYS,
+    parse,
+  });
 
   const updateFilters = (
-    newParams: Record<string, string | number | undefined | null>,
+    newParams: Partial<
+      Record<
+        keyof ProjectsFiltersInterface,
+        string | number | string[] | null | undefined
+      >
+    >,
   ): void => {
-    const current = new URLSearchParams(searchParams.toString());
-
-    Object.entries(newParams).forEach(([key, value]) => {
-      if (
-        value === undefined ||
-        value === null ||
-        value === '' ||
-        value === 0
-      ) {
-        current.delete(key);
-      } else {
-        current.set(key, String(value));
-      }
-    });
-
-    router.push(`?${current.toString()}`, { scroll: false });
+    result.updateFilters(
+      Object.fromEntries(
+        Object.entries(newParams).map(([key, value]) => [
+          key,
+          value === 0 ? undefined : value,
+        ]),
+      ) as Partial<
+        Record<
+          keyof ProjectsFiltersInterface,
+          string | number | string[] | null | undefined
+        >
+      >,
+    );
   };
 
-  return { filters, updateFilters };
+  return { filters: result.filters, updateFilters };
 };

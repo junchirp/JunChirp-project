@@ -19,16 +19,7 @@ import UserRequests from './UserRequests/UserRequests';
 import DataContainer from '@/shared/components/DataContainer/DataContainer';
 import { useTranslations } from 'next-intl';
 import UserInvites from './UserInvites/UserInvites';
-import {
-  useGetMyProjectsQuery,
-  useGetUserProjectsQuery,
-} from '@/api/projectsApi';
-import {
-  useGetMyInvitesQuery,
-  useGetMyRequestsQuery,
-  useGetUserInvitesInMyProjectsQuery,
-  useGetUserRequestsInMyProjectsQuery,
-} from '@/api/participationsApi';
+import { useGetMyProjectsQuery } from '@/api/projectsApi';
 
 export default function UserClient(): ReactElement {
   const params = useParams();
@@ -47,41 +38,15 @@ export default function UserClient(): ReactElement {
     myProjectsList?.projects.filter(
       (project) => project.ownerId === authUser.id,
     ) ?? [];
-  const { data: list, isLoading: projectsLoading } = useGetUserProjectsQuery({
-    id: userId,
-    params: {
-      page: 1,
-      limit: 5,
-      status: 'active',
-    },
-  });
-  const { data: myRequests = [], isLoading: myRequestsLoading } =
-    useGetMyRequestsQuery(authUser.id);
-  const { data: myInvites = [], isLoading: myInvitesLoading } =
-    useGetMyInvitesQuery(authUser.id);
-  const { data: requests = [], isLoading: requestsLoading } =
-    useGetUserRequestsInMyProjectsQuery(userId);
-  const { data: invites = [], isLoading: invitesLoading } =
-    useGetUserInvitesInMyProjectsQuery(userId);
-  const isLoading =
-    projectsLoading ??
-    userLoading ??
-    requestsLoading ??
-    invitesLoading ??
-    myRequestsLoading ??
-    myInvitesLoading;
-  const usersActiveProjects = list?.projects ?? [];
-  const usersActiveProjectsWithMeOwner = usersActiveProjects.filter(
-    (project) => project.ownerId === authUser.id,
-  );
+  const isLoading = userLoading;
 
   const isButtonVisible =
     myProjects.length !== 0 &&
-    myProjects.length !==
-      requests.length +
-        usersActiveProjectsWithMeOwner.length +
-        invites.length &&
     user &&
+    myProjects.length !==
+      user.projectParticipationSummary.activeRequestsCount +
+        user.projectParticipationSummary.activeInvitesCount +
+        user.projectParticipationSummary.participationsCount &&
     user.activeProjectsCount < 2;
 
   const closeModal = (): void => setModalOpen(false);
@@ -136,18 +101,12 @@ export default function UserClient(): ReactElement {
                 <UserProjectsList
                   userId={user.id}
                   filter={projectsFilter}
-                  invites={myInvites}
-                  requests={myRequests}
                   authUser={authUser}
                 />
               </div>
             </div>
-            {!isAuthUser && requests.length !== 0 && (
-              <UserRequests requests={requests} user={user} />
-            )}
-            {!isAuthUser && invites.length !== 0 && (
-              <UserInvites invites={invites} user={user} />
-            )}
+            {!isAuthUser && <UserRequests user={user} />}
+            {!isAuthUser && <UserInvites user={user} />}
             {!isAuthUser && isButtonVisible && (
               <div className={styles['user-client__actions']}>
                 <Button

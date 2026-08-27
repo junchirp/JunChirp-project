@@ -6,7 +6,6 @@ import Button from '@/shared/components/Button/Button';
 import { useRejectInviteMutation } from '@/api/participationsApi';
 import { useToast } from '@/hooks/useToast';
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
-import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
 import { useTranslations } from 'next-intl';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 import Dialog from '@/shared/components/Dialog/Dialog';
@@ -15,7 +14,8 @@ import DialogBody from '@/shared/components/Dialog/DialogBody/DialogBody';
 import DialogFooter from '@/shared/components/Dialog/DialogFooter/DialogFooter';
 
 interface RejectInvitePopupProps {
-  invite: ProjectParticipationInterface;
+  inviteId: string;
+  projectName: string;
   onClose: () => void;
   user: AuthInterface;
   isOpen: boolean;
@@ -24,7 +24,7 @@ interface RejectInvitePopupProps {
 export default function RejectInvitePopup(
   props: RejectInvitePopupProps,
 ): ReactElement {
-  const { invite, onClose, user, isOpen } = props;
+  const { inviteId, projectName, onClose, user, isOpen } = props;
   const [rejectInvite, { isLoading }] = useRejectInviteMutation();
   const { showToast, isActive } = useToast();
   const t = useTranslations('rejectInvitePopup');
@@ -35,7 +35,7 @@ export default function RejectInvitePopup(
     }
 
     try {
-      await rejectInvite({ id: invite.id, userId: user.id }).unwrap();
+      await rejectInvite({ id: inviteId, userId: user.id }).unwrap();
 
       showToast({
         severity: 'success',
@@ -66,7 +66,7 @@ export default function RejectInvitePopup(
               [{chunks}]
             </span>
           ),
-          projectName: invite.projectRole.project.projectName,
+          projectName,
         })}
       </DialogBody>
       <DialogFooter>

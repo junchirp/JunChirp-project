@@ -7,23 +7,12 @@ import Page404 from '@/shared/components/Page404/Page404';
 import { useAppSelector } from '@/hooks/reduxHooks';
 import authSelector from '@/redux/auth/authSelector';
 import { useGetProjectCardByIdQuery } from '@/api/projectsApi';
-import {
-  useGetMyInvitesQuery,
-  useGetMyRequestsQuery,
-} from '@/api/participationsApi';
 import ProjectCardLarge from './ProjectCardLarge/ProjectCardLarge';
 
 export default function ProjectClient(): ReactElement {
   const user = useAppSelector(authSelector.selectRequiredUser);
   const { projectId } = useParams<{ projectId: string }>();
-  const { data: project, isLoading: projectLoading } =
-    useGetProjectCardByIdQuery(projectId);
-
-  const { data: requests = [], isLoading: requestsLoading } =
-    useGetMyRequestsQuery(user.id);
-  const { data: invites = [], isLoading: invitesLoading } =
-    useGetMyInvitesQuery(user.id);
-  const isLoading = projectLoading ?? requestsLoading ?? invitesLoading;
+  const { data: project, isLoading } = useGetProjectCardByIdQuery(projectId);
 
   return (
     <>
@@ -33,12 +22,7 @@ export default function ProjectClient(): ReactElement {
         </div>
       ) : project ? (
         <div className={styles['project-client']}>
-          <ProjectCardLarge
-            project={project}
-            invites={invites}
-            requests={requests}
-            user={user}
-          />
+          <ProjectCardLarge project={project} user={user} />
         </div>
       ) : (
         <Page404 />

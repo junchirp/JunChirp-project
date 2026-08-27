@@ -27,6 +27,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   public async validate(
     payload: TokenPayloadInterface,
   ): Promise<AuthResponseDto> {
-    return await this.userService.getUserById(payload.sub, 'edit');
+    return await this.userService.getUserById(payload.sub);
   }
 }

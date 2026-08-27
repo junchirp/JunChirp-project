@@ -14,11 +14,12 @@ import { ConfigService } from '@nestjs/config';
 import { ProjectParticipationMapper } from '../common/mappers/project-participation.mapper';
 import { CreateRequestDto } from './dto/create-request.dto';
 import { DiscordService } from '../discord/discord.service';
-import { UserCardResponseDto } from '../users/dto/user-card.response-dto';
-import { UserMapper } from '../common/mappers/user.mapper';
 import { UsersService } from '../users/users.service';
 import { throwPrismaError } from '../common/utils/throw-prisma-error';
 import { ParticipationStatus } from '@prisma/client';
+import { PaginationDto } from '../common/dto/pagination.dto';
+import { InvitesListResponseDto } from './dto/invites-list.response-dto';
+import { RequestsListResponseDto } from './dto/requests-list.response-dto';
 
 @Injectable()
 export class ParticipationsService {
@@ -33,10 +34,7 @@ export class ParticipationsService {
   public async createInvite(
     createInviteDto: CreateInviteDto,
   ): Promise<ProjectParticipationResponseDto> {
-    const user = await this.usersService.getUserById(
-      createInviteDto.userId,
-      'edit',
-    );
+    const user = await this.usersService.getUserById(createInviteDto.userId);
 
     if (user.activeProjectsCount === 2) {
       throw new BadRequestException(
@@ -95,7 +93,9 @@ export class ParticipationsService {
         const existingRequest = await prisma.participationRequest.findFirst({
           where: {
             userId: createInviteDto.userId,
-            status: ParticipationStatus.pending,
+            status: {
+              in: [ParticipationStatus.pending, ParticipationStatus.reserved],
+            },
             projectRole: { projectId: createInviteDto.projectId },
           },
         });
@@ -109,7 +109,9 @@ export class ParticipationsService {
         const existingInvite = await prisma.participationInvite.findFirst({
           where: {
             userId: createInviteDto.userId,
-            status: ParticipationStatus.pending,
+            status: {
+              in: [ParticipationStatus.pending, ParticipationStatus.reserved],
+            },
             projectRole: { projectId: createInviteDto.projectId },
           },
         });
@@ -187,7 +189,7 @@ export class ParticipationsService {
     createRequestDto: CreateRequestDto,
     userId: string,
   ): Promise<ProjectParticipationResponseDto> {
-    const user = await this.usersService.getUserById(userId, 'edit');
+    const user = await this.usersService.getUserById(userId);
 
     if (user.activeProjectsCount === 2) {
       throw new BadRequestException(
@@ -246,7 +248,9 @@ export class ParticipationsService {
         const existingInvite = await prisma.participationInvite.findFirst({
           where: {
             userId,
-            status: ParticipationStatus.pending,
+            status: {
+              in: [ParticipationStatus.pending, ParticipationStatus.reserved],
+            },
             projectRole: { projectId: createRequestDto.projectId },
           },
         });
@@ -260,7 +264,9 @@ export class ParticipationsService {
         const existingRequest = await prisma.participationRequest.findFirst({
           where: {
             userId,
-            status: ParticipationStatus.pending,
+            status: {
+              in: [ParticipationStatus.pending, ParticipationStatus.reserved],
+            },
             projectRole: { projectId: createRequestDto.projectId },
           },
         });
@@ -333,18 +339,17 @@ export class ParticipationsService {
     }
   }
 
-  public async acceptInvite(
-    id: string,
-    userId: string,
-  ): Promise<UserCardResponseDto> {
+  public async acceptInvite(id: string, userId: string): Promise<void> {
     try {
-      const { user, discordId, discordMemberRoleId } =
-        await this.prisma.$transaction(async (prisma) => {
+      const { discordId, discordMemberRoleId } = await this.prisma.$transaction(
+        async (prisma) => {
           const invite = await prisma.participationInvite.findFirstOrThrow({
             where: {
               id,
               userId,
-              status: ParticipationStatus.pending,
+              status: {
+                in: [ParticipationStatus.pending, ParticipationStatus.reserved],
+              },
             },
             include: {
               projectRole: {
@@ -387,7 +392,7 @@ export class ParticipationsService {
             },
           });
 
-          const updatedUser = await prisma.user.update({
+          await prisma.user.update({
             where: { id: invite.userId },
             data: {
               activeProjectsCount: {
@@ -403,27 +408,25 @@ export class ParticipationsService {
             where: { id },
             data: {
               status: ParticipationStatus.accepted,
-              updatedAt: new Date(),
+              acceptedAt: new Date(),
             },
           });
 
           return {
-            user: updatedUser,
             discordId: invite.user.discordId,
             discordMemberRoleId: invite.projectRole.project.discordMemberRoleId,
           };
-        });
+        },
+      );
 
       if (discordId) {
         await this.discordService.addRoleToUser(discordId, discordMemberRoleId);
       }
-
-      return UserMapper.toCardResponse(user);
     } catch (error) {
       throwPrismaError(error, {
         code: 'P2025',
         exception: NotFoundException,
-        message: 'Invite not found or its status is not "pending"',
+        message: 'Invite not found',
       });
     }
   }
@@ -431,8 +434,14 @@ export class ParticipationsService {
   public async rejectInvite(id: string, userId: string): Promise<void> {
     try {
       await this.prisma.participationInvite.update({
-        where: { id, userId, status: ParticipationStatus.pending },
-        data: { status: ParticipationStatus.rejected, updatedAt: new Date() },
+        where: {
+          id,
+          userId,
+          status: {
+            in: [ParticipationStatus.pending, ParticipationStatus.reserved],
+          },
+        },
+        data: { status: ParticipationStatus.rejected, rejectedAt: new Date() },
       });
     } catch (error) {
       throwPrismaError(error, {
@@ -450,7 +459,9 @@ export class ParticipationsService {
           const request = await prisma.participationRequest.findFirstOrThrow({
             where: {
               id,
-              status: ParticipationStatus.pending,
+              status: {
+                in: [ParticipationStatus.pending, ParticipationStatus.reserved],
+              },
             },
             include: {
               projectRole: {
@@ -504,7 +515,7 @@ export class ParticipationsService {
             where: { id },
             data: {
               status: ParticipationStatus.accepted,
-              updatedAt: new Date(),
+              acceptedAt: new Date(),
             },
           });
 
@@ -523,7 +534,7 @@ export class ParticipationsService {
       throwPrismaError(error, {
         code: 'P2025',
         exception: NotFoundException,
-        message: 'Request not found or its status is not "pending"',
+        message: 'Request not found',
       });
     }
   }
@@ -531,10 +542,15 @@ export class ParticipationsService {
   public async rejectRequest(id: string): Promise<void> {
     try {
       await this.prisma.participationRequest.update({
-        where: { id, status: ParticipationStatus.pending },
+        where: {
+          id,
+          status: {
+            in: [ParticipationStatus.pending, ParticipationStatus.reserved],
+          },
+        },
         data: {
           status: ParticipationStatus.rejected,
-          updatedAt: new Date(),
+          rejectedAt: new Date(),
         },
       });
     } catch (error) {
@@ -549,10 +565,16 @@ export class ParticipationsService {
   public async cancelRequest(id: string, userId: string): Promise<void> {
     try {
       await this.prisma.participationRequest.update({
-        where: { id, userId, status: ParticipationStatus.pending },
+        where: {
+          id,
+          userId,
+          status: {
+            in: [ParticipationStatus.pending, ParticipationStatus.reserved],
+          },
+        },
         data: {
           status: ParticipationStatus.canceled,
-          updatedAt: new Date(),
+          canceledAt: new Date(),
         },
       });
     } catch (error) {
@@ -567,10 +589,15 @@ export class ParticipationsService {
   public async cancelInvite(id: string): Promise<void> {
     try {
       await this.prisma.participationInvite.update({
-        where: { id, status: ParticipationStatus.pending },
+        where: {
+          id,
+          status: {
+            in: [ParticipationStatus.pending, ParticipationStatus.reserved],
+          },
+        },
         data: {
           status: ParticipationStatus.canceled,
-          updatedAt: new Date(),
+          canceledAt: new Date(),
         },
       });
     } catch (error) {
@@ -583,13 +610,16 @@ export class ParticipationsService {
   }
 
   public async getInvitesWithProjects(
+    options: PaginationDto,
     userId: string,
     ownerId?: string,
-  ): Promise<ProjectParticipationResponseDto[]> {
+  ): Promise<InvitesListResponseDto> {
+    const { page = 1, limit = 10 } = options;
+    const skip = (page - 1) * limit;
+
     const invites = await this.prisma.participationInvite.findMany({
       where: {
         userId,
-        status: ParticipationStatus.pending,
         ...(ownerId && {
           projectRole: {
             project: {
@@ -598,6 +628,8 @@ export class ParticipationsService {
           },
         }),
       },
+      skip,
+      take: limit,
       orderBy: {
         createdAt: 'desc',
       },
@@ -630,19 +662,38 @@ export class ParticipationsService {
       },
     });
 
-    return invites.map((invite) =>
-      ProjectParticipationMapper.toResponse(invite),
-    );
+    const total = await this.prisma.participationInvite.count({
+      where: {
+        userId,
+        ...(ownerId && {
+          projectRole: {
+            project: {
+              ownerId,
+            },
+          },
+        }),
+      },
+    });
+
+    return {
+      total,
+      invites: invites.map((invite) =>
+        ProjectParticipationMapper.toResponse(invite),
+      ),
+    };
   }
 
   public async getRequestsWithProjects(
+    options: PaginationDto,
     userId: string,
     ownerId?: string,
-  ): Promise<ProjectParticipationResponseDto[]> {
+  ): Promise<RequestsListResponseDto> {
+    const { page = 1, limit = 10 } = options;
+    const skip = (page - 1) * limit;
+
     const requests = await this.prisma.participationRequest.findMany({
       where: {
         userId,
-        status: ParticipationStatus.pending,
         ...(ownerId && {
           projectRole: {
             project: {
@@ -651,6 +702,8 @@ export class ParticipationsService {
           },
         }),
       },
+      skip,
+      take: limit,
       orderBy: {
         createdAt: 'desc',
       },
@@ -683,9 +736,25 @@ export class ParticipationsService {
       },
     });
 
-    return requests.map((request) =>
-      ProjectParticipationMapper.toResponse(request),
-    );
+    const total = await this.prisma.participationRequest.count({
+      where: {
+        userId,
+        ...(ownerId && {
+          projectRole: {
+            project: {
+              ownerId,
+            },
+          },
+        }),
+      },
+    });
+
+    return {
+      total,
+      requests: requests.map((request) =>
+        ProjectParticipationMapper.toResponse(request),
+      ),
+    };
   }
 
   public async getInvitesWithUsers(
@@ -737,96 +806,6 @@ export class ParticipationsService {
 
     return requests.map((request) =>
       UserParticipationMapper.toResponse(request),
-    );
-  }
-
-  public async getRequestsInMyProjects(
-    ownerId: string,
-  ): Promise<ProjectParticipationResponseDto[]> {
-    const requests = await this.prisma.participationRequest.findMany({
-      where: {
-        status: ParticipationStatus.pending,
-        projectRole: {
-          project: { ownerId },
-        },
-      },
-      include: {
-        projectRole: {
-          include: {
-            roleType: true,
-            project: {
-              include: {
-                logo: true,
-                category: {
-                  include: {
-                    translations: true,
-                  },
-                },
-                roles: {
-                  include: {
-                    roleType: true,
-                    users: {
-                      include: {
-                        desiredRoles: true,
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    });
-
-    return requests.map((request) =>
-      ProjectParticipationMapper.toResponse(request),
-    );
-  }
-
-  public async getInvitesInMyProjects(
-    authId: string,
-  ): Promise<ProjectParticipationResponseDto[]> {
-    const invites = await this.prisma.participationInvite.findMany({
-      where: {
-        status: ParticipationStatus.pending,
-        projectRole: {
-          project: {
-            ownerId: authId,
-          },
-        },
-      },
-      include: {
-        projectRole: {
-          include: {
-            roleType: true,
-            project: {
-              include: {
-                logo: true,
-                category: {
-                  include: {
-                    translations: true,
-                  },
-                },
-                roles: {
-                  include: {
-                    roleType: true,
-                    users: {
-                      include: {
-                        desiredRoles: true,
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    });
-
-    return invites.map((invite) =>
-      ProjectParticipationMapper.toResponse(invite),
     );
   }
 

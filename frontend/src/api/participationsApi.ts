@@ -3,6 +3,9 @@ import { CreateInviteInterface } from '@/shared/interfaces/create-invite.interfa
 import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
 import { CreateRequestInterface } from '@/shared/interfaces/create-request.interface';
 import { UserParticipationInterface } from '@/shared/interfaces/user-participation.interface';
+import { RequestsListInterface } from '@/shared/interfaces/requests-list.interface';
+import { InvitesListInterface } from '@/shared/interfaces/invites-list.interface';
+import { ParticipationsQueryInterface } from '@/shared/interfaces/participations-query.interface';
 
 export const participationsApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -15,24 +18,23 @@ export const participationsApi = mainApi.injectEndpoints({
         method: 'POST',
         body: data,
       }),
-      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-        try {
-          const { data: newInvite } = await queryFulfilled;
-          dispatch(
-            participationsApi.util.updateQueryData(
-              'getUserInvitesInMyProjects',
-              arg.userId,
-              (draft: ProjectParticipationInterface[]) => {
-                draft.push(newInvite);
-              },
-            ),
-          );
-        } catch {
-          return;
-        }
-      },
+      // async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+      //   try {
+      //     const { data: newInvite } = await queryFulfilled;
+      //     dispatch(
+      //       participationsApi.util.updateQueryData(
+      //         'getUserInvitesInMyProjects',
+      //         arg.userId,
+      //         (draft: ProjectParticipationInterface[]) => {
+      //           draft.push(newInvite);
+      //         },
+      //       ),
+      //     );
+      //   } catch {
+      //     return;
+      //   }
+      // },
       invalidatesTags: (_result, _error, { projectId, userId }) => [
-        { type: 'invites-in-my-projects', id: 'LIST' },
         { type: 'invites-in-my-projects', id: userId },
         { type: 'invites', id: projectId },
       ],
@@ -46,22 +48,22 @@ export const participationsApi = mainApi.injectEndpoints({
         method: 'POST',
         body: data,
       }),
-      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-        try {
-          const { data: newRequest } = await queryFulfilled;
-          dispatch(
-            participationsApi.util.updateQueryData(
-              'getMyRequests',
-              arg.userId,
-              (draft: ProjectParticipationInterface[]) => {
-                draft.push(newRequest);
-              },
-            ),
-          );
-        } catch {
-          return;
-        }
-      },
+      // async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+      //   try {
+      //     const { data: newRequest } = await queryFulfilled;
+      //     dispatch(
+      //       participationsApi.util.updateQueryData(
+      //         'getMyRequests',
+      //         arg.userId,
+      //         (draft: ProjectParticipationInterface[]) => {
+      //           draft.push(newRequest);
+      //         },
+      //       ),
+      //     );
+      //   } catch {
+      //     return;
+      //   }
+      // },
       invalidatesTags: [{ type: 'my-requests-in-projects', id: 'LIST' }],
     }),
     rejectInvite: builder.mutation<void, { id: string; userId: string }>({
@@ -69,30 +71,30 @@ export const participationsApi = mainApi.injectEndpoints({
         url: `participations/invites/${id}/reject`,
         method: 'PATCH',
       }),
-      async onQueryStarted(
-        { id: inviteId, userId },
-        { dispatch, queryFulfilled },
-      ) {
-        try {
-          await queryFulfilled;
-          dispatch(
-            participationsApi.util.updateQueryData(
-              'getMyInvites',
-              userId,
-              (draft: ProjectParticipationInterface[]) => {
-                const index = draft.findIndex(
-                  (invite) => invite.id === inviteId,
-                );
-                if (index !== -1) {
-                  draft.splice(index, 1);
-                }
-              },
-            ),
-          );
-        } catch {
-          return;
-        }
-      },
+      // async onQueryStarted(
+      //   { id: inviteId, userId },
+      //   { dispatch, queryFulfilled },
+      // ) {
+      //   try {
+      //     await queryFulfilled;
+      //     dispatch(
+      //       participationsApi.util.updateQueryData(
+      //         'getMyInvites',
+      //         userId,
+      //         (draft: ProjectParticipationInterface[]) => {
+      //           const index = draft.findIndex(
+      //             (invite) => invite.id === inviteId,
+      //           );
+      //           if (index !== -1) {
+      //             draft.splice(index, 1);
+      //           }
+      //         },
+      //       ),
+      //     );
+      //   } catch {
+      //     return;
+      //   }
+      // },
       invalidatesTags: [{ type: 'invites-me-in-projects', id: 'LIST' }],
     }),
     acceptInvite: builder.mutation<void, string>({
@@ -113,34 +115,33 @@ export const participationsApi = mainApi.injectEndpoints({
         url: `participations/requests/${id}/accept`,
         method: 'PATCH',
       }),
-      async onQueryStarted(
-        { id: requestId, userId },
-        { dispatch, queryFulfilled },
-      ) {
-        try {
-          await queryFulfilled;
-          dispatch(
-            participationsApi.util.updateQueryData(
-              'getUserRequestsInMyProjects',
-              userId,
-              (draft: ProjectParticipationInterface[]) => {
-                const index = draft.findIndex(
-                  (request) => request.id === requestId,
-                );
-                if (index !== -1) {
-                  draft.splice(index, 1);
-                }
-              },
-            ),
-          );
-        } catch {
-          return;
-        }
-      },
+      // async onQueryStarted(
+      //   { id: requestId, userId },
+      //   { dispatch, queryFulfilled },
+      // ) {
+      //   try {
+      //     await queryFulfilled;
+      //     dispatch(
+      //       participationsApi.util.updateQueryData(
+      //         'getUserRequestsInMyProjects',
+      //         userId,
+      //         (draft: ProjectParticipationInterface[]) => {
+      //           const index = draft.findIndex(
+      //             (request) => request.id === requestId,
+      //           );
+      //           if (index !== -1) {
+      //             draft.splice(index, 1);
+      //           }
+      //         },
+      //       ),
+      //     );
+      //   } catch {
+      //     return;
+      //   }
+      // },
       invalidatesTags: (_result, _error, { userId, projectId }) => [
         { type: 'users', id: userId },
         { type: 'user-projects', id: userId },
-        { type: 'requests-in-my-projects', id: 'LIST' },
         { type: 'requests-in-my-projects', id: userId },
         { type: 'requests', id: projectId },
         { type: 'projects', id: projectId },
@@ -154,32 +155,31 @@ export const participationsApi = mainApi.injectEndpoints({
         url: `participations/requests/${id}/reject`,
         method: 'PATCH',
       }),
-      async onQueryStarted(
-        { id: requestId, userId },
-        { dispatch, queryFulfilled },
-      ) {
-        try {
-          await queryFulfilled;
-          dispatch(
-            participationsApi.util.updateQueryData(
-              'getUserRequestsInMyProjects',
-              userId,
-              (draft: ProjectParticipationInterface[]) => {
-                const index = draft.findIndex(
-                  (request) => request.id === requestId,
-                );
-                if (index !== -1) {
-                  draft.splice(index, 1);
-                }
-              },
-            ),
-          );
-        } catch {
-          return;
-        }
-      },
+      // async onQueryStarted(
+      //   { id: requestId, userId },
+      //   { dispatch, queryFulfilled },
+      // ) {
+      //   try {
+      //     await queryFulfilled;
+      //     dispatch(
+      //       participationsApi.util.updateQueryData(
+      //         'getUserRequestsInMyProjects',
+      //         userId,
+      //         (draft: ProjectParticipationInterface[]) => {
+      //           const index = draft.findIndex(
+      //             (request) => request.id === requestId,
+      //           );
+      //           if (index !== -1) {
+      //             draft.splice(index, 1);
+      //           }
+      //         },
+      //       ),
+      //     );
+      //   } catch {
+      //     return;
+      //   }
+      // },
       invalidatesTags: (_result, _error, { projectId, userId }) => [
-        { type: 'requests-in-my-projects', id: 'LIST' },
         { type: 'requests-in-my-projects', id: userId },
         { type: 'requests', id: projectId },
       ],
@@ -189,30 +189,30 @@ export const participationsApi = mainApi.injectEndpoints({
         url: `participations/requests/${id}/cancel`,
         method: 'PATCH',
       }),
-      async onQueryStarted(
-        { id: requestId, userId },
-        { dispatch, queryFulfilled },
-      ) {
-        try {
-          await queryFulfilled;
-          dispatch(
-            participationsApi.util.updateQueryData(
-              'getMyRequests',
-              userId,
-              (draft: ProjectParticipationInterface[]) => {
-                const index = draft.findIndex(
-                  (request) => request.id === requestId,
-                );
-                if (index !== -1) {
-                  draft.splice(index, 1);
-                }
-              },
-            ),
-          );
-        } catch {
-          return;
-        }
-      },
+      // async onQueryStarted(
+      //   { id: requestId, userId },
+      //   { dispatch, queryFulfilled },
+      // ) {
+      //   try {
+      //     await queryFulfilled;
+      //     dispatch(
+      //       participationsApi.util.updateQueryData(
+      //         'getMyRequests',
+      //         userId,
+      //         (draft: ProjectParticipationInterface[]) => {
+      //           const index = draft.findIndex(
+      //             (request) => request.id === requestId,
+      //           );
+      //           if (index !== -1) {
+      //             draft.splice(index, 1);
+      //           }
+      //         },
+      //       ),
+      //     );
+      //   } catch {
+      //     return;
+      //   }
+      // },
       invalidatesTags: [{ type: 'my-requests-in-projects', id: 'LIST' }],
     }),
     cancelInvite: builder.mutation<
@@ -223,97 +223,116 @@ export const participationsApi = mainApi.injectEndpoints({
         url: `participations/invites/${id}/cancel`,
         method: 'PATCH',
       }),
-      async onQueryStarted(
-        { id: inviteId, userId },
-        { dispatch, queryFulfilled },
-      ) {
-        try {
-          await queryFulfilled;
-          dispatch(
-            participationsApi.util.updateQueryData(
-              'getUserInvitesInMyProjects',
-              userId,
-              (draft: ProjectParticipationInterface[]) => {
-                const index = draft.findIndex(
-                  (invite) => invite.id === inviteId,
-                );
-                if (index !== -1) {
-                  draft.splice(index, 1);
-                }
-              },
-            ),
-          );
-        } catch {
-          return;
-        }
-      },
+      // async onQueryStarted(
+      //   { id: inviteId, userId },
+      //   { dispatch, queryFulfilled },
+      // ) {
+      //   try {
+      //     await queryFulfilled;
+      //     dispatch(
+      //       participationsApi.util.updateQueryData(
+      //         'getUserInvitesInMyProjects',
+      //         userId,
+      //         (draft: ProjectParticipationInterface[]) => {
+      //           const index = draft.findIndex(
+      //             (invite) => invite.id === inviteId,
+      //           );
+      //           if (index !== -1) {
+      //             draft.splice(index, 1);
+      //           }
+      //         },
+      //       ),
+      //     );
+      //   } catch {
+      //     return;
+      //   }
+      // },
       invalidatesTags: (_result, _error, { projectId, userId }) => [
-        { type: 'invites-in-my-projects', id: 'LIST' },
         { type: 'invites', id: projectId },
         { type: 'invites-in-my-projects', id: userId },
       ],
     }),
-    getInvitesInMyProjects: builder.query<
-      ProjectParticipationInterface[],
-      string
+    getMyInvites: builder.query<
+      InvitesListInterface,
+      { id: string; params: ParticipationsQueryInterface }
     >({
-      query: () => {
+      query: ({ params }) => {
+        const query = new URLSearchParams();
+
+        Object.entries(params).forEach(([key, value]) => {
+          if (value == null) {
+            return;
+          }
+          query.set(key, value.toString());
+        });
+
         return {
-          url: 'participations/my-projects/invites',
-        };
-      },
-      providesTags: [{ type: 'invites-in-my-projects', id: 'LIST' }],
-    }),
-    getRequestsInMyProjects: builder.query<
-      ProjectParticipationInterface[],
-      string
-    >({
-      query: () => {
-        return {
-          url: 'participations/my-projects/requests',
-        };
-      },
-      providesTags: [{ type: 'requests-in-my-projects', id: 'LIST' }],
-    }),
-    getMyInvites: builder.query<ProjectParticipationInterface[], string>({
-      query: () => {
-        return {
-          url: 'participations/me/invites',
+          url: `participations/me/invites?${query.toString()}`,
         };
       },
       providesTags: [{ type: 'invites-me-in-projects', id: 'LIST' }],
     }),
-    getMyRequests: builder.query<ProjectParticipationInterface[], string>({
-      query: () => {
+    getMyRequests: builder.query<
+      RequestsListInterface,
+      { id: string; params: ParticipationsQueryInterface }
+    >({
+      query: ({ params }) => {
+        const query = new URLSearchParams();
+
+        Object.entries(params).forEach(([key, value]) => {
+          if (value == null) {
+            return;
+          }
+          query.set(key, value.toString());
+        });
+
         return {
-          url: 'participations/me/requests',
+          url: `participations/me/requests?${query.toString()}`,
         };
       },
       providesTags: [{ type: 'my-requests-in-projects', id: 'LIST' }],
     }),
     getUserRequestsInMyProjects: builder.query<
-      ProjectParticipationInterface[],
-      string
+      RequestsListInterface,
+      { id: string; params: ParticipationsQueryInterface }
     >({
-      query: (id) => {
+      query: ({ id, params }) => {
+        const query = new URLSearchParams();
+
+        Object.entries(params).forEach(([key, value]) => {
+          if (value == null) {
+            return;
+          }
+          query.set(key, value.toString());
+        });
+
         return {
-          url: `participations/users/${id}/requests`,
+          url: `participations/users/${id}/requests?${query.toString()}`,
         };
       },
-      providesTags: (_result, _error, id) => [
+      providesTags: (_result, _error, { id }) => [
         { type: 'requests-in-my-projects', id },
       ],
     }),
     getUserInvitesInMyProjects: builder.query<
-      ProjectParticipationInterface[],
-      string
+      InvitesListInterface,
+      { id: string; params: ParticipationsQueryInterface }
     >({
-      query: (id) => {
+      query: ({ id, params }) => {
+        const query = new URLSearchParams();
+
+        Object.entries(params).forEach(([key, value]) => {
+          if (value == null) {
+            return;
+          }
+          query.set(key, value.toString());
+        });
+
         return {
-          url: `participations/users/${id}/invites`,
+          url: `participations/users/${id}/invites?${query.toString()}`,
         };
       },
-      providesTags: (_result, _error, id) => [
+      providesTags: (_result, _error, { id }) => [
         { type: 'invites-in-my-projects', id },
       ],
     }),
@@ -376,8 +395,6 @@ export const {
   useAcceptRequestMutation,
   useCancelRequestMutation,
   useCancelInviteMutation,
-  useGetInvitesInMyProjectsQuery,
-  useGetRequestsInMyProjectsQuery,
   useGetMyInvitesQuery,
   useGetMyRequestsQuery,
   useGetUserRequestsInMyProjectsQuery,

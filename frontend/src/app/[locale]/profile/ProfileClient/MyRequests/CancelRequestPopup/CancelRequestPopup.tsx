@@ -5,7 +5,6 @@ import styles from './CancelRequestPopup.module.scss';
 import Button from '@/shared/components/Button/Button';
 import { useCancelRequestMutation } from '@/api/participationsApi';
 import { useToast } from '@/hooks/useToast';
-import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import { useTranslations } from 'next-intl';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
@@ -15,7 +14,8 @@ import DialogBody from '@/shared/components/Dialog/DialogBody/DialogBody';
 import DialogFooter from '@/shared/components/Dialog/DialogFooter/DialogFooter';
 
 interface CancelRequestPopupProps {
-  request: ProjectParticipationInterface;
+  requestId: string;
+  projectName: string;
   onClose: () => void;
   user: AuthInterface;
   isOpen: boolean;
@@ -24,7 +24,7 @@ interface CancelRequestPopupProps {
 export default function CancelRequestPopup(
   props: CancelRequestPopupProps,
 ): ReactElement {
-  const { request, onClose, user, isOpen } = props;
+  const { requestId, projectName, onClose, user, isOpen } = props;
   const [cancelRequest, { isLoading }] = useCancelRequestMutation();
   const { showToast, isActive } = useToast();
   const t = useTranslations('cancelRequestPopup');
@@ -35,7 +35,7 @@ export default function CancelRequestPopup(
     }
 
     try {
-      await cancelRequest({ id: request.id, userId: user.id }).unwrap();
+      await cancelRequest({ id: requestId, userId: user.id }).unwrap();
 
       showToast({
         severity: 'success',
@@ -66,7 +66,7 @@ export default function CancelRequestPopup(
               [{chunks}]
             </span>
           ),
-          projectName: request.projectRole.project.projectName,
+          projectName,
         })}
       </DialogBody>
       <DialogFooter>

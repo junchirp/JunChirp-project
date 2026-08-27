@@ -1,7 +1,9 @@
 import { ProjectCardInterface } from './project-card.interface';
-import { UserCardInterface } from '@/shared/interfaces/user-card.interface';
+import { UserBaseInterface } from '@/shared/interfaces/user-base.interface';
+import { MyParticipationInterface } from '@/shared/interfaces/my-participation.interface';
 
 export interface ProjectInterface extends ProjectCardInterface {
   discordUrl: string;
-  owner: UserCardInterface;
+  owner: UserBaseInterface;
+  myParticipation: MyParticipationInterface | null;
 }

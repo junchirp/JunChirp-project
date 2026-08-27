@@ -1,5 +1,5 @@
 import { ProjectCategoryInterface } from './project-category.interface';
-import { RoleWithUserInterface } from './role-with-user.interface';
+import { RoleWithUsersInterface } from './role-with-users.interface';
 import { ProjectLogoInterface } from './project-logo.interface';
 
 export interface ProjectCardInterface {
@@ -13,6 +13,6 @@ export interface ProjectCardInterface {
   logo: ProjectLogoInterface | null;
   publicUrl: string | null;
   duration: number | null;
-  roles: RoleWithUserInterface[];
+  roles: RoleWithUsersInterface[];
   category: ProjectCategoryInterface;
 }

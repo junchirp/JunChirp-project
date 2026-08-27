@@ -3,7 +3,7 @@
 import { ReactElement } from 'react';
 import styles from './VacanciesManagementSection.module.scss';
 import { ProjectRoleTypeInterface } from '@/shared/interfaces/project-role-type.interface';
-import { RoleWithUserInterface } from '@/shared/interfaces/role-with-user.interface';
+import { RoleWithUsersInterface } from '@/shared/interfaces/role-with-users.interface';
 import VacanciesGroupedList from '../VacanciesGroupedList/VacanciesGroupedList';
 import {
   TeamRoleGroupInterface,
@@ -12,7 +12,7 @@ import {
 import RolesList from './RolesList/RolesList';
 
 interface VacanciesManagementSectionProps {
-  projectRoles: RoleWithUserInterface[];
+  projectRoles: RoleWithUsersInterface[];
   otherRoles: ProjectRoleTypeInterface[];
   onDeleteVacancy: (id: string) => void;
   onAddVacancy: (id: string) => void;

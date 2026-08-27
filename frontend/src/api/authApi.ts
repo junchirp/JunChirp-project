@@ -12,20 +12,6 @@ import { LocaleInterface } from '@/shared/interfaces/locale.interface';
 import { ConfirmEmailWithLocaleInterface } from '@/shared/interfaces/confirm-email-with-locale.interface';
 import { EmailWithIdInterface } from '@/shared/interfaces/email-with-id.interface';
 import { setUser } from '@/redux/auth/authSlice';
-import { projectsApi } from '@/api/projectsApi';
-
-const USER_RELATED_TAGS = [
-  { type: 'auth', id: 'CURRENT' },
-  { type: 'soft-skills', id: 'LIST' },
-  { type: 'hard-skills', id: 'LIST' },
-  { type: 'educations', id: 'LIST' },
-  { type: 'socials', id: 'LIST' },
-  { type: 'my-projects', id: 'LIST' },
-  { type: 'invites-me-in-projects', id: 'LIST' },
-  { type: 'invites-in-my-projects', id: 'LIST' },
-  { type: 'my-requests-in-projects', id: 'LIST' },
-  { type: 'requests-in-my-projects', id: 'LIST' },
-] as const;
 
 export const authApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -35,7 +21,15 @@ export const authApi = mainApi.injectEndpoints({
         method: 'POST',
         body: userData,
       }),
-      invalidatesTags: USER_RELATED_TAGS,
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        dispatch(mainApi.util.resetApiState());
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(setUser(data));
+        } catch {
+          return;
+        }
+      },
     }),
     getMe: builder.query<AuthInterface, void>({
       query: () => ({
@@ -49,12 +43,11 @@ export const authApi = mainApi.injectEndpoints({
         method: 'POST',
         body: credentials,
       }),
-      invalidatesTags: USER_RELATED_TAGS,
       async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        dispatch(mainApi.util.resetApiState());
         try {
           const { data } = await queryFulfilled;
           dispatch(setUser(data));
-          dispatch(projectsApi.util.resetApiState());
         } catch {
           return;
         }
@@ -65,6 +58,15 @@ export const authApi = mainApi.injectEndpoints({
         url: 'auth/logout',
         method: 'POST',
       }),
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          dispatch(setUser(null));
+          dispatch(mainApi.util.resetApiState());
+        } catch {
+          return;
+        }
+      },
       invalidatesTags: [{ type: 'auth', id: 'CURRENT' }],
     }),
     sendConfirmationEmail: builder.mutation<MessageInterface, LocaleInterface>({

@@ -36,10 +36,6 @@ import {
 } from '@/api/hardSkillsApi';
 import { useAppSelector } from '@/hooks/reduxHooks';
 import DiscordBanner from '@/shared/components/DiscordBanner/DiscordBanner';
-import {
-  useGetMyInvitesQuery,
-  useGetMyRequestsQuery,
-} from '@/api/participationsApi';
 import MyRequests from './MyRequests/MyRequests';
 import MyInvites from './MyInvites/MyInvites';
 import Button from '@/shared/components/Button/Button';
@@ -69,10 +65,6 @@ export default function ProfileClient(): ReactElement {
   const [isModalOpen, setModalOpen] = useState(false);
   const formRef = useRef<HTMLDivElement | null>(null);
   const user = useAppSelector(authSelector.selectRequiredUser);
-  const { data: requests = [], isLoading: requestsLoading } =
-    useGetMyRequestsQuery(user.id);
-  const { data: invites = [], isLoading: invitesLoading } =
-    useGetMyInvitesQuery(user.id);
   const { data: socials = [], isLoading: socialsLoading } =
     useGetSocialsQuery();
   const { data: educations = [], isLoading: educationsLoading } =
@@ -87,9 +79,7 @@ export default function ProfileClient(): ReactElement {
     socialsLoading ??
     softSkillsLoading ??
     hardSkillsLoading ??
-    educationsLoading ??
-    requestsLoading ??
-    invitesLoading;
+    educationsLoading;
 
   const allFilled = [
     socials,
@@ -433,8 +423,8 @@ export default function ProfileClient(): ReactElement {
               onCancel={handleCancel}
             />
           </div>
-          {!!requests.length && <MyRequests requests={requests} user={user} />}
-          {!!invites.length && <MyInvites invites={invites} user={user} />}
+          <MyRequests user={user} />
+          <MyInvites user={user} />
         </div>
       )}
       {deletedItem && isSocial(deletedItem.item) && (

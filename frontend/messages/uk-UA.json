@@ -104,8 +104,14 @@
     "colFirst": "№",
     "colProject": "Назва проєкту",
     "colRole": "Роль",
-    "colDate": "Дата",
-    "colActions": "Дії"
+    "colStatus": "Статус",
+    "colActions": "Дії",
+    "created": "Створено",
+    "pending": "На розгляді",
+    "accepted": "Прийнято",
+    "canceled": "Скасовано",
+    "rejected": "Відхилено",
+    "reserved": "В резерві"
   },
   "rejectInvitePopup": {
     "title": "Відхилити запрошення?",

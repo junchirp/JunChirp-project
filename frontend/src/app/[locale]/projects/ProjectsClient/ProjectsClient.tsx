@@ -8,10 +8,6 @@ import { useGetMyProjectsQuery, useGetProjectsQuery } from '@/api/projectsApi';
 import Pagination from '@/shared/components/Pagination/Pagination';
 import ListSkeleton from '@/shared/components/ListSkeleton/ListSkeleton';
 import ProjectsList from './ProjectsList/ProjectsList';
-import {
-  useGetMyInvitesQuery,
-  useGetMyRequestsQuery,
-} from '@/api/participationsApi';
 import ProjectsFilters from './ProjectsFilters/ProjectsFilters';
 import { useProjectsFilters } from '@/hooks/useProjectsFilters';
 import { useAppSelector } from '@/hooks/reduxHooks';
@@ -30,15 +26,10 @@ export default function ProjectsClient(): ReactElement {
   const { data: list, isLoading: listLoading } = useGetProjectsQuery(filters, {
     refetchOnMountOrArgChange: true,
   });
-  const { data: requests = [], isLoading: requestsLoading } =
-    useGetMyRequestsQuery(user.id);
-  const { data: invites = [], isLoading: invitesLoading } =
-    useGetMyInvitesQuery(user.id);
   const { data: myProjectsList, isLoading: myProjectsLoading } =
     useGetMyProjectsQuery(user.id);
 
-  const isLoading =
-    listLoading ?? requestsLoading ?? invitesLoading ?? myProjectsLoading;
+  const isLoading = listLoading ?? myProjectsLoading;
 
   return (
     <div className={styles['projects-client']}>
@@ -64,22 +55,12 @@ export default function ProjectsClient(): ReactElement {
         {myProjectsLoading ? (
           <ListSkeleton itemHeight={562} />
         ) : myProjectsList ? (
-          <MyProjects
-            myProjects={myProjectsList.projects}
-            user={user}
-            invites={invites}
-            requests={requests}
-          />
+          <MyProjects myProjects={myProjectsList.projects} user={user} />
         ) : null}
         {isLoading ? (
           <ListSkeleton itemHeight={562} rows={10} />
         ) : list?.projects.length ? (
-          <ProjectsList
-            projects={list.projects}
-            invites={invites}
-            requests={requests}
-            user={user}
-          />
+          <ProjectsList projects={list.projects} user={user} />
         ) : null}
         {!!list?.projects.length && (
           <Pagination

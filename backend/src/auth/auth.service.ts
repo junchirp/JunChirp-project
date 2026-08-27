@@ -11,7 +11,7 @@ import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 import { JsonWebTokenError, JwtService, TokenExpiredError } from '@nestjs/jwt';
 import { Request, Response } from 'express';
-import { UserWithPasswordResponseDto } from '../users/dto/user-with-password.response-dto';
+import { AuthWithPasswordResponseDto } from '../users/dto/auth-with-password.response-dto';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { MailService } from '../mail/mail.service';
 import { PrismaService } from '../prisma/prisma.service';
@@ -62,7 +62,7 @@ export class AuthService {
     const user = (await this.usersService.getUserByEmail(
       loginDto.email,
       true,
-    )) as UserWithPasswordResponseDto | null;
+    )) as AuthWithPasswordResponseDto | null;
     const ip =
       req.ip ??
       req.headers['x-forwarded-for']?.toString().split(',')[0]?.trim() ??
@@ -121,15 +121,8 @@ export class AuthService {
           where: { userId: user.id },
         });
       }
-      const {
-        password,
-        educations,
-        socials,
-        hardSkills,
-        softSkills,
-        ...baseUserInfo
-      } = user;
-      return baseUserInfo;
+
+      return user;
     } else {
       if (loginAttempt) {
         const attemptsCount = loginAttempt.attemptsCount + 1;
@@ -282,10 +275,7 @@ export class AuthService {
     this.addAccessTokenToResponse(res, accessToken);
     this.csrfService.rotate(req, res);
 
-    const { educations, socials, hardSkills, softSkills, ...baseUserInfo } =
-      user;
-
-    return baseUserInfo;
+    return user;
   }
 
   private createAccessToken(userId: string): string {
@@ -788,7 +778,7 @@ export class AuthService {
       throw new NotFoundException('Token not found');
     }
 
-    const user = UserMapper.toAuthResponse(record.user);
+    const user = UserMapper.toAuthResponse(record.user, false);
     const newToken = this.usersService.createCryptoToken();
     await this.usersService.createVerificationEmailRecords(ip, user, newToken);
     const params = new URLSearchParams({

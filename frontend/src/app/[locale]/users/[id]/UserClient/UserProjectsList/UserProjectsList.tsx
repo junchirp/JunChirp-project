@@ -1,33 +1,30 @@
 'use client';
 
 import { ReactElement, useEffect, useMemo, useState } from 'react';
-import { ProjectCardInterface } from '@/shared/interfaces/project-card.interface';
 import { useGetUserProjectsQuery } from '@/api/projectsApi';
 import styles from './UserProjectsList.module.scss';
 import Button from '@/shared/components/Button/Button';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
-import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
 import ProjectCardSmall from '@/shared/components/ProjectCardSmall/ProjectCardSmall';
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
+import { ProjectCardExpandedInterface } from '@/shared/interfaces/project-card-expanded.interface';
 
 interface UserProjectsListProps {
   userId: string;
   filter: null | 'active' | 'done';
-  invites: ProjectParticipationInterface[];
-  requests: ProjectParticipationInterface[];
   authUser: AuthInterface;
 }
 
 export default function UserProjectsList({
   userId,
   filter,
-  invites,
-  requests,
   authUser,
 }: UserProjectsListProps): ReactElement {
   const [page, setPage] = useState(1);
-  const [allProjects, setAllProjects] = useState<ProjectCardInterface[]>([]);
+  const [allProjects, setAllProjects] = useState<
+    ProjectCardExpandedInterface[]
+  >([]);
   const t = useTranslations('profile');
   const [listLoaded, setListLoaded] = useState(false);
 
@@ -121,13 +118,7 @@ export default function UserProjectsList({
   return (
     <div className={styles['user-projects-list']}>
       {allProjects.map((project) => (
-        <ProjectCardSmall
-          key={project.id}
-          project={project}
-          invites={invites}
-          requests={requests}
-          user={authUser}
-        />
+        <ProjectCardSmall key={project.id} project={project} user={authUser} />
       ))}
       {hasMoreProjects && (
         <div className={styles['user-projects-list__more']}>

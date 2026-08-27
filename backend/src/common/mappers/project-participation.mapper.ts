@@ -1,4 +1,4 @@
-import { Participation } from '../types/participation.type';
+import { ParticipationModelType } from '../types/participation-model.type';
 import {
   Project,
   ProjectCategory,
@@ -13,7 +13,7 @@ import { ProjectParticipationResponseDto } from '../../participations/dto/projec
 
 export class ProjectParticipationMapper {
   public static toResponse(
-    participation: Participation & {
+    participation: ParticipationModelType & {
       projectRole: ProjectRole & {
         roleType: ProjectRoleType;
         project: Project & {
@@ -34,6 +34,11 @@ export class ProjectParticipationMapper {
     return {
       id: participation.id,
       createdAt: participation.createdAt,
+      acceptedAt: participation.acceptedAt,
+      canceledAt: participation.canceledAt,
+      rejectedAt: participation.rejectedAt,
+      reservedAt: participation.reservedAt,
+      status: participation.status,
       userId: participation.userId,
       projectRole: ProjectRoleMapper.toProjectResponse(
         participation.projectRole,

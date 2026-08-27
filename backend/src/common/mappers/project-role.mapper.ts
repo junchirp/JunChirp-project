@@ -11,7 +11,7 @@ import { ProjectRoleResponseDto } from '../../project-roles/dto/project-role.res
 import { ProjectRoleWithProjectResponseDto } from '../../project-roles/dto/project-role-with-project.response-dto';
 import { ProjectMapper } from './project.mapper';
 import { UserMapper } from './user.mapper';
-import { ProjectRoleWithUserResponseDto } from '../../project-roles/dto/project-role-with-user.response-dto';
+import { ProjectRoleWithUsersResponseDto } from '../../project-roles/dto/project-role-with-users.response-dto';
 
 export class ProjectRoleMapper {
   public static toBaseResponse(
@@ -43,7 +43,7 @@ export class ProjectRoleMapper {
       id: role.id,
       roleType: role.roleType,
       slots: role.slots,
-      project: ProjectMapper.toCardResponse(role.project),
+      project: ProjectMapper.toBaseCardResponse(role.project),
     };
   }
 
@@ -52,12 +52,12 @@ export class ProjectRoleMapper {
       roleType: ProjectRoleType;
       users: (User & { desiredRoles: ProjectRoleType[] })[];
     },
-  ): ProjectRoleWithUserResponseDto {
+  ): ProjectRoleWithUsersResponseDto {
     return {
       id: role.id,
       roleType: role.roleType,
       slots: role.slots,
-      users: role.users.map((user) => UserMapper.toCardResponse(user)),
+      users: role.users.map((user) => UserMapper.toBaseResponse(user)),
     };
   }
 }

@@ -1,9 +1,9 @@
-import { UserCardInterface } from '@/shared/interfaces/user-card.interface';
 import { ProjectRoleInterface } from '@/shared/interfaces/project-role.interface';
+import { UserBaseInterface } from '@/shared/interfaces/user-base.interface';
 
 export interface UserParticipationInterface {
   id: string;
-  user: UserCardInterface;
+  user: UserBaseInterface;
   createdAt: Date;
   projectRole: ProjectRoleInterface;
 }
