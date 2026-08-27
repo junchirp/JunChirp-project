@@ -18,93 +18,49 @@ export const participationsApi = mainApi.injectEndpoints({
         method: 'POST',
         body: data,
       }),
-      // async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-      //   try {
-      //     const { data: newInvite } = await queryFulfilled;
-      //     dispatch(
-      //       participationsApi.util.updateQueryData(
-      //         'getUserInvitesInMyProjects',
-      //         arg.userId,
-      //         (draft: ProjectParticipationInterface[]) => {
-      //           draft.push(newInvite);
-      //         },
-      //       ),
-      //     );
-      //   } catch {
-      //     return;
-      //   }
-      // },
       invalidatesTags: (_result, _error, { projectId, userId }) => [
         { type: 'invites-in-my-projects', id: userId },
         { type: 'invites', id: projectId },
+        { type: 'users', id: userId },
+        { type: 'users', id: 'LIST' },
       ],
     }),
     createRequest: builder.mutation<
       ProjectParticipationInterface,
-      CreateRequestInterface & { userId: string }
+      CreateRequestInterface
     >({
       query: (data) => ({
         url: 'participations/requests',
         method: 'POST',
         body: data,
       }),
-      // async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-      //   try {
-      //     const { data: newRequest } = await queryFulfilled;
-      //     dispatch(
-      //       participationsApi.util.updateQueryData(
-      //         'getMyRequests',
-      //         arg.userId,
-      //         (draft: ProjectParticipationInterface[]) => {
-      //           draft.push(newRequest);
-      //         },
-      //       ),
-      //     );
-      //   } catch {
-      //     return;
-      //   }
-      // },
-      invalidatesTags: [{ type: 'my-requests-in-projects', id: 'LIST' }],
+      invalidatesTags: (_result, _error, { projectId }) => [
+        { type: 'my-requests-in-projects', id: 'LIST' },
+        { type: 'project-cards', id: 'LIST' },
+        { type: 'project-cards', id: projectId },
+      ],
     }),
-    rejectInvite: builder.mutation<void, { id: string; userId: string }>({
+    rejectInvite: builder.mutation<void, { id: string; projectId: string }>({
       query: ({ id }) => ({
         url: `participations/invites/${id}/reject`,
         method: 'PATCH',
       }),
-      // async onQueryStarted(
-      //   { id: inviteId, userId },
-      //   { dispatch, queryFulfilled },
-      // ) {
-      //   try {
-      //     await queryFulfilled;
-      //     dispatch(
-      //       participationsApi.util.updateQueryData(
-      //         'getMyInvites',
-      //         userId,
-      //         (draft: ProjectParticipationInterface[]) => {
-      //           const index = draft.findIndex(
-      //             (invite) => invite.id === inviteId,
-      //           );
-      //           if (index !== -1) {
-      //             draft.splice(index, 1);
-      //           }
-      //         },
-      //       ),
-      //     );
-      //   } catch {
-      //     return;
-      //   }
-      // },
-      invalidatesTags: [{ type: 'invites-me-in-projects', id: 'LIST' }],
+      invalidatesTags: (_result, _error, { projectId }) => [
+        { type: 'invites-me-in-projects', id: 'LIST' },
+        { type: 'project-cards', id: 'LIST' },
+        { type: 'project-cards', id: projectId },
+      ],
     }),
-    acceptInvite: builder.mutation<void, string>({
+    acceptInvite: builder.mutation<void, { id: string; projectId: string }>({
       query: (id) => ({
         url: `participations/invites/${id}/accept`,
         method: 'PATCH',
       }),
-      invalidatesTags: [
+      invalidatesTags: (_result, _error, { projectId }) => [
         { type: 'invites-me-in-projects', id: 'LIST' },
         { type: 'my-projects', id: 'LIST' },
+        { type: 'project-cards', id: 'LIST' },
+        { type: 'projects', id: projectId },
       ],
     }),
     acceptRequest: builder.mutation<
@@ -115,36 +71,14 @@ export const participationsApi = mainApi.injectEndpoints({
         url: `participations/requests/${id}/accept`,
         method: 'PATCH',
       }),
-      // async onQueryStarted(
-      //   { id: requestId, userId },
-      //   { dispatch, queryFulfilled },
-      // ) {
-      //   try {
-      //     await queryFulfilled;
-      //     dispatch(
-      //       participationsApi.util.updateQueryData(
-      //         'getUserRequestsInMyProjects',
-      //         userId,
-      //         (draft: ProjectParticipationInterface[]) => {
-      //           const index = draft.findIndex(
-      //             (request) => request.id === requestId,
-      //           );
-      //           if (index !== -1) {
-      //             draft.splice(index, 1);
-      //           }
-      //         },
-      //       ),
-      //     );
-      //   } catch {
-      //     return;
-      //   }
-      // },
       invalidatesTags: (_result, _error, { userId, projectId }) => [
         { type: 'users', id: userId },
+        { type: 'users', id: 'LIST' },
         { type: 'user-projects', id: userId },
         { type: 'requests-in-my-projects', id: userId },
         { type: 'requests', id: projectId },
         { type: 'projects', id: projectId },
+        { type: 'project-cards', id: 'LIST' },
       ],
     }),
     rejectRequest: builder.mutation<
@@ -155,65 +89,23 @@ export const participationsApi = mainApi.injectEndpoints({
         url: `participations/requests/${id}/reject`,
         method: 'PATCH',
       }),
-      // async onQueryStarted(
-      //   { id: requestId, userId },
-      //   { dispatch, queryFulfilled },
-      // ) {
-      //   try {
-      //     await queryFulfilled;
-      //     dispatch(
-      //       participationsApi.util.updateQueryData(
-      //         'getUserRequestsInMyProjects',
-      //         userId,
-      //         (draft: ProjectParticipationInterface[]) => {
-      //           const index = draft.findIndex(
-      //             (request) => request.id === requestId,
-      //           );
-      //           if (index !== -1) {
-      //             draft.splice(index, 1);
-      //           }
-      //         },
-      //       ),
-      //     );
-      //   } catch {
-      //     return;
-      //   }
-      // },
       invalidatesTags: (_result, _error, { projectId, userId }) => [
         { type: 'requests-in-my-projects', id: userId },
         { type: 'requests', id: projectId },
+        { type: 'users', id: userId },
+        { type: 'users', id: 'LIST' },
       ],
     }),
-    cancelRequest: builder.mutation<void, { id: string; userId: string }>({
+    cancelRequest: builder.mutation<void, { id: string; projectId: string }>({
       query: ({ id }) => ({
         url: `participations/requests/${id}/cancel`,
         method: 'PATCH',
       }),
-      // async onQueryStarted(
-      //   { id: requestId, userId },
-      //   { dispatch, queryFulfilled },
-      // ) {
-      //   try {
-      //     await queryFulfilled;
-      //     dispatch(
-      //       participationsApi.util.updateQueryData(
-      //         'getMyRequests',
-      //         userId,
-      //         (draft: ProjectParticipationInterface[]) => {
-      //           const index = draft.findIndex(
-      //             (request) => request.id === requestId,
-      //           );
-      //           if (index !== -1) {
-      //             draft.splice(index, 1);
-      //           }
-      //         },
-      //       ),
-      //     );
-      //   } catch {
-      //     return;
-      //   }
-      // },
-      invalidatesTags: [{ type: 'my-requests-in-projects', id: 'LIST' }],
+      invalidatesTags: (_result, _error, { projectId }) => [
+        { type: 'my-requests-in-projects', id: 'LIST' },
+        { type: 'project-cards', id: 'LIST' },
+        { type: 'project-cards', id: projectId },
+      ],
     }),
     cancelInvite: builder.mutation<
       void,
@@ -223,33 +115,11 @@ export const participationsApi = mainApi.injectEndpoints({
         url: `participations/invites/${id}/cancel`,
         method: 'PATCH',
       }),
-      // async onQueryStarted(
-      //   { id: inviteId, userId },
-      //   { dispatch, queryFulfilled },
-      // ) {
-      //   try {
-      //     await queryFulfilled;
-      //     dispatch(
-      //       participationsApi.util.updateQueryData(
-      //         'getUserInvitesInMyProjects',
-      //         userId,
-      //         (draft: ProjectParticipationInterface[]) => {
-      //           const index = draft.findIndex(
-      //             (invite) => invite.id === inviteId,
-      //           );
-      //           if (index !== -1) {
-      //             draft.splice(index, 1);
-      //           }
-      //         },
-      //       ),
-      //     );
-      //   } catch {
-      //     return;
-      //   }
-      // },
       invalidatesTags: (_result, _error, { projectId, userId }) => [
         { type: 'invites', id: projectId },
         { type: 'invites-in-my-projects', id: userId },
+        { type: 'users', id: userId },
+        { type: 'users', id: 'LIST' },
       ],
     }),
     getMyInvites: builder.query<
@@ -364,11 +234,10 @@ export const participationsApi = mainApi.injectEndpoints({
       }),
       invalidatesTags: (_result, _error, { id, userId }) => [
         { type: 'project-cards', id: 'LIST' },
-        { type: 'project-cards', id },
         { type: 'projects', id },
-        { type: 'my-projects', id: 'LIST' },
         { type: 'users', id: 'LIST' },
         { type: 'users', id: userId },
+        { type: 'user-projects', id: userId },
       ],
     }),
     leaveProject: builder.mutation<void, string>({

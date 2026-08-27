@@ -66,7 +66,10 @@ export default function MyInvites({
     }
 
     try {
-      await acceptInvite(inv.id).unwrap();
+      await acceptInvite({
+        id: inv.id,
+        projectId: inv.projectRole.project.id,
+      }).unwrap();
 
       showToast({
         severity: 'success',
@@ -144,7 +147,7 @@ export default function MyInvites({
           onClose={closeModal}
           inviteId={invite.id}
           projectName={invite.projectRole.project.projectName}
-          user={user}
+          projectId={invite.projectRole.project.id}
           isOpen={!!invite}
         />
       )}

@@ -71,7 +71,10 @@ export default function InviteFooter({
     }
 
     try {
-      await acceptInvite(currentInvite.id).unwrap();
+      await acceptInvite({
+        id: currentInvite.id,
+        projectId: project.id,
+      }).unwrap();
       goProject();
     } catch (error) {
       const errorData = error as
@@ -128,7 +131,7 @@ export default function InviteFooter({
           onClose={closeInvitePopup}
           inviteId={currentInvite.id}
           projectName={project.projectName}
-          user={user}
+          projectId={project.id}
         />
       )}
       {isInviteBanner && (

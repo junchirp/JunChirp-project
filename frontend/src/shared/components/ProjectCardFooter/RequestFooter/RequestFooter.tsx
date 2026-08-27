@@ -8,7 +8,6 @@ import Button from '@/shared/components/Button/Button';
 import { ProjectRoleInterface } from '@/shared/interfaces/project-role.interface';
 import { useTranslations } from 'next-intl';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
-import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import { useToast } from '@/hooks/useToast';
 import { useCancelRequestMutation } from '@/api/participationsApi';
 import { MyParticipationInterface } from '@/shared/interfaces/my-participation.interface';
@@ -16,16 +15,16 @@ import { MyParticipationInterface } from '@/shared/interfaces/my-participation.i
 interface RequestFooterProps {
   currentRequest: MyParticipationInterface;
   vacantRoles: ProjectRoleInterface[];
-  user: AuthInterface;
   size: 'small' | 'large';
+  projectId: string;
   className?: string;
 }
 
 export default function RequestFooter({
   currentRequest,
   vacantRoles,
-  user,
   size,
+  projectId,
   className,
 }: RequestFooterProps): ReactElement {
   const tButtons = useTranslations('buttons');
@@ -41,7 +40,7 @@ export default function RequestFooter({
     try {
       await cancelRequest({
         id: currentRequest.id,
-        userId: user.id,
+        projectId,
       }).unwrap();
 
       showToast({
