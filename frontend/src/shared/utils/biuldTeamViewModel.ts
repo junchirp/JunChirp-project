@@ -113,7 +113,7 @@ export function buildTeamViewModel(params: {
     id: 'owner',
     roleType: {
       id: 'owner',
-      roleName: 'Project Owner',
+      roleName: 'Product Owner',
     },
     slots: 1,
     users: [project.owner],

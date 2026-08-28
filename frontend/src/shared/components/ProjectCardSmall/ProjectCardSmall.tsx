@@ -21,9 +21,9 @@ export default function ProjectCardSmall({
   project,
   user,
 }: ProjectCardSmallProps): ReactElement {
-  const isMyProject = project.roles.some((role) =>
-    role.users.some((u) => u.id === user.id),
-  );
+  const isMyProject =
+    project.roles.some((role) => role.users.some((u) => u.id === user.id)) ||
+    project.ownerId === user.id;
   const locale = useShortLocale();
   const format = useFormatter();
   const formattedDate = format.dateTime(new Date(project.createdAt), {
@@ -31,6 +31,11 @@ export default function ProjectCardSmall({
     month: '2-digit',
     year: 'numeric',
   });
+  const currentUserRole =
+    project.ownerId === user.id
+      ? 'Product Owner'
+      : project.roles.find((role) => role.users.some((u) => u.id === user.id))
+          ?.roleType.roleName;
 
   const tProjectsPage = useTranslations('projectsPage');
   const tStatus = useTranslations('status');
@@ -83,6 +88,11 @@ export default function ProjectCardSmall({
             >
               {project.projectName}
             </Link>
+            {!!currentUserRole && (
+              <p className={styles['project-card-small__role']}>
+                {currentUserRole}
+              </p>
+            )}
           </div>
         </div>
         <p className={styles['project-card-small__description']}>
