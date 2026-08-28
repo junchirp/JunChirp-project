@@ -17,7 +17,6 @@ export default function Overview(): ReactElement {
   const searchParams = useSearchParams();
   const isEdit = searchParams.get('mode') === 'edit';
   const router = useRouter();
-
   const isOwner = project?.ownerId === user.id;
 
   useEffect(() => {
@@ -40,7 +39,7 @@ export default function Overview(): ReactElement {
       {isEdit ? (
         <OverviewEdit project={project} />
       ) : (
-        <OverviewView project={project} isOwner={isOwner} />
+        <OverviewView project={project} isOwner={isOwner} userId={user.id} />
       )}
     </>
   );

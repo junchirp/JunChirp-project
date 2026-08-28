@@ -23,11 +23,13 @@ import { useLeaveProjectMutation } from '@/api/participationsApi';
 interface OverviewViewProps {
   project: ProjectInterface;
   isOwner: boolean;
+  userId: string;
 }
 
 export default function OverviewView({
   project,
   isOwner,
+  userId,
 }: OverviewViewProps): ReactElement {
   const tProjectsPage = useTranslations('projectsPage');
   const tStatus = useTranslations('status');
@@ -51,6 +53,11 @@ export default function OverviewView({
   const [completePopupOpen, setCompletePopupOpen] = useState(false);
   const [completeProject, { isLoading: completeLoading }] =
     useCompleteProjectMutation();
+  const currentUserRole = isOwner
+    ? 'Product Owner'
+    : project.roles.find((role) =>
+        role.users.some((user) => user.id === userId),
+      )?.roleType.roleName;
 
   const openLeavePopup = (): void => setLeavePopupOpen(true);
   const closeLeavePopup = (): void => setLeavePopupOpen(false);
@@ -187,6 +194,9 @@ export default function OverviewView({
             <h2 className={styles['overview-view__title']}>
               {project.projectName}
             </h2>
+            {!!currentUserRole && (
+              <p className={styles['overview-view__role']}>{currentUserRole}</p>
+            )}
           </div>
           <p className={styles['overview-view__description']}>
             {project.description}
