@@ -8,7 +8,7 @@ export class ColumnOrderItemDto {
   })
   @IsUUID(4, { message: 'Must be a string in UUIDv4 format' })
   @IsNotEmpty({ message: 'ID is required' })
-  public id: string;
+  public id!: string;
 
   @ApiProperty({
     example: 2,
@@ -17,5 +17,5 @@ export class ColumnOrderItemDto {
   @IsInt({ message: 'Must be an integer number' })
   @Min(1, { message: 'Number must be positive integer' })
   @IsNotEmpty({ message: 'Column index is required' })
-  public readonly columnIndex: number;
+  public readonly columnIndex!: number;
 }

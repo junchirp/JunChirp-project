@@ -22,7 +22,7 @@ export class CreateUserDto {
     message: 'Invalid email format or contains a restricted domain',
   })
   @IsNotEmpty({ message: 'Email is required' })
-  public readonly email: string;
+  public readonly email!: string;
 
   @ApiProperty({ example: 'q1we5?!ER234', description: 'Password' })
   @IsString({ message: 'Must be a string' })
@@ -32,7 +32,7 @@ export class CreateUserDto {
   @IsPasswordNotContainName()
   @IsPasswordInBlackList()
   @IsNotEmpty({ message: 'Password is required' })
-  public readonly password: string;
+  public readonly password!: string;
 
   @ApiProperty({ example: 'John', description: 'First name' })
   @IsString({ message: 'Must be a string' })
@@ -41,7 +41,7 @@ export class CreateUserDto {
     message: 'First name is incorrect',
   })
   @IsNotEmpty({ message: 'First name is required' })
-  public readonly firstName: string;
+  public readonly firstName!: string;
 
   @ApiProperty({ example: 'Doe', description: 'Last name' })
   @IsString({ message: 'Must be a string' })
@@ -50,12 +50,12 @@ export class CreateUserDto {
     message: 'Last name is incorrect',
   })
   @IsNotEmpty({ message: 'Last name is required' })
-  public readonly lastName: string;
+  public readonly lastName!: string;
 
   @ApiProperty({
     example: 'en',
     description: 'Locale',
   })
   @IsIn(localeArray, { message: 'Must be a locale string' })
-  public readonly locale: LocaleType;
+  public readonly locale!: LocaleType;
 }

@@ -2,15 +2,14 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { ExpressAdapter } from '@nestjs/platform-express';
-import * as express from 'express';
-import * as cookieParser from 'cookie-parser';
+import cookieParser from 'cookie-parser';
 import * as path from 'path';
 import helmet from 'helmet';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 import nextModule = require('next');
 import { NextServer } from 'next/dist/server/next';
 import { ValidationPipe } from './common/pipes/validation/validation.pipe';
-import { NextFunction, Request, Response } from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import { CsrfSessionIdMiddleware } from './csrf/middleware/csrf-session-id/csrf-session-id.middleware';
 import { CsrfProtectionMiddleware } from './csrf/middleware/csrf-protection/csrf-protection.middleware';
 

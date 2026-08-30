@@ -130,7 +130,7 @@ export class ProjectsService {
           },
         },
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: 'asc' },
     });
     const total = await this.prisma.project.count({ where });
 

@@ -4,5 +4,5 @@ import { UserBaseResponseDto } from '../../users/dto/user-base.response-dto';
 
 export class ProjectRoleWithUsersResponseDto extends ProjectRoleResponseDto {
   @ApiProperty({ type: () => [UserBaseResponseDto] })
-  public readonly users: UserBaseResponseDto[];
+  public readonly users!: UserBaseResponseDto[];
 }

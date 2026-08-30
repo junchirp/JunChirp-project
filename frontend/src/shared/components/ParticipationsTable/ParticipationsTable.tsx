@@ -2,7 +2,7 @@
 
 import { ReactElement } from 'react';
 import styles from './ParticipationsTable.module.scss';
-import { Link } from '@/i18n/routing';
+import { Link, usePathname } from '@/i18n/routing';
 import Button from '@/shared/components/Button/Button';
 import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
 import { useTranslations } from 'next-intl';
@@ -36,6 +36,8 @@ export default function ParticipationsTable(
   const tTable = useTranslations('participationsTable');
   const tButtons = useTranslations('buttons');
   const cancelEvent = openModal ?? cancel;
+  const pathname = usePathname();
+  const isProfilePage = pathname === '/profile';
 
   return (
     <table className={styles['participations-table']}>
@@ -90,13 +92,22 @@ export default function ParticipationsTable(
               <td
                 className={`${styles['participations-table__cell']} ${styles['participations-table__cell--body']}`}
               >
-                <Link
-                  className={styles['participations-table__link']}
-                  href={`/projects/${item.projectRole.project.id}`}
-                  target="_blank"
-                >
-                  {item.projectRole.project.projectName}
-                </Link>
+                {isProfilePage ? (
+                  <Link
+                    className={styles['participations-table__link']}
+                    href={`/projects/${item.projectRole.project.id}`}
+                    target="_blank"
+                  >
+                    {item.projectRole.project.projectName}
+                  </Link>
+                ) : (
+                  <Link
+                    className={styles['participations-table__link']}
+                    href={`/projects/${item.projectRole.project.id}/dashboard/team`}
+                  >
+                    {item.projectRole.project.projectName}
+                  </Link>
+                )}
               </td>
               <td
                 className={`${styles['participations-table__cell']} ${styles['participations-table__cell--body']}`}

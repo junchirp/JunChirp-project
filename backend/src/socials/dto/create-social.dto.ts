@@ -13,7 +13,7 @@ export class CreateSocialDto {
     message: 'Network name is incorrect',
   })
   @IsNotEmpty({ message: 'Network name is required' })
-  public readonly network: string;
+  public readonly network!: string;
 
   @ApiProperty({
     example: 'https://linkedin.com/in/user-125478',
@@ -30,5 +30,5 @@ export class CreateSocialDto {
     { message: 'URL must include protocol (http/https)' },
   )
   @IsValidSocialNetworkUrl()
-  public readonly url: string;
+  public readonly url!: string;
 }

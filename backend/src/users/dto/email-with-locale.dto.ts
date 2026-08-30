@@ -9,12 +9,12 @@ export class EmailWithLocaleDto {
   @Matches(/^(?!.*[а-яА-ЯіІєЄїЇ])(?!.*\.ru$)/, {
     message: 'Invalid email format or contains a restricted domain',
   })
-  public readonly email: string;
+  public readonly email!: string;
 
   @ApiProperty({
     example: 'en',
     description: 'Locale',
   })
   @IsIn(localeArray, { message: 'Must be a locale string' })
-  public readonly locale: LocaleType;
+  public readonly locale!: LocaleType;
 }

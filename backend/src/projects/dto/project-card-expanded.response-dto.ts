@@ -4,5 +4,5 @@ import { ProjectCardResponseDto } from './project-card.response-dto';
 
 export class ProjectCardExpandedResponseDto extends ProjectCardResponseDto {
   @ApiProperty({ type: () => MyParticipationResponseDto, nullable: true })
-  public readonly myParticipation: MyParticipationResponseDto | null;
+  public readonly myParticipation!: MyParticipationResponseDto | null;
 }

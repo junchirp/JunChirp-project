@@ -19,7 +19,7 @@ export class CreateSupportDto {
     message: 'Invalid email format or contains a restricted domain',
   })
   @IsNotEmpty({ message: 'Email is required' })
-  public readonly email: string;
+  public readonly email!: string;
 
   @ApiProperty({
     example: 'Request description',
@@ -31,18 +31,18 @@ export class CreateSupportDto {
     message: 'Invalid text format',
   })
   @IsNotEmpty({ message: 'Request description is required' })
-  public readonly requestText: string;
+  public readonly requestText!: string;
 
   @ApiProperty({
     example: {},
     description: 'Request template',
   })
-  public readonly request: Prisma.InputJsonValue;
+  public readonly request!: Prisma.InputJsonValue;
 
   @ApiProperty({
     example: 'en',
     description: 'Locale',
   })
   @IsIn(localeArray, { message: 'Must be a locale string' })
-  public readonly locale: LocaleType;
+  public readonly locale!: LocaleType;
 }

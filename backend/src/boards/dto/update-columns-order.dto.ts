@@ -12,5 +12,5 @@ export class UpdateColumnsOrderDto {
   @ArrayNotEmpty({ message: 'Columns array must not be empty' })
   @ValidateNested({ each: true })
   @Type(() => ColumnOrderItemDto)
-  public columns: ColumnOrderItemDto[];
+  public columns!: ColumnOrderItemDto[];
 }

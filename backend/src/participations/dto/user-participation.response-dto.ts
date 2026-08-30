@@ -7,17 +7,17 @@ export class UserParticipationResponseDto {
     example: 'a4d4eb0c-1a10-455e-b9e9-1af147a77762',
     description: 'Unique identifier',
   })
-  public readonly id: string;
+  public readonly id!: string;
 
   @ApiProperty({ type: () => UserBaseResponseDto })
-  public readonly user: UserBaseResponseDto;
+  public readonly user!: UserBaseResponseDto;
 
   @ApiProperty({
     example: '2025-04-11 11:51:05.224',
     description: 'Creation date and time',
   })
-  public readonly createdAt: Date;
+  public readonly createdAt!: Date;
 
   @ApiProperty({ type: () => ProjectRoleResponseDto })
-  public readonly projectRole: ProjectRoleResponseDto;
+  public readonly projectRole!: ProjectRoleResponseDto;
 }

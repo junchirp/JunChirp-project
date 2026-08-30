@@ -6,5 +6,5 @@ export class UpdateTaskStatusDto {
   @IsString({ message: 'Must be a string' })
   @Length(2, 30, { message: 'Must be between 2 and 30 characters' })
   @IsNotEmpty({ message: 'Status name is required' })
-  public readonly statusName: string;
+  public readonly statusName!: string;
 }

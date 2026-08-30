@@ -9,5 +9,5 @@ export class TaskStatusWithTasksResponseDto extends OmitType(
   @ApiProperty({
     type: [TaskResponseDto],
   })
-  public readonly tasks: TaskResponseDto[];
+  public readonly tasks!: TaskResponseDto[];
 }

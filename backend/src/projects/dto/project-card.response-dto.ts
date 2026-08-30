@@ -9,43 +9,43 @@ export class ProjectCardResponseDto {
     example: 'a4d4eb0c-1a10-455e-b9e9-1af147a77762',
     description: 'Unique identifier',
   })
-  public readonly id: string;
+  public readonly id!: string;
 
   @ApiProperty({ example: 'Project name', description: 'Project name' })
-  public readonly projectName: string;
+  public readonly projectName!: string;
 
   @ApiProperty({
     example: 'Project description',
     description: 'Project description',
   })
-  public readonly description: string;
+  public readonly description!: string;
 
   @ApiProperty({
     example: 'active',
     description: 'Project status',
   })
-  public readonly status: ProjectStatus;
+  public readonly status!: ProjectStatus;
 
   @ApiProperty({
     example: '2025-04-11 11:51:05.224',
     description: 'Creation date and time',
   })
-  public readonly createdAt: Date;
+  public readonly createdAt!: Date;
 
   @ApiProperty({
     example: 7,
     description: 'Participants count',
   })
-  public readonly participantsCount: number;
+  public readonly participantsCount!: number;
 
   @ApiProperty({
     example: '9d7a0575-3779-44ba-a6e3-7d229f6096ec',
     description: 'Owner identifier',
   })
-  public readonly ownerId: string;
+  public readonly ownerId!: string;
 
   @ApiProperty({ type: () => ProjectLogoResponseDto, nullable: true })
-  public readonly logo: ProjectLogoResponseDto | null;
+  public readonly logo!: ProjectLogoResponseDto | null;
 
   @ApiProperty({
     example: 'www.project-public-url.com',
@@ -53,7 +53,7 @@ export class ProjectCardResponseDto {
     type: String,
     nullable: true,
   })
-  public readonly publicUrl: string | null;
+  public readonly publicUrl!: string | null;
 
   @ApiProperty({
     example: 22,
@@ -61,11 +61,11 @@ export class ProjectCardResponseDto {
     type: Number,
     nullable: true,
   })
-  public readonly duration: number | null;
+  public readonly duration!: number | null;
 
   @ApiProperty({ type: () => ProjectCategoryResponseDto })
-  public readonly category: ProjectCategoryResponseDto;
+  public readonly category!: ProjectCategoryResponseDto;
 
   @ApiProperty({ type: () => [ProjectRoleWithUsersResponseDto] })
-  public readonly roles: ProjectRoleWithUsersResponseDto[];
+  public readonly roles!: ProjectRoleWithUsersResponseDto[];
 }

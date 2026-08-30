@@ -4,5 +4,5 @@ import { UserBaseResponseDto } from './user-base.response-dto';
 
 export class UserCardResponseDto extends UserBaseResponseDto {
   @ApiProperty({ type: () => UserParticipationInMyProjectsResponseDto })
-  public readonly projectParticipationSummary: UserParticipationInMyProjectsResponseDto;
+  public readonly projectParticipationSummary!: UserParticipationInMyProjectsResponseDto;
 }

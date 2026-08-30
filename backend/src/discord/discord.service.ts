@@ -16,13 +16,13 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class DiscordService implements OnModuleInit {
-  private client: Client;
+  private client!: Client;
 
   private readonly guildId: string;
 
   private readonly botToken: string;
 
-  private guild: Guild;
+  private guild!: Guild;
 
   public constructor(private readonly configService: ConfigService) {
     this.guildId = this.configService.get<string>('DISCORD_GUILD_ID') as string;

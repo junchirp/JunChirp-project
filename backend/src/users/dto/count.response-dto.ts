@@ -5,5 +5,5 @@ export class CountResponseDto {
     example: 2,
     description: 'Items count',
   })
-  public readonly count: number;
+  public readonly count!: number;
 }

@@ -13,5 +13,5 @@ export class UpdateUserDto extends PickType(CreateUserDto, [
   @IsArray({ message: 'Must be an array of IDs' })
   @IsUUID(4, { message: 'Must be a string in UUIDv4 format', each: true })
   @IsNotEmpty({ message: 'Role type ID is required', each: true })
-  public readonly desiredRolesIds: string[];
+  public readonly desiredRolesIds!: string[];
 }

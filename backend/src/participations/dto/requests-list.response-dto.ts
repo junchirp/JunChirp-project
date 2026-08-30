@@ -6,8 +6,8 @@ export class RequestsListResponseDto {
     example: 43,
     description: 'Total number of requests',
   })
-  public readonly total: number;
+  public readonly total!: number;
 
   @ApiProperty({ type: () => [ProjectParticipationResponseDto] })
-  public readonly requests: ProjectParticipationResponseDto[];
+  public readonly requests!: ProjectParticipationResponseDto[];
 }

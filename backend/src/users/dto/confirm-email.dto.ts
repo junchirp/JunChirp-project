@@ -5,5 +5,5 @@ export class ConfirmEmailDto {
   @ApiProperty({ example: 'token', description: 'Confirmation token' })
   @IsNotEmpty({ message: 'Token is required' })
   @IsString({ message: 'Must be a string' })
-  public readonly token: string;
+  public readonly token!: string;
 }

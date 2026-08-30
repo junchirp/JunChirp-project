@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactElement } from 'react';
+import { ReactElement, useEffect, useMemo } from 'react';
 import styles from './InviteForm.module.scss';
 import { UserCardInterface } from '@/shared/interfaces/user-card.interface';
 import { Controller, useForm, useWatch } from 'react-hook-form';
@@ -54,13 +54,45 @@ export default function InviteForm(props: InviteFormProps): ReactElement {
     control,
     name: 'projectId',
   });
+  const selectedRoleId = useWatch({
+    control,
+    name: 'projectRoleId',
+  });
   const selectedProject = myProjects.find(
     (item) => item.id === selectedProjectId,
   );
-  const roleOptions =
-    selectedProject?.roles.filter((role) => role.users.length < role.slots) ??
-    [];
-  const allowedRoleTypeIds = user.desiredRoles.map((role) => role.id);
+  const roleOptions = useMemo(
+    () =>
+      selectedProject?.roles.filter((role) => role.users.length < role.slots) ??
+      [],
+    [selectedProject],
+  );
+  const allowedRoleTypeIds = useMemo(
+    () => user.desiredRoles.map((role) => role.id),
+    [user.desiredRoles],
+  );
+
+  useEffect(() => {
+    if (myProjects.length === 1 && selectedProjectId !== myProjects[0].id) {
+      setValue('projectId', myProjects[0].id);
+    }
+  }, [myProjects, selectedProjectId, setValue]);
+
+  useEffect(() => {
+    const matchingRoles = roleOptions.filter((role) =>
+      allowedRoleTypeIds.includes(role.roleType.id),
+    );
+
+    if (matchingRoles.length === 1) {
+      const roleId = matchingRoles[0].id;
+
+      if (selectedRoleId !== roleId) {
+        setValue('projectRoleId', roleId, {
+          shouldValidate: true,
+        });
+      }
+    }
+  }, [roleOptions, allowedRoleTypeIds, selectedRoleId, setValue]);
 
   const onSubmit = async (data: FormData): Promise<void> => {
     if (isActive(ToastKeysEnum.PARTICIPATION_INVITE)) {

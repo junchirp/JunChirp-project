@@ -13,7 +13,7 @@ export class UserResponseDto extends UserCardResponseDto {
     type: String,
     nullable: true,
   })
-  public readonly googleId: string | null;
+  public readonly googleId!: string | null;
 
   @ApiProperty({
     example: '113273902301932041645',
@@ -21,29 +21,29 @@ export class UserResponseDto extends UserCardResponseDto {
     type: String,
     nullable: true,
   })
-  public readonly discordId: string | null;
+  public readonly discordId!: string | null;
 
   @ApiProperty({ example: 'email@mail.com', description: 'Email' })
-  public readonly email: string;
+  public readonly email!: string;
 
   @ApiProperty({ example: false, description: `Is user's email verified?` })
-  public readonly isVerified: boolean;
+  public readonly isVerified!: boolean;
 
   @ApiProperty({ example: false, description: 'Is user blocked?' })
-  public readonly isBlocked: boolean;
+  public readonly isBlocked!: boolean;
 
   @ApiProperty({ type: () => RoleResponseDto })
-  public readonly role: RoleResponseDto;
+  public readonly role!: RoleResponseDto;
 
   @ApiProperty({ type: () => [SocialResponseDto] })
-  public readonly socials: SocialResponseDto[];
+  public readonly socials!: SocialResponseDto[];
 
   @ApiProperty({ type: () => [SoftSkillResponseDto] })
-  public readonly softSkills: SoftSkillResponseDto[];
+  public readonly softSkills!: SoftSkillResponseDto[];
 
   @ApiProperty({ type: () => [HardSkillResponseDto] })
-  public readonly hardSkills: HardSkillResponseDto[];
+  public readonly hardSkills!: HardSkillResponseDto[];
 
   @ApiProperty({ type: () => [EducationResponseDto] })
-  public readonly educations: EducationResponseDto[];
+  public readonly educations!: EducationResponseDto[];
 }

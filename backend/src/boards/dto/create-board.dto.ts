@@ -8,7 +8,7 @@ export class CreateBoardDto {
     description: 'Locale',
   })
   @IsIn(localeArray, { message: 'Must be a locale string' })
-  public readonly locale: LocaleType;
+  public readonly locale!: LocaleType;
 
   @ApiProperty({
     example: '47989942-0d09-4834-90c4-3c2954f46d73',
@@ -16,5 +16,5 @@ export class CreateBoardDto {
   })
   @IsUUID(4, { message: 'Must be a string in UUIDv4 format' })
   @IsNotEmpty({ message: 'ID is required' })
-  public readonly projectId: string;
+  public readonly projectId!: string;
 }

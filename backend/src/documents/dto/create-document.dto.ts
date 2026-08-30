@@ -16,7 +16,7 @@ export class CreateDocumentDto {
   @Matches(/^[A-Za-zА-Яа-яІіЇїЄєҐґ0-9 \-'.,_()/+]+$/, {
     message: 'Document name is incorrect',
   })
-  public readonly documentName: string;
+  public readonly documentName!: string;
 
   @ApiProperty({
     example: 'https://document.url',
@@ -32,7 +32,7 @@ export class CreateDocumentDto {
     { require_protocol: true },
     { message: 'URL must include protocol (http/https)' },
   )
-  public readonly url: string;
+  public readonly url!: string;
 
   @ApiProperty({
     example: 'e960a0fb-891a-4f02-9f39-39ac3bb08621',
@@ -40,5 +40,5 @@ export class CreateDocumentDto {
   })
   @IsUUID(4, { message: 'Must be a string in UUIDv4 format' })
   @IsNotEmpty({ message: 'Project ID is required' })
-  public readonly projectId: string;
+  public readonly projectId!: string;
 }

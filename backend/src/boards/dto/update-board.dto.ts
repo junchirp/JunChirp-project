@@ -6,5 +6,5 @@ export class UpdateBoardDto {
   @IsString({ message: 'Must be a string' })
   @Length(2, 50, { message: 'Must be between 2 and 50 characters' })
   @IsNotEmpty({ message: 'Board name is required' })
-  public readonly boardName: string;
+  public readonly boardName!: string;
 }
