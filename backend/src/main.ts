@@ -3,7 +3,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import cookieParser from 'cookie-parser';
-import * as path from 'path';
+import { resolve } from 'path';
 import helmet from 'helmet';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 import nextModule = require('next');
@@ -21,7 +21,7 @@ async function bootstrap(): Promise<void> {
   server.listen(PORT, '0.0.0.0');
 
   const dev = process.env.NODE_ENV !== 'production';
-  const frontendDir = path.resolve(__dirname, '../../frontend');
+  const frontendDir = resolve(__dirname, '../../frontend');
   const next = nextModule as unknown as (opts: {
     dev: boolean;
     dir: string;
