@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class TokenValidationResponseDto {
   @ApiProperty({ example: true, description: 'Token is valid' })
-  public readonly isValid: boolean;
+  public readonly isValid!: boolean;
 
   @ApiProperty({
     required: false,

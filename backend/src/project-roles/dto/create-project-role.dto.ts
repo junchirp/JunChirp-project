@@ -8,7 +8,7 @@ export class CreateProjectRoleDto {
   })
   @IsUUID(4, { message: 'Must be a string in UUIDv4 format' })
   @IsNotEmpty({ message: 'ID is required' })
-  public readonly projectId: string;
+  public readonly projectId!: string;
 
   @ApiProperty({
     example: 'e960a0fb-891a-4f02-9f39-39ac3bb08621',
@@ -16,5 +16,5 @@ export class CreateProjectRoleDto {
   })
   @IsUUID(4, { message: 'Must be a string in UUIDv4 format' })
   @IsNotEmpty({ message: 'ID is required' })
-  public readonly roleTypeId: string;
+  public readonly roleTypeId!: string;
 }

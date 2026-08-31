@@ -6,8 +6,8 @@ export class UsersListResponseDto {
     example: 43,
     description: 'Total number of users',
   })
-  public readonly total: number;
+  public readonly total!: number;
 
   @ApiProperty({ type: () => [UserCardResponseDto] })
-  public readonly users: UserCardResponseDto[];
+  public readonly users!: UserCardResponseDto[];
 }

@@ -9,7 +9,7 @@ export class AuthResponseDto extends UserBaseResponseDto {
     type: String,
     nullable: true,
   })
-  public readonly googleId: string | null;
+  public readonly googleId!: string | null;
 
   @ApiProperty({
     example: '113273902301932041645',
@@ -17,17 +17,17 @@ export class AuthResponseDto extends UserBaseResponseDto {
     type: String,
     nullable: true,
   })
-  public readonly discordId: string | null;
+  public readonly discordId!: string | null;
 
   @ApiProperty({ example: 'email@mail.com', description: 'Email' })
-  public readonly email: string;
+  public readonly email!: string;
 
   @ApiProperty({ example: false, description: `Is user's email verified?` })
-  public readonly isVerified: boolean;
+  public readonly isVerified!: boolean;
 
   @ApiProperty({ example: false, description: 'Is user blocked?' })
-  public readonly isBlocked: boolean;
+  public readonly isBlocked!: boolean;
 
   @ApiProperty({ type: () => RoleResponseDto })
-  public readonly role: RoleResponseDto;
+  public readonly role!: RoleResponseDto;
 }

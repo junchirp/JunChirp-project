@@ -5,17 +5,17 @@ export class EducationResponseDto {
     example: 'a4d4eb0c-1a10-455e-b9e9-1af147a77762',
     description: 'Unique identifier',
   })
-  public readonly id: string;
+  public readonly id!: string;
 
   @ApiProperty({
     example: 'Ivan Franko National University of Lviv',
     description: 'Name of the educational institution',
   })
-  public readonly institution: string;
+  public readonly institution!: string;
 
   @ApiProperty({
     example: 'Mathematics',
     description: 'Name of the specialization',
   })
-  public readonly specialization: string;
+  public readonly specialization!: string;
 }

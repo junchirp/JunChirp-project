@@ -16,7 +16,7 @@ export class CreateProjectDto {
     description: 'Locale',
   })
   @IsIn(localeArray, { message: 'Must be a locale string' })
-  public readonly locale: LocaleType;
+  public readonly locale!: LocaleType;
 
   @ApiProperty({ example: 'Project name', description: 'Project name' })
   @IsString({ message: 'Must be a string' })
@@ -25,7 +25,7 @@ export class CreateProjectDto {
   @Matches(/^(?!.*\.\.)[A-Za-zА-Яа-яІіЇїЄєҐґ0-9 \-_.',()]+$/, {
     message: 'Project name is incorrect',
   })
-  public readonly projectName: string;
+  public readonly projectName!: string;
 
   @ApiProperty({
     example: 'Project description',
@@ -37,7 +37,7 @@ export class CreateProjectDto {
   @Matches(/^(?!.*\.\.)[A-Za-zА-Яа-яІіЇїЄєҐґ0-9 \-_.',()]+$/, {
     message: 'Project description is incorrect',
   })
-  public readonly description: string;
+  public readonly description!: string;
 
   @ApiProperty({
     example: 'e960a0fb-891a-4f02-9f39-39ac3bb08621',
@@ -45,7 +45,7 @@ export class CreateProjectDto {
   })
   @IsUUID(4, { message: 'Must be a string in UUIDv4 format' })
   @IsNotEmpty({ message: 'Category ID is required' })
-  public readonly categoryId: string;
+  public readonly categoryId!: string;
 
   @ApiProperty({
     example: ['e960a0fb-891a-4f02-9f39-39ac3bb08621'],
@@ -54,5 +54,5 @@ export class CreateProjectDto {
   @IsArray({ message: 'Must be an array of IDs' })
   @IsUUID(4, { message: 'Must be a string in UUIDv4 format', each: true })
   @IsNotEmpty({ message: 'Role type ID is required', each: true })
-  public readonly rolesIds: string[];
+  public readonly rolesIds!: string[];
 }

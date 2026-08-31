@@ -8,10 +8,10 @@ export class LoginDto {
   @Matches(/^(?!.*[а-яА-ЯіІєЄїЇ])(?!.*\.ru$)/, {
     message: 'Invalid email format or contains a restricted domain',
   })
-  public readonly email: string;
+  public readonly email!: string;
 
   @ApiProperty({ example: 'q1we5?!ER234', description: 'Password' })
   @Length(8, 20, { message: 'Must be between 8 and 20 characters' })
   @IsNotEmpty({ message: 'Password is required' })
-  public readonly password: string;
+  public readonly password!: string;
 }

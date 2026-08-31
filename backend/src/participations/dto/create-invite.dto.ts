@@ -9,5 +9,5 @@ export class CreateInviteDto extends CreateRequestDto {
   })
   @IsUUID(4, { message: 'Must be a string in UUIDv4 format' })
   @IsNotEmpty({ message: 'User ID is required' })
-  public readonly userId: string;
+  public readonly userId!: string;
 }

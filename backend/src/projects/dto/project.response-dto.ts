@@ -7,8 +7,8 @@ export class ProjectResponseDto extends ProjectCardResponseDto {
     example: 'https://discord.gg/qwertyuiop',
     description: 'Discord url',
   })
-  public readonly discordUrl: string;
+  public readonly discordUrl!: string;
 
   @ApiProperty({ type: () => UserBaseResponseDto })
-  public readonly owner: UserBaseResponseDto;
+  public readonly owner!: UserBaseResponseDto;
 }

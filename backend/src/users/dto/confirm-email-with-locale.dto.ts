@@ -9,5 +9,5 @@ export class ConfirmEmailWithLocaleDto extends ConfirmEmailDto {
     description: 'Locale',
   })
   @IsIn(localeArray, { message: 'Must be a locale string' })
-  public readonly locale: LocaleType;
+  public readonly locale!: LocaleType;
 }

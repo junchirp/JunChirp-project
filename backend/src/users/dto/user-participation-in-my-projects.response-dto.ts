@@ -5,17 +5,17 @@ export class UserParticipationInMyProjectsResponseDto {
     example: 2,
     description: 'Active participations count in current user`s projects',
   })
-  public participationsCount: number;
+  public participationsCount!: number;
 
   @ApiProperty({
     example: 2,
     description: 'Active requests count in current user`s projects',
   })
-  public activeRequestsCount: number;
+  public activeRequestsCount!: number;
 
   @ApiProperty({
     example: 2,
     description: 'Active invitations count in current user`s projects',
   })
-  public activeInvitesCount: number;
+  public activeInvitesCount!: number;
 }

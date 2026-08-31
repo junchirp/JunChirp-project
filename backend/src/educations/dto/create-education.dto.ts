@@ -12,7 +12,7 @@ export class CreateEducationDto {
     message: 'Institution name is incorrect',
   })
   @IsNotEmpty({ message: 'Institution name is required' })
-  public readonly institution: string;
+  public readonly institution!: string;
 
   @ApiProperty({
     example: 'Mathematics',
@@ -24,5 +24,5 @@ export class CreateEducationDto {
     message: 'Specialization name is incorrect',
   })
   @IsNotEmpty({ message: 'Specialization name is required' })
-  public readonly specialization: string;
+  public readonly specialization!: string;
 }

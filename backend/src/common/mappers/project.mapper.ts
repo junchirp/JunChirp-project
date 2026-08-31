@@ -39,9 +39,9 @@ export class ProjectMapper {
       createdAt: project.createdAt,
       duration: project.finishedAt
         ? ProjectMapper.calculateDurationMonths(
-          project.createdAt,
-          project.finishedAt,
-        )
+            project.createdAt,
+            project.finishedAt,
+          )
         : null,
       category: ProjectCategoryMapper.toResponse(project.category),
       logo: project.logo ? ProjectLogoMapper.toResponse(project.logo) : null,
@@ -75,9 +75,9 @@ export class ProjectMapper {
       createdAt: project.createdAt,
       duration: project.finishedAt
         ? ProjectMapper.calculateDurationMonths(
-          project.createdAt,
-          project.finishedAt,
-        )
+            project.createdAt,
+            project.finishedAt,
+          )
         : null,
       category: ProjectCategoryMapper.toResponse(project.category),
       logo: project.logo ? ProjectLogoMapper.toResponse(project.logo) : null,
@@ -113,9 +113,9 @@ export class ProjectMapper {
       createdAt: project.createdAt,
       duration: project.finishedAt
         ? ProjectMapper.calculateDurationMonths(
-          project.createdAt,
-          project.finishedAt,
-        )
+            project.createdAt,
+            project.finishedAt,
+          )
         : null,
       category: ProjectCategoryMapper.toResponse(project.category),
       discordUrl: project.discordUrl,

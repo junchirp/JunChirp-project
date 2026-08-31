@@ -14,10 +14,10 @@ export class ResetPasswordDto {
   @IsPasswordNotContainName()
   @IsPasswordInBlackList()
   @IsNotEmpty({ message: 'Password is required' })
-  public readonly password: string;
+  public readonly password!: string;
 
   @ApiProperty({ example: 'token', description: 'Reset password token' })
   @IsNotEmpty({ message: 'Token is required' })
   @IsString({ message: 'Must be a string' })
-  public readonly token: string;
+  public readonly token!: string;
 }

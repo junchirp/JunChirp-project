@@ -28,6 +28,7 @@ import { DiscordModule } from './discord/discord.module';
 import { HttpModule } from '@nestjs/axios';
 import { ValidationPipe } from './common/pipes/validation/validation.pipe';
 import { CookieConfigModule } from './cookie-config/cookie-config.module';
+import { PassportConfigModule } from './passport-config/passport-config.module';
 
 @Module({
   imports: [
@@ -72,6 +73,7 @@ import { CookieConfigModule } from './cookie-config/cookie-config.module';
       }),
     }),
     CookieConfigModule,
+    PassportConfigModule,
   ],
   providers: [
     CronTasksService,

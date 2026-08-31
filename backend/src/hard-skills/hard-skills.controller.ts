@@ -26,7 +26,7 @@ import { Request } from 'express';
 import { AuthWithPasswordResponseDto } from '../users/dto/auth-with-password.response-dto';
 import { HardSkillResponseDto } from './dto/hard-skill.response-dto';
 import { User } from '../auth/decorators/user.decorator';
-import { UUIDParam } from 'src/common/decorators/UUID-param.decorator';
+import { UUIDParam } from '../common/decorators/UUID-param.decorator';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 
 @User()

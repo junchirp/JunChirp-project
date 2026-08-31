@@ -4,5 +4,5 @@ import { ProjectCardResponseDto } from '../../projects/dto/project-card.response
 
 export class ProjectRoleWithProjectResponseDto extends ProjectRoleResponseDto {
   @ApiProperty({ type: () => ProjectCardResponseDto })
-  public readonly project: ProjectCardResponseDto;
+  public readonly project!: ProjectCardResponseDto;
 }

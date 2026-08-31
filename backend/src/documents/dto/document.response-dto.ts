@@ -5,23 +5,23 @@ export class DocumentResponseDto {
     example: 'a4d4eb0c-1a10-455e-b9e9-1af147a77762',
     description: 'Unique identifier',
   })
-  public readonly id: string;
+  public readonly id!: string;
 
   @ApiProperty({
     example: 'Document name',
     description: 'Document name',
   })
-  public readonly documentName: string;
+  public readonly documentName!: string;
 
   @ApiProperty({
     example: 'https://document.url',
     description: 'Document url',
   })
-  public readonly url: string;
+  public readonly url!: string;
 
   @ApiProperty({
     example: '6446ff53-d993-46b3-a837-25d55fac1392',
     description: 'Project ID',
   })
-  public readonly projectId: string;
+  public readonly projectId!: string;
 }
