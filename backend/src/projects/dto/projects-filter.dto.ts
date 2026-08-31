@@ -41,4 +41,13 @@ export class ProjectsFilterDto extends PaginationDto {
   @IsInt({ message: 'Must be an integer number' })
   @Min(1, { message: 'Minimum allowable value is 1' })
   public readonly maxParticipants?: number;
+
+  @ApiProperty({
+    example: 'a4d4eb0c-1a10-455e-b9e9-1af147a77762',
+    description: 'Role type identifier',
+    required: false,
+  })
+  @IsUUID(4, { message: 'Must be a string in UUIDv4 format' })
+  @IsOptional()
+  public readonly roleTypeId?: string;
 }

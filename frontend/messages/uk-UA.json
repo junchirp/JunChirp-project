@@ -399,6 +399,7 @@
     "createProject": "Створити проєкт",
     "status": "Статус проєкту",
     "categoryId": "Категорія проєкту",
+    "roleTypeId": "Вакансії",
     "participantsRange": "Кількість учасників",
     "duration": {
       "title": "Тривалість",

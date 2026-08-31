@@ -399,6 +399,7 @@
     "createProject": "Create project",
     "status": "Project status",
     "categoryId": "Project category",
+    "roleTypeId": "Vacancies",
     "participantsRange": "Number of participants",
     "duration": {
       "title": "Duration",

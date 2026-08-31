@@ -52,7 +52,7 @@ export const participationsApi = mainApi.injectEndpoints({
       ],
     }),
     acceptInvite: builder.mutation<void, { id: string; projectId: string }>({
-      query: (id) => ({
+      query: ({ id }) => ({
         url: `participations/invites/${id}/accept`,
         method: 'PATCH',
       }),

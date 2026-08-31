@@ -11,16 +11,19 @@ import { useProjectParticipantsOptions } from '@/hooks/useProjectParticipantsOpt
 import { useProjectStatusOptions } from '@/hooks/useProjectStatusOptions';
 import { useShortLocale } from '@/hooks/useShortLocale';
 import { ShortLocaleType } from '@/shared/types/short-locale.type';
+import { useGetProjectRolesListQuery } from '@/api/projectRolesApi';
 
 interface FormData {
   status: 'active' | 'done' | null;
   categoryId: string;
   participantsRange: { minParticipants: number; maxParticipants: number };
+  roleTypeId: string;
 }
 
 export default function ProjectsFiltersForm(): ReactElement {
   const { filters, updateFilters } = useProjectsFilters();
-  const { data = [] } = useGetCategoriesQuery();
+  const { data: categoriesList = [] } = useGetCategoriesQuery();
+  const { data: rolesList = [] } = useGetProjectRolesListQuery();
   const t = useTranslations('projectsPage');
   const locale = useShortLocale();
   const categories = [
@@ -30,7 +33,14 @@ export default function ProjectsFiltersForm(): ReactElement {
         [locale]: t('all'),
       } as Record<ShortLocaleType, string>,
     },
-    ...data,
+    ...categoriesList,
+  ];
+  const roleTypes = [
+    {
+      id: '',
+      roleName: t('all'),
+    },
+    ...rolesList,
   ];
   const participantsOptions = useProjectParticipantsOptions();
   const statusOptions = useProjectStatusOptions();
@@ -40,6 +50,7 @@ export default function ProjectsFiltersForm(): ReactElement {
     defaultValues: {
       status: null,
       categoryId: '',
+      roleTypeId: '',
       participantsRange: { minParticipants: 0, maxParticipants: 0 },
     },
   });
@@ -48,6 +59,7 @@ export default function ProjectsFiltersForm(): ReactElement {
     form.reset({
       status: filters.status ?? null,
       categoryId: filters.categoryId ?? '',
+      roleTypeId: filters.roleTypeId ?? '',
       participantsRange: {
         minParticipants: filters.minParticipants ?? 0,
         maxParticipants: filters.maxParticipants ?? 0,
@@ -149,6 +161,32 @@ export default function ProjectsFiltersForm(): ReactElement {
                   updateFilters({
                     minParticipants: min,
                     maxParticipants: max,
+                    page: 1,
+                  });
+                }}
+              />
+            )}
+          />
+        </fieldset>
+        <fieldset className={styles['projects-filters-form__fieldset']}>
+          <Controller
+            name="roleTypeId"
+            control={form.control}
+            render={({ field }) => (
+              <Dropdown
+                {...field}
+                options={roleTypes}
+                label={`${t('roleTypeId')}:`}
+                labelSize={20}
+                labelHeight={1.4}
+                labelWeight={600}
+                labelMargin={12}
+                getOptionLabel={(o) => o.roleName}
+                getOptionValue={(o) => o.id}
+                onChange={(value) => {
+                  field.onChange(value);
+                  updateFilters({
+                    roleTypeId: value,
                     page: 1,
                   });
                 }}

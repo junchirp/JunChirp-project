@@ -20,6 +20,7 @@ const PROJECT_FILTER_KEYS = [
   'categoryId',
   'minParticipants',
   'maxParticipants',
+  'roleTypeId',
 ] as const satisfies readonly (keyof ProjectsFiltersInterface)[];
 
 const parse = (searchParams: URLSearchParams): ProjectsFiltersInterface => {
@@ -33,6 +34,7 @@ const parse = (searchParams: URLSearchParams): ProjectsFiltersInterface => {
     categoryId: searchParams.get('categoryId') ?? undefined,
     minParticipants: min !== null ? Number(min) : undefined,
     maxParticipants: max !== null ? Number(max) : undefined,
+    roleTypeId: searchParams.get('roleTypeId') ?? undefined,
   };
 };
 
