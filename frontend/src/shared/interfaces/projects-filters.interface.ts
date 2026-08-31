@@ -5,4 +5,5 @@ export interface ProjectsFiltersInterface {
   categoryId?: string;
   minParticipants?: number;
   maxParticipants?: number;
+  roleTypeId?: string;
 }

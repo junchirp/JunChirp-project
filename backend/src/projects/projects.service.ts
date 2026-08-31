@@ -33,6 +33,7 @@ interface GetProjectsOptionsInterface {
   userId: string;
   status: ProjectStatus;
   categoryId: string;
+  roleTypeId: string;
   minParticipants: number;
   maxParticipants: number;
   page: number;
@@ -69,6 +70,7 @@ export class ProjectsService {
       userId,
       status,
       categoryId,
+      roleTypeId,
       minParticipants,
       maxParticipants,
       page = 1,
@@ -80,13 +82,14 @@ export class ProjectsService {
     const where: Prisma.ProjectWhereInput = {
       ...(status && { status }),
       ...(categoryId && { categoryId }),
+      ...(roleTypeId && { roles: { some: { roleType: { id: roleTypeId } } } }),
       ...(minParticipants || maxParticipants
         ? {
-          participantsCount: {
-            ...(minParticipants && { gte: minParticipants }),
-            ...(maxParticipants && { lte: maxParticipants }),
-          },
-        }
+            participantsCount: {
+              ...(minParticipants && { gte: minParticipants }),
+              ...(maxParticipants && { lte: maxParticipants }),
+            },
+          }
         : {}),
       ...(userId && {
         OR: [
