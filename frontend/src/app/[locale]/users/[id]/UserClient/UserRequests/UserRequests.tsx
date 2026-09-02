@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactElement, useEffect, useState } from 'react';
+import { ReactElement, useState } from 'react';
 import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
 import RejectRequestPopup from '@/shared/components/RejectRequestPopup/RejectRequestPopup';
 import { UserInterface } from '@/shared/interfaces/user.interface';
@@ -16,6 +16,8 @@ import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 import { useToast } from '@/hooks/useToast';
 import { useRequestsFilters } from '@/hooks/useRequestsFilters';
 import Pagination from '@/shared/components/Pagination/Pagination';
+import { usePagination } from '@/hooks/usePagination';
+import { limitOptions } from '@/shared/constants/limit-options';
 
 interface UserRequestsProps {
   user: UserInterface;
@@ -114,32 +116,15 @@ export default function UserRequests({
     }
   };
 
-  const onPageChange = (page: number): void => {
-    if (!list) {
-      return;
-    }
-
-    const totalPages = Math.ceil(list.total / filters.requestsLimit);
-    const validPage = Math.max(1, Math.min(page, totalPages));
-
-    updateFilters({
-      requestsPage: validPage,
-    });
-  };
-
-  useEffect(() => {
-    if (!list || list.total === 0) {
-      return;
-    }
-
-    const totalPages = Math.ceil(list.total / filters.requestsLimit);
-
-    if (filters.requestsPage > totalPages) {
-      updateFilters({
-        requestsPage: totalPages,
-      });
-    }
-  }, [list, filters.requestsPage, filters.requestsLimit, updateFilters]);
+  const { onLimitChange, onPageChange } = usePagination({
+    defaultLimit: 10,
+    allowedLimits: limitOptions,
+    filters,
+    limitKey: 'requestsLimit',
+    pageKey: 'requestsPage',
+    total: list?.total ?? 0,
+    updateFilters,
+  });
 
   if (!list || list?.total === 0) {
     return null;
@@ -163,6 +148,7 @@ export default function UserRequests({
             limit={filters.requestsLimit}
             page={filters.requestsPage}
             onPageChange={onPageChange}
+            onLimitChange={onLimitChange}
           />
         )}
       </DataContainer>

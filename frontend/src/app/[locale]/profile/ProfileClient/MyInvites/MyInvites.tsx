@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactElement, useEffect, useState } from 'react';
+import { ReactElement, useState } from 'react';
 import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
 import {
   useAcceptInviteMutation,
@@ -17,6 +17,8 @@ import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 import { useRouter } from '@/i18n/routing';
 import { useInvitesFilters } from '@/hooks/useInvitesFilters';
 import Pagination from '@/shared/components/Pagination/Pagination';
+import { usePagination } from '@/hooks/usePagination';
+import { limitOptions } from '@/shared/constants/limit-options';
 
 interface MyInvitesProps {
   user: AuthInterface;
@@ -90,32 +92,15 @@ export default function MyInvites({
     }
   };
 
-  const onPageChange = (page: number): void => {
-    if (!list) {
-      return;
-    }
-
-    const totalPages = Math.ceil(list.total / filters.invitesLimit);
-    const validPage = Math.max(1, Math.min(page, totalPages));
-
-    updateFilters({
-      invitesPage: validPage,
-    });
-  };
-
-  useEffect(() => {
-    if (!list || list.total === 0) {
-      return;
-    }
-
-    const totalPages = Math.ceil(list.total / filters.invitesLimit);
-
-    if (filters.invitesPage > totalPages) {
-      updateFilters({
-        invitesPage: totalPages,
-      });
-    }
-  }, [list, filters.invitesPage, filters.invitesLimit, updateFilters]);
+  const { onLimitChange, onPageChange } = usePagination({
+    defaultLimit: 10,
+    allowedLimits: limitOptions,
+    filters,
+    limitKey: 'invitesLimit',
+    pageKey: 'invitesPage',
+    total: list?.total ?? 0,
+    updateFilters,
+  });
 
   if (!list || list?.total === 0) {
     return null;
@@ -139,6 +124,7 @@ export default function MyInvites({
             limit={filters.invitesLimit}
             page={filters.invitesPage}
             onPageChange={onPageChange}
+            onLimitChange={onLimitChange}
           />
         )}
       </DataContainer>

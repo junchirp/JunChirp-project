@@ -13,21 +13,29 @@ import { useProjectsFilters } from '@/hooks/useProjectsFilters';
 import { useAppSelector } from '@/hooks/reduxHooks';
 import authSelector from '@/redux/auth/authSelector';
 import { useTranslations } from 'next-intl';
+import { usePagination } from '@/hooks/usePagination';
+import { limitOptions } from '@/shared/constants/limit-options';
 
 export default function ProjectsClient(): ReactElement {
   const { filters, updateFilters } = useProjectsFilters();
   const user = useAppSelector(authSelector.selectRequiredUser);
   const t = useTranslations('projectsPage');
 
-  const onPageChange = (page: number): void => {
-    updateFilters({ page });
-  };
-
   const { data: list, isLoading: listLoading } = useGetProjectsQuery(filters, {
     refetchOnMountOrArgChange: true,
   });
   const { data: myProjectsList, isLoading: myProjectsLoading } =
     useGetMyProjectsQuery(user.id);
+
+  const { onPageChange, onLimitChange } = usePagination({
+    defaultLimit: 20,
+    allowedLimits: limitOptions,
+    filters,
+    limitKey: 'limit',
+    pageKey: 'page',
+    total: list?.total ?? 0,
+    updateFilters,
+  });
 
   const isLoading = listLoading ?? myProjectsLoading;
 
@@ -68,6 +76,7 @@ export default function ProjectsClient(): ReactElement {
             limit={filters.limit}
             page={filters.page}
             onPageChange={onPageChange}
+            onLimitChange={onLimitChange}
           />
         )}
       </div>
