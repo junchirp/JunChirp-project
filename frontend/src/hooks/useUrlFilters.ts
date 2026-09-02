@@ -3,8 +3,7 @@
 import { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from '@/i18n/routing';
-
-type UrlFilterValue = string | number | string[] | null | undefined;
+import { UrlFilterValueType } from '@/shared/types/url-filter-value.type';
 
 interface UseUrlFiltersOptions<T extends object> {
   keys: readonly (keyof T)[];
@@ -13,7 +12,9 @@ interface UseUrlFiltersOptions<T extends object> {
 
 export interface UseUrlFiltersResult<T extends object> {
   filters: T;
-  updateFilters: (newParams: Partial<Record<keyof T, UrlFilterValue>>) => void;
+  updateFilters: (
+    newParams: Partial<Record<keyof T, UrlFilterValueType>>,
+  ) => void;
 }
 
 export const useUrlFilters = <T extends object>({
@@ -25,7 +26,7 @@ export const useUrlFilters = <T extends object>({
   const filters = useMemo(() => parse(searchParams), [searchParams, parse]);
 
   const updateFilters = useCallback(
-    (newParams: Partial<Record<keyof T, UrlFilterValue>>): void => {
+    (newParams: Partial<Record<keyof T, UrlFilterValueType>>): void => {
       const current = new URLSearchParams(searchParams.toString());
       Object.entries(newParams).forEach(([key, value]) => {
         if (!keys.includes(key as keyof T)) {

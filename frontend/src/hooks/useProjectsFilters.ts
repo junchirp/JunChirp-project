@@ -1,17 +1,8 @@
 'use client';
 
 import { ProjectsFiltersInterface } from '@/shared/interfaces/projects-filters.interface';
-import { useUrlFilters } from './useUrlFilters';
-
-interface ProjectsFiltersResultInterface {
-  filters: ProjectsFiltersInterface;
-  updateFilters: (
-    newParams: Record<
-      string,
-      string | number | undefined | null | 'active' | 'done'
-    >,
-  ) => void;
-}
+import { useUrlFilters, UseUrlFiltersResult } from './useUrlFilters';
+import { UrlFilterValueType } from '@/shared/types/url-filter-value.type';
 
 const PROJECT_FILTER_KEYS = [
   'page',
@@ -38,34 +29,29 @@ const parse = (searchParams: URLSearchParams): ProjectsFiltersInterface => {
   };
 };
 
-export const useProjectsFilters = (): ProjectsFiltersResultInterface => {
-  const result = useUrlFilters<ProjectsFiltersInterface>({
-    keys: PROJECT_FILTER_KEYS,
-    parse,
-  });
+export const useProjectsFilters =
+  (): UseUrlFiltersResult<ProjectsFiltersInterface> => {
+    const result = useUrlFilters<ProjectsFiltersInterface>({
+      keys: PROJECT_FILTER_KEYS,
+      parse,
+    });
 
-  const updateFilters = (
-    newParams: Partial<
-      Record<
-        keyof ProjectsFiltersInterface,
-        string | number | string[] | null | undefined
-      >
-    >,
-  ): void => {
-    result.updateFilters(
-      Object.fromEntries(
-        Object.entries(newParams).map(([key, value]) => [
-          key,
-          value === 0 ? undefined : value,
-        ]),
-      ) as Partial<
-        Record<
-          keyof ProjectsFiltersInterface,
-          string | number | string[] | null | undefined
-        >
+    const updateFilters = (
+      newParams: Partial<
+        Record<keyof ProjectsFiltersInterface, UrlFilterValueType>
       >,
-    );
-  };
+    ): void => {
+      result.updateFilters(
+        Object.fromEntries(
+          Object.entries(newParams).map(([key, value]) => [
+            key,
+            value === 0 ? undefined : value,
+          ]),
+        ) as Partial<
+          Record<keyof ProjectsFiltersInterface, UrlFilterValueType>
+        >,
+      );
+    };
 
-  return { filters: result.filters, updateFilters };
-};
+    return { filters: result.filters, updateFilters };
+  };

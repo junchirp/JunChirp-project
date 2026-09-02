@@ -429,10 +429,6 @@
     "from5to10": "5 – 10",
     "moreThan10": "Більше 10"
   },
-  "pagination": {
-    "next": "Наступна",
-    "prev": "Попередня"
-  },
   "footer": {
     "aboutBtn": "Про нас",
     "supportBtn": "Підтримка",

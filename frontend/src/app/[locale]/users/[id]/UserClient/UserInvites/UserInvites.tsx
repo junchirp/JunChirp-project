@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactElement, useEffect } from 'react';
+import { ReactElement } from 'react';
 import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
 import { UserInterface } from '@/shared/interfaces/user.interface';
 import ParticipationsTable from '@/shared/components/ParticipationsTable/ParticipationsTable';
@@ -14,6 +14,8 @@ import { useToast } from '@/hooks/useToast';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 import { useInvitesFilters } from '@/hooks/useInvitesFilters';
 import Pagination from '@/shared/components/Pagination/Pagination';
+import { usePagination } from '@/hooks/usePagination';
+import { limitOptions } from '@/shared/constants/limit-options';
 
 interface UserInvitesProps {
   user: UserInterface;
@@ -66,32 +68,15 @@ export default function UserInvites({
     }
   };
 
-  const onPageChange = (page: number): void => {
-    if (!list) {
-      return;
-    }
-
-    const totalPages = Math.ceil(list.total / filters.invitesLimit);
-    const validPage = Math.max(1, Math.min(page, totalPages));
-
-    updateFilters({
-      invitesPage: validPage,
-    });
-  };
-
-  useEffect(() => {
-    if (!list || list.total === 0) {
-      return;
-    }
-
-    const totalPages = Math.ceil(list.total / filters.invitesLimit);
-
-    if (filters.invitesPage > totalPages) {
-      updateFilters({
-        invitesPage: totalPages,
-      });
-    }
-  }, [list, filters.invitesPage, filters.invitesLimit, updateFilters]);
+  const { onLimitChange, onPageChange } = usePagination({
+    defaultLimit: 10,
+    allowedLimits: limitOptions,
+    filters,
+    limitKey: 'invitesLimit',
+    pageKey: 'invitesPage',
+    total: list?.total ?? 0,
+    updateFilters,
+  });
 
   if (!list || list?.total === 0) {
     return null;
@@ -113,6 +98,7 @@ export default function UserInvites({
           limit={filters.invitesLimit}
           page={filters.invitesPage}
           onPageChange={onPageChange}
+          onLimitChange={onLimitChange}
         />
       )}
     </DataContainer>

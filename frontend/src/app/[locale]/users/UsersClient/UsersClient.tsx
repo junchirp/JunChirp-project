@@ -13,6 +13,8 @@ import { useAppSelector } from '@/hooks/reduxHooks';
 import authSelector from '@/redux/auth/authSelector';
 import { useTranslations } from 'next-intl';
 import { useGetMyProjectsQuery } from '@/api/projectsApi';
+import { usePagination } from '@/hooks/usePagination';
+import { limitOptions } from '@/shared/constants/limit-options';
 
 export default function UsersClient(): ReactElement {
   const { filters, updateFilters } = useUsersFilters();
@@ -29,9 +31,15 @@ export default function UsersClient(): ReactElement {
     [];
   const isLoading = usersLoading ?? myProjectsLoading;
 
-  const onPageChange = (page: number): void => {
-    updateFilters({ page });
-  };
+  const { onPageChange, onLimitChange } = usePagination({
+    defaultLimit: 20,
+    allowedLimits: limitOptions,
+    filters,
+    limitKey: 'limit',
+    pageKey: 'page',
+    total: usersList?.total ?? 0,
+    updateFilters,
+  });
 
   return (
     <div className={styles['users-client']}>
@@ -65,6 +73,7 @@ export default function UsersClient(): ReactElement {
             limit={filters.limit}
             page={filters.page}
             onPageChange={onPageChange}
+            onLimitChange={onLimitChange}
           />
         )}
       </div>
