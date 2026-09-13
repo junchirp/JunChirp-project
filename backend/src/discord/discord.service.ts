@@ -310,4 +310,8 @@ export class DiscordService {
       return false;
     }
   }
+
+  public getGuildId(): string {
+    return this.guildId;
+  }
 }

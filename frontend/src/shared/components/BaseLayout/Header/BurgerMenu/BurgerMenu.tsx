@@ -55,7 +55,10 @@ export default function BurgerMenu(): ReactElement {
   };
 
   const openDiscordChat = (): void => {
-    window.open('https://discord.gg/fvQfCJNjU', '_blank');
+    window.open(
+      'https://discord.com/channels/1362056776119488755/1362056776744435947',
+      '_blank',
+    );
   };
 
   useClickOutside({
