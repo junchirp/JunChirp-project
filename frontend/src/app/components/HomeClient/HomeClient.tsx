@@ -84,3 +84,4 @@ export default function HomeClient(): ReactElement {
     </>
   );
 }
+
