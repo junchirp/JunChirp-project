@@ -1,30 +1,31 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  OnModuleInit,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import {
   Client,
-  GatewayIntentBits,
   Guild,
   ChannelType,
   PermissionResolvable,
   TextChannel,
+  DiscordAPIError,
 } from 'discord.js';
 import axios from 'axios';
 import { ConfigService } from '@nestjs/config';
+import { Once } from 'necord';
+import { PrismaService } from '../prisma/prisma.service';
+import { isPrismaError } from '../common/utils/is-prisma-error';
 
 @Injectable()
-export class DiscordService implements OnModuleInit {
-  private client!: Client;
-
+export class DiscordService {
   private readonly guildId: string;
 
   private readonly botToken: string;
 
   private guild!: Guild;
 
-  public constructor(private readonly configService: ConfigService) {
+  public constructor(
+    private readonly configService: ConfigService,
+    private readonly client: Client,
+    private readonly prisma: PrismaService,
+  ) {
     this.guildId = this.configService.get<string>('DISCORD_GUILD_ID') as string;
 
     this.botToken = this.configService.get<string>(
@@ -32,18 +33,12 @@ export class DiscordService implements OnModuleInit {
     ) as string;
   }
 
-  public async onModuleInit(): Promise<void> {
-    this.client = new Client({
-      intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers],
-    });
+  @Once('clientReady')
+  public async onReady(): Promise<void> {
+    this.guild = await this.client.guilds.fetch(this.guildId);
 
-    await this.client.login(this.botToken);
-
-    this.client.once('clientReady', async () => {
-      this.guild = await this.client.guilds.fetch(this.guildId);
-      await this.guild.roles.fetch();
-      await this.guild.channels.fetch();
-    });
+    await this.guild.roles.fetch();
+    await this.guild.channels.fetch();
   }
 
   public async createProjectChannel(
@@ -124,6 +119,57 @@ export class DiscordService implements OnModuleInit {
       adminRoleId: adminRole.id,
       memberRoleId: memberRole.id,
     };
+  }
+
+  public async restoreProjectRoles(
+    userId: string,
+    discordId: string,
+  ): Promise<void> {
+    const projects = await this.prisma.project.findMany({
+      where: {
+        OR: [
+          { ownerId: userId },
+          {
+            roles: {
+              some: {
+                users: {
+                  some: {
+                    id: userId,
+                  },
+                },
+              },
+            },
+          },
+        ],
+      },
+      select: {
+        ownerId: true,
+        discordAdminRoleId: true,
+        discordMemberRoleId: true,
+        roles: {
+          where: {
+            users: {
+              some: {
+                id: userId,
+              },
+            },
+          },
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+
+    for (const project of projects) {
+      if (project.ownerId === userId) {
+        await this.addRoleToUser(discordId, project.discordAdminRoleId);
+      }
+
+      if (project.roles.length > 0) {
+        await this.addRoleToUser(discordId, project.discordMemberRoleId);
+      }
+    }
   }
 
   public async addRoleToUser(
@@ -234,5 +280,34 @@ export class DiscordService implements OnModuleInit {
     await channel.edit({
       name: projectName,
     });
+  }
+
+  public async userExists(userId: string, discordId: string): Promise<boolean> {
+    try {
+      await this.client.users.fetch(discordId);
+      return true;
+    } catch (error) {
+      if (!(error instanceof DiscordAPIError) || error.code !== 10013) {
+        throw error;
+      }
+
+      try {
+        await this.prisma.user.update({
+          where: {
+            id: userId,
+            discordId,
+          },
+          data: {
+            discordId: null,
+          },
+        });
+      } catch (e) {
+        if (isPrismaError(e) && e.code === 'P2025') {
+          return false;
+        }
+        throw e;
+      }
+      return false;
+    }
   }
 }

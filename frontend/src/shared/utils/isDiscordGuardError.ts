@@ -1,4 +1,4 @@
-export function isGuardError(error?: unknown): boolean {
+export function isDiscordGuardError(error?: unknown): boolean {
   return !!(
     error &&
     typeof error === 'object' &&
@@ -6,6 +6,6 @@ export function isGuardError(error?: unknown): boolean {
     error.data &&
     typeof error.data === 'object' &&
     'code' in error.data &&
-    error.data.code === 'GUARD_ERROR'
+    error.data.code === 'DISCORD_NOT_CONNECTED'
   );
 }

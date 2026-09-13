@@ -81,6 +81,7 @@
     "ioredis": "^5.11.1",
     "lexical": "^0.49.0",
     "multer": "^2.3.0",
+    "necord": "^6.14.0",
     "next": "^16.3.3",
     "next-intl": "^4.14.1",
     "passport": "^0.7.0",

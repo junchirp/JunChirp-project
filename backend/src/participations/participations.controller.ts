@@ -231,9 +231,7 @@ export class ParticipationsController {
   }
 
   @Owner()
-  @ApiOperation({
-    summary: 'Get current project invites',
-  })
+  @ApiOperation({ summary: 'Get current project invites' })
   @ApiOkResponse({ type: [UserParticipationResponseDto] })
   @ApiForbiddenResponse({
     description:
@@ -247,9 +245,7 @@ export class ParticipationsController {
   }
 
   @Owner()
-  @ApiOperation({
-    summary: 'Get current project requests',
-  })
+  @ApiOperation({ summary: 'Get current project requests' })
   @ApiOkResponse({ type: [UserParticipationResponseDto] })
   @ApiForbiddenResponse({
     description:
@@ -309,9 +305,7 @@ export class ParticipationsController {
     return this.participationsService.handleUserRemovalFromProject(id, userId);
   }
 
-  @ApiOperation({
-    summary: 'Get current user invites',
-  })
+  @ApiOperation({ summary: 'Get current user invites' })
   @ApiOkResponse({ type: InvitesListResponseDto })
   @ApiForbiddenResponse({ description: 'Access denied: email not confirmed' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
@@ -323,9 +317,7 @@ export class ParticipationsController {
     return this.participationsService.getInvitesWithProjects(query, id);
   }
 
-  @ApiOperation({
-    summary: 'Get current user requests',
-  })
+  @ApiOperation({ summary: 'Get current user requests' })
   @ApiOkResponse({ type: RequestsListResponseDto })
   @ApiForbiddenResponse({ description: 'Access denied: email not confirmed' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })

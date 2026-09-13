@@ -9,35 +9,25 @@ import { ProjectRoleInterface } from '@/shared/interfaces/project-role.interface
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
 import { ProjectCardInterface } from '@/shared/interfaces/project-card.interface';
-import { AuthInterface } from '@/shared/interfaces/auth.interface';
 
 interface MemberFooterProps {
   project: ProjectCardInterface;
-  user: AuthInterface;
   vacantRoles: ProjectRoleInterface[];
   size: 'small' | 'large';
+  checkDiscord: () => Promise<boolean>;
   className?: string;
 }
 
-export default function MemberFooter({
-  project,
-  user,
-  vacantRoles,
-  size,
-  className,
-}: MemberFooterProps): ReactElement {
+export default function MemberFooter(props: MemberFooterProps): ReactElement {
+  const { project, vacantRoles, size, checkDiscord, className } = props;
   const tButtons = useTranslations('buttons');
   const router = useRouter();
-  const isMyProject =
-    project.roles.some((role) => role.users.some((u) => u.id === user.id)) ||
-    project.ownerId === user.id;
 
-  const goProject = (): void => {
-    if (isMyProject) {
-      router.push(`/projects/${project.id}/dashboard`);
-    } else {
-      router.push(`/projects/${project.id}`);
+  const goProject = async (): Promise<void> => {
+    if (!(await checkDiscord())) {
+      return;
     }
+    router.push(`/projects/${project.id}/dashboard`);
   };
 
   return (

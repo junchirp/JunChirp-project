@@ -18,7 +18,7 @@ interface BoardMenuProps {
 
 export default function BoardMenu(props: BoardMenuProps): ReactElement {
   const { boardsCount, currentBoard, onDuplicate, onDelete, onRename } = props;
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLElement>(null);
   const buttonRef = useRef<HTMLDivElement>(null);
   const t = useTranslations('boards.menu');

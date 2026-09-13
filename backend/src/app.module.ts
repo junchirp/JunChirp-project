@@ -8,7 +8,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { CronTasksService } from './common/services/cron-tasks/cron-tasks.service';
 import { RolesModule } from './roles/roles.module';
 import { RedisModule } from './redis/redis.module';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { CsrfModule } from './csrf/csrf.module';
 import { SocialsModule } from './socials/socials.module';
@@ -29,6 +29,7 @@ import { HttpModule } from '@nestjs/axios';
 import { ValidationPipe } from './common/pipes/validation/validation.pipe';
 import { CookieConfigModule } from './cookie-config/cookie-config.module';
 import { PassportConfigModule } from './passport-config/passport-config.module';
+import { HttpThrottlerGuard } from './common/guards/http-throttler/http-throttler.guard';
 
 @Module({
   imports: [
@@ -79,7 +80,7 @@ import { PassportConfigModule } from './passport-config/passport-config.module';
     CronTasksService,
     {
       provide: APP_GUARD,
-      useClass: ThrottlerGuard,
+      useClass: HttpThrottlerGuard,
     },
     {
       provide: APP_PIPE,

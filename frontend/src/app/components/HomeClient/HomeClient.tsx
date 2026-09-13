@@ -11,12 +11,32 @@ import CallToAction from './CallToAction/CallToAction';
 import NextLevel from './NextLevel/NextLevel';
 import ThreeSteps from './ThreeSteps/ThreeSteps';
 import WhatWeNeed from './WhatWeNeed/WhatWeNeed';
+import { useCheckDiscordQuery } from '@/api/authApi';
+import { isDiscordGuardError } from '@/shared/utils/isDiscordGuardError';
 
 export default function HomeClient(): ReactElement {
   const user = useAppSelector(authSelector.selectUser);
   const loadingStatus = useAppSelector(authSelector.selectLoadingStatus);
 
-  if (loadingStatus !== 'loaded') {
+  const {
+    isSuccess: isDiscordConnected,
+    error: discordError,
+    isLoading: isDiscordLoading,
+  } = useCheckDiscordQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
+
+  const discordStatus = isDiscordConnected
+    ? 'connected'
+    : isDiscordGuardError(discordError)
+      ? 'not-connected'
+      : 'unknown';
+
+  if (
+    loadingStatus !== 'loaded' ||
+    isDiscordLoading ||
+    discordStatus === 'unknown'
+  ) {
     return <HomeSkeleton />;
   }
 
@@ -26,7 +46,7 @@ export default function HomeClient(): ReactElement {
         <HomeBanner user={user} />
         <Quote />
         <ThreeSteps />
-        <WhatWeNeed user={user} />
+        <WhatWeNeed user={user} discordStatus={discordStatus} />
         <NextLevel />
         <CallToAction user={user} />
       </div>

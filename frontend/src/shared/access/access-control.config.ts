@@ -1,5 +1,6 @@
 import { AccessResolverType, ModeType } from './access-control.type';
 import { isGuardError } from '@/shared/utils/isGuardError';
+import { isDiscordGuardError } from '@/shared/utils/isDiscordGuardError';
 
 export const ACCESS_RESOLVERS: Record<ModeType, AccessResolverType> = {
   'no-auth': ({ user }) => {
@@ -30,7 +31,7 @@ export const ACCESS_RESOLVERS: Record<ModeType, AccessResolverType> = {
     return null;
   },
 
-  discord: ({ user, url }) => {
+  discord: ({ user, url, error }) => {
     if (!user) {
       return `/auth/login?next=${encodeURIComponent(url)}`;
     }
@@ -39,8 +40,8 @@ export const ACCESS_RESOLVERS: Record<ModeType, AccessResolverType> = {
       return '/';
     }
 
-    if (!user.discordId) {
-      return '/projects';
+    if (isDiscordGuardError(error)) {
+      return '/projects?connect=discord';
     }
 
     return null;
@@ -55,8 +56,8 @@ export const ACCESS_RESOLVERS: Record<ModeType, AccessResolverType> = {
       return '/';
     }
 
-    if (!user.discordId) {
-      return `/projects/${projectId}`;
+    if (isDiscordGuardError(error)) {
+      return `/projects/${projectId}?connect=discord`;
     }
 
     if (isGuardError(error)) {

@@ -1,9 +1,18 @@
-import { Body, Controller, Get, Patch, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Patch,
+  Query,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Auth } from '../auth/decorators/auth.decorator';
 import {
   ApiForbiddenResponse,
   ApiHeader,
+  ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -34,6 +43,19 @@ export class UsersController {
   ): Promise<CountResponseDto> {
     return this.usersService.getActiveProjectsCount(id);
   }
+
+  @User('discord')
+  @ApiOperation({ summary: 'Check user discord connection' })
+  @ApiNoContentResponse()
+  @ApiForbiddenResponse({
+    description:
+      'Access denied: email not confirmed / Access denied: discord not confirmed',
+  })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Get('me/check-discord')
+  // eslint-disable-next-line
+  public async checkDiscord(): Promise<void> {}
 
   @ApiOperation({ summary: 'Get current user (base info in edit mode)' })
   @ApiOkResponse({ type: AuthResponseDto })

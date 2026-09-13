@@ -9,6 +9,7 @@ import { SupportProvider } from '@/providers/SupportProvider';
 import { NextIntlClientProvider } from 'next-intl';
 import OAuthDiscordHandler from './OAuthDiscordHandler/OAuthDiscordHandler';
 import OAuthGoogleHandler from './OAuthGoogleHandler/OAuthGoogleHandler';
+import { DiscordProvider } from '@/providers/DiscordProvider';
 
 interface BaseLayoutProps {
   children: ReactNode;
@@ -26,14 +27,16 @@ export default function BaseLayout({
           <ReduxProvider>
             <MessageProvider>
               <SupportProvider>
-                <UserLoader />
-                <OAuthDiscordHandler />
-                <OAuthGoogleHandler />
-                <div className={styles.body__container}>
-                  <Header />
-                  <div className={styles.body__inner}>{children}</div>
-                  <FooterWrapper />
-                </div>
+                <DiscordProvider>
+                  <UserLoader />
+                  <OAuthDiscordHandler />
+                  <OAuthGoogleHandler />
+                  <div className={styles.body__container}>
+                    <Header />
+                    <div className={styles.body__inner}>{children}</div>
+                    <FooterWrapper />
+                  </div>
+                </DiscordProvider>
               </SupportProvider>
             </MessageProvider>
           </ReduxProvider>

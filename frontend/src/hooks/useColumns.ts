@@ -7,7 +7,7 @@ export const useColumns = (options?: {
   breakpoint?: number;
 }): number => {
   const { fixed, breakpoint = 0 } = options ?? {};
-  const [columns, setColumns] = useState<number>(fixed ?? 1);
+  const [columns, setColumns] = useState(fixed ?? 1);
 
   useEffect(() => {
     if (fixed !== undefined) {

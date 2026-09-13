@@ -16,7 +16,7 @@ interface ColumnMenuProps {
 
 export default function ColumnMenu(props: ColumnMenuProps): ReactElement {
   const { columnsCount, currentColumn, onDelete, onRename } = props;
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLElement>(null);
   const buttonRef = useRef<HTMLDivElement>(null);
   const t = useTranslations('boards.menu');

@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -454,82 +455,94 @@ export class ParticipationsService {
 
   public async acceptRequest(id: string): Promise<void> {
     try {
-      const { discordId, discordMemberRoleId } = await this.prisma.$transaction(
-        async (prisma) => {
-          const request = await prisma.participationRequest.findFirstOrThrow({
-            where: {
-              id,
-              status: {
-                in: [ParticipationStatus.pending, ParticipationStatus.reserved],
-              },
-            },
-            include: {
-              projectRole: {
-                include: {
-                  project: true,
-                  users: true,
-                },
-              },
-              user: true,
-            },
-          });
-
-          if (request.projectRole.users.length === request.projectRole.slots) {
-            throw new ConflictException('The role has no empty slots');
-          }
-
-          if (request.user.activeProjectsCount >= 2) {
-            throw new BadRequestException(
-              'User cannot have more than 2 active projects',
-            );
-          }
-
-          await prisma.projectRole.update({
-            where: { id: request.projectRoleId },
-            data: {
-              users: {
-                connect: { id: request.userId },
-              },
-            },
-          });
-
-          await prisma.project.update({
-            where: { id: request.projectRole.projectId },
-            data: {
-              participantsCount: {
-                increment: 1,
-              },
-            },
-          });
-
-          await prisma.user.update({
-            where: { id: request.userId },
-            data: {
-              activeProjectsCount: {
-                increment: 1,
-              },
-            },
-          });
-
-          await prisma.participationRequest.update({
-            where: { id },
-            data: {
-              status: ParticipationStatus.accepted,
-              acceptedAt: new Date(),
-            },
-          });
-
-          return {
-            discordId: request.user.discordId,
-            discordMemberRoleId:
-              request.projectRole.project.discordMemberRoleId,
-          };
+      const request = await this.prisma.participationRequest.findFirstOrThrow({
+        where: {
+          id,
+          status: {
+            in: [ParticipationStatus.pending, ParticipationStatus.reserved],
+          },
         },
+        include: {
+          projectRole: {
+            include: {
+              project: true,
+              users: true,
+            },
+          },
+          user: true,
+        },
+      });
+
+      if (!request.user.discordId) {
+        throw new ForbiddenException({
+          code: 'DISCORD_NOT_CONNECTED',
+          message: 'User must have a connected Discord account',
+        });
+      }
+
+      const discordExists = await this.discordService.userExists(
+        request.userId,
+        request.user.discordId,
       );
 
-      if (discordId) {
-        await this.discordService.addRoleToUser(discordId, discordMemberRoleId);
+      if (!discordExists) {
+        throw new ForbiddenException({
+          code: 'DISCORD_NOT_CONNECTED',
+          message: 'User must have a connected Discord account',
+        });
       }
+
+      await this.prisma.$transaction(async (prisma) => {
+        if (request.projectRole.users.length === request.projectRole.slots) {
+          throw new ConflictException('The role has no empty slots');
+        }
+
+        if (request.user.activeProjectsCount >= 2) {
+          throw new BadRequestException(
+            'User cannot have more than 2 active projects',
+          );
+        }
+
+        await prisma.projectRole.update({
+          where: { id: request.projectRoleId },
+          data: {
+            users: {
+              connect: { id: request.userId },
+            },
+          },
+        });
+
+        await prisma.project.update({
+          where: { id: request.projectRole.projectId },
+          data: {
+            participantsCount: {
+              increment: 1,
+            },
+          },
+        });
+
+        await prisma.user.update({
+          where: { id: request.userId },
+          data: {
+            activeProjectsCount: {
+              increment: 1,
+            },
+          },
+        });
+
+        await prisma.participationRequest.update({
+          where: { id },
+          data: {
+            status: ParticipationStatus.accepted,
+            acceptedAt: new Date(),
+          },
+        });
+      });
+
+      await this.discordService.addRoleToUser(
+        request.user.discordId,
+        request.projectRole.project.discordMemberRoleId,
+      );
     } catch (error) {
       throwPrismaError(error, {
         code: 'P2025',

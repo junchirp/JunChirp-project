@@ -145,12 +145,11 @@ export class AuthController {
   // eslint-disable-next-line
   public async googleAuth(): Promise<void> {}
 
-  @ApiOperation({ summary: 'Initiate Google OAuth2 login' })
+  @ApiOperation({ summary: 'Callback endpoint for Google authentication' })
   @ApiResponse({ status: HttpStatus.FOUND })
   @HttpCode(HttpStatus.FOUND)
   @Get('google/callback')
   @UseGuards(GoogleCallbackGuard)
-  @ApiOperation({ summary: 'Callback endpoint for Google authentication' })
   public async googleRedirect(
     @Ip() ip: string,
     @Req() req: Request,
@@ -174,7 +173,7 @@ export class AuthController {
   public async redirectToDiscord(): Promise<void> {}
 
   @Discord('callback')
-  @ApiOperation({ summary: 'Initiate Discord OAuth2 login' })
+  @ApiOperation({ summary: 'Callback endpoint for Discord OAuth2 login' })
   @ApiResponse({ status: HttpStatus.FOUND })
   @HttpCode(HttpStatus.FOUND)
   @Get('discord/callback')

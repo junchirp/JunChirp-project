@@ -6,38 +6,56 @@ import Menu from '@/assets/icons/menu.svg';
 import X from '@/assets/icons/x.svg';
 import Image from 'next/image';
 import { usePathname, useRouter } from '@/i18n/routing';
-import { useLogoutMutation } from '@/api/authApi';
+import { useLazyCheckDiscordQuery, useLogoutMutation } from '@/api/authApi';
 import { useTranslations } from 'next-intl';
-import DiscordBanner from '@/shared/components/DiscordBanner/DiscordBanner';
 import { useClickOutside } from '@/hooks/useClickOutside';
+import { useDiscord } from '@/hooks/useDiscord';
+import { isDiscordGuardError } from '@/shared/utils/isDiscordGuardError';
+import Spinner from '@/shared/components/Spinner/Spinner';
 
-interface BurgerMenuProps {
-  isDiscord: boolean;
-}
-
-export default function BurgerMenu({
-  isDiscord,
-}: BurgerMenuProps): ReactElement {
+export default function BurgerMenu(): ReactElement {
   const router = useRouter();
   const pathname = usePathname();
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLElement>(null);
   const [logoutMutation] = useLogoutMutation();
+  const openDiscordConnect = useDiscord();
+  const [checkDiscord] = useLazyCheckDiscordQuery();
+  const [discordStatus, setDiscordStatus] = useState<
+    'unknown' | 'connected' | 'not-connected'
+  >('unknown');
+  const [isCheckingDiscord, setIsCheckingDiscord] = useState(false);
   const t = useTranslations('burgerMenu');
-  const [isBanner, setBanner] = useState(false);
 
-  const toggleMenu = (): void => setIsOpen((prev) => !prev);
   const closeMenu = (): void => setIsOpen(false);
+  const toggleMenu = async (): Promise<void> => {
+    if (isOpen) {
+      closeMenu();
+      return;
+    }
+
+    setIsCheckingDiscord(true);
+
+    try {
+      await checkDiscord().unwrap();
+      setDiscordStatus('connected');
+    } catch (error) {
+      if (isDiscordGuardError(error)) {
+        setDiscordStatus('not-connected');
+      }
+    } finally {
+      setIsCheckingDiscord(false);
+      setIsOpen(true);
+    }
+  };
 
   const isActive = (path: string): boolean => {
     return pathname === path;
   };
 
-  const closeBanner = (): void => setBanner(false);
-  const openBanner = (): void => setBanner(true);
   const openDiscordChat = (): void => {
-    window.open('https://discord.gg/x2rdtS2Vbz', '_blank');
+    window.open('https://discord.gg/vAXxCTmhQ', '_blank');
   };
 
   useClickOutside({
@@ -68,96 +86,88 @@ export default function BurgerMenu({
   };
 
   return (
-    <>
-      <div className={styles['burger-menu']}>
-        <button
-          onClick={toggleMenu}
-          className={styles['burger-menu__button']}
-          ref={buttonRef}
-        >
-          {isOpen ? (
-            <X className={styles['burger-menu__icon']} />
-          ) : (
-            <Menu className={styles['burger-menu__icon']} />
-          )}
-        </button>
+    <div className={styles['burger-menu']}>
+      <button
+        onClick={toggleMenu}
+        className={styles['burger-menu__button']}
+        ref={buttonRef}
+      >
+        {isCheckingDiscord ? (
+          <Spinner size={40} />
+        ) : isOpen ? (
+          <X className={styles['burger-menu__icon']} />
+        ) : (
+          <Menu className={styles['burger-menu__icon']} />
+        )}
+      </button>
 
-        {isOpen && (
-          <nav className={styles['burger-menu__menu']} ref={menuRef}>
-            <button
-              className={`${styles['burger-menu__menu-item']} ${isActive('/profile') && styles['burger-menu__menu-item--active']}`}
-              onClick={() => handleRedirect('/profile')}
-            >
-              <Image
-                src="/images/profile.svg"
-                alt="profile"
-                width={48}
-                height={48}
-              />
-              <span>{t('profile')}</span>
-            </button>
-            <button
-              className={`${styles['burger-menu__menu-item']} ${isActive('/projects') && styles['burger-menu__menu-item--active']}`}
-              onClick={() => handleRedirect('/projects')}
-            >
-              <Image
-                src="/images/projects.svg"
-                alt="projects"
-                width={48}
-                height={48}
-              />
-              <span>{t('projects')}</span>
-            </button>
-            <button
-              className={`${styles['burger-menu__menu-item']} ${isActive('/users') && styles['burger-menu__menu-item--active']}`}
-              onClick={() => handleRedirect('/users')}
-            >
-              <Image
-                src="/images/users.svg"
-                alt="users"
-                width={48}
-                height={48}
-              />
-              <span>{t('users')}</span>
-            </button>
-            {isDiscord ? (
-              <button
-                className={styles['burger-menu__menu-item']}
-                onClick={openDiscordChat}
-              >
-                <Image
-                  src="/images/chat.svg"
-                  alt="chat"
-                  width={48}
-                  height={48}
-                />
-                <span>{t('chat')}</span>
-              </button>
-            ) : (
-              <button
-                className={styles['burger-menu__menu-item']}
-                onClick={openBanner}
-              >
-                <Image
-                  src="/images/chat.svg"
-                  alt="chat"
-                  width={48}
-                  height={48}
-                />
-                <span>{t('joinCommunity')}</span>
-              </button>
-            )}
+      {isOpen && (
+        <nav className={styles['burger-menu__menu']} ref={menuRef}>
+          <button
+            className={`
+                  ${styles['burger-menu__menu-item']}
+                  ${isActive('/profile') && styles['burger-menu__menu-item--active']}
+                `}
+            onClick={() => handleRedirect('/profile')}
+          >
+            <Image
+              src="/images/profile.svg"
+              alt="profile"
+              width={48}
+              height={48}
+            />
+            <span>{t('profile')}</span>
+          </button>
+          <button
+            className={`${styles['burger-menu__menu-item']} ${isActive('/projects') && styles['burger-menu__menu-item--active']}`}
+            onClick={() => handleRedirect('/projects')}
+          >
+            <Image
+              src="/images/projects.svg"
+              alt="projects"
+              width={48}
+              height={48}
+            />
+            <span>{t('projects')}</span>
+          </button>
+          <button
+            className={`${styles['burger-menu__menu-item']} ${isActive('/users') && styles['burger-menu__menu-item--active']}`}
+            onClick={() => handleRedirect('/users')}
+          >
+            <Image src="/images/users.svg" alt="users" width={48} height={48} />
+            <span>{t('users')}</span>
+          </button>
+          {discordStatus === 'connected' ? (
             <button
               className={styles['burger-menu__menu-item']}
-              onClick={handleLogout}
+              onClick={openDiscordChat}
             >
-              <Image src="/images/exit.svg" alt="exit" width={48} height={48} />
-              <span>{t('signOut')}</span>
+              <Image src="/images/chat.svg" alt="chat" width={48} height={48} />
+              <span>{t('chat')}</span>
             </button>
-          </nav>
-        )}
-      </div>
-      {isBanner && <DiscordBanner closeBanner={closeBanner} isCancelButton />}
-    </>
+          ) : (
+            <button
+              className={styles['burger-menu__menu-item']}
+              onClick={() =>
+                openDiscordConnect({
+                  withWrapper: false,
+                  isCancelButton: true,
+                })
+              }
+            >
+              <Image src="/images/chat.svg" alt="chat" width={48} height={48} />
+              <span>{t('joinCommunity')}</span>
+            </button>
+          )}
+          <button
+            className={styles['burger-menu__menu-item']}
+            onClick={handleLogout}
+          >
+            <Image src="/images/exit.svg" alt="exit" width={48} height={48} />
+            <span>{t('signOut')}</span>
+          </button>
+        </nav>
+      )}
+    </div>
   );
 }

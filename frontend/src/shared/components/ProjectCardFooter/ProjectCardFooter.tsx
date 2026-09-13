@@ -11,6 +11,9 @@ import RequestFooter from './RequestFooter/RequestFooter';
 import MemberFooter from './MemberFooter/MemberFooter';
 import GuestClosedFooter from './GuestClosedFooter/GuestClosedFooter';
 import GuestEmptyFooter from './GuestEmptyFooter/GuestEmptyFooter';
+import { useLazyCheckDiscordQuery } from '@/api/authApi';
+import { useDiscord } from '@/hooks/useDiscord';
+import { isDiscordGuardError } from '@/shared/utils/isDiscordGuardError';
 
 type FooterResultType =
   | { variant: 'guest-invite'; invite: MyParticipationInterface }
@@ -49,6 +52,20 @@ export default function ProjectCardFooter({
   const isMyProject =
     project.roles.some((role) => role.users.some((u) => u.id === user.id)) ||
     project.ownerId === user.id;
+  const [checkDiscordQuery] = useLazyCheckDiscordQuery();
+  const openDiscordConnect = useDiscord();
+
+  const checkDiscord = async (): Promise<boolean> => {
+    try {
+      await checkDiscordQuery().unwrap();
+      return true;
+    } catch (error) {
+      if (isDiscordGuardError(error)) {
+        openDiscordConnect();
+      }
+      return false;
+    }
+  };
 
   const assertNever = (): never => {
     throw new Error('Unexpected variant');
@@ -81,7 +98,6 @@ export default function ProjectCardFooter({
         <InviteFooter
           currentInvite={footer.invite}
           vacantRoles={vacantRoles}
-          user={user}
           className={className}
           size={size}
           project={project}
@@ -111,10 +127,10 @@ export default function ProjectCardFooter({
       return (
         <MemberFooter
           project={project}
-          user={user}
           vacantRoles={vacantRoles}
           className={className}
           size={size}
+          checkDiscord={checkDiscord}
         />
       );
     case 'guest-closed':

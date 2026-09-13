@@ -35,7 +35,6 @@ import {
   useGetHardSkillsQuery,
 } from '@/api/hardSkillsApi';
 import { useAppSelector } from '@/hooks/reduxHooks';
-import DiscordBanner from '@/shared/components/DiscordBanner/DiscordBanner';
 import MyRequests from './MyRequests/MyRequests';
 import MyInvites from './MyInvites/MyInvites';
 import Button from '@/shared/components/Button/Button';
@@ -43,6 +42,9 @@ import { useTranslations } from 'next-intl';
 import { profileActionTranslationKeys } from '@/shared/constants/profile-action-translation-keys';
 import { useRouter } from '@/i18n/routing';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
+import { useDiscord } from '@/hooks/useDiscord';
+import { isDiscordGuardError } from '@/shared/utils/isDiscordGuardError';
+import { useLazyCheckDiscordQuery } from '@/api/authApi';
 
 export default function ProfileClient(): ReactElement {
   const router = useRouter();
@@ -73,7 +75,8 @@ export default function ProfileClient(): ReactElement {
     useGetSoftSkillsQuery();
   const { data: hardSkills = [], isLoading: hardSkillsLoading } =
     useGetHardSkillsQuery();
-  const [isBanner, setBanner] = useState(false);
+  const openDiscordConnect = useDiscord();
+  const [checkDiscord] = useLazyCheckDiscordQuery();
   const desiredRoles = user.desiredRoles;
   const isLoading =
     socialsLoading ??
@@ -96,10 +99,17 @@ export default function ProfileClient(): ReactElement {
   }, [action]);
 
   useEffect(() => {
-    if (!user.discordId) {
-      setBanner(true);
-    }
-  }, [user]);
+    void checkDiscord()
+      .unwrap()
+      .catch((error) => {
+        if (isDiscordGuardError(error)) {
+          openDiscordConnect({
+            withWrapper: false,
+            isCancelButton: false,
+          });
+        }
+      });
+  }, [checkDiscord, openDiscordConnect]);
 
   const t = useTranslations('profile');
 
@@ -349,10 +359,6 @@ export default function ProfileClient(): ReactElement {
     }
   };
 
-  const closeBanner = (): void => {
-    setBanner(false);
-  };
-
   const handleRedirect = (): void => {
     if (action) {
       showToast({
@@ -471,7 +477,6 @@ export default function ProfileClient(): ReactElement {
           isOpen={isModalOpen}
         />
       )}
-      {isBanner && <DiscordBanner closeBanner={closeBanner} />}
     </>
   );
 }
