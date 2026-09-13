@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactElement, useState } from 'react';
+import { ReactElement } from 'react';
 import styles from './ParticipationRequestForm.module.scss';
 import { Controller, useForm } from 'react-hook-form';
 import RadioGroup from '@/shared/components/RadioGroup/RadioGroup';
@@ -17,11 +17,12 @@ import { useTranslations } from 'next-intl';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
-import DiscordBanner from '@/shared/components/DiscordBanner/DiscordBanner';
 import { useToast } from '@/hooks/useToast';
 import { useCreateRequestMutation } from '@/api/participationsApi';
 import { ProjectRoleInterface } from '@/shared/interfaces/project-role.interface';
 import { useShortLocale } from '@/hooks/useShortLocale';
+import { useDiscord } from '@/hooks/useDiscord';
+import { isDiscordGuardError } from '@/shared/utils/isDiscordGuardError';
 
 interface ParticipationRequestFormProps {
   project: ProjectCardInterface;
@@ -56,12 +57,12 @@ export default function ParticipationRequestForm({
       userId: user.id,
     },
   });
-  const [isRequestBanner, setRequestBanner] = useState(false);
   const { showToast, isActive } = useToast();
   const locale = useShortLocale();
   const [createRequest, { isLoading: requestLoading }] =
     useCreateRequestMutation();
   const roleTypeIds = user.desiredRoles.map((role) => role.id);
+  const openDiscordConnect = useDiscord();
   const labelClassNames = [
     styles['participation-request-form__label'],
     size === 'small'
@@ -72,14 +73,7 @@ export default function ParticipationRequestForm({
     .filter(Boolean)
     .join(' ');
 
-  const closeRequestBanner = (): void => setRequestBanner(false);
-
   const sendRequest = async (data: FormData): Promise<void> => {
-    if (!user.discordId) {
-      setRequestBanner(true);
-      return;
-    }
-
     if (isActive(ToastKeysEnum.PARTICIPATION_REQUEST)) {
       return;
     }
@@ -94,6 +88,11 @@ export default function ParticipationRequestForm({
         actionKey: ToastKeysEnum.PARTICIPATION_REQUEST,
       });
     } catch (error) {
+      if (isDiscordGuardError(error)) {
+        openDiscordConnect();
+        return;
+      }
+
       const errorData = error as
         | ((FetchBaseQueryError | SerializedError) & {
             status: number;
@@ -121,53 +120,44 @@ export default function ParticipationRequestForm({
   };
 
   return (
-    <>
-      <form
-        className={styles['participation-request-form']}
-        onSubmit={handleSubmit(sendRequest)}
-      >
-        <div className={styles['participation-request-form__inner']}>
-          <p className={labelClassNames}>{tForm('requestForm.field')}:</p>
-          <Controller
-            name="projectRoleId"
-            control={control}
-            render={({ field }) => (
-              <RadioGroup
-                {...field}
-                options={vacantRoles}
-                name="roles"
-                roleTypeIds={roleTypeIds}
-              />
-            )}
-          />
-        </div>
-        <div
-          className={`
+    <form
+      className={styles['participation-request-form']}
+      onSubmit={handleSubmit(sendRequest)}
+    >
+      <div className={styles['participation-request-form__inner']}>
+        <p className={labelClassNames}>{tForm('requestForm.field')}:</p>
+        <Controller
+          name="projectRoleId"
+          control={control}
+          render={({ field }) => (
+            <RadioGroup
+              {...field}
+              options={vacantRoles}
+              name="roles"
+              roleTypeIds={roleTypeIds}
+            />
+          )}
+        />
+      </div>
+      <div
+        className={`
             ${styles['participation-request-form__actions']}
             ${
               size === 'small'
                 ? styles['participation-request-form__actions--small']
                 : styles['participation-request-form__actions--large']
             }
-          `}
+         `}
+      >
+        <Button
+          color="green"
+          type="submit"
+          disabled={!isValid || !vacantRoles.length}
+          loading={requestLoading}
         >
-          <Button
-            color="green"
-            type="submit"
-            disabled={!isValid || !vacantRoles.length}
-            loading={requestLoading}
-          >
-            {tButtons('sendRequest')}
-          </Button>
-        </div>
-      </form>
-      {isRequestBanner && (
-        <DiscordBanner
-          closeBanner={closeRequestBanner}
-          isCancelButton
-          withWrapper
-        />
-      )}
-    </>
+          {tButtons('sendRequest')}
+        </Button>
+      </div>
+    </form>
   );
 }

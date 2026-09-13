@@ -503,6 +503,7 @@ export class AuthService {
 
       await this.discordService.addToGuild(discordId, accessToken);
       await this.usersService.linkDiscord(userId, discordId);
+      await this.discordService.restoreProjectRoles(userId, discordId);
       await this.redisService.del(state);
 
       const safeReturnUrl = error
@@ -594,7 +595,6 @@ export class AuthService {
             status: 'success',
             authType,
           });
-      console.log(returnUrl, safeReturnUrl);
 
       const redirectUrl = `${frontendBaseUrl}${safeReturnUrl}`;
 

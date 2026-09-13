@@ -11,7 +11,7 @@ export interface AccessContextInterface {
   user: AuthInterface | null;
   url: string;
   projectId?: string;
-  data?: ProjectInterface | ProjectCardExpandedInterface;
+  data?: ProjectInterface | ProjectCardExpandedInterface | void;
   error?: FetchBaseQueryError | SerializedError;
 }
 

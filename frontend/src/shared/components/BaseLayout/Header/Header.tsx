@@ -46,7 +46,7 @@ export default function Header(): ReactElement {
               <div className={styles['header__menu-wrapper']}>
                 <LocaleSwitcher />
                 {user?.isVerified ? (
-                  <BurgerMenu isDiscord={!!user.discordId} />
+                  <BurgerMenu />
                 ) : (
                   <Button
                     color="green"

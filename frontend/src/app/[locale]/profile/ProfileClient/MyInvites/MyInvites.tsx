@@ -11,7 +11,6 @@ import DataContainer from '@/shared/components/DataContainer/DataContainer';
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import RejectInvitePopup from '@/shared/components/RejectInvitePopup/RejectInvitePopup';
 import { useTranslations } from 'next-intl';
-import DiscordBanner from '@/shared/components/DiscordBanner/DiscordBanner';
 import { useToast } from '@/hooks/useToast';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 import { useRouter } from '@/i18n/routing';
@@ -19,6 +18,8 @@ import { useInvitesFilters } from '@/hooks/useInvitesFilters';
 import Pagination from '@/shared/components/Pagination/Pagination';
 import { usePagination } from '@/hooks/usePagination';
 import { limitOptions } from '@/shared/constants/limit-options';
+import { useDiscord } from '@/hooks/useDiscord';
+import { isDiscordGuardError } from '@/shared/utils/isDiscordGuardError';
 
 interface MyInvitesProps {
   user: AuthInterface;
@@ -39,11 +40,11 @@ export default function MyInvites({
     null,
   );
   const tInvite = useTranslations('acceptInvite');
-  const [isBanner, setBanner] = useState(false);
   const [acceptInvite, { isLoading }] = useAcceptInviteMutation();
   const tTable = useTranslations('participationsTable');
   const { showToast, isActive } = useToast();
   const router = useRouter();
+  const openDiscordConnect = useDiscord();
 
   const openModal = (inv: ProjectParticipationInterface): void => {
     setInvite(inv);
@@ -53,17 +54,10 @@ export default function MyInvites({
     setInvite(null);
   };
 
-  const closeBanner = (): void => setBanner(false);
-
   const handleAcceptInvite = async (
     inv: ProjectParticipationInterface,
   ): Promise<void> => {
     if (isActive(ToastKeysEnum.PARTICIPATION_INVITE)) {
-      return;
-    }
-
-    if (!user.discordId) {
-      setBanner(true);
       return;
     }
 
@@ -81,7 +75,12 @@ export default function MyInvites({
       });
 
       router.push(`/projects/${inv.projectRole.project.id}/dashboard`);
-    } catch {
+    } catch (error) {
+      if (isDiscordGuardError(error)) {
+        openDiscordConnect();
+        return;
+      }
+
       showToast({
         severity: 'error',
         summary: tInvite('error'),
@@ -136,9 +135,6 @@ export default function MyInvites({
           projectId={invite.projectRole.project.id}
           isOpen={!!invite}
         />
-      )}
-      {isBanner && (
-        <DiscordBanner closeBanner={closeBanner} isCancelButton withWrapper />
       )}
     </>
   );

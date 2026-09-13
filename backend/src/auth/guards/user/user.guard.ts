@@ -7,10 +7,14 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { USER_GUARD_KEY, UserCheckType } from '../../decorators/user.decorator';
+import { DiscordService } from '../../../discord/discord.service';
 
 @Injectable()
 export class UserGuard implements CanActivate {
-  public constructor(private readonly reflector: Reflector) {}
+  public constructor(
+    private readonly reflector: Reflector,
+    private readonly discordService: DiscordService,
+  ) {}
 
   public async canActivate(context: ExecutionContext): Promise<boolean> {
     const check: UserCheckType =
@@ -26,8 +30,25 @@ export class UserGuard implements CanActivate {
       throw new ForbiddenException('Access denied: email not confirmed');
     }
 
-    if (check === 'discord' && !user.discordId) {
-      throw new ForbiddenException('Access denied: discord not confirmed');
+    if (check === 'discord') {
+      if (!user.discordId) {
+        throw new ForbiddenException({
+          code: 'DISCORD_NOT_CONNECTED',
+          message: 'Access denied: discord not confirmed',
+        });
+      }
+
+      const exists = await this.discordService.userExists(
+        user.id,
+        user.discordId,
+      );
+
+      if (!exists) {
+        throw new ForbiddenException({
+          code: 'DISCORD_NOT_CONNECTED',
+          message: 'Access denied: discord not confirmed',
+        });
+      }
     }
 
     return true;

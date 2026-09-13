@@ -4,11 +4,12 @@ import Image from 'next/image';
 import NewProjectForm from './NewProjectForm/NewProjectForm';
 import AccessGuard from '@/shared/components/AccessGuard/AccessGuard';
 import { getTranslations } from 'next-intl/server';
+import { useDiscordCheck } from '@/hooks/useDiscordCheck';
 
 export default async function NewProject(): Promise<ReactElement> {
   const t = await getTranslations('newProject');
   return (
-    <AccessGuard mode="discord">
+    <AccessGuard mode="discord" checkDataAccess={useDiscordCheck}>
       <div className={styles['new-project']}>
         <div className={styles['new-project__banner']}>
           <Image

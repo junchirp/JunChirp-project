@@ -1,6 +1,6 @@
 'use client';
 
-import { useLocale } from 'next-intl';
+import { useShortLocale } from '@/hooks/useShortLocale';
 import { usePathname } from '@/i18n/routing';
 import { useSearchParams } from 'next/navigation';
 import { SocialProviderType } from '@/shared/types/social-provider.type';
@@ -8,7 +8,7 @@ import { SocialProviderType } from '@/shared/types/social-provider.type';
 export const useOAuthRedirect = (): {
   redirectToOAuth: (provider: SocialProviderType) => void;
 } => {
-  const locale = useLocale();
+  const locale = useShortLocale();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 

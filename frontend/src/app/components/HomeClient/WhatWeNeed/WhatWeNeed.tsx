@@ -18,25 +18,29 @@ import {
 } from '@/shared/constants/what-we-need';
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import { useTranslations } from 'next-intl';
-import DiscordBanner from '@/shared/components/DiscordBanner/DiscordBanner';
 import { WhatWeNeedType } from '@/shared/interfaces/what-we-need.interface';
+import { useDiscord } from '@/hooks/useDiscord';
 
 const CENTER_GAP = 264;
 const FIXED_INDEXES = [2, 3, 4];
 
 interface WhatWeNeedProps {
   user: AuthInterface | null;
+  discordStatus: 'connected' | 'not-connected';
 }
 
-export default function WhatWeNeed({ user }: WhatWeNeedProps): ReactElement {
+export default function WhatWeNeed({
+  user,
+  discordStatus,
+}: WhatWeNeedProps): ReactElement {
   const sectionRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [heights, setHeights] = useState<number[]>([]);
   const [containerH, setContainerH] = useState(1);
   const [translate, setTranslate] = useState(0);
-  const [isBanner, setBanner] = useState(false);
   const router = useRouter();
+  const openDiscordConnect = useDiscord();
   const tWhatNeed = useTranslations('whatWeNeed');
   const tBlocks: {
     title: string;
@@ -219,78 +223,71 @@ export default function WhatWeNeed({ user }: WhatWeNeedProps): ReactElement {
   const handleClick = (i: number): void => {
     if (blocks[i].buttonRoute) {
       router.push(blocks[i].buttonRoute);
-    } else if (user?.discordId) {
-      window.open(blocks[i].buttonUrl, '_blank');
-    } else {
-      setBanner(true);
+      return;
     }
-  };
 
-  const closeBanner = (): void => {
-    setBanner(false);
+    if (discordStatus === 'connected') {
+      window.open(blocks[i].buttonUrl, '_blank');
+      return;
+    }
+
+    openDiscordConnect({ withWrapper: false, isCancelButton: true });
   };
 
   return (
-    <>
-      <div className={styles['what-we-need__wrapper']} ref={sectionRef}>
-        <div className={styles['what-we-need']}>
-          <h2 className={styles['what-we-need__header']}>
-            {tWhatNeed('title')}
-          </h2>
-          <div ref={containerRef} className={styles['what-we-need__container']}>
-            <div style={{ transform: `translateY(${translate}px)` }}>
-              {blocks.map((block, i) => {
-                const fixedHeight = FIXED_INDEXES.includes(i)
-                  ? CENTER_GAP
-                  : 'auto';
+    <div className={styles['what-we-need__wrapper']} ref={sectionRef}>
+      <div className={styles['what-we-need']}>
+        <h2 className={styles['what-we-need__header']}>{tWhatNeed('title')}</h2>
+        <div ref={containerRef} className={styles['what-we-need__container']}>
+          <div style={{ transform: `translateY(${translate}px)` }}>
+            {blocks.map((block, i) => {
+              const fixedHeight = FIXED_INDEXES.includes(i)
+                ? CENTER_GAP
+                : 'auto';
 
-                return (
-                  <div
-                    key={i}
-                    ref={(el) => {
-                      itemRefs.current[i] = el;
-                    }}
-                    className={styles['what-we-need__item']}
-                    style={{
-                      marginTop: getMarginTop(i),
-                      height: fixedHeight,
-                    }}
-                  >
-                    <div className={styles['what-we-need__item-content']}>
-                      {block.title && (
-                        <h3 style={getTitleStyle(i)}>{block.title}</h3>
-                      )}
-                    </div>
-                    <Circle
-                      className={styles['what-we-need__circle']}
-                      style={getCircleStyle(i)}
-                    />
-                    <div
-                      className={`${styles['what-we-need__item-content']} ${styles['what-we-need__item-content--right']}`}
-                    >
-                      {block.text && (
-                        <p style={getTextStyle(i)}>{block.text}</p>
-                      )}
-                      {block.buttonText && getNorm(i) <= 0.45 && (
-                        <Button
-                          color="green"
-                          variant="secondary-frame"
-                          onClick={() => handleClick(i)}
-                        >
-                          {user?.discordId && block.buttonTextChat
-                            ? block.buttonTextChat
-                            : block.buttonText}
-                        </Button>
-                      )}
-                    </div>
+              return (
+                <div
+                  key={i}
+                  ref={(el) => {
+                    itemRefs.current[i] = el;
+                  }}
+                  className={styles['what-we-need__item']}
+                  style={{
+                    marginTop: getMarginTop(i),
+                    height: fixedHeight,
+                  }}
+                >
+                  <div className={styles['what-we-need__item-content']}>
+                    {block.title && (
+                      <h3 style={getTitleStyle(i)}>{block.title}</h3>
+                    )}
                   </div>
-                );
-              })}
-            </div>
+                  <Circle
+                    className={styles['what-we-need__circle']}
+                    style={getCircleStyle(i)}
+                  />
+                  <div
+                    className={`${styles['what-we-need__item-content']} ${styles['what-we-need__item-content--right']}`}
+                  >
+                    {block.text && <p style={getTextStyle(i)}>{block.text}</p>}
+                    {block.buttonText && getNorm(i) <= 0.45 && (
+                      <Button
+                        color="green"
+                        variant="secondary-frame"
+                        onClick={() => handleClick(i)}
+                      >
+                        {discordStatus === 'connected' && block.buttonTextChat
+                          ? block.buttonTextChat
+                          : block.buttonText}
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
-      {isBanner && <DiscordBanner closeBanner={closeBanner} isCancelButton />}
-    </>
+    </div>
   );
 }

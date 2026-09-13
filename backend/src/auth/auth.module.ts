@@ -24,10 +24,8 @@ import { CookieConfigModule } from '../cookie-config/cookie-config.module';
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: async (
-        configService: ConfigService,
-      ): Promise<JwtModuleOptions> => ({
-        secret: configService.get('JWT_SECRET'),
+      useFactory: (configService: ConfigService): JwtModuleOptions => ({
+        secret: configService.getOrThrow<string>('JWT_SECRET'),
       }),
     }),
     LoggerModule,

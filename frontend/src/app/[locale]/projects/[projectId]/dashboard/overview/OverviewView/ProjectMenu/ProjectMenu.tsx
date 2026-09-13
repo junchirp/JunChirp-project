@@ -20,7 +20,7 @@ interface ProjectMenuProps {
 
 export default function ProjectMenu(props: ProjectMenuProps): ReactElement {
   const { project, isOwner, onLeave, onDelete, onComplete } = props;
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState(false);
   const buttonRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLElement>(null);
   const router = useRouter();

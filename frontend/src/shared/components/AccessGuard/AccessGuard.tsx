@@ -15,16 +15,40 @@ import { ProjectCardExpandedInterface } from '@/shared/interfaces/project-card-e
 type AccessGuardProps =
   | {
       children: ReactNode;
-      mode: Exclude<ModeType, 'member' | 'no-member'>;
+      mode: Exclude<ModeType, 'member' | 'no-member' | 'discord'>;
       checkDataAccess?: never;
       loadingFallback?: ReactNode;
     }
   | {
       children: ReactNode;
-      mode: 'member' | 'no-member';
+      mode: 'member';
       checkDataAccess: () =>
         | {
-            data?: ProjectInterface | ProjectCardExpandedInterface;
+            data?: ProjectInterface;
+            error?: FetchBaseQueryError | SerializedError;
+            isLoading?: boolean;
+          }
+        | undefined;
+      loadingFallback?: ReactNode;
+    }
+  | {
+      children: ReactNode;
+      mode: 'no-member';
+      checkDataAccess: () =>
+        | {
+            data?: ProjectCardExpandedInterface;
+            error?: FetchBaseQueryError | SerializedError;
+            isLoading?: boolean;
+          }
+        | undefined;
+      loadingFallback?: ReactNode;
+    }
+  | {
+      children: ReactNode;
+      mode: 'discord';
+      checkDataAccess: () =>
+        | {
+            data?: void;
             error?: FetchBaseQueryError | SerializedError;
             isLoading?: boolean;
           }

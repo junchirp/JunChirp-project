@@ -1,18 +1,22 @@
 'use client';
 
-import { ReactElement, useState } from 'react';
+import { ReactElement } from 'react';
 import styles from './MyProjects.module.scss';
 import Button from '@/shared/components/Button/Button';
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
-import DiscordBanner from '@/shared/components/DiscordBanner/DiscordBanner';
 import { useRouter } from '@/i18n/routing';
 import Plus from '@/assets/icons/plus.svg';
 import { useTranslations } from 'next-intl';
-import { useLazyGetProjectsCountQuery } from '@/api/authApi';
+import {
+  useLazyCheckDiscordQuery,
+  useLazyGetProjectsCountQuery,
+} from '@/api/authApi';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 import { useToast } from '@/hooks/useToast';
 import ProjectCardSmall from '@/shared/components/ProjectCardSmall/ProjectCardSmall';
 import { ProjectCardExpandedInterface } from '@/shared/interfaces/project-card-expanded.interface';
+import { useDiscord } from '@/hooks/useDiscord';
+import { isDiscordGuardError } from '@/shared/utils/isDiscordGuardError';
 
 interface MyProjectsProps {
   myProjects: ProjectCardExpandedInterface[];
@@ -23,7 +27,8 @@ export default function MyProjects({
   myProjects,
   user,
 }: MyProjectsProps): ReactElement {
-  const [isBanner, setBanner] = useState(false);
+  const [checkDiscord] = useLazyCheckDiscordQuery();
+  const openDiscordConnect = useDiscord();
   const router = useRouter();
   const tProjects = useTranslations('projectsPage');
   const tForms = useTranslations('forms.projectForm');
@@ -35,30 +40,28 @@ export default function MyProjects({
       return;
     }
 
-    if (user.discordId) {
-      try {
-        const result = await getProjectsCount().unwrap();
+    try {
+      await checkDiscord().unwrap();
 
-        if (result.count >= 2) {
-          showToast({
-            severity: 'error',
-            summary: tForms('error'),
-            life: 3000,
-            actionKey: ToastKeysEnum.NEW_PROJECT,
-          });
-        } else {
-          router.push('/new-project');
-        }
-      } catch {
+      const result = await getProjectsCount().unwrap();
+
+      if (result.count >= 2) {
+        showToast({
+          severity: 'error',
+          summary: tForms('error'),
+          life: 3000,
+          actionKey: ToastKeysEnum.NEW_PROJECT,
+        });
+
         return;
       }
-    } else {
-      setBanner(true);
-    }
-  };
 
-  const closeBanner = (): void => {
-    setBanner(false);
+      router.push('/new-project');
+    } catch (error) {
+      if (isDiscordGuardError(error)) {
+        openDiscordConnect();
+      }
+    }
   };
 
   return (
@@ -91,9 +94,6 @@ export default function MyProjects({
           )}
         </div>
       </div>
-      {isBanner && (
-        <DiscordBanner closeBanner={closeBanner} isCancelButton withWrapper />
-      )}
     </>
   );
 }

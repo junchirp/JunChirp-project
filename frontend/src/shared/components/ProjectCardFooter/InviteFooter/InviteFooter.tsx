@@ -7,24 +7,23 @@ import ProjectCardActionsWrapper from '@/shared/components/ProjectCardActionsWra
 import Button from '@/shared/components/Button/Button';
 import { ProjectRoleInterface } from '@/shared/interfaces/project-role.interface';
 import RejectInvitePopup from '@/shared/components/RejectInvitePopup/RejectInvitePopup';
-import DiscordBanner from '@/shared/components/DiscordBanner/DiscordBanner';
 import { useTranslations } from 'next-intl';
 import { useAcceptInviteMutation } from '@/api/participationsApi';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
-import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import { useToast } from '@/hooks/useToast';
 import { useRouter } from '@/i18n/routing';
 import { MyParticipationInterface } from '@/shared/interfaces/my-participation.interface';
 import { ProjectCardExpandedInterface } from '@/shared/interfaces/project-card-expanded.interface';
+import { useDiscord } from '@/hooks/useDiscord';
+import { isDiscordGuardError } from '@/shared/utils/isDiscordGuardError';
 
 interface InviteFooterProps {
   project: ProjectCardExpandedInterface;
   currentInvite: MyParticipationInterface;
   vacantRoles: ProjectRoleInterface[];
   size: 'small' | 'large';
-  user: AuthInterface;
   className?: string;
 }
 
@@ -33,39 +32,21 @@ export default function InviteFooter({
   currentInvite,
   vacantRoles,
   size,
-  user,
   className,
 }: InviteFooterProps): ReactElement {
   const tButtons = useTranslations('buttons');
   const tProjectsPage = useTranslations('projectsPage');
   const [isInvitePopupOpen, setInvitePopupOpen] = useState(false);
-  const [isInviteBanner, setInviteBanner] = useState(false);
   const [acceptInvite, { isLoading: inviteLoading }] =
     useAcceptInviteMutation();
   const { showToast, isActive } = useToast();
-  const isMyProject = project.roles.some((role) =>
-    role.users.some((u) => u.id === user?.id),
-  );
   const router = useRouter();
+  const openDiscordConnect = useDiscord();
 
   const closeInvitePopup = (): void => setInvitePopupOpen(false);
   const openInvitePopup = (): void => setInvitePopupOpen(true);
-  const closeInviteBanner = (): void => setInviteBanner(false);
-
-  const goProject = (): void => {
-    if (isMyProject) {
-      router.push(`/projects/${project.id}/dashboard`);
-    } else {
-      router.push(`/projects/${project.id}`);
-    }
-  };
 
   const handleAccept = async (): Promise<void> => {
-    if (!user.discordId) {
-      setInviteBanner(true);
-      return;
-    }
-
     if (isActive(ToastKeysEnum.PARTICIPATION_INVITE)) {
       return;
     }
@@ -75,13 +56,20 @@ export default function InviteFooter({
         id: currentInvite.id,
         projectId: project.id,
       }).unwrap();
-      goProject();
+
+      router.push(`/projects/${project.id}/dashboard`);
     } catch (error) {
+      if (isDiscordGuardError(error)) {
+        openDiscordConnect();
+        return;
+      }
+
       const errorData = error as
         | ((FetchBaseQueryError | SerializedError) & {
             status: number;
           })
         | undefined;
+
       const status = errorData?.status;
 
       if (status === 400) {
@@ -132,13 +120,6 @@ export default function InviteFooter({
           inviteId={currentInvite.id}
           projectName={project.projectName}
           projectId={project.id}
-        />
-      )}
-      {isInviteBanner && (
-        <DiscordBanner
-          closeBanner={closeInviteBanner}
-          isCancelButton
-          withWrapper
         />
       )}
     </>
