@@ -91,7 +91,7 @@ model Project {
   discordChannelId    String          @map("discord_channel_id")
   discordAdminRoleId  String          @map("discord_admin_role_id")
   discordMemberRoleId String          @map("discord_member_role_id")
-  discordUrl          String          @default("https://discord.gg/x2rdtS2Vbz") @map("discord_url")
+  discordUrl          String          @default("https://discord.gg/fvQfCJNjU") @map("discord_url")
   publicUrl           String?         @map("public_url")
   boards              Board[]
   documents           Document[]
@@ -326,7 +326,6 @@ model ParticipationInvite {
   // ON "participation_invites" ("user_id", "project_id")
   // WHERE "status" = 'pending';
   // Historical canceled/rejected invites are allowed
-
   @@map("participation_invites")
 }
 
@@ -350,7 +349,6 @@ model ParticipationRequest {
   // ON "participation_requests" ("user_id", "project_id")
   // WHERE "status" = 'pending';
   // Historical canceled/rejected requests are allowed
-
   @@map("participation_requests")
 }
 

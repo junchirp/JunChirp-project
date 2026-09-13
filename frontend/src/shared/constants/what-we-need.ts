@@ -16,5 +16,5 @@ export const noAuthRoutes: string[] = [
 export const authRoutes: string[] = [
   '/projects',
   '/new-project',
-  'https://discord.gg/x2rdtS2Vbz',
+  'https://discord.gg/fvQfCJNjU',
 ];

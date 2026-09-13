@@ -55,7 +55,7 @@ export default function BurgerMenu(): ReactElement {
   };
 
   const openDiscordChat = (): void => {
-    window.open('https://discord.gg/vAXxCTmhQ', '_blank');
+    window.open('https://discord.gg/fvQfCJNjU', '_blank');
   };
 
   useClickOutside({
