@@ -244,7 +244,10 @@ export class ProjectsService {
         );
       }
 
-      return ProjectMapper.toFullResponse(newProject);
+      return ProjectMapper.toFullResponse(
+        newProject,
+        this.discordService.getGuildId(),
+      );
     } catch (error) {
       await this.discordService.deleteProjectChannel(
         channelId,
@@ -303,7 +306,10 @@ export class ProjectsService {
       const myParticipation = await this.getMyActiveParticipation(authId, id);
 
       return withDetails
-        ? ProjectMapper.toFullResponse(project)
+        ? ProjectMapper.toFullResponse(
+            project,
+            this.discordService.getGuildId(),
+          )
         : ProjectMapper.toExpandedCardResponse(project, myParticipation);
     } catch (error) {
       throwPrismaError(error, {
@@ -376,7 +382,10 @@ export class ProjectsService {
         );
       }
 
-      return ProjectMapper.toFullResponse(updatedProject);
+      return ProjectMapper.toFullResponse(
+        updatedProject,
+        this.discordService.getGuildId(),
+      );
     } catch (error) {
       throwPrismaError(error, [
         {
@@ -451,7 +460,10 @@ export class ProjectsService {
         return project;
       });
 
-      return ProjectMapper.toFullResponse(closedProject);
+      return ProjectMapper.toFullResponse(
+        closedProject,
+        this.discordService.getGuildId(),
+      );
     } catch (error) {
       throwPrismaError(error, {
         code: 'P2025',

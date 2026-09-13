@@ -101,6 +101,7 @@ export class ProjectMapper {
       })[];
       owner: User & { desiredRoles: ProjectRoleType[] };
     },
+    discordGuildId: string,
   ): ProjectResponseDto {
     return {
       id: project.id,
@@ -118,7 +119,7 @@ export class ProjectMapper {
           )
         : null,
       category: ProjectCategoryMapper.toResponse(project.category),
-      discordUrl: project.discordUrl,
+      discordUrl: `https://discord.com/channels/${discordGuildId}/${project.discordChannelId}`,
       logo: project.logo ? ProjectLogoMapper.toResponse(project.logo) : null,
       publicUrl: project.publicUrl,
       roles: project.roles.map((role) =>
