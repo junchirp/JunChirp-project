@@ -27,11 +27,13 @@ export default function HomeClient(): ReactElement {
     refetchOnMountOrArgChange: true,
   });
 
-  const discordStatus = isDiscordConnected
-    ? 'connected'
-    : isDiscordGuardError(discordError)
-      ? 'not-connected'
-      : 'unknown';
+  const discordStatus = user?.isVerified
+    ? isDiscordConnected
+      ? 'connected'
+      : isDiscordGuardError(discordError)
+        ? 'not-connected'
+        : 'unknown'
+    : 'not-connected';
 
   if (
     loadingStatus !== 'loaded' ||
