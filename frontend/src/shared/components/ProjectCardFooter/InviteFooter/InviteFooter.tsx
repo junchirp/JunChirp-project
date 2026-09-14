@@ -57,6 +57,13 @@ export default function InviteFooter({
         projectId: project.id,
       }).unwrap();
 
+      showToast({
+        severity: 'success',
+        summary: tProjectsPage('invite.success'),
+        life: 3000,
+        actionKey: ToastKeysEnum.PARTICIPATION_INVITE,
+      });
+
       router.push(`/projects/${project.id}/dashboard`);
     } catch (error) {
       if (isDiscordGuardError(error)) {
