@@ -23,6 +23,7 @@ export default function HomeClient(): ReactElement {
     error: discordError,
     isLoading: isDiscordLoading,
   } = useCheckDiscordQuery(undefined, {
+    skip: !user?.isVerified,
     refetchOnMountOrArgChange: true,
   });
 
