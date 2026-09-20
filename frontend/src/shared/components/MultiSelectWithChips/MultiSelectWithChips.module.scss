@@ -136,6 +136,8 @@
     text-overflow: ellipsis;
     max-width: 100%;
     text-align: start;
+    position: relative;
+    left: 12px;
   }
 
   &__error {

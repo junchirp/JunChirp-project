@@ -1,8 +1,7 @@
 import { ReactElement, ReactNode } from 'react';
-import styles from './layout.module.scss';
-import ProjectTabs from './ProjectTabs/ProjectTabs';
 import AccessGuard from '@/shared/components/AccessGuard/AccessGuard';
 import { useProjectAccessCheck } from '@/hooks/useProjectAccessCheck';
+import DashboardContent from './DashboardContent/DashboardContent';
 
 export default function DashboardLayout({
   children,
@@ -11,10 +10,7 @@ export default function DashboardLayout({
 }): ReactElement {
   return (
     <AccessGuard mode="member" checkDataAccess={useProjectAccessCheck}>
-      <div className={styles['dashboard-layout']}>
-        <ProjectTabs />
-        <div>{children}</div>
-      </div>
+      <DashboardContent>{children}</DashboardContent>
     </AccessGuard>
   );
 }

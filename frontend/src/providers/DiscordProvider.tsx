@@ -14,13 +14,8 @@ import DiscordBanner from '@/shared/components/DiscordBanner/DiscordBanner';
 import { DiscordConnectOptionsInterface } from '@/shared/interfaces/discord-connect-options.interface';
 
 interface DiscordContextType {
-  openDiscordConnect: (options?: DiscordConnectOptionsInterface) => void;
+  openDiscordConnect: (options: DiscordConnectOptionsInterface) => void;
 }
-
-const DEFAULT_DISCORD_OPTIONS: DiscordConnectOptionsInterface = {
-  withWrapper: true,
-  isCancelButton: true,
-};
 
 const DiscordContext = createContext<DiscordContextType | undefined>(undefined);
 
@@ -31,16 +26,14 @@ export function DiscordProvider({
 }): ReactElement {
   const [isOpen, setIsOpen] = useState(false);
   const [discordOptions, setDiscordOptions] =
-    useState<DiscordConnectOptionsInterface>(DEFAULT_DISCORD_OPTIONS);
+    useState<DiscordConnectOptionsInterface | null>(null);
 
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
 
   const openDiscordConnect = useCallback(
-    (
-      options: DiscordConnectOptionsInterface = DEFAULT_DISCORD_OPTIONS,
-    ): void => {
+    (options: DiscordConnectOptionsInterface): void => {
       setDiscordOptions(options);
       setIsOpen(true);
     },
@@ -71,11 +64,12 @@ export function DiscordProvider({
   return (
     <DiscordContext.Provider value={{ openDiscordConnect }}>
       {children}
-      {isOpen && (
+      {isOpen && discordOptions && (
         <DiscordBanner
           closeBanner={closeDiscordConnect}
           isCancelButton={discordOptions.isCancelButton}
           withWrapper={discordOptions.withWrapper}
+          errorCode={discordOptions.errorCode}
         />
       )}
     </DiscordContext.Provider>

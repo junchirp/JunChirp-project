@@ -49,6 +49,17 @@ export class UserGuard implements CanActivate {
           message: 'Access denied: discord not confirmed',
         });
       }
+
+      const isGuildMember = await this.discordService.isGuildMember(
+        user.discordId,
+      );
+
+      if (!isGuildMember) {
+        throw new ForbiddenException({
+          code: 'DISCORD_NOT_IN_GUILD',
+          message: 'Access denied: user is not a member of the Discord guild',
+        });
+      }
     }
 
     return true;

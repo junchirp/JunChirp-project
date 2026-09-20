@@ -11,9 +11,10 @@ import RequestFooter from './RequestFooter/RequestFooter';
 import MemberFooter from './MemberFooter/MemberFooter';
 import GuestClosedFooter from './GuestClosedFooter/GuestClosedFooter';
 import GuestEmptyFooter from './GuestEmptyFooter/GuestEmptyFooter';
-import { useLazyCheckDiscordQuery } from '@/api/authApi';
+import { useLazyCheckDiscordQuery } from '@/api/discordApi';
 import { useDiscord } from '@/hooks/useDiscord';
-import { isDiscordGuardError } from '@/shared/utils/isDiscordGuardError';
+import { isDiscordNotConnectedError } from '@/shared/utils/isDiscordNotConnectedError';
+import { isDiscordNotInGuildError } from '@/shared/utils/isDiscordNotInGuildError';
 
 type FooterResultType =
   | { variant: 'guest-invite'; invite: MyParticipationInterface }
@@ -60,9 +61,22 @@ export default function ProjectCardFooter({
       await checkDiscordQuery().unwrap();
       return true;
     } catch (error) {
-      if (isDiscordGuardError(error)) {
-        openDiscordConnect();
+      if (isDiscordNotConnectedError(error)) {
+        openDiscordConnect({
+          withWrapper: true,
+          isCancelButton: true,
+          errorCode: 'DISCORD_NOT_CONNECTED',
+        });
       }
+
+      if (isDiscordNotInGuildError(error)) {
+        openDiscordConnect({
+          withWrapper: true,
+          isCancelButton: true,
+          errorCode: 'DISCORD_NOT_IN_GUILD',
+        });
+      }
+
       return false;
     }
   };

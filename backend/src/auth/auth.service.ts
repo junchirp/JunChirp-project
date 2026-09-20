@@ -29,7 +29,7 @@ import { UserMapper } from '../common/mappers/user.mapper';
 import { isPrismaError } from '../common/utils/is-prisma-error';
 import { throwPrismaError } from '../common/utils/throw-prisma-error';
 import { CryptoTokenInterface } from '../common/interfaces/crypto-token.interface';
-import { ResetPasswordToken } from '@prisma/client';
+import { LogEventType, ResetPasswordToken } from '@prisma/client';
 import { ConfirmEmailWithLocaleDto } from '../users/dto/confirm-email-with-locale.dto';
 import * as crypto from 'crypto';
 import { ConfirmEmailDto } from '../users/dto/confirm-email.dto';
@@ -70,21 +70,18 @@ export class AuthService {
 
     if (!user) {
       await this.loggerService.log(
-        ip ?? 'unknown',
-        loginDto.email,
-        'login',
+        LogEventType.LOGIN,
         'Email or password is incorrect',
+        { ip, email: loginDto.email },
       );
       throw new UnauthorizedException('Email or password is incorrect');
     }
 
     if (user.isBlocked) {
-      await this.loggerService.log(
-        ip ?? 'unknown',
-        loginDto.email,
-        'login',
-        'User is blocked',
-      );
+      await this.loggerService.log(LogEventType.LOGIN, 'User is blocked', {
+        ip,
+        email: loginDto.email,
+      });
 
       throw new ForbiddenException('User is blocked');
     }
@@ -97,10 +94,9 @@ export class AuthService {
       const now = new Date();
       if (loginAttempt.blockedUntil && now < loginAttempt.blockedUntil) {
         await this.loggerService.log(
-          ip ?? 'unknown',
-          loginDto.email,
-          'login',
+          LogEventType.LOGIN,
           'Too many failed attempts. Please try again later',
+          { ip, email: loginDto.email },
         );
         throw new TooManyRequestsException(
           'Too many failed attempts. Please try again later',
@@ -168,10 +164,9 @@ export class AuthService {
           ]);
 
           await this.loggerService.log(
-            ip ?? 'unknown',
-            loginDto.email,
-            'login',
+            LogEventType.LOGIN,
             'User has been blocked due to too many failed attempts',
+            { ip, email: loginDto.email },
           );
 
           throw new ForbiddenException('User is blocked');
@@ -184,10 +179,9 @@ export class AuthService {
 
         if ([5, 10].includes(updateData.attemptsCount)) {
           await this.loggerService.log(
-            ip ?? 'unknown',
-            loginDto.email,
-            'login',
+            LogEventType.LOGIN,
             'Too many failed attempts. Please try again later',
+            { ip, email: loginDto.email },
           );
           throw new TooManyRequestsException(
             'Too many failed attempts. Please try again later',
@@ -205,10 +199,9 @@ export class AuthService {
       }
 
       await this.loggerService.log(
-        ip ?? 'unknown',
-        loginDto.email,
-        'login',
+        LogEventType.LOGIN,
         'Email or password is incorrect',
+        { ip, email: loginDto.email },
       );
       throw new UnauthorizedException('Email or password is incorrect');
     }
@@ -226,10 +219,9 @@ export class AuthService {
     this.csrfService.rotate(req, res);
 
     await this.loggerService.log(
-      ip,
-      user.email,
-      'login',
+      LogEventType.LOGIN,
       'User login successfully',
+      { ip, email: user.email },
     );
 
     return user;
@@ -251,10 +243,9 @@ export class AuthService {
     );
 
     await this.loggerService.log(
-      ip,
-      createUserDto.email,
-      'registration',
+      LogEventType.REGISTRATION,
       'User registered successfully',
+      { ip, email: createUserDto.email },
     );
 
     const token = this.usersService.createCryptoToken();
@@ -414,18 +405,16 @@ export class AuthService {
       await this.clearTokens(refreshToken, req, res);
 
       await this.loggerService.log(
-        ip,
-        user.email,
-        'logout',
+        LogEventType.LOGOUT,
         'Logged out successfully',
+        { ip, email: user.email },
       );
       return { message: 'Logged out successfully' };
     } catch (error) {
       await this.loggerService.log(
-        ip,
-        user.email,
-        'logout',
+        LogEventType.LOGOUT,
         'Something went wrong',
+        { ip, email: user.email },
       );
       throw error;
     }
@@ -438,10 +427,9 @@ export class AuthService {
   ): Promise<'registration' | 'login'> {
     if (!req.user) {
       await this.loggerService.log(
-        ip,
-        'unknown',
+        LogEventType.GOOGLE_AUTHENTICATION,
         'google authentication',
-        'Google authentication failed',
+        { ip },
       );
       throw new UnauthorizedException('Google authentication failed');
     }
@@ -464,10 +452,9 @@ export class AuthService {
     this.csrfService.rotate(req, res);
 
     await this.loggerService.log(
-      ip,
-      'unknown',
+      LogEventType.GOOGLE_AUTHENTICATION,
       'google authentication',
-      'Google authentication successfully',
+      { ip, email: user.email },
     );
 
     return authType;
@@ -637,10 +624,9 @@ export class AuthService {
       });
 
       await this.loggerService.log(
-        ip,
-        'unknown',
-        'google authentication',
+        LogEventType.GOOGLE_AUTHENTICATION,
         'Google authentication canceled',
+        { ip },
       );
       await this.redisService.del(state);
 
@@ -746,10 +732,9 @@ export class AuthService {
     await this.mailService.sendVerificationMail(user.email, url, locale);
 
     await this.loggerService.log(
-      ip,
-      user.email,
-      'confirmation email',
+      LogEventType.EMAIL_CONFIRMATION,
       'Confirmation email sent successfully',
+      { ip, email: user.email },
     );
 
     return { message: 'Confirmation email sent. Please check your inbox.' };
@@ -789,10 +774,9 @@ export class AuthService {
     await this.mailService.sendVerificationMail(user.email, url, locale);
 
     await this.loggerService.log(
-      ip,
-      record.user.email,
-      'confirmation email',
+      LogEventType.EMAIL_CONFIRMATION,
       'Confirmation email sent successfully',
+      { ip, email: record.user.email },
     );
 
     return { message: 'Confirmation email sent. Please check your inbox.' };
@@ -814,18 +798,16 @@ export class AuthService {
 
     if (!verificationToken) {
       await this.loggerService.log(
-        ip,
-        '',
-        'confirmation email',
+        LogEventType.EMAIL_CONFIRMATION,
         'Token not found',
+        { ip },
       );
       throw new NotFoundException('Token not found');
     } else if (verificationToken.used) {
       await this.loggerService.log(
-        ip,
-        verificationToken.user.email,
-        'confirmation email',
+        LogEventType.EMAIL_CONFIRMATION,
         'Token expired',
+        { ip, email: verificationToken.user.email },
       );
       throw new BadRequestException('Token expired');
     } else {
@@ -841,10 +823,9 @@ export class AuthService {
           });
 
           await this.loggerService.log(
-            ip,
-            verificationToken.user.email,
-            'confirmation email',
+            LogEventType.EMAIL_CONFIRMATION,
             'Email verified successfully',
+            { ip, email: verificationToken.user.email },
           );
         });
 
@@ -857,19 +838,16 @@ export class AuthService {
         const message = error instanceof Error ? error.message : String(error);
         if (isPrismaError(error) && error.code === 'P2025') {
           await this.loggerService.log(
-            ip,
-            verificationToken.user.email,
-            'confirmation email',
+            LogEventType.EMAIL_CONFIRMATION,
             'User not found',
+            { ip, email: verificationToken.user.email },
           );
           throw new NotFoundException('User not found');
         }
-        await this.loggerService.log(
+        await this.loggerService.log(LogEventType.EMAIL_CONFIRMATION, message, {
           ip,
-          verificationToken.user.email,
-          'confirmation email',
-          message,
-        );
+          email: verificationToken.user.email,
+        });
         throw error;
       }
     }
@@ -897,10 +875,9 @@ export class AuthService {
     );
 
     await this.loggerService.log(
-      ip,
-      emailDto.email,
-      'reset password',
+      LogEventType.RESET_PASSWORD,
       'Password reset link sent successfully',
+      { ip, email: emailDto.email },
     );
 
     return { id: record.id };
@@ -978,10 +955,9 @@ export class AuthService {
 
     if (!resetPasswordToken) {
       await this.loggerService.log(
-        ip,
-        '',
-        'reset password',
+        LogEventType.RESET_PASSWORD,
         'Invalid or expired token',
+        { ip },
       );
       throw new BadRequestException('Invalid or expired token');
     }
@@ -998,17 +974,18 @@ export class AuthService {
         await prisma.resetPasswordToken.delete({ where: { email } });
 
         await this.loggerService.log(
-          ip,
-          user.email,
-          'reset password',
+          LogEventType.RESET_PASSWORD,
           'Password reset successfully',
+          { ip, email: user.email },
         );
       });
 
       return { message: 'Password has been reset successfully.' };
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      await this.loggerService.log(ip, '', 'reset password', message);
+      await this.loggerService.log(LogEventType.RESET_PASSWORD, message, {
+        ip,
+      });
 
       if (isPrismaError(error) && error.code === 'P2025') {
         throw new BadRequestException('Invalid or expired token');

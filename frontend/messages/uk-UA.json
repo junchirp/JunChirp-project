@@ -5,6 +5,7 @@
     "save": "Зберегти",
     "copy": "Скопіювати",
     "connect": "Підключити",
+    "join": "Приєднатися",
     "accept": "Прийняти",
     "decline": "Відхилити",
     "signIn": "Увійти",
@@ -29,6 +30,7 @@
   },
   "discord": {
     "description": "Підключи свій Discord, щоб продовжити. Це необхідно для приєднання до проєктів та отримання доступу до проєктних чатів.",
+    "notInGuildDescription": "Приєднайся до нашої Discord-спільноти, щоб продовжити. Це необхідно для приєднання до проєктів та отримання доступу до проєктних чатів.",
     "error": "Не вдалося підключити Discord.",
     "errorDetails": "Спробуй ще раз.",
     "success": "Discord підключено успішно."
@@ -177,10 +179,10 @@
       "confirmPassword": "Паролі не збігаються",
       "passwordLength": "Пароль має містити 8–20 символів",
       "passwordSymbols": "Використовуй лише латиницю, цифри та спецсимволи",
-      "projectDescriptionLength": "Опис повинен містити від 2 до 500 символів",
-      "projectDescriptionSymbols": "Недопустимі символи в описі",
-      "projectNameLength": "Назва повинна містити від 2 до 50 символів",
-      "projectNameSymbols": "Недопустимі символи в назві",
+      "projectDescriptionLength": "Введи від 2 до 500 символів",
+      "projectDescriptionSymbols": "Недопустимі символи",
+      "projectNameLength": "Введи від 2 до 50 символів",
+      "projectNameSymbols": "Недопустимі символи",
       "supportLength": "Введи опис від 10 до 1000 символів",
       "supportSymbols": "Недопустимі символи в описі",
       "documentNameLength": "Назва повинна містити від 2 до 100 символів",
@@ -327,9 +329,12 @@
         "category": "Будь ласка, вибери категорію проєкту"
       },
       "createSuccess": "Проєкт успішно створено.",
-      "createError": "Досягнуто ліміту активних проєктів (максимум 2).",
-      "updateSuccess": "Дані успішно оновлено.",
-      "updateError": "Не вдалося зберегти зміни."
+      "createError409": "Досягнуто максимального ліміту активних проєктів (максимум 2).",
+      "createError": "Не вдалося створити проєкт.",
+      "createErrorDetails": "Спробуй ще раз.",
+      "updateSuccess": "Зміни збережено успішно.",
+      "updateError": "Не вдалося зберегти зміни.",
+      "updateErrorDetails": "Спробуй ще раз."
     },
     "documentForm": {
       "documentName": "Назва документа",
@@ -690,20 +695,20 @@
     "exit": "Вийти з проєкту"
   },
   "projectImage": {
-    "label": "Зображення проєкту",
     "description": "Завантажити обкладинку проєкту",
     "rules": [
       "1. Максимальний розмір 5 МБ.",
       "2. Формати: PNG, JPEG, WEBP."
     ],
-    "fileTypeError": "Непідтримуваний формат.",
-    "fileTypeErrorDetails": "Дозволені: JPEG, PNG, WEBP.",
+    "fileTypeError": "Невірний формат зображення (тільки PNG, JPEG, WEBP).",
     "fileSizeError": "Перевищено розмір файлу.",
     "fileSizeErrorDetails": "Максимальний розмір 5 МБ.",
-    "imageUpdateSuccess": "Зображення оновлено.",
+    "imageUpdateSuccess": "Зображення оновлено успішно.",
     "imageUpdateError": "Не вдалося оновити зображення.",
-    "imageDeleteSuccess": "Зображення видалено.",
-    "imageDeleteError": "Не вдалося видалити зображення."
+    "imageUpdateErrorDetails": "Спробуй ще раз.",
+    "imageDeleteSuccess": "Зображення видалено успішно.",
+    "imageDeleteError": "Не вдалося видалити зображення.",
+    "imageDeleteErrorDetails": "Спробуй ще раз."
   },
   "deleteProjectLogoPopup": {
     "title": "Видалити зображення проєкту",

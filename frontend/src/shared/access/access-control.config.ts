@@ -1,6 +1,7 @@
 import { AccessResolverType, ModeType } from './access-control.type';
 import { isGuardError } from '@/shared/utils/isGuardError';
-import { isDiscordGuardError } from '@/shared/utils/isDiscordGuardError';
+import { isDiscordNotConnectedError } from '@/shared/utils/isDiscordNotConnectedError';
+import { isDiscordNotInGuildError } from '@/shared/utils/isDiscordNotInGuildError';
 
 export const ACCESS_RESOLVERS: Record<ModeType, AccessResolverType> = {
   'no-auth': ({ user }) => {
@@ -40,7 +41,7 @@ export const ACCESS_RESOLVERS: Record<ModeType, AccessResolverType> = {
       return '/';
     }
 
-    if (isDiscordGuardError(error)) {
+    if (isDiscordNotConnectedError(error) || isDiscordNotInGuildError(error)) {
       return '/projects?connect=discord';
     }
 
@@ -56,7 +57,7 @@ export const ACCESS_RESOLVERS: Record<ModeType, AccessResolverType> = {
       return '/';
     }
 
-    if (isDiscordGuardError(error)) {
+    if (isDiscordNotConnectedError(error) || isDiscordNotInGuildError(error)) {
       return `/projects/${projectId}?connect=discord`;
     }
 

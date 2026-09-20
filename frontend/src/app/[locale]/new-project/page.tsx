@@ -19,7 +19,7 @@ export default async function NewProject(): Promise<ReactElement> {
             width={33}
             height={35}
           />
-          <h2 className={styles['new-project__title']}>[{t('title')}]</h2>
+          <h2 className={styles['new-project__title']}>{t('title')}</h2>
           <p className={styles['new-project__description']}>
             {t('description')}
           </p>

@@ -40,25 +40,6 @@
     }
   }
 
-  &__team {
-    display: flex;
-    justify-content: space-between;
-    gap: 16px;
-    align-items: center;
-  }
-
-  &__members {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }
-
-  &__team-text {
-    font-size: 14px;
-    line-height: 1.2;
-    color: variables.$gray-6;
-  }
-
   &__actions {
     width: 100%;
     display: flex;

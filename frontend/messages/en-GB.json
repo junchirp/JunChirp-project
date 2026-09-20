@@ -5,6 +5,7 @@
     "save": "Save",
     "copy": "Copy",
     "connect": "Connect",
+    "join": "Join",
     "accept": "Accept",
     "decline": "Decline",
     "signIn": "Sign in",
@@ -29,6 +30,7 @@
   },
   "discord": {
     "description": "Connect your Discord to continue. This is required to join projects and access project chats.",
+    "notInGuildDescription": "Join our Discord community to continue. This is required to join projects and access project chats.",
     "error": "Failed to connect Discord.",
     "errorDetails": "Please try again.",
     "success": "Discord connected successfully."
@@ -179,8 +181,8 @@
       "passwordSymbols": "Use only Latin letters, numbers, and special characters",
       "projectDescriptionLength": "The description must be between 2 and 500 characters",
       "projectDescriptionSymbols": "Invalid characters in the description",
-      "projectNameLength": "The name must be between 2 and 50 characters",
-      "projectNameSymbols": "Invalid characters in the name",
+      "projectNameLength": "Enter between 2 and 50 characters",
+      "projectNameSymbols": "Invalid characters",
       "supportLength": "Enter a description between 10 and 1000 characters",
       "supportSymbols": "Invalid characters in the description",
       "documentNameLength": "The name must be between 2 and 100 characters",
@@ -327,9 +329,12 @@
         "category": "Please select a project category"
       },
       "createSuccess": "Project successfully created.",
-      "createError": "Maximum number of active projects reached (2).",
-      "updateSuccess": "Project info updated.",
-      "updateError": "Failed to save changes."
+      "createError409": "Maximum active project limit reached (max 2).",
+      "createError": "Failed to create project.",
+      "createErrorDetails": "Please try again.",
+      "updateSuccess": "Changes saved successfully.",
+      "updateError": "Failed to save changes.",
+      "updateErrorDetails": "Please try again."
     },
     "documentForm": {
       "documentName": "Document name",
@@ -679,7 +684,7 @@
     "info": "Overview",
     "docs": "Documentation",
     "members": "Team",
-    "boards": "Task Board",
+    "boards": "Task board",
     "chat": "Chat"
   },
   "projectMenu": {
@@ -690,24 +695,24 @@
     "exit": "Leave project"
   },
   "projectImage": {
-    "label": "Project image",
     "description": "Upload project cover",
     "rules": [
       "1. Max size 5MB.",
       "2. Formats: PNG, JPEG, WEBP."
     ],
-    "fileTypeError": "Unsupported image format.",
-    "fileTypeErrorDetails": "Allowed: JPEG, PNG, WEBP.",
+    "fileTypeError": "Invalid image format (PNG, JPEG, WEBP only).",
     "fileSizeError": "File size exceeded.",
     "fileSizeErrorDetails": "Maximum size 5 MB.",
-    "imageUpdateSuccess": "Image updated.",
+    "imageUpdateSuccess": "Image updated successfully.",
     "imageUpdateError": "Failed to update image.",
-    "imageDeleteSuccess": "Image deleted.",
-    "imageDeleteError": "Failed to delete image."
+    "imageUpdateErrorDetails": "Please try again.",
+    "imageDeleteSuccess": "Image deleted successfully.",
+    "imageDeleteError": "Failed to delete image. Please try again.",
+    "imageDeleteErrorDetails": "Please try again."
   },
   "deleteProjectLogoPopup": {
     "title": "Delete project image",
-    "description": "Do you really want to delete the image?"
+    "description": "Are you sure you want to delete the image?"
   },
   "leaveProjectPopup": {
     "title": "Leave project",

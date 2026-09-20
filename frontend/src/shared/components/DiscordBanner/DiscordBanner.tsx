@@ -7,18 +7,35 @@ import Button from '@/shared/components/Button/Button';
 import X from '@/assets/icons/x.svg';
 import { useTranslations } from 'next-intl';
 import { useOAuthRedirect } from '@/hooks/useOAuthRedirect';
+import { DiscordErrorCodeType } from '@/shared/types/discord-error-code.type';
 
 interface DiscordBannerProps {
   closeBanner: () => void;
+  errorCode: DiscordErrorCodeType;
   isCancelButton?: boolean;
   withWrapper?: boolean;
 }
 
 export default function DiscordBanner(props: DiscordBannerProps): ReactElement {
-  const { closeBanner, isCancelButton = false, withWrapper = false } = props;
+  const {
+    closeBanner,
+    errorCode,
+    isCancelButton = false,
+    withWrapper = false,
+  } = props;
   const tButtons = useTranslations('buttons');
   const tDiscord = useTranslations('discord');
   const { redirectToOAuth } = useOAuthRedirect();
+
+  const description =
+    errorCode === 'DISCORD_NOT_IN_GUILD'
+      ? tDiscord('notInGuildDescription')
+      : tDiscord('description');
+
+  const connectButtonText =
+    errorCode === 'DISCORD_NOT_IN_GUILD'
+      ? tButtons('join')
+      : tButtons('connect');
 
   const handleDiscordLogin = (): void => redirectToOAuth('discord');
 
@@ -31,9 +48,7 @@ export default function DiscordBanner(props: DiscordBannerProps): ReactElement {
         height={223}
         priority
       />
-      <p className={styles['discord-banner__text']}>
-        {tDiscord('description')}
-      </p>
+      <p className={styles['discord-banner__text']}>{description}</p>
       <div className={styles['discord-banner__actions']}>
         {isCancelButton && (
           <Button color="green" variant="secondary-frame" onClick={closeBanner}>
@@ -41,7 +56,7 @@ export default function DiscordBanner(props: DiscordBannerProps): ReactElement {
           </Button>
         )}
         <Button color="green" onClick={handleDiscordLogin}>
-          {tButtons('connect')}
+          {connectButtonText}
         </Button>
       </div>
       <Button

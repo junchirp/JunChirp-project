@@ -6,12 +6,14 @@ import Menu from '@/assets/icons/menu.svg';
 import X from '@/assets/icons/x.svg';
 import Image from 'next/image';
 import { usePathname, useRouter } from '@/i18n/routing';
-import { useLazyCheckDiscordQuery, useLogoutMutation } from '@/api/authApi';
+import { useLogoutMutation } from '@/api/authApi';
+import { useLazyCheckDiscordQuery } from '@/api/discordApi';
 import { useTranslations } from 'next-intl';
 import { useClickOutside } from '@/hooks/useClickOutside';
 import { useDiscord } from '@/hooks/useDiscord';
-import { isDiscordGuardError } from '@/shared/utils/isDiscordGuardError';
+import { isDiscordNotConnectedError } from '@/shared/utils/isDiscordNotConnectedError';
 import Spinner from '@/shared/components/Spinner/Spinner';
+import { isDiscordNotInGuildError } from '@/shared/utils/isDiscordNotInGuildError';
 
 export default function BurgerMenu(): ReactElement {
   const router = useRouter();
@@ -23,7 +25,7 @@ export default function BurgerMenu(): ReactElement {
   const openDiscordConnect = useDiscord();
   const [checkDiscord] = useLazyCheckDiscordQuery();
   const [discordStatus, setDiscordStatus] = useState<
-    'unknown' | 'connected' | 'not-connected'
+    'unknown' | 'connected' | 'user-not-connected' | 'user-not-in-guild'
   >('unknown');
   const [isCheckingDiscord, setIsCheckingDiscord] = useState(false);
   const t = useTranslations('burgerMenu');
@@ -41,8 +43,12 @@ export default function BurgerMenu(): ReactElement {
       await checkDiscord().unwrap();
       setDiscordStatus('connected');
     } catch (error) {
-      if (isDiscordGuardError(error)) {
-        setDiscordStatus('not-connected');
+      if (isDiscordNotConnectedError(error)) {
+        setDiscordStatus('user-not-connected');
+      }
+
+      if (isDiscordNotInGuildError(error)) {
+        setDiscordStatus('user-not-in-guild');
       }
     } finally {
       setIsCheckingDiscord(false);
@@ -148,6 +154,20 @@ export default function BurgerMenu(): ReactElement {
               <Image src="/images/chat.svg" alt="chat" width={48} height={48} />
               <span>{t('chat')}</span>
             </button>
+          ) : discordStatus === 'user-not-connected' ? (
+            <button
+              className={styles['burger-menu__menu-item']}
+              onClick={() =>
+                openDiscordConnect({
+                  withWrapper: false,
+                  isCancelButton: true,
+                  errorCode: 'DISCORD_NOT_CONNECTED',
+                })
+              }
+            >
+              <Image src="/images/chat.svg" alt="chat" width={48} height={48} />
+              <span>{t('joinCommunity')}</span>
+            </button>
           ) : (
             <button
               className={styles['burger-menu__menu-item']}
@@ -155,6 +175,7 @@ export default function BurgerMenu(): ReactElement {
                 openDiscordConnect({
                   withWrapper: false,
                   isCancelButton: true,
+                  errorCode: 'DISCORD_NOT_IN_GUILD',
                 })
               }
             >

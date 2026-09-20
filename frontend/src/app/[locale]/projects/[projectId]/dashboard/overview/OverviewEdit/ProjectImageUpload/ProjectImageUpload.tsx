@@ -57,7 +57,6 @@ export default function ProjectImageUpload({
       showToast({
         severity: 'error',
         summary: tImage('fileTypeError'),
-        detail: tImage('fileTypeErrorDetails'),
         actionKey: ToastKeysEnum.UPLOAD_IMAGE,
       });
 
@@ -90,6 +89,7 @@ export default function ProjectImageUpload({
       showToast({
         severity: 'error',
         summary: tImage('imageUpdateError'),
+        detail: tImage('imageUpdateErrorDetails'),
         actionKey: ToastKeysEnum.UPLOAD_IMAGE,
       });
     }
@@ -113,6 +113,7 @@ export default function ProjectImageUpload({
       showToast({
         severity: 'error',
         summary: tImage('imageDeleteError'),
+        detail: tImage('imageDeleteErrorDetails'),
         actionKey: ToastKeysEnum.UPLOAD_IMAGE,
       });
     }
@@ -121,9 +122,6 @@ export default function ProjectImageUpload({
   return (
     <>
       <div className={styles['project-image-upload']}>
-        <h6 className={styles['project-image-upload__title']}>
-          {tImage('label')}
-        </h6>
         <div className={styles['project-image-upload__container']}>
           {project.logo ? (
             <div className={styles['project-image-upload__content-wrapper']}>

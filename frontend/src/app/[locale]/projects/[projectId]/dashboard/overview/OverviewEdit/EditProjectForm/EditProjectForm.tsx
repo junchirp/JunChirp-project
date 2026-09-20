@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactElement, useEffect } from 'react';
+import React, { ReactElement, useEffect } from 'react';
 import styles from './EditProjectForm.module.scss';
 import {
   useGetCategoriesQuery,
@@ -8,20 +8,26 @@ import {
 } from '@/api/projectsApi';
 import { z } from 'zod';
 import {
-  projectSchema,
-  projectSchemaStatic,
-} from '@/shared/forms/schemas/projectSchema';
-import { useForm } from 'react-hook-form';
+  updateProjectSchema,
+  updateProjectSchemaStatic,
+} from '@/shared/forms/schemas/updateProjectSchema';
+import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useGetProjectRolesListQuery } from '@/api/projectRolesApi';
 import { useToast } from '@/hooks/useToast';
 import { useRouter } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
-import ProjectFormFields from '@/shared/components/ProjectFormFields/ProjectFormFields';
 import { ProjectInterface } from '@/shared/interfaces/project.interface';
+import Input from '@/shared/components/Input/Input';
+import { normalizeInputValue } from '@/shared/utils/normalizeInputValue';
+import Textarea from '@/shared/components/Textarea/Textarea';
+import Dropdown from '@/shared/components/Dropdown/Dropdown';
+import { useShortLocale } from '@/hooks/useShortLocale';
+import { isDiscordNotConnectedError } from '@/shared/utils/isDiscordNotConnectedError';
+import { useDiscord } from '@/hooks/useDiscord';
+import { isDiscordNotInGuildError } from '@/shared/utils/isDiscordNotInGuildError';
 
-type FormData = z.infer<typeof projectSchemaStatic>;
+type FormData = z.infer<typeof updateProjectSchemaStatic>;
 
 interface EditProjectFormProps {
   project: ProjectInterface;
@@ -30,28 +36,33 @@ interface EditProjectFormProps {
 export default function EditProjectForm({
   project,
 }: EditProjectFormProps): ReactElement {
+  const openDiscordConnect = useDiscord();
   const { data: categories = [] } = useGetCategoriesQuery();
-  const { data: roles = [] } = useGetProjectRolesListQuery();
   const tForms = useTranslations('forms');
-  const form = useForm<FormData>({
-    resolver: zodResolver(projectSchema(tForms)),
+  const {
+    control,
+    reset,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>({
+    resolver: zodResolver(updateProjectSchema(tForms)),
     mode: 'onChange',
     defaultValues: {
       projectName: '',
       description: '',
       categoryId: '',
-      rolesIds: [],
     },
   });
 
+  const locale = useShortLocale();
+
   useEffect(() => {
-    form.reset({
+    reset({
       projectName: project.projectName,
       description: project.description,
       categoryId: project.category.id,
-      rolesIds: [],
     });
-  }, [project, form]);
+  }, [project, reset]);
 
   const [updateProject, { isLoading }] = useUpdateProjectMutation();
   const { showToast, isActive } = useToast();
@@ -81,10 +92,29 @@ export default function EditProjectForm({
       });
 
       router.replace(`/projects/${newProject.id}/dashboard/overview`);
-    } catch {
+    } catch (error) {
+      if (isDiscordNotConnectedError(error)) {
+        openDiscordConnect({
+          withWrapper: false,
+          isCancelButton: false,
+          errorCode: 'DISCORD_NOT_CONNECTED',
+        });
+        return;
+      }
+
+      if (isDiscordNotInGuildError(error)) {
+        openDiscordConnect({
+          withWrapper: false,
+          isCancelButton: false,
+          errorCode: 'DISCORD_NOT_IN_GUILD',
+        });
+        return;
+      }
+
       showToast({
         severity: 'error',
         summary: tForms('projectForm.updateError'),
+        detail: tForms('projectForm.updateErrorDetails'),
         life: 3000,
         actionKey: ToastKeysEnum.NEW_PROJECT,
       });
@@ -94,17 +124,76 @@ export default function EditProjectForm({
   return (
     <form
       className={styles['edit-project-form']}
-      onSubmit={form.handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(onSubmit)}
       id="edit-project"
     >
-      <ProjectFormFields
-        form={form}
-        roles={roles}
-        categories={categories}
-        tForms={tForms}
+      <fieldset
+        className={styles['edit-project-form__fields']}
         disabled={isLoading}
-        project={project}
-      />
+      >
+        <Controller
+          name="projectName"
+          control={control}
+          render={({ field }) => (
+            <Input
+              label={tForms('projectForm.projectName')}
+              labelSize={20}
+              labelHeight={1.4}
+              labelWeight={600}
+              labelMargin={12}
+              placeholder={tForms('projectForm.placeholders.projectName')}
+              withError
+              errorMessage={errors.projectName?.message}
+              {...field}
+              onChange={(e) => {
+                const normalized = normalizeInputValue(e.target.value);
+                field.onChange(normalized);
+              }}
+            />
+          )}
+        />
+        <Controller
+          name="description"
+          control={control}
+          render={({ field }) => (
+            <Textarea
+              label={tForms('projectForm.description')}
+              labelSize={20}
+              labelHeight={1.4}
+              labelWeight={600}
+              labelMargin={12}
+              placeholder={tForms('projectForm.placeholders.description')}
+              withError
+              errorMessage={errors.description?.message}
+              {...field}
+              onChange={(e) => {
+                const normalized = normalizeInputValue(e.target.value);
+                field.onChange(normalized);
+              }}
+            />
+          )}
+        />
+        <Controller
+          name="categoryId"
+          control={control}
+          render={({ field }) => (
+            <Dropdown
+              options={categories}
+              label={tForms('projectForm.category')}
+              labelSize={20}
+              labelHeight={1.4}
+              labelWeight={600}
+              labelMargin={12}
+              placeholder={tForms('projectForm.placeholders.category')}
+              {...field}
+              getOptionLabel={(o) => o.categoryName[locale]}
+              getOptionValue={(o) => o.id}
+              withError
+              errorMessage={errors.categoryId?.message}
+            />
+          )}
+        />
+      </fieldset>
     </form>
   );
 }

@@ -7,16 +7,15 @@ import { AuthInterface } from '@/shared/interfaces/auth.interface';
 import { useRouter } from '@/i18n/routing';
 import Plus from '@/assets/icons/plus.svg';
 import { useTranslations } from 'next-intl';
-import {
-  useLazyCheckDiscordQuery,
-  useLazyGetProjectsCountQuery,
-} from '@/api/authApi';
+import { useLazyGetProjectsCountQuery } from '@/api/authApi';
+import { useLazyCheckDiscordQuery } from '@/api/discordApi';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 import { useToast } from '@/hooks/useToast';
 import ProjectCardSmall from '@/shared/components/ProjectCardSmall/ProjectCardSmall';
 import { ProjectCardExpandedInterface } from '@/shared/interfaces/project-card-expanded.interface';
 import { useDiscord } from '@/hooks/useDiscord';
-import { isDiscordGuardError } from '@/shared/utils/isDiscordGuardError';
+import { isDiscordNotConnectedError } from '@/shared/utils/isDiscordNotConnectedError';
+import { isDiscordNotInGuildError } from '@/shared/utils/isDiscordNotInGuildError';
 
 interface MyProjectsProps {
   myProjects: ProjectCardExpandedInterface[];
@@ -58,8 +57,22 @@ export default function MyProjects({
 
       router.push('/new-project');
     } catch (error) {
-      if (isDiscordGuardError(error)) {
-        openDiscordConnect();
+      if (isDiscordNotConnectedError(error)) {
+        if (isDiscordNotConnectedError(error)) {
+          openDiscordConnect({
+            withWrapper: false,
+            isCancelButton: false,
+            errorCode: 'DISCORD_NOT_CONNECTED',
+          });
+        }
+
+        if (isDiscordNotInGuildError(error)) {
+          openDiscordConnect({
+            withWrapper: false,
+            isCancelButton: false,
+            errorCode: 'DISCORD_NOT_IN_GUILD',
+          });
+        }
       }
     }
   };

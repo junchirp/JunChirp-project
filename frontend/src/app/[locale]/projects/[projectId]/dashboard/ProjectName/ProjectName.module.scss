@@ -1,0 +1,35 @@
+@use '@/assets/styles/variables';
+
+.project-name {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  padding: 40px 0;
+
+  &__title {
+    font-family: variables.$montserrat;
+    font-weight: 600;
+    font-size: 56px;
+    line-height: 1.2;
+    text-align: center;
+  }
+
+  &__skeleton {
+    border-radius: 32px;
+    background-color: variables.$gray-1;
+    position: relative;
+    animation: pulse 1.2s ease-in-out infinite;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}

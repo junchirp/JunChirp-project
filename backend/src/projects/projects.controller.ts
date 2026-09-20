@@ -20,6 +20,7 @@ import { ProjectCategoryResponseDto } from './dto/project-category.response-dto'
 import {
   ApiBadRequestResponse,
   ApiBody,
+  ApiConflictResponse,
   ApiConsumes,
   ApiCreatedResponse,
   ApiForbiddenResponse,
@@ -80,8 +81,10 @@ export class ProjectsController {
   @ApiOperation({ summary: 'Create project' })
   @ApiCreatedResponse({ type: ProjectResponseDto })
   @ApiBadRequestResponse({
-    description:
-      'You have reached the limit of active projects / Some role type IDs or category ID are invalid',
+    description: 'Some role type IDs or category ID are invalid',
+  })
+  @ApiConflictResponse({
+    description: 'You have reached the limit of active projects',
   })
   @ApiForbiddenResponse({
     description:

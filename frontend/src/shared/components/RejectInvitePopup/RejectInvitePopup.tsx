@@ -73,7 +73,7 @@ export default function RejectInvitePopup(
           {t('cancel')}
         </Button>
         <Button color="green" onClick={onSubmit} loading={isLoading}>
-          {t('decline')}
+          {t('confirm')}
         </Button>
       </DialogFooter>
     </Dialog>
