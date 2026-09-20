@@ -22,7 +22,8 @@ import { useCreateRequestMutation } from '@/api/participationsApi';
 import { ProjectRoleInterface } from '@/shared/interfaces/project-role.interface';
 import { useShortLocale } from '@/hooks/useShortLocale';
 import { useDiscord } from '@/hooks/useDiscord';
-import { isDiscordGuardError } from '@/shared/utils/isDiscordGuardError';
+import { isDiscordNotConnectedError } from '@/shared/utils/isDiscordNotConnectedError';
+import { isDiscordNotInGuildError } from '@/shared/utils/isDiscordNotInGuildError';
 
 interface ParticipationRequestFormProps {
   project: ProjectCardInterface;
@@ -88,8 +89,21 @@ export default function ParticipationRequestForm({
         actionKey: ToastKeysEnum.PARTICIPATION_REQUEST,
       });
     } catch (error) {
-      if (isDiscordGuardError(error)) {
-        openDiscordConnect();
+      if (isDiscordNotConnectedError(error)) {
+        openDiscordConnect({
+          withWrapper: true,
+          isCancelButton: true,
+          errorCode: 'DISCORD_NOT_CONNECTED',
+        });
+        return;
+      }
+
+      if (isDiscordNotInGuildError(error)) {
+        openDiscordConnect({
+          withWrapper: true,
+          isCancelButton: true,
+          errorCode: 'DISCORD_NOT_IN_GUILD',
+        });
         return;
       }
 

@@ -1,7 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { authApi } from '@/api/authApi';
 import { AuthInterface } from '@/shared/interfaces/auth.interface';
-import { isDiscordGuardError } from '@/shared/utils/isDiscordGuardError';
+import { isDiscordNotConnectedError } from '@/shared/utils/isDiscordNotConnectedError';
+import { discordApi } from '@/api/discordApi';
 
 interface AuthState {
   user: AuthInterface | null;
@@ -92,9 +93,9 @@ export const authSlice = createSlice({
       },
     );
     builder.addMatcher(
-      authApi.endpoints.checkDiscord.matchRejected,
+      discordApi.endpoints.checkDiscord.matchRejected,
       (state, { payload }) => {
-        if (isDiscordGuardError(payload) && state.user) {
+        if (isDiscordNotConnectedError(payload) && state.user) {
           state.user.discordId = null;
         }
       },

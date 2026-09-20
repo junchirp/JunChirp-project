@@ -1,5 +1,7 @@
 import {
   BadRequestException,
+  ConflictException,
+  ForbiddenException,
   Injectable,
   MethodNotAllowedException,
   NotFoundException,
@@ -160,18 +162,36 @@ export class ProjectsService {
   ): Promise<ProjectResponseDto> {
     const user = await this.usersService.getUserById(userId);
 
+    if (!user.discordId) {
+      throw new ForbiddenException({
+        code: 'DISCORD_NOT_CONNECTED',
+        message: 'Access denied: discord not confirmed',
+      });
+    }
+
     if (user.activeProjectsCount >= 2) {
-      throw new BadRequestException(
+      throw new ConflictException(
         'You have reached the limit of active projects',
       );
     }
 
-    const { channelId, adminRoleId, memberRoleId } =
-      await this.discordService.createProjectChannel(
-        createProjectDto.projectName,
-      );
+    let discordResources: {
+      channelId: string;
+      adminRoleId: string;
+      memberRoleId: string;
+    } | null = null;
 
     try {
+      const resources = await this.discordService.createProjectChannel(
+        createProjectDto.projectName,
+      );
+      discordResources = resources;
+
+      await this.discordService.addRoleToUser(
+        user.discordId,
+        discordResources.adminRoleId,
+      );
+
       const newProject = await this.prisma.$transaction(async (prisma) => {
         const project = await prisma.project.create({
           data: {
@@ -179,9 +199,9 @@ export class ProjectsService {
             projectName: createProjectDto.projectName,
             description: createProjectDto.description,
             categoryId: createProjectDto.categoryId,
-            discordChannelId: channelId,
-            discordAdminRoleId: adminRoleId,
-            discordMemberRoleId: memberRoleId,
+            discordChannelId: resources.channelId,
+            discordAdminRoleId: resources.adminRoleId,
+            discordMemberRoleId: resources.memberRoleId,
             roles: {
               create: [
                 ...createProjectDto.rolesIds.map((roleTypeId) => ({
@@ -226,7 +246,9 @@ export class ProjectsService {
         });
 
         await prisma.user.update({
-          where: { id: userId },
+          where: {
+            id: userId,
+          },
           data: {
             activeProjectsCount: {
               increment: 1,
@@ -237,23 +259,18 @@ export class ProjectsService {
         return project;
       });
 
-      if (newProject.owner.discordId) {
-        await this.discordService.addRoleToUser(
-          newProject.owner.discordId,
-          adminRoleId,
-        );
-      }
-
       return ProjectMapper.toFullResponse(
         newProject,
         this.discordService.getGuildId(),
       );
     } catch (error) {
-      await this.discordService.deleteProjectChannel(
-        channelId,
-        adminRoleId,
-        memberRoleId,
-      );
+      if (discordResources) {
+        await this.discordService.deleteProjectChannel(
+          discordResources.channelId,
+          discordResources.adminRoleId,
+          discordResources.memberRoleId,
+        );
+      }
 
       throwPrismaError(error, {
         code: 'P2003',
@@ -339,13 +356,6 @@ export class ProjectsService {
           projectName: dto.projectName,
           description: dto.description,
           categoryId: dto.categoryId,
-          roles: {
-            create: dto.rolesIds.map((roleTypeId) => ({
-              roleType: {
-                connect: { id: roleTypeId },
-              },
-            })),
-          },
         },
         include: {
           logo: true,
@@ -372,14 +382,18 @@ export class ProjectsService {
         },
       });
 
-      if (
-        currentProject.projectName !== dto.projectName &&
-        currentProject.discordChannelId
-      ) {
-        await this.discordService.renameProjectChannel(
-          updatedProject.discordChannelId,
-          updatedProject.projectName,
+      if (currentProject.projectName !== dto.projectName) {
+        const hasChannel = await this.discordService.checkChannelByChannelId(
+          id,
+          currentProject.discordChannelId,
         );
+
+        if (hasChannel) {
+          await this.discordService.renameProjectChannel(
+            currentProject.discordChannelId,
+            updatedProject.projectName,
+          );
+        }
       }
 
       return ProjectMapper.toFullResponse(

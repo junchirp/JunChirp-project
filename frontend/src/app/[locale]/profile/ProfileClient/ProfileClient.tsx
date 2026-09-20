@@ -43,8 +43,9 @@ import { profileActionTranslationKeys } from '@/shared/constants/profile-action-
 import { useRouter } from '@/i18n/routing';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 import { useDiscord } from '@/hooks/useDiscord';
-import { isDiscordGuardError } from '@/shared/utils/isDiscordGuardError';
-import { useLazyCheckDiscordQuery } from '@/api/authApi';
+import { isDiscordNotConnectedError } from '@/shared/utils/isDiscordNotConnectedError';
+import { useLazyCheckDiscordQuery } from '@/api/discordApi';
+import { isDiscordNotInGuildError } from '@/shared/utils/isDiscordNotInGuildError';
 
 export default function ProfileClient(): ReactElement {
   const router = useRouter();
@@ -102,10 +103,19 @@ export default function ProfileClient(): ReactElement {
     void checkDiscord()
       .unwrap()
       .catch((error) => {
-        if (isDiscordGuardError(error)) {
+        if (isDiscordNotConnectedError(error)) {
           openDiscordConnect({
             withWrapper: false,
             isCancelButton: false,
+            errorCode: 'DISCORD_NOT_CONNECTED',
+          });
+        }
+
+        if (isDiscordNotInGuildError(error)) {
+          openDiscordConnect({
+            withWrapper: false,
+            isCancelButton: false,
+            errorCode: 'DISCORD_NOT_IN_GUILD',
           });
         }
       });

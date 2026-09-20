@@ -4,7 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { ParticipationStatus, Prisma } from '@prisma/client';
+import { LogEventType, ParticipationStatus, Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { AuthWithPasswordResponseDto } from './dto/auth-with-password.response-dto';
@@ -79,20 +79,18 @@ export class UsersService {
     } catch (error) {
       if (isPrismaError(error) && error.code === 'P2002') {
         await this.loggerService.log(
-          ip,
-          createUserDto.email,
-          'registration',
+          LogEventType.REGISTRATION,
           'User with this email already exists',
+          { ip, email: createUserDto.email },
         );
 
         throw new ConflictException('User with this email already exists');
       }
 
       await this.loggerService.log(
-        ip,
-        createUserDto.email,
-        'registration',
+        LogEventType.REGISTRATION,
         'Something went wrong. Please try again later',
+        { ip, email: createUserDto.email },
       );
 
       throw error;
@@ -184,10 +182,9 @@ export class UsersService {
       );
 
       await this.loggerService.log(
-        ip,
-        user.email,
-        'confirmation email',
-        'You have used up all your attempts. Please try again later.',
+        LogEventType.EMAIL_CONFIRMATION,
+        'You have used up all your attempts. Please try again later',
+        { ip, email: user.email },
       );
 
       throw new TooManyRequestsException(
@@ -220,10 +217,9 @@ export class UsersService {
     } catch (error) {
       if (isPrismaError(error) && error.code === 'P2003') {
         await this.loggerService.log(
-          ip,
-          user.email,
-          'confirmation email',
+          LogEventType.EMAIL_CONFIRMATION,
           'User with this email not found',
+          { ip, email: user.email },
         );
         throw new NotFoundException('User not found');
       }

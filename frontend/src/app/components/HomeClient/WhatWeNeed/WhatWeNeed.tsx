@@ -26,7 +26,7 @@ const FIXED_INDEXES = [2, 3, 4];
 
 interface WhatWeNeedProps {
   user: AuthInterface | null;
-  discordStatus: 'connected' | 'not-connected';
+  discordStatus: 'connected' | 'user-not-connected' | 'user-not-in-guild';
 }
 
 export default function WhatWeNeed({
@@ -228,10 +228,23 @@ export default function WhatWeNeed({
 
     if (discordStatus === 'connected') {
       window.open(blocks[i].buttonUrl, '_blank');
-      return;
     }
 
-    openDiscordConnect({ withWrapper: false, isCancelButton: true });
+    if (discordStatus === 'user-not-connected') {
+      openDiscordConnect({
+        withWrapper: false,
+        isCancelButton: true,
+        errorCode: 'DISCORD_NOT_CONNECTED',
+      });
+    }
+
+    if (discordStatus === 'user-not-in-guild') {
+      openDiscordConnect({
+        withWrapper: false,
+        isCancelButton: true,
+        errorCode: 'DISCORD_NOT_IN_GUILD',
+      });
+    }
   };
 
   return (

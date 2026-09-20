@@ -19,7 +19,8 @@ import Pagination from '@/shared/components/Pagination/Pagination';
 import { usePagination } from '@/hooks/usePagination';
 import { limitOptions } from '@/shared/constants/limit-options';
 import { useDiscord } from '@/hooks/useDiscord';
-import { isDiscordGuardError } from '@/shared/utils/isDiscordGuardError';
+import { isDiscordNotConnectedError } from '@/shared/utils/isDiscordNotConnectedError';
+import { isDiscordNotInGuildError } from '@/shared/utils/isDiscordNotInGuildError';
 
 interface MyInvitesProps {
   user: AuthInterface;
@@ -76,8 +77,21 @@ export default function MyInvites({
 
       router.push(`/projects/${inv.projectRole.project.id}/dashboard`);
     } catch (error) {
-      if (isDiscordGuardError(error)) {
-        openDiscordConnect();
+      if (isDiscordNotConnectedError(error)) {
+        openDiscordConnect({
+          withWrapper: false,
+          isCancelButton: false,
+          errorCode: 'DISCORD_NOT_CONNECTED',
+        });
+        return;
+      }
+
+      if (isDiscordNotInGuildError(error)) {
+        openDiscordConnect({
+          withWrapper: false,
+          isCancelButton: false,
+          errorCode: 'DISCORD_NOT_IN_GUILD',
+        });
         return;
       }
 

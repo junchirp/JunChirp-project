@@ -1,4 +1,4 @@
-export function isDiscordGuardError(error?: unknown): boolean {
+export function isDiscordNotConnectedError(error?: unknown): boolean {
   return !!(
     error &&
     typeof error === 'object' &&

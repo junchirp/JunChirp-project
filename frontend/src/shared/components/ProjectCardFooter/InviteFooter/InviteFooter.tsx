@@ -17,7 +17,8 @@ import { useRouter } from '@/i18n/routing';
 import { MyParticipationInterface } from '@/shared/interfaces/my-participation.interface';
 import { ProjectCardExpandedInterface } from '@/shared/interfaces/project-card-expanded.interface';
 import { useDiscord } from '@/hooks/useDiscord';
-import { isDiscordGuardError } from '@/shared/utils/isDiscordGuardError';
+import { isDiscordNotConnectedError } from '@/shared/utils/isDiscordNotConnectedError';
+import { isDiscordNotInGuildError } from '@/shared/utils/isDiscordNotInGuildError';
 
 interface InviteFooterProps {
   project: ProjectCardExpandedInterface;
@@ -66,8 +67,21 @@ export default function InviteFooter({
 
       router.push(`/projects/${project.id}/dashboard`);
     } catch (error) {
-      if (isDiscordGuardError(error)) {
-        openDiscordConnect();
+      if (isDiscordNotConnectedError(error)) {
+        openDiscordConnect({
+          withWrapper: true,
+          isCancelButton: true,
+          errorCode: 'DISCORD_NOT_CONNECTED',
+        });
+        return;
+      }
+
+      if (isDiscordNotInGuildError(error)) {
+        openDiscordConnect({
+          withWrapper: true,
+          isCancelButton: true,
+          errorCode: 'DISCORD_NOT_IN_GUILD',
+        });
         return;
       }
 

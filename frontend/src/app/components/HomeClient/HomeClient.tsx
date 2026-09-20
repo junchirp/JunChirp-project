@@ -11,8 +11,9 @@ import CallToAction from './CallToAction/CallToAction';
 import NextLevel from './NextLevel/NextLevel';
 import ThreeSteps from './ThreeSteps/ThreeSteps';
 import WhatWeNeed from './WhatWeNeed/WhatWeNeed';
-import { useCheckDiscordQuery } from '@/api/authApi';
-import { isDiscordGuardError } from '@/shared/utils/isDiscordGuardError';
+import { useCheckDiscordQuery } from '@/api/discordApi';
+import { isDiscordNotConnectedError } from '@/shared/utils/isDiscordNotConnectedError';
+import { isDiscordNotInGuildError } from '@/shared/utils/isDiscordNotInGuildError';
 
 export default function HomeClient(): ReactElement {
   const user = useAppSelector(authSelector.selectUser);
@@ -30,10 +31,12 @@ export default function HomeClient(): ReactElement {
   const discordStatus = user?.isVerified
     ? isDiscordConnected
       ? 'connected'
-      : isDiscordGuardError(discordError)
-        ? 'not-connected'
-        : 'unknown'
-    : 'not-connected';
+      : isDiscordNotConnectedError(discordError)
+        ? 'user-not-connected'
+        : isDiscordNotInGuildError(discordError)
+          ? 'user-not-in-guild'
+          : 'unknown'
+    : 'user-not-connected';
 
   if (
     loadingStatus !== 'loaded' ||

@@ -37,11 +37,6 @@ export const authApi = mainApi.injectEndpoints({
       }),
       providesTags: [{ type: 'auth', id: 'CURRENT' }],
     }),
-    checkDiscord: builder.query<void, void>({
-      query: () => ({
-        url: 'users/me/check-discord',
-      }),
-    }),
     login: builder.mutation<AuthInterface, LoginInterface>({
       query: (credentials) => ({
         url: 'auth/login',
@@ -181,6 +176,4 @@ export const {
   useCancelResetPasswordMutation,
   useGetPasswordResetTokenQuery,
   useLazyGetProjectsCountQuery,
-  useCheckDiscordQuery,
-  useLazyCheckDiscordQuery,
 } = authApi;

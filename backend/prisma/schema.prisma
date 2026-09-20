@@ -88,9 +88,9 @@ model Project {
   participantsCount   Int             @default(1) @map("participiants_count")
   ownerId             String          @map("owner_id")
   categoryId          String          @map("category_id")
-  discordChannelId    String          @map("discord_channel_id")
-  discordAdminRoleId  String          @map("discord_admin_role_id")
-  discordMemberRoleId String          @map("discord_member_role_id")
+  discordChannelId    String          @unique @map("discord_channel_id")
+  discordAdminRoleId  String          @unique @map("discord_admin_role_id")
+  discordMemberRoleId String          @unique @map("discord_member_role_id")
   publicUrl           String?         @map("public_url")
   boards              Board[]
   documents           Document[]
@@ -223,12 +223,13 @@ model SupportRequest {
 }
 
 model LogEvent {
-  id        String   @id @default(dbgenerated("gen_random_uuid()"))
-  details   String
-  ip        String
-  email     String
-  eventType String   @map("event_type")
-  createdAt DateTime @default(now()) @map("created_at")
+  id          String       @id @default(dbgenerated("gen_random_uuid()"))
+  description String
+  ip          String?
+  email       String?
+  metadata    Json?
+  eventType   LogEventType @map("event_type")
+  createdAt   DateTime     @default(now()) @map("created_at")
 
   @@map("log_events")
 }
@@ -397,4 +398,14 @@ enum ParticipationStatus {
   accepted
   rejected
   reserved
+}
+
+enum LogEventType {
+  REGISTRATION
+  LOGIN
+  GOOGLE_AUTHENTICATION
+  LOGOUT
+  RESET_PASSWORD
+  EMAIL_CONFIRMATION
+  DISCORD_CHANNEL_NOT_FOUND
 }

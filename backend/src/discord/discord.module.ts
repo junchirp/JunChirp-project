@@ -3,6 +3,8 @@ import { DiscordService } from './discord.service';
 import { NecordModule } from 'necord';
 import { IntentsBitField } from 'discord.js';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { DiscordController } from './discord.controller';
+import { LoggerModule } from '../logger/logger.module';
 
 @Module({
   imports: [
@@ -17,8 +19,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         ],
       }),
     }),
+    LoggerModule,
   ],
   providers: [DiscordService],
   exports: [DiscordService],
+  controllers: [DiscordController],
 })
 export class DiscordModule {}
