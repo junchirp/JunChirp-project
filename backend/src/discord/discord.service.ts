@@ -43,10 +43,19 @@ export class DiscordService {
 
   @Once('clientReady')
   public async onReady(): Promise<void> {
+    console.log('Discord clientReady: before guild fetch');
+
     this.guild = await this.client.guilds.fetch(this.guildId);
 
+    console.log('Discord: guild fetched');
+
     await this.guild.roles.fetch();
+
+    console.log('Discord: roles fetched');
+
     await this.guild.channels.fetch();
+
+    console.log('Discord: channels fetched');
   }
 
   public async createProjectChannel(projectName: string): Promise<{
