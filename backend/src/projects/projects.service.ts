@@ -797,4 +797,138 @@ export class ProjectsService {
 
     return participations;
   }
+
+  public async transferOwnership(
+    projectId: string,
+    newOwnerId: string,
+  ): Promise<void> {
+    try {
+      const newOwner = await this.prisma.user.findUnique({
+        where: { id: newOwnerId },
+      });
+
+      if (!newOwner) {
+        throw new NotFoundException('User not found');
+      }
+
+      if (!newOwner.discordId) {
+        throw new ForbiddenException({
+          code: 'DISCORD_NOT_CONNECTED',
+          message: 'New project owner has no connected Discord account',
+        });
+      }
+
+      const isGuildMember = await this.discordService.isGuildMember(
+        newOwner.discordId,
+      );
+
+      if (!isGuildMember) {
+        throw new ForbiddenException({
+          code: 'DISCORD_NOT_IN_GUILD',
+          message: 'New project owner is not a member of the Discord guild',
+        });
+      }
+
+      const {
+        discordChannelId,
+        discordAdminRoleId,
+        discordMemberRoleId,
+        oldOwnerDiscordId,
+      } = await this.prisma.$transaction(async (prisma) => {
+        const project = await prisma.project.findUniqueOrThrow({
+          where: { id: projectId },
+          include: {
+            owner: true,
+            roles: {
+              include: {
+                users: true,
+              },
+            },
+          },
+        });
+
+        const role = project.roles.find((r) =>
+          r.users.some((u) => u.id === newOwnerId),
+        );
+
+        if (!role) {
+          throw new NotFoundException('User is not a member of the project');
+        }
+
+        if (role.slots === 1) {
+          await prisma.projectRole.delete({
+            where: { id: role.id },
+          });
+        } else {
+          await prisma.projectRole.update({
+            where: { id: role.id },
+            data: {
+              slots: {
+                decrement: 1,
+              },
+              users: {
+                disconnect: {
+                  id: newOwnerId,
+                },
+              },
+            },
+          });
+        }
+
+        await prisma.user.update({
+          where: { id: project.ownerId },
+          data: {
+            activeProjectsCount: {
+              decrement: 1,
+            },
+          },
+        });
+
+        await prisma.project.update({
+          where: { id: projectId },
+          data: {
+            ownerId: newOwnerId,
+          },
+        });
+
+        return {
+          discordChannelId: project.discordChannelId,
+          discordAdminRoleId: project.discordAdminRoleId,
+          discordMemberRoleId: project.discordMemberRoleId,
+          oldOwnerDiscordId: project.owner.discordId,
+        };
+      });
+
+      const hasChannel = await this.discordService.checkChannelByChannelId(
+        projectId,
+        discordChannelId,
+      );
+
+      if (!hasChannel) {
+        return;
+      }
+
+      if (oldOwnerDiscordId) {
+        await this.discordService.removeRoleFromUser(
+          oldOwnerDiscordId,
+          discordAdminRoleId,
+        );
+      }
+
+      await this.discordService.removeRoleFromUser(
+        newOwner.discordId,
+        discordMemberRoleId,
+      );
+      await this.discordService.addRoleToUser(
+        newOwner.discordId,
+        discordAdminRoleId,
+      );
+    } catch (error) {
+      throwPrismaError(error, {
+        code: 'P2025',
+        exception: NotFoundException,
+        message: 'Resource (project, projectRole or user) not found',
+      });
+    }
+  }
 }

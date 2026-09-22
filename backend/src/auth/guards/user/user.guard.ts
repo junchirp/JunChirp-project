@@ -18,7 +18,10 @@ export class UserGuard implements CanActivate {
 
   public async canActivate(context: ExecutionContext): Promise<boolean> {
     const check: UserCheckType =
-      this.reflector.get(USER_GUARD_KEY, context.getHandler()) ?? 'email';
+      this.reflector.getAllAndOverride<UserCheckType>(USER_GUARD_KEY, [
+        context.getHandler(),
+        context.getClass(),
+      ]) ?? 'email';
     const request = context.switchToHttp().getRequest();
     const user = request.user;
 

@@ -166,6 +166,22 @@ export const projectsApi = mainApi.injectEndpoints({
         { type: 'user-projects', id },
       ],
     }),
+    transferOwnership: builder.mutation<
+      void,
+      { projectId: string; ownerId: string }
+    >({
+      query: ({ projectId, ownerId }) => ({
+        url: `projects/${projectId}/owner`,
+        method: 'PATCH',
+        body: { ownerId },
+      }),
+      invalidatesTags: (_result, _error, { projectId }) => [
+        { type: 'project-cards', id: 'LIST' },
+        { type: 'project-cards', id: projectId },
+        { type: 'my-projects', id: 'LIST' },
+        { type: 'auth', id: 'CURRENT' },
+      ],
+    }),
   }),
 });
 
@@ -182,4 +198,5 @@ export const {
   useCompleteProjectMutation,
   useGetMyProjectsQuery,
   useGetUserProjectsQuery,
+  useTransferOwnershipMutation,
 } = projectsApi;

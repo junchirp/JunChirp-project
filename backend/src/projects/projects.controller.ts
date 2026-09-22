@@ -49,6 +49,7 @@ import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { DocumentResponseDto } from '../documents/dto/document.response-dto';
 import { BoardResponseDto } from '../boards/dto/board.response-dto';
 import { UserProjectsFilterDto } from '../users/dto/user-projects-filter.dto';
+import { TransferOwnershipDto } from './dto/transfer-ownership.dto';
 
 @User()
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
@@ -314,5 +315,27 @@ export class ProjectsController {
     @UUIDParam('id') id: string,
   ): Promise<BoardResponseDto[]> {
     return this.projectsService.getBoardsList(id);
+  }
+
+  @Owner()
+  @ApiOperation({ summary: 'Transfer of ownership' })
+  @ApiNoContentResponse()
+  @ApiForbiddenResponse({
+    description: `Access denied: you are not a participant of this project /
+       Access denied: email not confirmed / Access denied: discord not confirmed /
+       Invalid CSRF token / New project owner has no connected Discord account /
+       New project owner is not a member of the Discord guild`,
+  })
+  @ApiNotFoundResponse({ description: 'User not found / User is not a member of the project / Resource (project, projectRole or user) not found' })
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Patch(':id/owner')
+  public async transferOwnership(
+    @Param('id') projectId: string,
+    @Body() transferOwnershipDto: TransferOwnershipDto,
+  ): Promise<void> {
+    return this.projectsService.transferOwnership(
+      projectId,
+      transferOwnershipDto.ownerId,
+    );
   }
 }

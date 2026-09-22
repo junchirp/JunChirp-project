@@ -16,10 +16,18 @@ interface ProjectMenuProps {
   onLeave: () => void;
   onDelete: () => void;
   onComplete: () => void;
+  onTransferOwnerShip: () => void;
 }
 
 export default function ProjectMenu(props: ProjectMenuProps): ReactElement {
-  const { project, isOwner, onLeave, onDelete, onComplete } = props;
+  const {
+    project,
+    isOwner,
+    onLeave,
+    onDelete,
+    onComplete,
+    onTransferOwnerShip,
+  } = props;
   const [isOpen, setIsOpen] = useState(false);
   const buttonRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLElement>(null);
@@ -93,7 +101,10 @@ export default function ProjectMenu(props: ProjectMenuProps): ReactElement {
                   {t('edit')}
                 </span>
               </button>
-              <button className={styles['project-menu__item']}>
+              <button
+                className={styles['project-menu__item']}
+                onClick={onTransferOwnerShip}
+              >
                 <Image
                   src="/images/owner.svg"
                   alt="owner"
