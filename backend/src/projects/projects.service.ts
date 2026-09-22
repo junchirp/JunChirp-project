@@ -888,9 +888,6 @@ export class ProjectsService {
           where: { id: projectId },
           data: {
             ownerId: newOwnerId,
-            participantsCount: {
-              decrement: 1,
-            }
           },
         });
 
