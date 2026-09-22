@@ -30,4 +30,5 @@ export enum ToastKeysEnum {
   PROJECT_ROLE = 'project role',
   BOARD = 'board',
   STATUS = 'status',
+  OWNERSHIP = 'ownership',
 }

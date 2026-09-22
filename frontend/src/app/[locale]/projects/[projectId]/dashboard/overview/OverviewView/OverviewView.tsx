@@ -19,6 +19,7 @@ import DeleteProjectPopup from './DeleteProjectPopup/DeleteProjectPopup';
 import CompleteProjectPopup from './CompleteProjectPopup/CompleteProjectPopup';
 import { useShortLocale } from '@/hooks/useShortLocale';
 import { useLeaveProjectMutation } from '@/api/participationsApi';
+import OwnershipPopup from '@/app/[locale]/projects/[projectId]/dashboard/overview/OverviewView/OwnershipPopup/OwnershipPopup';
 
 interface OverviewViewProps {
   project: ProjectInterface;
@@ -58,6 +59,7 @@ export default function OverviewView({
     : project.roles.find((role) =>
         role.users.some((user) => user.id === userId),
       )?.roleType.roleName;
+  const [ownershipPopupOpen, setOwnershipPopupOpen] = useState(false);
 
   const openLeavePopup = (): void => setLeavePopupOpen(true);
   const closeLeavePopup = (): void => setLeavePopupOpen(false);
@@ -65,6 +67,8 @@ export default function OverviewView({
   const closeDeletePopup = (): void => setDeletePopupOpen(false);
   const openCompletePopup = (): void => setCompletePopupOpen(true);
   const closeCompletePopup = (): void => setCompletePopupOpen(false);
+  const openOwnershipPopup = (): void => setOwnershipPopupOpen(true);
+  const closeOwnershipPopup = (): void => setOwnershipPopupOpen(false);
 
   const exitFromProject = async (): Promise<void> => {
     if (isActive(ToastKeysEnum.PROJECT)) {
@@ -160,6 +164,7 @@ export default function OverviewView({
               alt="logo"
               width={project.logo.width}
               height={project.logo.height}
+              loading="eager"
             />
           ) : (
             <Image
@@ -189,6 +194,7 @@ export default function OverviewView({
                 onLeave={openLeavePopup}
                 onDelete={openDeletePopup}
                 onComplete={openCompletePopup}
+                onTransferOwnerShip={openOwnershipPopup}
               />
             </div>
             <h2 className={styles['overview-view__title']}>
@@ -241,6 +247,11 @@ export default function OverviewView({
         isOpen={completePopupOpen}
         onClose={closeCompletePopup}
         onConfirm={handleCompleteProject}
+      />
+      <OwnershipPopup
+        project={project}
+        isOpen={ownershipPopupOpen}
+        onClose={closeOwnershipPopup}
       />
     </>
   );

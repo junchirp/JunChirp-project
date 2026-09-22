@@ -1,0 +1,20 @@
+@use '@/assets/styles/variables';
+
+.ownership-popup {
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    text-align: left;
+  }
+
+  &__text {
+    color: variables.$red-2;
+  }
+}

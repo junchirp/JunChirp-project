@@ -58,21 +58,19 @@ export default function MyProjects({
       router.push('/new-project');
     } catch (error) {
       if (isDiscordNotConnectedError(error)) {
-        if (isDiscordNotConnectedError(error)) {
-          openDiscordConnect({
-            withWrapper: false,
-            isCancelButton: false,
-            errorCode: 'DISCORD_NOT_CONNECTED',
-          });
-        }
+        openDiscordConnect({
+          withWrapper: false,
+          isCancelButton: false,
+          errorCode: 'DISCORD_NOT_CONNECTED',
+        });
+      }
 
-        if (isDiscordNotInGuildError(error)) {
-          openDiscordConnect({
-            withWrapper: false,
-            isCancelButton: false,
-            errorCode: 'DISCORD_NOT_IN_GUILD',
-          });
-        }
+      if (isDiscordNotInGuildError(error)) {
+        openDiscordConnect({
+          withWrapper: false,
+          isCancelButton: false,
+          errorCode: 'DISCORD_NOT_IN_GUILD',
+        });
       }
     }
   };
