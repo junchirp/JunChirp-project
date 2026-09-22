@@ -11,13 +11,21 @@ import { LoggerModule } from '../logger/logger.module';
     NecordModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        token: configService.getOrThrow<string>('DISCORD_BOT_TOKEN'),
-        intents: [
-          IntentsBitField.Flags.Guilds,
-          IntentsBitField.Flags.GuildMembers,
-        ],
-      }),
+      useFactory: (configService: ConfigService) => {
+        console.log('Necord: before config');
+
+        const token = configService.getOrThrow<string>('DISCORD_BOT_TOKEN');
+
+        console.log('Necord: token loaded');
+
+        return {
+          token,
+          intents: [
+            IntentsBitField.Flags.Guilds,
+            IntentsBitField.Flags.GuildMembers,
+          ],
+        };
+      },
     }),
     LoggerModule,
   ],
