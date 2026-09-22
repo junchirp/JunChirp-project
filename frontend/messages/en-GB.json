@@ -346,6 +346,12 @@
       "error": "Failed to save document.",
       "error409": "A document with this link already exists.",
       "success": "Document saved."
+    },
+    "ownershipForm": {
+      "ownerId": "Select user",
+      "placeholders": {
+        "ownerId": "Select user"
+      }
     }
   },
   "page404": {
@@ -849,5 +855,12 @@
   "deleteColumnPopup": {
     "title": "Delete column",
     "description": "This column contains tasks. Do you really want to delete the column <column>{columnName}</column>? This action cannot be undone."
+  },
+  "ownershipPopup": {
+    "title": "Transfer ownership",
+    "warning": "Warning: Upon confirming the transfer, the owner role will be passed to the selected user, and you will be removed from the project without the possibility of restoring access.",
+    "error": "Failed to transfer ownership.",
+    "errorDetails": "Please try again.",
+    "success": "Ownership transferred successfully."
   }
 }

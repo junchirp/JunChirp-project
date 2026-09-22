@@ -23,7 +23,6 @@ import { useToast } from '@/hooks/useToast';
 import { useRouter } from '@/i18n/routing';
 import { isDiscordNotConnectedError } from '@/shared/utils/isDiscordNotConnectedError';
 import { isDiscordNotInGuildError } from '@/shared/utils/isDiscordNotInGuildError';
-import Image from 'next/image';
 
 interface OwnershipPopupProps {
   project: ProjectInterface;
@@ -40,6 +39,8 @@ export default function OwnershipPopup(
   const { showToast, isActive } = useToast();
   const router = useRouter();
   const tForms = useTranslations('forms');
+  const tOwnership = useTranslations('ownershipPopup');
+  const tButtons = useTranslations('buttons');
   const {
     handleSubmit,
     control,
@@ -74,7 +75,7 @@ export default function OwnershipPopup(
 
       showToast({
         severity: 'success',
-        summary: 'Право власності передано успішно.',
+        summary: tOwnership('success'),
         life: 3000,
         actionKey: ToastKeysEnum.OWNERSHIP,
       });
@@ -94,8 +95,8 @@ export default function OwnershipPopup(
 
       showToast({
         severity: 'error',
-        summary: 'Не вдалося передати право власності.',
-        detail: 'Спробуй ще раз.',
+        summary: tOwnership('error'),
+        detail: tOwnership('errorDetails'),
         life: 3000,
         actionKey: ToastKeysEnum.OWNERSHIP,
       });
@@ -104,7 +105,7 @@ export default function OwnershipPopup(
 
   return (
     <Dialog isOpen={isOpen} onClose={onClose}>
-      <DialogHeader title={'Передати право власності'} />
+      <DialogHeader title={tOwnership('title')} />
       <DialogBody>
         <div className={styles['ownership-popup__body']}>
           <form
@@ -112,21 +113,18 @@ export default function OwnershipPopup(
             className={styles['ownership-popup__form']}
             onSubmit={handleSubmit(onSubmit)}
           >
-            <fieldset
-              className={styles['ownership-popup__fieldset']}
-              disabled={isLoading}
-            >
+            <fieldset disabled={isLoading}>
               <Controller
                 name="ownerId"
                 control={control}
                 render={({ field }) => (
                   <Dropdown
                     {...field}
-                    label="Вибери користувача"
+                    label={tForms('ownershipForm.ownerId')}
                     options={members}
                     getOptionLabel={(o) => `${o.firstName} ${o.lastName}`}
                     getOptionValue={(o) => o.id}
-                    placeholder="Вибери користувача"
+                    placeholder={tForms('ownershipForm.placeholders.ownerId')}
                   />
                 )}
               />
@@ -134,16 +132,14 @@ export default function OwnershipPopup(
           </form>
           {isValid && (
             <p className={styles['ownership-popup__text']}>
-              Увага: після підтвердження передачі роль власника перейде до
-              обраного користувача, а тебе буде видалено з проєкту без
-              можливості відновлення доступу.
+              {tOwnership('warning')}
             </p>
           )}
         </div>
       </DialogBody>
       <DialogFooter>
         <Button color="green" variant="secondary-frame" onClick={onClose}>
-          Скасувати
+          {tButtons('cancel')}
         </Button>
         <Button
           color="green"
@@ -152,7 +148,7 @@ export default function OwnershipPopup(
           disabled={!isValid}
           form="ownership-form"
         >
-          Підтвердити
+          {tButtons('confirm')}
         </Button>
       </DialogFooter>
     </Dialog>

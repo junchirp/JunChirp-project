@@ -19,8 +19,7 @@ import DeleteProjectPopup from './DeleteProjectPopup/DeleteProjectPopup';
 import CompleteProjectPopup from './CompleteProjectPopup/CompleteProjectPopup';
 import { useShortLocale } from '@/hooks/useShortLocale';
 import { useLeaveProjectMutation } from '@/api/participationsApi';
-import OwnershipPopup
-  from '@/app/[locale]/projects/[projectId]/dashboard/overview/OverviewView/OwnershipPopup/OwnershipPopup';
+import OwnershipPopup from '@/app/[locale]/projects/[projectId]/dashboard/overview/OverviewView/OwnershipPopup/OwnershipPopup';
 
 interface OverviewViewProps {
   project: ProjectInterface;
@@ -165,6 +164,7 @@ export default function OverviewView({
               alt="logo"
               width={project.logo.width}
               height={project.logo.height}
+              loading="eager"
             />
           ) : (
             <Image
