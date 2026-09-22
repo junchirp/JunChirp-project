@@ -18,9 +18,6 @@ async function bootstrap(): Promise<void> {
   const server = express();
   server.set('trust proxy', true);
 
-  console.log('PORT:', process.env.PORT);
-  console.log('Listening on:', PORT);
-
   server.listen(PORT, '0.0.0.0');
 
   const dev = process.env.NODE_ENV !== 'production';
