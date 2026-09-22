@@ -45,7 +45,9 @@ async function bootstrap(): Promise<void> {
     nextFunc();
   });
 
+  console.log('Before NestFactory.create()');
   const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
+  console.log('After NestFactory.create()');
 
   const sessionMiddleware = app.get(CsrfSessionIdMiddleware);
   const csrfMiddleware = app.get(CsrfProtectionMiddleware);
@@ -76,7 +78,10 @@ async function bootstrap(): Promise<void> {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('swagger', app, document);
 
+  console.log('Before app.init()');
   await app.init();
+  console.log('After app.init()');
+
   isReady = true;
 
   console.log(`Server started on port ${PORT}`);
