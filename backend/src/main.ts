@@ -18,8 +18,6 @@ async function bootstrap(): Promise<void> {
   const server = express();
   server.set('trust proxy', true);
 
-  server.listen(PORT, '0.0.0.0');
-
   const dev = process.env.NODE_ENV !== 'production';
   const frontendDir = resolve(__dirname, '../../frontend');
   const next = nextModule as unknown as (opts: {
@@ -29,20 +27,12 @@ async function bootstrap(): Promise<void> {
   const nextApp = next({ dev, dir: frontendDir });
   await nextApp.prepare();
   const handle = nextApp.getRequestHandler();
-  let isReady = false;
 
   server.use((req, res, nextFunc) => {
     if (req.url.startsWith('/api') || req.url.startsWith('/swagger')) {
       return nextFunc();
     }
     return handle(req, res);
-  });
-
-  server.use((_req, res, nextFunc) => {
-    if (!isReady) {
-      return res.status(503).send('Server is starting...');
-    }
-    nextFunc();
   });
 
   const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
@@ -77,9 +67,9 @@ async function bootstrap(): Promise<void> {
   SwaggerModule.setup('swagger', app, document);
 
   await app.init();
-  isReady = true;
-
-  console.log(`Server started on port ${PORT}`);
+  server.listen(PORT, () => {
+    console.log(`Server started on port ${PORT}`);
+  });
 }
 bootstrap().catch((error) => {
   console.error('Failed to start application:', error);
