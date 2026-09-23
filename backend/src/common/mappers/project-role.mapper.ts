@@ -1,17 +1,17 @@
 import {
-  Project,
-  ProjectCategory,
-  ProjectCategoryTranslation,
-  ProjectLogo,
-  ProjectRole,
-  ProjectRoleType,
-  User,
+  type Project,
+  type ProjectCategory,
+  type ProjectCategoryTranslation,
+  type ProjectLogo,
+  type ProjectRole,
+  type ProjectRoleType,
+  type User,
 } from '@prisma/client';
-import { ProjectRoleResponseDto } from '../../project-roles/dto/project-role.response-dto';
-import { ProjectRoleWithProjectResponseDto } from '../../project-roles/dto/project-role-with-project.response-dto';
+import { type ProjectRoleResponseDto } from '../../project-roles/dto/project-role.response-dto';
+import { type ProjectRoleWithProjectResponseDto } from '../../project-roles/dto/project-role-with-project.response-dto';
 import { ProjectMapper } from './project.mapper';
 import { UserMapper } from './user.mapper';
-import { ProjectRoleWithUsersResponseDto } from '../../project-roles/dto/project-role-with-users.response-dto';
+import { type ProjectRoleWithUsersResponseDto } from '../../project-roles/dto/project-role-with-users.response-dto';
 
 export class ProjectRoleMapper {
   public static toBaseResponse(

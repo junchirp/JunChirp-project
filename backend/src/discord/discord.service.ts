@@ -48,6 +48,24 @@ export class DiscordService {
     await this.guild.roles.fetch();
     await this.guild.channels.fetch();
   }
+  // TODO: uncomment event before release
+  // @On('guildMemberAdd')
+  // public async onGuildMemberAdd(member: GuildMember): Promise<void> {
+  //   if (member.guild.id !== this.guildId) {
+  //     return;
+  //   }
+  //
+  //   const user = await this.prisma.user.findFirst({ // TODO: change to 'findUnique' before release
+  //     where: { discordId: member.id },
+  //     select: { id: true },
+  //   });
+  //
+  //   if (!user) {
+  //     return;
+  //   }
+  //
+  //   await this.restoreProjectRoles(user.id, member.id);
+  // }
 
   public async createProjectChannel(projectName: string): Promise<{
     channelId: string;

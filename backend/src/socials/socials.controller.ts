@@ -14,7 +14,7 @@ import {
   ApiOperation,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { Request } from 'express';
+import { type Request } from 'express';
 import { AuthWithPasswordResponseDto } from '../users/dto/auth-with-password.response-dto';
 import { User } from '../auth/decorators/user.decorator';
 import { UUIDParam } from '../common/decorators/UUID-param.decorator';

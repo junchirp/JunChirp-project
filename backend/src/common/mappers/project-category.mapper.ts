@@ -1,5 +1,8 @@
-import { ProjectCategory, ProjectCategoryTranslation } from '@prisma/client';
-import { ProjectCategoryResponseDto } from '../../projects/dto/project-category.response-dto';
+import {
+  type ProjectCategory,
+  type ProjectCategoryTranslation,
+} from '@prisma/client';
+import { type ProjectCategoryResponseDto } from '../../projects/dto/project-category.response-dto';
 
 export class ProjectCategoryMapper {
   public static toResponse(

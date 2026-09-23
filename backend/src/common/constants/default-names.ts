@@ -1,4 +1,4 @@
-import { LocaleType } from '../types/locale.type';
+import { type LocaleType } from '../types/locale.type';
 import { ColumnColor } from '@prisma/client';
 
 export const DEFAULT_NAMES: Record<

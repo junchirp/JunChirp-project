@@ -1,5 +1,5 @@
-import { Education } from '@prisma/client';
-import { EducationResponseDto } from '../../educations/dto/education.response-dto';
+import { type Education } from '@prisma/client';
+import { type EducationResponseDto } from '../../educations/dto/education.response-dto';
 
 export class EducationMapper {
   public static toResponse(education: Education): EducationResponseDto {

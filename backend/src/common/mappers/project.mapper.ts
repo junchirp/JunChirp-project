@@ -1,20 +1,20 @@
 import {
-  Project,
-  ProjectCategory,
-  ProjectRole,
-  ProjectRoleType,
-  User,
-  ProjectCategoryTranslation,
-  ProjectLogo,
+  type Project,
+  type ProjectCategory,
+  type ProjectRole,
+  type ProjectRoleType,
+  type User,
+  type ProjectCategoryTranslation,
+  type ProjectLogo,
 } from '@prisma/client';
-import { ProjectResponseDto } from '../../projects/dto/project.response-dto';
+import { type ProjectResponseDto } from '../../projects/dto/project.response-dto';
 import { ProjectRoleMapper } from './project-role.mapper';
-import { ProjectCardResponseDto } from '../../projects/dto/project-card.response-dto';
+import { type ProjectCardResponseDto } from '../../projects/dto/project-card.response-dto';
 import { ProjectCategoryMapper } from './project-category.mapper';
 import { ProjectLogoMapper } from './project-logo.mapper';
 import { UserMapper } from './user.mapper';
-import { MyParticipationResponseDto } from '../../participations/dto/my-participation.response-dto';
-import { ProjectCardExpandedResponseDto } from '../../projects/dto/project-card-expanded.response-dto';
+import { type MyParticipationResponseDto } from '../../participations/dto/my-participation.response-dto';
+import { type ProjectCardExpandedResponseDto } from '../../projects/dto/project-card-expanded.response-dto';
 
 export class ProjectMapper {
   public static toBaseCardResponse(

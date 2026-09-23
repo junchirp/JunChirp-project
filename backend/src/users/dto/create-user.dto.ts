@@ -11,7 +11,7 @@ import { IsPasswordInBlackList } from '../../common/validators/is-in-black-list.
 import { IsPasswordNotContainName } from '../../common/validators/is-password-not-contain-name.validator';
 import { ContainsOnlyAllowedCharacters } from '../../common/validators/contains-only-allowed-characters.validator';
 import { HasTwoGroups } from '../../common/validators/has-two-groups.validator';
-import { localeArray, LocaleType } from '../../common/types/locale.type';
+import { localeArray, type LocaleType } from '../../common/types/locale.type';
 
 export class CreateUserDto {
   @ApiProperty({ example: 'email@mail.com', description: 'Email' })

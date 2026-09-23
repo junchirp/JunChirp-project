@@ -1,5 +1,5 @@
-import { Board, TaskStatus } from '@prisma/client';
-import { BoardResponseDto } from '../../boards/dto/board.response-dto';
+import { type Board, type TaskStatus } from '@prisma/client';
+import { type BoardResponseDto } from '../../boards/dto/board.response-dto';
 import { TaskStatusMapper } from './task-status.mapper';
 
 export class BoardMapper {

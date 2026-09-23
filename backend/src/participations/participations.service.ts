@@ -863,17 +863,38 @@ export class ParticipationsService {
           },
         });
 
+        if (role.slots === 1) {
+          await prisma.projectRole.delete({
+            where: { id: role.id },
+          });
+        } else {
+          await prisma.projectRole.update({
+            where: { id: role.id },
+            data: {
+              slots: {
+                decrement: 1,
+              },
+            },
+          });
+        }
+
         return {
           discordId: user.discordId,
           discordRoleId: role.project.discordMemberRoleId,
         };
       });
 
-      if (result.discordId && result.discordRoleId) {
-        await this.discordService.removeRoleFromUser(
+      if (result.discordId) {
+        const isGuildMember = await this.discordService.isGuildMember(
           result.discordId,
-          result.discordRoleId,
         );
+
+        if (isGuildMember) {
+          await this.discordService.removeRoleFromUser(
+            result.discordId,
+            result.discordRoleId,
+          );
+        }
       }
     } catch (error) {
       throwPrismaError(error, [

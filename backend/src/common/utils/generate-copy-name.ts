@@ -1,4 +1,4 @@
-import { LocaleType } from '../types/locale.type';
+import { type LocaleType } from '../types/locale.type';
 
 const COPY_SUFFIXES = {
   ua: {

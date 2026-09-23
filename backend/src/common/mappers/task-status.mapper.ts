@@ -1,7 +1,12 @@
-import { ProjectRoleType, Task, TaskStatus, User } from '@prisma/client';
-import { TaskStatusResponseDto } from '../../boards/dto/task-status.response-dto';
+import {
+  type ProjectRoleType,
+  type Task,
+  type TaskStatus,
+  type User,
+} from '@prisma/client';
+import { type TaskStatusResponseDto } from '../../boards/dto/task-status.response-dto';
 import { TaskMapper } from './task.mapper';
-import { TaskStatusWithTasksResponseDto } from '../../boards/dto/task-status-with-tasks.response-dto';
+import { type TaskStatusWithTasksResponseDto } from '../../boards/dto/task-status-with-tasks.response-dto';
 
 export class TaskStatusMapper {
   public static toBaseResponse(

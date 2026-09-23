@@ -7,7 +7,7 @@ import {
   Length,
   Matches,
 } from 'class-validator';
-import { localeArray, LocaleType } from '../../common/types/locale.type';
+import { localeArray, type LocaleType } from '../../common/types/locale.type';
 import { Prisma } from '@prisma/client';
 
 export class CreateSupportDto {
