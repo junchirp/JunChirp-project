@@ -78,14 +78,13 @@ export default function ProjectMenu(props: ProjectMenuProps): ReactElement {
           className={styles['project-menu__button']}
           variant="secondary-frame"
           color="green"
-          disabled={project.status === 'done' && !isOwner}
           icon={<Settings />}
           onClick={toggleMenu}
         />
       </div>
       {isOpen && (
         <nav className={styles['project-menu__menu']} ref={menuRef}>
-          {isOwner && project.status === 'active' ? (
+          {isOwner ? (
             <>
               <button
                 className={styles['project-menu__item']}
@@ -144,19 +143,7 @@ export default function ProjectMenu(props: ProjectMenuProps): ReactElement {
                 </span>
               </button>
             </>
-          ) : isOwner && project.status === 'done' ? (
-            <button className={styles['project-menu__item']} onClick={() => {}}>
-              <Image
-                src="/images/trash.svg"
-                alt="trash"
-                width={48}
-                height={48}
-              />
-              <span className={styles['project-menu__text']}>
-                Відновити проєкт
-              </span>
-            </button>
-          ) : !isOwner && project.status === 'active' ? (
+          ) : (
             <button
               className={styles['project-menu__item']}
               onClick={leaveProject}
@@ -169,7 +156,7 @@ export default function ProjectMenu(props: ProjectMenuProps): ReactElement {
               />
               <span className={styles['project-menu__text']}>{t('exit')}</span>
             </button>
-          ) : null}
+          )}
         </nav>
       )}
     </div>
