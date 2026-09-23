@@ -725,9 +725,10 @@
   },
   "leaveProjectPopup": {
     "title": "Leave project",
-    "description": "Do you really want to leave the project <project>{projectName}</project>? After leaving, you will lose access to tasks, chat, and other information.",
-    "success": "Your participation in the project is complete.",
-    "error": "Failed to leave project."
+    "description": "Are you sure you want to leave the project <project>{projectName}</project>? After leaving, you will lose access to tasks, chat, and other information.",
+    "success": "Left the project successfully.",
+    "error": "Failed to leave project.",
+    "errorDetails": "Please try again."
   },
   "documents": {
     "description": "Added documents",
