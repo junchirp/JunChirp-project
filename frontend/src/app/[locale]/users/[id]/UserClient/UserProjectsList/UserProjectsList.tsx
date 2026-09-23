@@ -26,7 +26,6 @@ export default function UserProjectsList({
     ProjectCardExpandedInterface[]
   >([]);
   const t = useTranslations('profile');
-  const [listLoaded, setListLoaded] = useState(false);
 
   const queryArgs = useMemo(() => {
     return {
@@ -43,7 +42,6 @@ export default function UserProjectsList({
     data: list,
     isFetching,
     isLoading,
-    refetch,
   } = useGetUserProjectsQuery(queryArgs);
 
   useEffect(() => {
@@ -51,7 +49,6 @@ export default function UserProjectsList({
       return;
     }
 
-    setListLoaded(true);
     setAllProjects((prev) => {
       if (page === 1) {
         return list.projects;
@@ -64,49 +61,10 @@ export default function UserProjectsList({
   }, [list, page]);
 
   useEffect(() => {
-    setListLoaded(false);
-    setAllProjects([]);
-
-    if (page !== 1) {
-      setPage(1);
-    } else {
-      void refetch().then((res) => {
-        if ('data' in res) {
-          setAllProjects(res.data?.projects ?? []);
-        }
-      });
-    }
+    setPage(1);
   }, [filter]);
 
-  useEffect(() => {
-    let mounted = true;
-    const handleVisibility = async (): Promise<void> => {
-      if (document.visibilityState === 'visible') {
-        setAllProjects([]);
-        if (page !== 1) {
-          setPage(1);
-        } else {
-          const res = await refetch();
-          if (!mounted) {
-            return;
-          }
-          if ('data' in res) {
-            setAllProjects(res.data?.projects ?? []);
-          }
-        }
-      }
-    };
-
-    document.addEventListener('visibilitychange', handleVisibility);
-    return (): void => {
-      mounted = false;
-      document.removeEventListener('visibilitychange', handleVisibility);
-    };
-  }, [page, refetch]);
-
-  const hasMoreProjects = Boolean(
-    listLoaded && list && allProjects.length < list.total,
-  );
+  const hasMoreProjects = Boolean(list && allProjects.length < list.total);
 
   const loadMoreProjects = (): void => {
     if (isFetching || isLoading) {

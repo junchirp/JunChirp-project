@@ -34,7 +34,7 @@ export default function ProjectTabs({
   const openDiscordConnect = useDiscord();
   const [checkDiscord] = useLazyCheckDiscordQuery();
   const [checkDiscordChannel] = useLazyCheckDiscordChannelQuery();
-  const t = useTranslations('dashboardMenu');
+  const t = useTranslations('dashboard.menu');
 
   const basePath = `/projects/${projectId}/dashboard`;
 

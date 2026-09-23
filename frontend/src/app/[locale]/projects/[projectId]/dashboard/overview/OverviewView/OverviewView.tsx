@@ -188,14 +188,16 @@ export default function OverviewView({
                   ? tStatus('active')
                   : tStatus('completed')}
               </p>
-              <ProjectMenu
-                project={project}
-                isOwner={isOwner}
-                onLeave={openLeavePopup}
-                onDelete={openDeletePopup}
-                onComplete={openCompletePopup}
-                onTransferOwnerShip={openOwnershipPopup}
-              />
+              {project.status === 'active' && (
+                <ProjectMenu
+                  project={project}
+                  isOwner={isOwner}
+                  onLeave={openLeavePopup}
+                  onDelete={openDeletePopup}
+                  onComplete={openCompletePopup}
+                  onTransferOwnerShip={openOwnershipPopup}
+                />
+              )}
             </div>
             <h2 className={styles['overview-view__title']}>
               {project.projectName}

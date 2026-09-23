@@ -686,12 +686,15 @@
     "title": "Cancel project creation?",
     "description": "Are you sure you want to cancel project creation? This action cannot be undone."
   },
-  "dashboardMenu": {
-    "info": "Overview",
-    "docs": "Documentation",
-    "members": "Team",
-    "boards": "Task board",
-    "chat": "Chat"
+  "dashboard": {
+    "title": "Project dashboard",
+    "menu": {
+      "info": "Overview",
+      "docs": "Documentation",
+      "members": "Team",
+      "boards": "Task board",
+      "chat": "Chat"
+    }
   },
   "projectMenu": {
     "edit": "Edit project",

@@ -443,8 +443,8 @@ export default function ProfileClient(): ReactElement {
           <MyInvites user={user} />
         </div>
       )}
-      {deletedItem && isSocial(deletedItem.item) && (
-        <DeleteItemPopup<SocialInterface>
+      {isSocial(deletedItem?.item) && (
+        <DeleteItemPopup
           item={deletedItem.item}
           onCancel={closeModal}
           onConfirm={handleDeleteSocial}
@@ -455,7 +455,7 @@ export default function ProfileClient(): ReactElement {
         />
       )}
       {isEducation(deletedItem?.item) && (
-        <DeleteItemPopup<EducationInterface>
+        <DeleteItemPopup
           item={deletedItem.item}
           onCancel={closeModal}
           onConfirm={handleDeleteEducation}
@@ -466,7 +466,7 @@ export default function ProfileClient(): ReactElement {
         />
       )}
       {isSoftSkill(deletedItem?.item) && (
-        <DeleteItemPopup<SoftSkillInterface>
+        <DeleteItemPopup
           item={deletedItem.item}
           onCancel={closeModal}
           onConfirm={handleDeleteSoftSkill}
@@ -477,7 +477,7 @@ export default function ProfileClient(): ReactElement {
         />
       )}
       {isHardSkill(deletedItem?.item) && (
-        <DeleteItemPopup<HardSkillInterface>
+        <DeleteItemPopup
           item={deletedItem.item}
           onCancel={closeModal}
           onConfirm={handleDeleteHardSkill}
