@@ -90,6 +90,7 @@ export default function OverviewView({
       showToast({
         severity: 'error',
         summary: tLeavePopup('error'),
+        detail: tLeavePopup('errorDetails'),
         life: 3000,
         actionKey: ToastKeysEnum.PROJECT,
       });
