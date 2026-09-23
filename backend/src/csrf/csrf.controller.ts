@@ -1,6 +1,6 @@
 import { Controller, Get, Req, Res } from '@nestjs/common';
 import { CsrfService } from './csrf.service';
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { CsrfTokenResponseDto } from './dto/csrf-token.response-dto';
 

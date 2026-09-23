@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsIn, IsNotEmpty, Matches } from 'class-validator';
-import { localeArray, LocaleType } from '../../common/types/locale.type';
+import { localeArray, type LocaleType } from '../../common/types/locale.type';
 
 export class EmailWithLocaleDto {
   @ApiProperty({ example: 'email@mail.com', description: 'Email' })

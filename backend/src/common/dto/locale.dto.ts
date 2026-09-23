@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsIn } from 'class-validator';
-import { localeArray, LocaleType } from '../types/locale.type';
+import { localeArray, type LocaleType } from '../types/locale.type';
 
 export class LocaleDto {
   @ApiProperty({

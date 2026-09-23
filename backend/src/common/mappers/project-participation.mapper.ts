@@ -1,15 +1,15 @@
-import { ParticipationModelType } from '../types/participation-model.type';
+import { type ParticipationModelType } from '../types/participation-model.type';
 import {
-  Project,
-  ProjectCategory,
-  ProjectCategoryTranslation,
-  ProjectLogo,
-  ProjectRole,
-  ProjectRoleType,
-  User,
+  type Project,
+  type ProjectCategory,
+  type ProjectCategoryTranslation,
+  type ProjectLogo,
+  type ProjectRole,
+  type ProjectRoleType,
+  type User,
 } from '@prisma/client';
 import { ProjectRoleMapper } from './project-role.mapper';
-import { ProjectParticipationResponseDto } from '../../participations/dto/project-participation.response-dto';
+import { type ProjectParticipationResponseDto } from '../../participations/dto/project-participation.response-dto';
 
 export class ProjectParticipationMapper {
   public static toResponse(

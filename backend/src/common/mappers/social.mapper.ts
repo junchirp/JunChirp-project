@@ -1,5 +1,5 @@
-import { Social } from '@prisma/client';
-import { SocialResponseDto } from '../../socials/dto/social.response-dto';
+import { type Social } from '@prisma/client';
+import { type SocialResponseDto } from '../../socials/dto/social.response-dto';
 
 export class SocialMapper {
   public static toResponse(social: Social): SocialResponseDto {

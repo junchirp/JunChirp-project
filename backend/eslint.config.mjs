@@ -23,6 +23,13 @@ export default defineConfig({
     '@stylistic': stylistic,
   },
   rules: {
+    '@typescript-eslint/consistent-type-imports': [
+      'error',
+      {
+        prefer: 'type-imports',
+        fixStyle: 'inline-type-imports',
+      },
+    ],
     '@typescript-eslint/no-floating-promises': 'error',
     '@typescript-eslint/switch-exhaustiveness-check': 'error',
     '@typescript-eslint/prefer-readonly': 'error',

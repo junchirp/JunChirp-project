@@ -14,11 +14,11 @@ import {
   LocaleType,
 } from '../common/types/locale.type';
 import { AuthResponseDto } from '../users/dto/auth.response-dto';
-import * as path from 'path';
-import * as fs from 'fs';
+import { join } from 'path';
+import { readFileSync } from 'fs';
 import * as handlebars from 'handlebars';
 import { InjectQueue } from '@nestjs/bull';
-import { Queue } from 'bull';
+import { type Queue } from 'bull';
 import { OAuth2Client } from 'google-auth-library';
 import { RedisService } from '../redis/redis.service';
 import { gmail_v1, google } from 'googleapis';
@@ -236,8 +236,8 @@ export class MailService {
     templateName: string,
     context?: Record<string, unknown>,
   ): string {
-    const filePath = path.join(__dirname, 'templates', `${templateName}.hbs`);
-    const template = fs.readFileSync(filePath, 'utf8');
+    const filePath = join(__dirname, 'templates', `${templateName}.hbs`);
+    const template = readFileSync(filePath, 'utf8');
     return handlebars.compile(template)(context);
   }
 

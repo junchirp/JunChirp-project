@@ -1,4 +1,4 @@
-import { PrismaErrorHandlerInterface } from '../interfaces/prisma-error-handler.interface';
+import { type PrismaErrorHandlerInterface } from '../interfaces/prisma-error-handler.interface';
 import { isPrismaError } from './is-prisma-error';
 
 export function throwPrismaError(

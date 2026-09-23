@@ -326,7 +326,10 @@ export class ProjectsController {
        Invalid CSRF token / New project owner has no connected Discord account /
        New project owner is not a member of the Discord guild`,
   })
-  @ApiNotFoundResponse({ description: 'User not found / User is not a member of the project / Resource (project, projectRole or user) not found' })
+  @ApiNotFoundResponse({
+    description:
+      'User not found / User is not a member of the project / Resource (project, projectRole or user) not found',
+  })
   @HttpCode(HttpStatus.NO_CONTENT)
   @Patch(':id/owner')
   public async transferOwnership(

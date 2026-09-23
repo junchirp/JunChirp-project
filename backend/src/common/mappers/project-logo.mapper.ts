@@ -1,5 +1,5 @@
-import { ProjectLogo } from '@prisma/client';
-import { ProjectLogoResponseDto } from '../../projects/dto/project-logo.response-dto';
+import { type ProjectLogo } from '@prisma/client';
+import { type ProjectLogoResponseDto } from '../../projects/dto/project-logo.response-dto';
 
 export class ProjectLogoMapper {
   public static toResponse(logo: ProjectLogo): ProjectLogoResponseDto {

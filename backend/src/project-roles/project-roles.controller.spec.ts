@@ -1,4 +1,4 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { ProjectRolesController } from './project-roles.controller';
 import { ProjectRolesService } from './project-roles.service';
 

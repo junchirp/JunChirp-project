@@ -1,22 +1,22 @@
 import {
-  Education,
-  ProjectRoleType,
-  Role,
-  Social,
-  User,
-  UserHardSkill,
-  UserSoftSkill,
+  type Education,
+  type ProjectRoleType,
+  type Role,
+  type Social,
+  type User,
+  type UserHardSkill,
+  type UserSoftSkill,
 } from '@prisma/client';
-import { UserResponseDto } from '../../users/dto/user.response-dto';
+import { type UserResponseDto } from '../../users/dto/user.response-dto';
 import { EducationMapper } from './education.mapper';
 import { SocialMapper } from './social.mapper';
 import { SoftSkillMapper } from './soft-skill.mapper';
 import { HardSkillMapper } from './hard-skill.mapper';
-import { AuthWithPasswordResponseDto } from '../../users/dto/auth-with-password.response-dto';
-import { UserCardResponseDto } from '../../users/dto/user-card.response-dto';
-import { AuthResponseDto } from '../../users/dto/auth.response-dto';
-import { UserParticipationInMyProjectsResponseDto } from '../../users/dto/user-participation-in-my-projects.response-dto';
-import { UserBaseResponseDto } from '../../users/dto/user-base.response-dto';
+import { type AuthWithPasswordResponseDto } from '../../users/dto/auth-with-password.response-dto';
+import { type UserCardResponseDto } from '../../users/dto/user-card.response-dto';
+import { type AuthResponseDto } from '../../users/dto/auth.response-dto';
+import { type UserParticipationInMyProjectsResponseDto } from '../../users/dto/user-participation-in-my-projects.response-dto';
+import { type UserBaseResponseDto } from '../../users/dto/user-base.response-dto';
 
 export class UserMapper {
   public static toFullResponse(

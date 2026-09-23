@@ -7,9 +7,13 @@ import { resolve } from 'path';
 import helmet from 'helmet';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 import nextModule = require('next');
-import { NextServer } from 'next/dist/server/next';
+import { type NextServer } from 'next/dist/server/next';
 import { ValidationPipe } from './common/pipes/validation/validation.pipe';
-import express, { NextFunction, Request, Response } from 'express';
+import express, {
+  type NextFunction,
+  type Request,
+  type Response,
+} from 'express';
 import { CsrfSessionIdMiddleware } from './csrf/middleware/csrf-session-id/csrf-session-id.middleware';
 import { CsrfProtectionMiddleware } from './csrf/middleware/csrf-protection/csrf-protection.middleware';
 

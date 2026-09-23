@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ProjectRoleResponseDto } from '../../project-roles/dto/project-role.response-dto';
-import { ParticipationType } from '../../common/types/participation.type';
+import { type ParticipationType } from '../../common/types/participation.type';
 
 export class MyParticipationResponseDto {
   @ApiProperty({
