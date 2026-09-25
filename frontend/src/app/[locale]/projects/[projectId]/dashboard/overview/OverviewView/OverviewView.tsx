@@ -34,6 +34,7 @@ export default function OverviewView({
   const tStatus = useTranslations('status');
   const tLeavePopup = useTranslations('leaveProjectPopup');
   const tDeletePopup = useTranslations('deleteProjectPopup');
+  const tButtons = useTranslations('buttons');
   const locale = useShortLocale();
   const format = useFormatter();
   const formattedDate = format.dateTime(new Date(project.createdAt), {
@@ -112,6 +113,7 @@ export default function OverviewView({
       showToast({
         severity: 'error',
         summary: tDeletePopup('error'),
+        detail: tDeletePopup('errorDetails'),
         life: 3000,
         actionKey: ToastKeysEnum.PROJECT,
       });
@@ -201,9 +203,9 @@ export default function OverviewView({
           {project.status === 'done' && (project.publicUrl ?? isOwner) && (
             <div className={styles['overview-view__actions']}>
               {project.publicUrl && (
-                <Button color="green">Переглянути сайт проєкту</Button>
+                <Button color="green">{tButtons('viewProjectWebSite')}</Button>
               )}
-              {isOwner && <Button color="green">Відновити проєкт</Button>}
+              {isOwner && <Button color="green">{tButtons('restore')}</Button>}
             </div>
           )}
         </div>

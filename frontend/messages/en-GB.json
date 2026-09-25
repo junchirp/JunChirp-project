@@ -14,6 +14,8 @@
     "viewDetails": "View details",
     "goDashboard": "Go to project dashboard",
     "viewWebSite": "View website",
+    "viewProjectWebSite": "View project website",
+    "restore": "Restore project",
     "sendRequest": "Apply Now",
     "cancelRequest": "Cancel Application",
     "sendInvite": "Send invitation",
@@ -754,9 +756,10 @@
   "deleteProjectPopup": {
     "title": "Delete project",
     "warning": "This action is irreversible. Once deleted, the project cannot be restored.",
-    "description": "Do you really want to delete <project>{projectName}</project>? This action cannot be undone.",
-    "success": "Project deleted.",
-    "error": "Failed to delete project."
+    "description": "Are you sure you want to delete <project>{projectName}</project>? This action cannot be undone.",
+    "success": "Project deleted successfully.",
+    "error": "Failed to delete project.",
+    "errorDetails": "Please try again."
   },
   "completeProjectPopup": {
     "title": "Complete project",
