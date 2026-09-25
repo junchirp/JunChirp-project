@@ -125,16 +125,24 @@ export const projectsApi = mainApi.injectEndpoints({
         { type: 'auth', id: 'CURRENT' },
       ],
     }),
-    completeProject: builder.mutation<ProjectInterface, string>({
-      query: (id) => ({
+    completeProject: builder.mutation<
+      string[],
+      { id: string; data: { publicUrl?: string } }
+    >({
+      query: ({ id, data }) => ({
         url: `projects/${id}/close`,
         method: 'PATCH',
+        body: data,
       }),
-      invalidatesTags: (_result, _error, id) => [
+      invalidatesTags: (result, _error, { id }) => [
         { type: 'project-cards', id: 'LIST' },
         { type: 'projects', id },
         { type: 'my-projects', id: 'LIST' },
         { type: 'auth', id: 'CURRENT' },
+        ...(result ?? []).flatMap((userId) => [
+          { type: 'invites-in-my-projects' as const, id: userId },
+          { type: 'requests-in-my-projects' as const, id: userId },
+        ]),
       ],
     }),
     getMyProjects: builder.query<ProjectsListInterface, string>({

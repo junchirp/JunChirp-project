@@ -414,4 +414,39 @@ export class DiscordService {
       throw error;
     }
   }
+
+  public async archiveProjectChannel(
+    projectId: string,
+    channelId: string,
+    memberRoleId: string,
+  ): Promise<void> {
+    try {
+      const channel = await this.guild.channels.fetch(channelId);
+
+      if (!(channel instanceof TextChannel)) {
+        return;
+      }
+
+      await channel.permissionOverwrites.edit(memberRoleId, {
+        ViewChannel: false,
+      });
+    } catch (error) {
+      if (error instanceof DiscordAPIError && error.code === 10003) {
+        await this.loggerService.log(
+          LogEventType.DISCORD_CHANNEL_NOT_FOUND,
+          `Discord channel ${channelId} was not found`,
+          {
+            metadata: {
+              projectId,
+              channelId,
+            },
+          },
+        );
+
+        return;
+      }
+
+      throw error;
+    }
+  }
 }

@@ -352,6 +352,12 @@
       "placeholders": {
         "ownerId": "Select user"
       }
+    },
+    "completeProjectForm": {
+      "publicUrl": "Project website link",
+      "placeholders": {
+        "publicUrl": "Enter project website URL"
+      }
     }
   },
   "page404": {
@@ -754,9 +760,11 @@
   },
   "completeProjectPopup": {
     "title": "Complete project",
-    "description": "After completion, the project will become view-only.",
-    "success": "Project marked as completed.",
-    "error": "Failed to complete project."
+    "description": "After completion, the project will become view-only. All open vacancies will be closed, and pending applications, reserve, and invitations will be canceled.",
+    "warning": "Are you sure you want to complete the project <project>{projectName}</project>?",
+    "success": "Project completed successfully.",
+    "error": "Failed to complete project.",
+    "errorDetails": "Please try again."
   },
   "team": {
     "all": "All",

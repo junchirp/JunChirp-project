@@ -1,0 +1,12 @@
+.complete-project-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  &__actions {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+  }
+}

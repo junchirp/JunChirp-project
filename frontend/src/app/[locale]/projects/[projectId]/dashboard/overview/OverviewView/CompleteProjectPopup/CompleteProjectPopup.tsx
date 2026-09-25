@@ -1,38 +1,45 @@
 'use client';
 
 import { ReactElement } from 'react';
+import styles from './CompleteProjectPopup.module.scss';
 import Dialog from '@/shared/components/Dialog/Dialog';
 import DialogHeader from '@/shared/components/Dialog/DialogHeader/DialogHeader';
 import DialogBody from '@/shared/components/Dialog/DialogBody/DialogBody';
-import DialogFooter from '@/shared/components/Dialog/DialogFooter/DialogFooter';
-import Button from '@/shared/components/Button/Button';
 import { useTranslations } from 'next-intl';
+import { ProjectInterface } from '@/shared/interfaces/project.interface';
+import CompleteProjectForm from './CompleteProjectForm/CompleteProjectForm';
+import DialogFooter from '@/shared/components/Dialog/DialogFooter/DialogFooter';
 
 interface CompleteProjectPopupProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: () => void;
-  isLoading?: boolean;
+  project: ProjectInterface;
 }
 
 export default function CompleteProjectPopup(
   props: CompleteProjectPopupProps,
 ): ReactElement {
-  const { isOpen, onClose, onConfirm, isLoading } = props;
+  const { isOpen, onClose, project } = props;
   const tPopup = useTranslations('completeProjectPopup');
-  const tButtons = useTranslations('buttons');
 
   return (
     <Dialog isOpen={isOpen} onClose={onClose}>
       <DialogHeader title={tPopup('title')} />
-      <DialogBody>{tPopup('description')}</DialogBody>
+      <DialogBody>
+        <p>{tPopup('description')}</p>
+        <p>
+          {tPopup.rich('warning', {
+            project: (chunks) => (
+              <span className={styles['complete-project-popup__green-text']}>
+                [{chunks}]
+              </span>
+            ),
+            projectName: project.projectName,
+          })}
+        </p>
+      </DialogBody>
       <DialogFooter>
-        <Button color="green" variant="secondary-frame" onClick={onClose}>
-          {tButtons('cancel')}
-        </Button>
-        <Button color="green" onClick={onConfirm} loading={isLoading}>
-          {tButtons('confirm')}
-        </Button>
+        <CompleteProjectForm id={project.id} onClose={onClose} />
       </DialogFooter>
     </Dialog>
   );

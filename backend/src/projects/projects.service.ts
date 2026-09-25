@@ -13,7 +13,12 @@ import { ProjectCategoryResponseDto } from './dto/project-category.response-dto'
 import { ProjectResponseDto } from './dto/project.response-dto';
 import { ProjectsListResponseDto } from './dto/projects-list.response-dto';
 import { ProjectMapper } from '../common/mappers/project.mapper';
-import { ParticipationStatus, Prisma, ProjectStatus } from '@prisma/client';
+import {
+  LogEventType,
+  ParticipationStatus,
+  Prisma,
+  ProjectStatus,
+} from '@prisma/client';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { ProjectRolesService } from '../project-roles/project-roles.service';
 import { DiscordService } from '../discord/discord.service';
@@ -30,6 +35,7 @@ import { BoardResponseDto } from '../boards/dto/board.response-dto';
 import { BoardMapper } from '../common/mappers/board.mapper';
 import { throwPrismaError } from '../common/utils/throw-prisma-error';
 import { MyParticipationResponseDto } from '../participations/dto/my-participation.response-dto';
+import { LoggerService } from '../logger/logger.service';
 
 interface GetProjectsOptionsInterface {
   userId: string;
@@ -50,6 +56,7 @@ export class ProjectsService {
     private readonly projectRolesService: ProjectRolesService,
     private readonly discordService: DiscordService,
     private readonly usersService: UsersService,
+    private readonly loggerService: LoggerService,
   ) {}
 
   public async getCategories(): Promise<ProjectCategoryResponseDto[]> {
@@ -416,16 +423,73 @@ export class ProjectsService {
     }
   }
 
-  public async closeProject(id: string): Promise<ProjectResponseDto> {
+  public async closeProject(
+    id: string,
+    publicUrl?: string,
+  ): Promise<string[]> {
     try {
-      const closedProject = await this.prisma.$transaction(async (prisma) => {
+      const result = await this.prisma.$transaction(async (prisma) => {
+        const requests = await prisma.participationRequest.findMany({
+          where: {
+            projectId: id,
+            status: {
+              in: [ParticipationStatus.pending, ParticipationStatus.reserved],
+            },
+          },
+          select: {
+            userId: true,
+          },
+        });
+
+        const invites = await prisma.participationInvite.findMany({
+          where: {
+            projectId: id,
+            status: {
+              in: [ParticipationStatus.pending, ParticipationStatus.reserved],
+            },
+          },
+          select: {
+            userId: true,
+          },
+        });
+
+        const userIds: string[] = [
+          ...requests.map(({ userId }) => userId),
+          ...invites.map(({ userId }) => userId),
+        ];
+
         await this.projectRolesService.clearSlots(id, prisma);
+
+        await prisma.participationRequest.updateMany({
+          where: {
+            projectId: id,
+            status: {
+              in: [ParticipationStatus.pending, ParticipationStatus.reserved],
+            },
+          },
+          data: {
+            status: ParticipationStatus.rejected,
+          },
+        });
+
+        await prisma.participationInvite.updateMany({
+          where: {
+            projectId: id,
+            status: {
+              in: [ParticipationStatus.pending, ParticipationStatus.reserved],
+            },
+          },
+          data: {
+            status: ParticipationStatus.canceled,
+          },
+        });
 
         const project = await prisma.project.update({
           where: { id },
           data: {
             status: ProjectStatus.done,
             finishedAt: new Date(),
+            publicUrl,
           },
           include: {
             logo: true,
@@ -471,13 +535,34 @@ export class ProjectsService {
           },
         });
 
-        return project;
+        return {
+          userIds,
+          discordChannelId: project.discordChannelId,
+          discordMemberRoleId: project.discordMemberRoleId,
+        };
       });
 
-      return ProjectMapper.toFullResponse(
-        closedProject,
-        this.discordService.getGuildId(),
-      );
+      try {
+        await this.discordService.archiveProjectChannel(
+          id,
+          result.discordChannelId,
+          result.discordMemberRoleId,
+        );
+      } catch (error) {
+        await this.loggerService.log(
+          LogEventType.DISCORD_CHANNEL_ERROR,
+          `Failed to archive Discord channel ${result.discordChannelId}`,
+          {
+            metadata: {
+              projectId: id,
+              channelId: result.discordChannelId,
+              error: error instanceof Error ? error.message : String(error),
+            },
+          },
+        );
+      }
+
+      return result.userIds;
     } catch (error) {
       throwPrismaError(error, {
         code: 'P2025',

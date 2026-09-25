@@ -1,5 +1,5 @@
 import { z, ZodObject, ZodString } from 'zod';
-import { networkUrlValidator } from '@/shared/forms/validators/networkUrlValidator';
+import { socialUrlValidator } from '@/shared/forms/validators/socialUrlValidator';
 import { socialRefinement } from '@/shared/forms/refinements/socialRefinement';
 import { nonEmptyValidator } from '@/shared/forms/validators/nonEmptyValidator';
 
@@ -17,6 +17,6 @@ export const socialSchema = (
   socialSchemaStatic
     .extend({
       network: nonEmptyValidator(t),
-      url: networkUrlValidator(t),
+      url: socialUrlValidator(t),
     })
     .superRefine(socialRefinement(t));
