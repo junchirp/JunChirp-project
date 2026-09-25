@@ -3,7 +3,5 @@ export const normalizeUrl = (value: string): string => {
     return value;
   }
 
-  return /^https?:\/\//i.test(value)
-    ? value
-    : `https://${value}`;
+  return /^https?:\/\//i.test(value) ? value : `https://${value}`;
 };
