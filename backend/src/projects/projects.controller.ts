@@ -50,6 +50,7 @@ import { DocumentResponseDto } from '../documents/dto/document.response-dto';
 import { BoardResponseDto } from '../boards/dto/board.response-dto';
 import { UserProjectsFilterDto } from '../users/dto/user-projects-filter.dto';
 import { TransferOwnershipDto } from './dto/transfer-ownership.dto';
+import { CloseProjectDto } from './dto/close-project.dto';
 
 @User()
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
@@ -130,7 +131,7 @@ export class ProjectsController {
 
   @Owner()
   @ApiOperation({ summary: 'Close project' })
-  @ApiCreatedResponse({ type: ProjectResponseDto })
+  @ApiOkResponse({ type: [String] })
   @ApiNotFoundResponse({
     description:
       'Project, role or user in team not found / Project roles not found or already removed',
@@ -150,8 +151,9 @@ export class ProjectsController {
   @Patch(':id/close')
   public async closeProject(
     @UUIDParam('id') id: string,
-  ): Promise<ProjectResponseDto> {
-    return this.projectsService.closeProject(id);
+    @Body() closeProjectDto: CloseProjectDto,
+  ): Promise<string[]> {
+    return this.projectsService.closeProject(id, closeProjectDto.publicUrl);
   }
 
   @Owner()

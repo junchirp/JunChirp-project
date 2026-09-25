@@ -112,4 +112,9 @@
     line-height: 1.2;
     color: variables.$gray-6;
   }
+
+  &__actions {
+    display: flex;
+    gap: 16px;
+  }
 }

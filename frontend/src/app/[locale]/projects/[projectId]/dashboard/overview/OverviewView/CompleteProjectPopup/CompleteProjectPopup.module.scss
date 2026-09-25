@@ -1,0 +1,7 @@
+@use '@/assets/styles/variables';
+
+.complete-project-popup {
+  &__green-text {
+    color: variables.$green-2;
+  }
+}

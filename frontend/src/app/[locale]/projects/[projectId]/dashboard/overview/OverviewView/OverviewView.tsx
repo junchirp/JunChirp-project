@@ -7,10 +7,7 @@ import { membersPipe } from '@/shared/utils/membersPipe';
 import ProjectMenu from './ProjectMenu/ProjectMenu';
 import { useFormatter, useTranslations } from 'next-intl';
 import { ProjectInterface } from '@/shared/interfaces/project.interface';
-import {
-  useCompleteProjectMutation,
-  useDeleteProjectMutation,
-} from '@/api/projectsApi';
+import { useDeleteProjectMutation } from '@/api/projectsApi';
 import LeaveProjectPopup from './LeaveProjectPopup/LeaveProjectPopup';
 import { useToast } from '@/hooks/useToast';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
@@ -20,6 +17,7 @@ import CompleteProjectPopup from './CompleteProjectPopup/CompleteProjectPopup';
 import { useShortLocale } from '@/hooks/useShortLocale';
 import { useLeaveProjectMutation } from '@/api/participationsApi';
 import OwnershipPopup from '@/app/[locale]/projects/[projectId]/dashboard/overview/OverviewView/OwnershipPopup/OwnershipPopup';
+import Button from '@/shared/components/Button/Button';
 
 interface OverviewViewProps {
   project: ProjectInterface;
@@ -36,7 +34,6 @@ export default function OverviewView({
   const tStatus = useTranslations('status');
   const tLeavePopup = useTranslations('leaveProjectPopup');
   const tDeletePopup = useTranslations('deleteProjectPopup');
-  const tCompletePopup = useTranslations('completeProjectPopup');
   const locale = useShortLocale();
   const format = useFormatter();
   const formattedDate = format.dateTime(new Date(project.createdAt), {
@@ -52,8 +49,6 @@ export default function OverviewView({
   const [deleteProject, { isLoading: deleteLoading }] =
     useDeleteProjectMutation();
   const [completePopupOpen, setCompletePopupOpen] = useState(false);
-  const [completeProject, { isLoading: completeLoading }] =
-    useCompleteProjectMutation();
   const currentUserRole = isOwner
     ? 'Product Owner'
     : project.roles.find((role) =>
@@ -120,32 +115,6 @@ export default function OverviewView({
         life: 3000,
         actionKey: ToastKeysEnum.PROJECT,
       });
-    }
-  };
-
-  const handleCompleteProject = async (): Promise<void> => {
-    if (isActive(ToastKeysEnum.PROJECT)) {
-      return;
-    }
-
-    try {
-      await completeProject(project.id).unwrap();
-
-      showToast({
-        severity: 'success',
-        summary: tCompletePopup('success'),
-        life: 3000,
-        actionKey: ToastKeysEnum.PROJECT,
-      });
-    } catch {
-      showToast({
-        severity: 'error',
-        summary: tCompletePopup('error'),
-        life: 3000,
-        actionKey: ToastKeysEnum.PROJECT,
-      });
-    } finally {
-      closeCompletePopup();
     }
   };
 
@@ -229,6 +198,14 @@ export default function OverviewView({
               {formattedDate}
             </span>
           </div>
+          {project.status === 'done' && (project.publicUrl ?? isOwner) && (
+            <div className={styles['overview-view__actions']}>
+              {project.publicUrl && (
+                <Button color="green">Переглянути сайт проєкту</Button>
+              )}
+              {isOwner && <Button color="green">Відновити проєкт</Button>}
+            </div>
+          )}
         </div>
       </div>
       <LeaveProjectPopup
@@ -246,10 +223,9 @@ export default function OverviewView({
         onConfirm={handleDeleteProject}
       />
       <CompleteProjectPopup
-        isLoading={completeLoading}
         isOpen={completePopupOpen}
         onClose={closeCompletePopup}
-        onConfirm={handleCompleteProject}
+        project={project}
       />
       <OwnershipPopup
         project={project}
