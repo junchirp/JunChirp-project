@@ -10,14 +10,22 @@ import { DocumentResponseDto } from './dto/document.response-dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { DocumentMapper } from '../common/mappers/document.mapper';
 import { throwPrismaError } from '../common/utils/throw-prisma-error';
+import { ProjectsService } from '../projects/projects.service';
 
 @Injectable()
 export class DocumentsService {
-  public constructor(private readonly prisma: PrismaService) {}
+  public constructor(
+    private readonly prisma: PrismaService,
+    private readonly projectsService: ProjectsService,
+  ) {}
 
   public async addDocument(
     createDocumentDto: CreateDocumentDto,
   ): Promise<DocumentResponseDto> {
+    await this.projectsService.checkProjectIsActive(
+      createDocumentDto.projectId,
+    );
+
     const documentCount = await this.prisma.document.count({
       where: {
         projectId: createDocumentDto.projectId,
@@ -49,30 +57,49 @@ export class DocumentsService {
     id: string,
     updateDocumentDto: UpdateDocumentDto,
   ): Promise<DocumentResponseDto> {
+    const document = await this.prisma.document.findUnique({
+      where: { id },
+      select: {
+        projectId: true,
+      },
+    });
+
+    if (!document) {
+      throw new NotFoundException('Document not found');
+    }
+
+    await this.projectsService.checkProjectIsActive(document.projectId);
+
     try {
-      const document = await this.prisma.document.update({
+      const updatedDocument = await this.prisma.document.update({
         where: { id },
         data: updateDocumentDto,
       });
 
-      return DocumentMapper.toResponse(document);
+      return DocumentMapper.toResponse(updatedDocument);
     } catch (error) {
-      throwPrismaError(error, [
-        {
-          code: 'P2025',
-          exception: NotFoundException,
-          message: 'Document not found',
-        },
-        {
-          code: 'P2002',
-          exception: ConflictException,
-          message: 'Duplicate document url',
-        },
-      ]);
+      throwPrismaError(error, {
+        code: 'P2002',
+        exception: ConflictException,
+        message: 'Duplicate document url',
+      });
     }
   }
 
   public async deleteDocument(id: string): Promise<void> {
+    const document = await this.prisma.document.findUnique({
+      where: { id },
+      select: {
+        projectId: true,
+      },
+    });
+
+    if (!document) {
+      throw new NotFoundException('Document not found');
+    }
+
+    await this.projectsService.checkProjectIsActive(document.projectId);
+
     try {
       await this.prisma.document.delete({
         where: { id },

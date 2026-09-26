@@ -10,13 +10,13 @@ import Trash from '@/assets/icons/trash.svg';
 
 interface DocItemProps {
   doc: DocumentInterface;
-  isOwner: boolean;
+  canManage: boolean;
   onDelete: (item: DocumentInterface) => void;
   onEdit: (item: DocumentInterface) => void;
 }
 
 export default function DocItem(props: DocItemProps): ReactElement {
-  const { doc, isOwner, onDelete, onEdit } = props;
+  const { doc, canManage, onDelete, onEdit } = props;
 
   return (
     <div className={styles['doc-item']}>
@@ -34,7 +34,7 @@ export default function DocItem(props: DocItemProps): ReactElement {
             height={80}
           />
         </a>
-        {isOwner && (
+        {canManage && (
           <div className={styles['doc-item__actions']}>
             <Button
               icon={<Trash />}

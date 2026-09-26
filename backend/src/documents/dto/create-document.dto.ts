@@ -24,10 +24,14 @@ export class CreateDocumentDto {
   })
   @IsString({ message: 'Must be a string' })
   @IsNotEmpty({ message: 'Document url is required' })
-  @Length(10, 255, { message: 'Must be between 10 and 255 characters' })
-  @Matches(/^https:\/\/.{2,247}$/, {
-    message: 'Document url is incorrect',
-  })
+  @Length(10, 500, { message: 'Must be between 10 and 500 characters' })
+  @IsUrl(
+    {
+      protocols: ['https'],
+      require_protocol: true,
+    },
+    { message: 'URL must include protocol (http/https)' },
+  )
   @IsUrl(
     { require_protocol: true },
     { message: 'URL must include protocol (http/https)' },

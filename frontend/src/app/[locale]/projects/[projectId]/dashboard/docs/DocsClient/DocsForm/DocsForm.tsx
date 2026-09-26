@@ -23,6 +23,7 @@ import Input from '@/shared/components/Input/Input';
 import { normalizeInputValue } from '@/shared/utils/normalizeInputValue';
 import Button from '@/shared/components/Button/Button';
 import { useParams } from 'next/navigation';
+import { normalizeUrl } from '@/shared/utils/normalizeUrl';
 
 type FormData = z.infer<typeof documentSchemaStatic>;
 
@@ -84,11 +85,7 @@ export default function DocsForm(props: DocsFormProps): ReactElement {
       return;
     }
 
-    let url = data.url.trim();
-    if (!/^https?:\/\//i.test(url)) {
-      url = `https://${url}`;
-    }
-    const preparedData = { ...data, url };
+    const preparedData = { ...data, url: normalizeUrl(data.url) };
 
     if (initialValues) {
       try {

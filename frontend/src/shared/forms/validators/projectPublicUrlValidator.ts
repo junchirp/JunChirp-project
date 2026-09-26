@@ -7,7 +7,6 @@ export const projectPublicUrlValidator = (
 ): ZodString =>
   z
     .string()
-    .trim()
     .refine(
       (value) => {
         if (!value) {

@@ -90,7 +90,7 @@ export class ProjectsController {
   })
   @ApiForbiddenResponse({
     description:
-      'Access denied: email not confirmed / Access denied: discord not confirmed / Invalid CSRF token',
+      'Access denied: email not confirmed / Access denied: discord not confirmed / Access denied: user is not a member of the Discord guild / Invalid CSRF token',
   })
   @ApiHeader({
     name: 'x-csrf-token',
@@ -109,9 +109,12 @@ export class ProjectsController {
   @ApiOperation({ summary: 'Update project' })
   @ApiCreatedResponse({ type: ProjectResponseDto })
   @ApiNotFoundResponse({ description: 'Project not found' })
+  @ApiMethodNotAllowedResponse({
+    description: 'Cannot update a completed project',
+  })
   @ApiForbiddenResponse({
     description:
-      'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Invalid CSRF token',
+      'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Access denied: user is not a member of the Discord guild / Invalid CSRF token',
   })
   @ApiBadRequestResponse({
     description: 'Some role type IDs or category ID are invalid',
@@ -141,7 +144,7 @@ export class ProjectsController {
   })
   @ApiForbiddenResponse({
     description:
-      'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Invalid CSRF token',
+      'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Access denied: user is not a member of the Discord guild / Invalid CSRF token',
   })
   @ApiHeader({
     name: 'x-csrf-token',
@@ -162,7 +165,7 @@ export class ProjectsController {
   @ApiNotFoundResponse({ description: 'Project or user in team not found' })
   @ApiForbiddenResponse({
     description:
-      'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Invalid CSRF token',
+      'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Access denied: user is not a member of the Discord guild / Invalid CSRF token',
   })
   @ApiMethodNotAllowedResponse({
     description: 'Cannot delete a completed project',
@@ -187,7 +190,7 @@ export class ProjectsController {
   @ApiConsumes('multipart/form-data')
   @ApiForbiddenResponse({
     description:
-      'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Invalid CSRF token',
+      'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Access denied: user is not a member of the Discord guild / Invalid CSRF token',
   })
   @ApiHeader({
     name: 'x-csrf-token',
@@ -219,7 +222,7 @@ export class ProjectsController {
   @ApiNotFoundResponse({ description: 'Project not found' })
   @ApiForbiddenResponse({
     description:
-      'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Invalid CSRF token',
+      'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Access denied: user is not a member of the Discord guild / Invalid CSRF token',
   })
   @ApiHeader({
     name: 'x-csrf-token',
@@ -265,7 +268,7 @@ export class ProjectsController {
   @ApiNotFoundResponse({ description: 'Project not found' })
   @ApiForbiddenResponse({
     description:
-      'Access denied: you are not a participant of this project / Access denied: email not confirmed / Access denied: discord not confirmed',
+      'Access denied: you are not a participant of this project / Access denied: email not confirmed / Access denied: discord not confirmed / Access denied: user is not a member of the Discord guild',
   })
   @Get(':id/card')
   public async getProjectCardById(
@@ -281,7 +284,7 @@ export class ProjectsController {
   @ApiNotFoundResponse({ description: 'Project not found' })
   @ApiForbiddenResponse({
     description:
-      'Access denied: you are not a participant of this project / Access denied: email not confirmed / Access denied: discord not confirmed',
+      'Access denied: you are not a participant of this project / Access denied: email not confirmed / Access denied: discord not confirmed / Access denied: user is not a member of the Discord guild',
   })
   @Get(':id')
   public async getProjectById(
@@ -296,7 +299,7 @@ export class ProjectsController {
   @ApiOkResponse({ type: [DocumentResponseDto] })
   @ApiForbiddenResponse({
     description:
-      'Access denied: you are not a participant of this project / Access denied: email not confirmed / Access denied: discord not confirmed / Invalid CSRF token',
+      'Access denied: you are not a participant of this project / Access denied: email not confirmed / Access denied: discord not confirmed / Access denied: user is not a member of the Discord guild / Invalid CSRF token',
   })
   @Get(':id/documents')
   public async getDocumentsList(
@@ -310,7 +313,7 @@ export class ProjectsController {
   @ApiOkResponse({ type: [BoardResponseDto] })
   @ApiForbiddenResponse({
     description:
-      'Access denied: you are not a participant of this project / Access denied: email not confirmed / Access denied: discord not confirmed / Invalid CSRF token',
+      'Access denied: you are not a participant of this project / Access denied: email not confirmed / Access denied: discord not confirmed / Access denied: user is not a member of the Discord guild / Invalid CSRF token',
   })
   @Get(':id/boards')
   public async getBoardsList(
@@ -324,7 +327,7 @@ export class ProjectsController {
   @ApiNoContentResponse()
   @ApiForbiddenResponse({
     description: `Access denied: you are not a participant of this project /
-       Access denied: email not confirmed / Access denied: discord not confirmed /
+       Access denied: email not confirmed / Access denied: discord not confirmed / Access denied: user is not a member of the Discord guild /
        Invalid CSRF token / New project owner has no connected Discord account /
        New project owner is not a member of the Discord guild`,
   })

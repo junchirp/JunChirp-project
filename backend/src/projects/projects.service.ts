@@ -354,8 +354,15 @@ export class ProjectsService {
         select: {
           projectName: true,
           discordChannelId: true,
+          status: true,
         },
       });
+
+      if (currentProject.status === ProjectStatus.done) {
+        throw new MethodNotAllowedException(
+          'Cannot update a completed project',
+        );
+      }
 
       const updatedProject = await this.prisma.project.update({
         where: { id },
@@ -1017,6 +1024,23 @@ export class ProjectsService {
         exception: NotFoundException,
         message: 'Resource (project, projectRole or user) not found',
       });
+    }
+  }
+
+  public async checkProjectIsActive(projectId: string): Promise<void> {
+    const project = await this.prisma.project.findUnique({
+      where: { id: projectId },
+      select: {
+        status: true,
+      },
+    });
+
+    if (!project) {
+      throw new NotFoundException('Project not found');
+    }
+
+    if (project.status === ProjectStatus.done) {
+      throw new MethodNotAllowedException('Cannot modify a completed project');
     }
   }
 }

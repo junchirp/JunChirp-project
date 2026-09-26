@@ -50,7 +50,7 @@ export class BoardsController {
   @ApiConflictResponse({ description: 'Board with this name already exists' })
   @ApiForbiddenResponse({
     description:
-      'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Invalid CSRF token',
+      'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Access denied: user is not a member of the Discord guild / Invalid CSRF token',
   })
   @ApiHeader({
     name: 'x-csrf-token',
@@ -70,7 +70,7 @@ export class BoardsController {
   @ApiNotFoundResponse({ description: 'Board not found' })
   @ApiForbiddenResponse({
     description:
-      'Access denied: you are not a participant of this project / Access denied: email not confirmed / Access denied: discord not confirmed',
+      'Access denied: you are not a participant of this project / Access denied: email not confirmed / Access denied: discord not confirmed / Access denied: user is not a member of the Discord guild',
   })
   @Get(':id')
   public async getBoardById(
@@ -86,7 +86,7 @@ export class BoardsController {
   @ApiConflictResponse({ description: 'Board with this name already exists' })
   @ApiForbiddenResponse({
     description:
-      'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Invalid CSRF token',
+      'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Access denied: user is not a member of the Discord guild / Invalid CSRF token',
   })
   @ApiHeader({
     name: 'x-csrf-token',
@@ -110,7 +110,7 @@ export class BoardsController {
   })
   @ApiForbiddenResponse({
     description:
-      'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Invalid CSRF token',
+      'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Access denied: user is not a member of the Discord guild / Invalid CSRF token',
   })
   @ApiHeader({
     name: 'x-csrf-token',
@@ -135,7 +135,7 @@ export class BoardsController {
   })
   @ApiForbiddenResponse({
     description:
-      'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Invalid CSRF token',
+      'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Access denied: user is not a member of the Discord guild / Invalid CSRF token',
   })
   @ApiHeader({
     name: 'x-csrf-token',
@@ -160,7 +160,7 @@ export class BoardsController {
   @ApiNotFoundResponse({ description: 'Board not found' })
   @ApiForbiddenResponse({
     description:
-      'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Invalid CSRF token',
+      'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Access denied: user is not a member of the Discord guild / Invalid CSRF token',
   })
   @ApiHeader({
     name: 'x-csrf-token',

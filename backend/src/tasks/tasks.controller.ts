@@ -41,7 +41,7 @@ export class TasksController {
   })
   @ApiForbiddenResponse({
     description:
-      'Access denied: you are not a participant of this project / Access denied: email not confirmed / Access denied: discord not confirmed / Invalid CSRF token',
+      'Access denied: you are not a participant of this project / Access denied: email not confirmed / Access denied: discord not confirmed / Access denied: user is not a member of the Discord guild / Invalid CSRF token',
   })
   @ApiHeader({
     name: 'x-csrf-token',
@@ -61,7 +61,7 @@ export class TasksController {
   @ApiNotFoundResponse({ description: 'Task not found' })
   @ApiForbiddenResponse({
     description:
-      'Access denied: you are not a participant of this project / Access denied: email not confirmed / Access denied: discord not confirmed',
+      'Access denied: you are not a participant of this project / Access denied: email not confirmed / Access denied: discord not confirmed / Access denied: user is not a member of the Discord guild',
   })
   @Get(':id')
   public async getTaskById(
@@ -76,7 +76,7 @@ export class TasksController {
   @ApiNotFoundResponse({ description: 'Task not found' })
   @ApiForbiddenResponse({
     description:
-      'Access denied: you are not a participant of this project / Access denied: email not confirmed / Access denied: discord not confirmed / Invalid CSRF token',
+      'Access denied: you are not a participant of this project / Access denied: email not confirmed / Access denied: discord not confirmed / Access denied: user is not a member of the Discord guild / Invalid CSRF token',
   })
   @ApiHeader({
     name: 'x-csrf-token',
@@ -97,7 +97,7 @@ export class TasksController {
   @ApiNotFoundResponse({ description: 'Task not found' })
   @ApiForbiddenResponse({
     description:
-      'Access denied: you are not a participant of this project / Access denied: email not confirmed / Access denied: discord not confirmed / Invalid CSRF token',
+      'Access denied: you are not a participant of this project / Access denied: email not confirmed / Access denied: discord not confirmed / Access denied: user is not a member of the Discord guild / Invalid CSRF token',
   })
   @ApiHeader({
     name: 'x-csrf-token',
@@ -118,7 +118,7 @@ export class TasksController {
   })
   @ApiForbiddenResponse({
     description:
-      'Access denied: you are not a participant of this project / Access denied: email not confirmed / Access denied: discord not confirmed / Invalid CSRF token',
+      'Access denied: you are not a participant of this project / Access denied: email not confirmed / Access denied: discord not confirmed / Access denied: user is not a member of the Discord guild / Invalid CSRF token',
   })
   @ApiHeader({
     name: 'x-csrf-token',
