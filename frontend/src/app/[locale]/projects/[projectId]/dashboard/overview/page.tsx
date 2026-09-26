@@ -20,7 +20,7 @@ export default function Overview(): ReactElement {
   const isOwner = project?.ownerId === user.id;
 
   useEffect(() => {
-    if (project && isEdit && !isOwner) {
+    if (project && isEdit && (!isOwner || project.status === 'done')) {
       router.replace(`/projects/${projectId}/dashboard/overview`);
     }
   }, [project, isEdit, router, isOwner, projectId]);
@@ -36,7 +36,7 @@ export default function Overview(): ReactElement {
 
   return (
     <>
-      {isEdit ? (
+      {isEdit && isOwner && project.status !== 'done' ? (
         <OverviewEdit project={project} />
       ) : (
         <OverviewView project={project} isOwner={isOwner} userId={user.id} />

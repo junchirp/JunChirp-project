@@ -59,6 +59,7 @@
     &:disabled {
       color: variables.$gray-3;
       border-color: variables.$gray-3;
+      cursor: default;
     }
   }
 

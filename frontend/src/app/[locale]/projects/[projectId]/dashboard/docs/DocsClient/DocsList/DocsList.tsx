@@ -9,7 +9,7 @@ import { useTranslations } from 'next-intl';
 
 interface DocsListProps {
   docs: DocumentInterface[];
-  isOwner: boolean;
+  canManage: boolean;
   addDoc: () => void;
   editDoc: (doc: DocumentInterface) => void;
   deleteDoc: (doc: DocumentInterface) => void;
@@ -18,7 +18,7 @@ interface DocsListProps {
 const MAX_DOCS_COUNT = 20;
 
 export default function DocsList(props: DocsListProps): ReactElement {
-  const { docs, isOwner, addDoc, editDoc, deleteDoc } = props;
+  const { docs, canManage, addDoc, editDoc, deleteDoc } = props;
   const t = useTranslations('documents');
 
   return (
@@ -31,7 +31,7 @@ export default function DocsList(props: DocsListProps): ReactElement {
         </p>
       </div>
       <div className={styles['docs-list__list']}>
-        {isOwner && (
+        {canManage && (
           <button
             className={styles['docs-list__button']}
             disabled={docs.length >= MAX_DOCS_COUNT}
@@ -61,7 +61,7 @@ export default function DocsList(props: DocsListProps): ReactElement {
           <DocItem
             key={doc.id}
             doc={doc}
-            isOwner={isOwner}
+            canManage={canManage}
             onDelete={deleteDoc}
             onEdit={editDoc}
           />

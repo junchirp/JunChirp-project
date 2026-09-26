@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsUrl } from 'class-validator';
+import { IsOptional, IsUrl, Length } from 'class-validator';
 
 export class CloseProjectDto {
   @ApiProperty({
@@ -9,9 +9,13 @@ export class CloseProjectDto {
     type: String,
   })
   @IsOptional()
-  @IsUrl({
-    protocols: ['http', 'https'],
-    require_protocol: true,
-  })
+  @Length(10, 255, { message: 'Must be between 10 and 255 characters' })
+  @IsUrl(
+    {
+      protocols: ['https'],
+      require_protocol: true,
+    },
+    { message: 'URL must include protocol (http/https)' },
+  )
   public readonly publicUrl?: string;
 }

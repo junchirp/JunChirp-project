@@ -187,8 +187,8 @@
       "projectNameSymbols": "Invalid characters",
       "supportLength": "Enter a description between 10 and 1000 characters",
       "supportSymbols": "Invalid characters in the description",
-      "documentNameLength": "The name must be between 2 and 100 characters",
-      "documentNameSymbols": "Invalid characters in the name",
+      "documentNameLength": "Enter between 2 and 100 characters",
+      "documentNameSymbols": "Invalid characters",
       "documentUrlLength": "Enter between 10 and 500 characters"
     },
     "userNameForm": {
@@ -346,8 +346,9 @@
         "url": "Document link"
       },
       "error": "Failed to save document.",
-      "error409": "A document with this link already exists.",
-      "success": "Document saved."
+      "errorDetails": "Please try again.",
+      "error409": "Document with this link already exists.",
+      "success": "Document saved successfully."
     },
     "ownershipForm": {
       "ownerId": "Select user",
@@ -745,13 +746,14 @@
       "edit": "Edit document",
       "add": "Add document"
     },
-    "success": "Document deleted.",
-    "error": "Failed to delete document."
+    "success": "Document deleted successfully.",
+    "error": "Failed to delete document.",
+    "errorDetails": "Please try again."
   },
   "deleteDocumentPopup": {
     "title": "Delete document",
     "warning": "This action is irreversible. Once deleted, the document cannot be restored.",
-    "description": "Do you really want to delete <doc>{documentName}</doc>? This action cannot be undone."
+    "description": "Are you sure you want to delete <doc>{documentName}</doc>? This action cannot be undone."
   },
   "deleteProjectPopup": {
     "title": "Delete project",

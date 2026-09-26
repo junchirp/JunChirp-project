@@ -17,6 +17,7 @@ import {
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiHeader,
+  ApiMethodNotAllowedResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -30,8 +31,12 @@ import { UUIDParam } from '../common/decorators/UUID-param.decorator';
 @User('discord')
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
 @ApiForbiddenResponse({
-  description:
-    'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Invalid CSRF token',
+  description: `Access denied: you are not the project owner /
+     Access denied: email not confirmed / Access denied: discord not confirmed /
+     Access denied: user is not a member of the Discord guild / Invalid CSRF token`,
+})
+@ApiMethodNotAllowedResponse({
+  description: 'Cannot update a completed project',
 })
 @Controller('documents')
 export class DocumentsController {
@@ -40,6 +45,7 @@ export class DocumentsController {
   @Owner('body', 'projectId', 'project')
   @ApiOperation({ summary: 'Add document' })
   @ApiCreatedResponse({ type: DocumentResponseDto })
+  @ApiNotFoundResponse({ description: 'Project not found' })
   @ApiBadRequestResponse({
     description: 'Maximum number of documents per project is 20',
   })
@@ -59,7 +65,9 @@ export class DocumentsController {
   @Owner('params', 'id', 'document')
   @ApiOperation({ summary: 'Update document' })
   @ApiOkResponse({ type: DocumentResponseDto })
-  @ApiNotFoundResponse({ description: 'Document not found' })
+  @ApiNotFoundResponse({
+    description: 'Document not found / Project not found',
+  })
   @ApiConflictResponse({ description: 'Duplicate document url' })
   @ApiHeader({
     name: 'x-csrf-token',
@@ -77,7 +85,9 @@ export class DocumentsController {
   @Owner('params', 'id', 'document')
   @ApiOperation({ summary: 'Delete document' })
   @ApiNoContentResponse()
-  @ApiNotFoundResponse({ description: 'Document not found' })
+  @ApiNotFoundResponse({
+    description: 'Document not found / Project not found',
+  })
   @ApiHeader({
     name: 'x-csrf-token',
     description: 'CSRF token for the request',

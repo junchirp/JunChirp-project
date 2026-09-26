@@ -55,7 +55,7 @@ export class ParticipationsController {
   })
   @ApiForbiddenResponse({
     description:
-      'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Invalid CSRF token',
+      'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Access denied: user is not a member of the Discord guild / Invalid CSRF token',
   })
   @ApiBadRequestResponse({
     description:
@@ -83,7 +83,7 @@ export class ParticipationsController {
   })
   @ApiForbiddenResponse({
     description:
-      'Access denied: email not confirmed / Access denied: discord not confirmed / Invalid CSRF token',
+      'Access denied: email not confirmed / Access denied: discord not confirmed / Access denied: user is not a member of the Discord guild / Invalid CSRF token',
   })
   @ApiBadRequestResponse({
     description:
@@ -109,7 +109,7 @@ export class ParticipationsController {
   @ApiConflictResponse({ description: 'The role has no empty slots' })
   @ApiForbiddenResponse({
     description:
-      'Access denied: email not confirmed / Access denied: discord not confirmed / Invalid CSRF token',
+      'Access denied: email not confirmed / Access denied: discord not confirmed / Access denied: user is not a member of the Discord guild / Invalid CSRF token',
   })
   @ApiBadRequestResponse({
     description: 'User cannot have more than 2 active projects',
@@ -155,7 +155,7 @@ export class ParticipationsController {
   @ApiConflictResponse({ description: 'The role has no empty slots' })
   @ApiForbiddenResponse({
     description:
-      'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Invalid CSRF token',
+      'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Access denied: user is not a member of the Discord guild / Invalid CSRF token',
   })
   @ApiBadRequestResponse({
     description: 'User cannot have more than 2 active projects',
@@ -177,7 +177,7 @@ export class ParticipationsController {
   @ApiNotFoundResponse({ description: 'Request not found' })
   @ApiForbiddenResponse({
     description:
-      'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Invalid CSRF token',
+      'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Access denied: user is not a member of the Discord guild / Invalid CSRF token',
   })
   @ApiHeader({
     name: 'x-csrf-token',
@@ -195,7 +195,7 @@ export class ParticipationsController {
   @ApiNotFoundResponse({ description: 'Request not found' })
   @ApiForbiddenResponse({
     description:
-      'Access denied: email not confirmed / Access denied: discord not confirmed / Invalid CSRF token',
+      'Access denied: email not confirmed / Access denied: discord not confirmed / Access denied: user is not a member of the Discord guild / Invalid CSRF token',
   })
   @ApiHeader({
     name: 'x-csrf-token',
@@ -217,7 +217,7 @@ export class ParticipationsController {
   @ApiNotFoundResponse({ description: 'Invite not found' })
   @ApiForbiddenResponse({
     description:
-      'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Invalid CSRF token',
+      'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Access denied: user is not a member of the Discord guild / Invalid CSRF token',
   })
   @ApiHeader({
     name: 'x-csrf-token',
@@ -235,7 +235,7 @@ export class ParticipationsController {
   @ApiOkResponse({ type: [UserParticipationResponseDto] })
   @ApiForbiddenResponse({
     description:
-      'Access denied: you are not a participant of this project / Access denied: email not confirmed / Access denied: discord not confirmed',
+      'Access denied: you are not a participant of this project / Access denied: email not confirmed / Access denied: discord not confirmed / Access denied: user is not a member of the Discord guild',
   })
   @Get('projects/:id/invites')
   public async getInvitesInCurrentProject(
@@ -249,7 +249,7 @@ export class ParticipationsController {
   @ApiOkResponse({ type: [UserParticipationResponseDto] })
   @ApiForbiddenResponse({
     description:
-      'Access denied: you are not a participant of this project / Access denied: email not confirmed / Access denied: discord not confirmed',
+      'Access denied: you are not a participant of this project / Access denied: email not confirmed / Access denied: discord not confirmed / Access denied: user is not a member of the Discord guild',
   })
   @Get('projects/:id/requests')
   public async getRequestsInCurrentProject(
@@ -264,7 +264,7 @@ export class ParticipationsController {
   @ApiNotFoundResponse({ description: 'User is not in the team' })
   @ApiForbiddenResponse({
     description:
-      'Access denied: you are not a participant of this project / Access denied: email not confirmed / Access denied: discord not confirmed / Invalid CSRF token',
+      'Access denied: you are not a participant of this project / Access denied: email not confirmed / Access denied: discord not confirmed / Access denied: user is not a member of the Discord guild / Invalid CSRF token',
   })
   @ApiBadRequestResponse({
     description: 'User is no longer part of this project',
@@ -289,7 +289,7 @@ export class ParticipationsController {
   @ApiNotFoundResponse({ description: 'User is not in the team' })
   @ApiForbiddenResponse({
     description:
-      'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Invalid CSRF token',
+      'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Access denied: user is not a member of the Discord guild / Invalid CSRF token',
   })
   @ApiHeader({
     name: 'x-csrf-token',

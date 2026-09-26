@@ -1,0 +1,2 @@
+-- AlterEnum
+ALTER TYPE "LogEventType" ADD VALUE 'DISCORD_CHANNEL_ERROR';

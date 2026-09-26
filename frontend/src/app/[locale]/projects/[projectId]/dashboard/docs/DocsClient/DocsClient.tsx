@@ -29,7 +29,8 @@ export default function DocsClient(): ReactElement {
   const { data: project, isLoading: projectLoading } =
     useGetProjectByIdQuery(projectId);
   const isLoading = listLoading || projectLoading;
-  const isOwner = user.id === project?.ownerId;
+  const canManageDocuments =
+    user.id === project?.ownerId && project?.status === 'active';
   const [action, setAction] = useState<DocumentActionType>(null);
   const formRef = useRef<HTMLDivElement | null>(null);
   const [deletedItem, setDeletedItem] = useState<DocumentInterface | null>(
@@ -84,6 +85,7 @@ export default function DocsClient(): ReactElement {
       showToast({
         severity: 'error',
         summary: t('error'),
+        detail: t('errorDetails'),
         life: 3000,
         actionKey: ToastKeysEnum.DOCUMENT,
       });
@@ -97,12 +99,12 @@ export default function DocsClient(): ReactElement {
       <div className={styles['docs-client']}>
         <DocsList
           docs={data}
-          isOwner={isOwner}
+          canManage={canManageDocuments}
           addDoc={handleAddDocument}
           editDoc={handleEditDocument}
           deleteDoc={openPopup}
         />
-        {!!action && isOwner && (
+        {!!action && canManageDocuments && (
           <div className={styles['docs-client__actions']} ref={formRef}>
             <ActionDescription actionKey={action.key} namespace="documents" />
             <DocsForm
