@@ -8,4 +8,7 @@ export const softSkillNameValidator = (t: TFunctionType): ZodString =>
     .nonempty(t('errors.nonEmpty'))
     .min(2, t('errors.length', { min: 2, max: 50 }))
     .max(50, t('errors.length', { min: 2, max: 50 }))
-    .regex(/^[A-Za-zА-Яа-яІіЇїЄєҐґ0-9 .'\-+_/,()]+$/, t('errors.invalidCharacters'));
+    .regex(
+      /^[A-Za-zА-Яа-яІіЇїЄєҐґ0-9 .'\-+_/,()]+$/,
+      t('errors.invalidCharacters'),
+    );
