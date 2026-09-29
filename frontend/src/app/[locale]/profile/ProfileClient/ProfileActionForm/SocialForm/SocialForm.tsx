@@ -122,6 +122,7 @@ export default function SocialForm(props: SocialFormProps): ReactElement {
           status === 409
             ? tForms('socialForm.error409')
             : tForms('socialForm.error'),
+        detail: status === 409 ? undefined : tForms('socialForm.errorDetails'),
         life: 3000,
         actionKey: ToastKeysEnum.SOCIAL,
       });

@@ -17,7 +17,7 @@
     "viewProjectWebSite": "View project website",
     "restore": "Restore project",
     "sendRequest": "Apply Now",
-    "cancelRequest": "Cancel Application",
+    "cancelRequest": "Cancel application",
     "sendInvite": "Send invitation",
     "invite": "Invite",
     "profile": "Profile",
@@ -71,38 +71,38 @@
     "completedProjects": "Completed projects",
     "showMore": "Show more",
     "inviteBtn": "Invite to project",
-    "deleteItem": {
+    "deleteItemPopup": {
       "socials": {
         "title": "Delete social network?",
         "description": "Are you sure you want to delete the social network <social>{socialName}</social>? This action cannot be undone.",
-        "success": "Social network deleted.",
+        "success": "Social network deleted successfully.",
         "error": "Failed to delete social network."
       },
       "educations": {
         "title": "Delete education record?",
         "description": "Are you sure you want to delete the education record <edu>{eduRecord}</edu>? This action cannot be undone.",
-        "success": "Education record deleted.",
+        "success": "Education record deleted successfully.",
         "error": "Failed to delete education record."
       },
       "softSkills": {
         "title": "Delete skill?",
         "description": "Are you sure you want to delete the soft skill <skill>{skillName}</skill>? This action cannot be undone.",
-        "success": "Soft skill deleted.",
+        "success": "Soft skill deleted successfully.",
         "error": "Failed to delete soft skill."
       },
       "hardSkills": {
         "title": "Delete skill?",
         "description": "Are you sure you want to delete the hard skill <skill>{skillName}</skill>? This action cannot be undone.",
-        "success": "Hard skill deleted.",
+        "success": "Hard skill deleted successfully.",
         "error": "Failed to delete hard skill."
       },
-      "errorDetails": "Please try again later."
+      "errorDetails": "Please try again."
     },
     "saveChanges": "Save your changes before viewing."
   },
   "participationsTable": {
     "myInvites": "Invitations",
-    "myRequests": "My Applications",
+    "myRequests": "My applications",
     "userRequests": "Participation requests",
     "userInvites": "Invitations",
     "colFirst": "No",
@@ -123,17 +123,17 @@
     "cancel": "Cancel",
     "confirm": "Confirm",
     "error": "Failed to decline invitation.",
-    "errorDetails": "Please try again later.",
-    "success": "Invitation declined."
+    "errorDetails": "Please try again.",
+    "success": "Invitation declined successfully."
   },
-  "declineRequestPopup": {
+  "rejectRequestPopup": {
     "title": "Decline application?",
     "description": "Are you sure you want to decline the application of user <user>{userName}</user> for participation in the project <project>{projectName}</project>? This action cannot be undone.",
     "cancel": "Cancel",
     "decline": "Decline application",
     "error": "Failed to decline application.",
-    "errorDetails": "Please try again later.",
-    "success": "Application declined."
+    "errorDetails": "Please try again.",
+    "success": "Application declined successfully."
   },
   "cancelRequestPopup": {
     "title": "Cancel application?",
@@ -141,55 +141,38 @@
     "cancel": "Cancel",
     "delete": "Cancel application",
     "error": "Failed to cancel application.",
-    "errorDetails": "Please try again later.",
-    "success": "Application cancelled."
+    "errorDetails": "Please try again.",
+    "success": "Application cancelled successfully."
   },
   "cancelInvite": {
     "error": "Failed to cancel invitation.",
-    "errorDetails": "Please try again later.",
-    "success": "Invitation cancelled."
+    "errorDetails": "Please try again.",
+    "success": "Invitation cancelled successfully."
   },
   "acceptInvite": {
     "error": "Failed to accept invitation.",
-    "errorDetails": "Please try again later.",
-    "success": " Invitation accepted."
+    "errorDetails": "Please try again.",
+    "success": "Invitation accepted successfully."
   },
   "acceptRequest": {
     "error": "Failed to accept application.",
-    "errorDetails": "Please try again later.",
-    "success": "Application accepted."
+    "errorDetails": "Please try again.",
+    "success": "Application accepted successfully."
   },
   "forms": {
     "errors": {
       "nonEmpty": "The field cannot be empty",
-      "nameLength": "Enter between 2 and 50 letters",
-      "nameSymbols": "Allowed characters: letters, spaces, apostrophes, and hyphens",
+      "length": "Enter between {min} and {max} characters",
+      "invalidCharacters": "Invalid characters",
       "desiredRolesMax": "You can select up to three roles",
-      "educationLength": "The name must be between 2 and 100 characters",
-      "educationSymbols": "Invalid characters in the name",
-      "urlLength": "Enter between 10 and 255 characters",
-      "urlInvalid": "Invalid link",
-      "skillLength": "The name must be between 2 and 50 characters",
-      "skillSymbols": "Invalid characters in the name",
-      "agreement": "Confirm your consent to the terms and privacy policy.",
-      "emailLength": "The email must contain between 7 and 254 characters",
+      "invalidUrl": "Invalid link",
+      "agreement": "Confirm your consent to the terms and privacy policy",
       "emailFormat": "Invalid email format",
       "emailDomain": "The '.ru' domain is not supported",
       "emailTaken": "This email is already in use",
       "passwordIncludes": "The password must not contain your first or last name",
       "blackList": "Avoid overly simple or obvious passwords",
-      "confirmPassword": "Passwords do not match",
-      "passwordLength": "The password must contain 8–20 characters",
-      "passwordSymbols": "Use only Latin letters, numbers, and special characters",
-      "projectDescriptionLength": "The description must be between 2 and 500 characters",
-      "projectDescriptionSymbols": "Invalid characters in the description",
-      "projectNameLength": "Enter between 2 and 50 characters",
-      "projectNameSymbols": "Invalid characters",
-      "supportLength": "Enter a description between 10 and 1000 characters",
-      "supportSymbols": "Invalid characters in the description",
-      "documentNameLength": "Enter between 2 and 100 characters",
-      "documentNameSymbols": "Invalid characters",
-      "documentUrlLength": "Enter between 10 and 500 characters"
+      "confirmPassword": "Passwords do not match"
     },
     "userNameForm": {
       "firstName": "First name",
@@ -200,7 +183,8 @@
         "lastName": "Surname",
         "desiredRoles": "Select role"
       },
-      "error": "Error saving changes.",
+      "error": "Failed to save changes.",
+      "errorDetails": "Please try again.",
       "success": "Changes saved successfully."
     },
     "educationForm": {
@@ -210,7 +194,8 @@
         "institution": "Educational institution",
         "specialization": "Front-end Development, QA Engineering, UX/UI Design..."
       },
-      "error": "Error saving changes.",
+      "error": "Failed to save changes.",
+      "errorDetails": "Please try again.",
       "success": "Changes saved successfully."
     },
     "socialForm": {
@@ -220,7 +205,8 @@
         "network": "Social network name",
         "url": "Link"
       },
-      "error": "Error saving changes.",
+      "error": "Failed to save changes.",
+      "errorDetails": "Please try again.",
       "error409": "This social network has already been added.",
       "success": "Changes saved successfully."
     },
@@ -229,7 +215,8 @@
       "placeholders": {
         "hardSkillName": "JavaScript, Figma, SQL..."
       },
-      "error": "Error saving changes.",
+      "error": "Failed to save changes.",
+      "errorDetails": "Please try again.",
       "error409": "This skill has already been added.",
       "success": "Changes saved successfully."
     },
@@ -238,7 +225,8 @@
       "placeholders": {
         "softSkillName": "Teamwork, Time management..."
       },
-      "error": "Error saving changes.",
+      "error": "Failed to save changes.",
+      "errorDetails": "Please try again.",
       "error409": "This skill has already been added.",
       "success": "Changes saved successfully."
     },
@@ -247,11 +235,11 @@
       "placeholders": {
         "requestText": "Describe your issue..."
       },
-      "error": "Something went wrong.",
-      "errorDetails": "Please try sending your request later.",
-      "success": "Your request has been sent!",
+      "error": "Failed to send request.",
+      "errorDetails": "Please try again.",
+      "success": "Request sent successfully.",
       "successDetails": "We’ll get back to you as soon as possible.",
-      "button": "Send Request"
+      "button": "Send request"
     },
     "inviteForm": {
       "project": "Select project",
@@ -262,7 +250,7 @@
       },
       "error": "Failed to send the invitation.",
       "errorDetails": "Please try again.",
-      "success": "Invitation sent."
+      "success": "Invitation sent successfully."
     },
     "requestForm": {
       "field": "Looking for"
@@ -297,15 +285,13 @@
     "changeEmailForm": {
       "email": "Email",
       "success": "Email changed successfully.",
-      "successDetails": "Email changed successfully.",
+      "successDetails": "Please check your inbox to confirm it.",
       "error": "Failed to change email.",
       "errorDetails": "Please try again."
     },
     "requestPasswordResetForm": {
       "email": "Email",
-      "error": "It looks like the email address is incorrect.",
-      "error429": "Too many password reset requests.",
-      "error429Details": "Please try again in 1 hour."
+      "error": "It looks like the email address is incorrect."
     },
     "resetPasswordForm": {
       "password": "Password",
@@ -314,7 +300,7 @@
         "password": "Create a password",
         "confirm": "Repeat password"
       },
-      "success": "Password successfully updated.",
+      "success": "Password updated successfully.",
       "successCancel": "Password reset has been canceled.",
       "successCancelDetails": "All entered changes have been discarded.",
       "error": "Failed to reset password.",
@@ -330,7 +316,7 @@
         "description": "Briefly describe the idea, goal, and value of the project",
         "category": "Please select a project category"
       },
-      "createSuccess": "Project successfully created.",
+      "createSuccess": "Project created successfully.",
       "createError409": "Maximum active project limit reached (max 2).",
       "createError": "Failed to create project.",
       "createErrorDetails": "Please try again.",
@@ -440,7 +426,8 @@
       "error400": "Maximum active project limit reached (max 2).",
       "success": "Application submitted successfully.",
       "cancelError": "Failed to cancel the application.",
-      "cancelSuccess": "Application canceled."
+      "cancelErrorDetails": "Please try again.",
+      "cancelSuccess": "Application canceled successfully."
     },
     "members": "{count, plural, one {# member} other {# members}}"
   },
@@ -453,8 +440,8 @@
   "footer": {
     "aboutBtn": "About us",
     "supportBtn": "Support",
-    "privacyPolicy": "Privacy Policy",
-    "terms": "Terms of Use"
+    "privacyPolicy": "Privacy policy",
+    "terms": "Terms of use"
   },
   "homeBanner": {
     "title": "From beginner to <span>[professional]</span>",
@@ -519,7 +506,7 @@
       {
         "title": "3. Need more networking?",
         "description": "Connect with the community, find like-minded people, and gain valuable insights.",
-        "button": "Join the Community",
+        "button": "Join the community",
         "buttonChat": "Go to chat"
       }
     ]
@@ -560,7 +547,7 @@
     "description": "Invite friends and build awesome projects side by side.",
     "success": "Link copied successfully!",
     "error": "Failed to copy link.",
-    "errorDetails": "Try again."
+    "errorDetails": "Please try again."
   },
   "auth": {
     "signIn": "Sign in",
@@ -602,7 +589,7 @@
       "A new link invalidates the previous one: Each time you request a new confirmation link, the previous one becomes invalid. This means the old link will no longer work, and you will need to use the new one.",
       "After 24 hours: If you do not confirm your email address within 24 hours, your data will be deleted from our database, and you will need to start the registration process again."
     ],
-    "success": "Your request has been successfully processed.",
+    "success": "Request processed successfully.",
     "successDetails": "Please check your email for confirmation.",
     "error400": "An error occurred while processing the request.",
     "error400Details": "Email has already been confirmed."
@@ -621,8 +608,6 @@
       "description": "This link is no longer valid. Please <button>Send the request again</button> to receive a new email confirmation link.",
       "success": "Your request has been successfully processed.",
       "successDetails": "Please check your email for confirmation.",
-      "error429": "You have exceeded the limit for email confirmation requests.",
-      "error429Details": "Please try sending a new request in 1 hour.",
       "error400": "An error occurred while processing the request.",
       "error400Details": "Email has already been confirmed.",
       "error": "An error occurred while processing the request.",
@@ -650,7 +635,7 @@
       "New link invalidates the old one: Each time you request a new link, the previous one becomes invalid. This means the old link will no longer work, and you must use the new one.",
       "After 24 hours: If you don’t confirm your request within 24 hours, it will be considered expired, and you’ll need to start the password recovery process again."
     ],
-    "success": "Your request has been successfully processed.",
+    "success": "Request processed successfully.",
     "successDetails": "Please check your email for confirmation."
   },
   "resetPassword": {
@@ -675,12 +660,12 @@
       "errorDetails15": "Будь ласка, спробуй надіслати новий запит через {time}."
     },
     "confirmEmail": {
-      "error": "You have exceeded the limit for email confirmation requests.",
-      "errorDetails": "Please try sending a new request in {time}."
+      "error": "The limit for email confirmation requests has been exceeded.",
+      "errorDetails": "Please try again in {time}."
     },
     "resetPassword": {
       "error": "Too many password reset requests.",
-      "errorDetails": "Please try sending a new request in {time}."
+      "errorDetails": "Please try again in {time}."
     },
     "time": {
       "minutes": "{count, plural, one {# minute} other {# minutes}}",

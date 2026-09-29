@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { socialNetworks } from '@/shared/constants/social-networks';
+import { TFunctionType } from '@/shared/types/t-function.type';
 
 interface SocialCheckData {
   network: string;
@@ -7,7 +8,7 @@ interface SocialCheckData {
 }
 
 export const socialRefinement =
-  (t: (key: string) => string) =>
+  (t: TFunctionType) =>
   ({ network, url }: SocialCheckData, ctx: z.RefinementCtx): void => {
     const match = socialNetworks.find(
       (item) => item.network.toLowerCase() === network.toLowerCase(),
@@ -20,7 +21,7 @@ export const socialRefinement =
     if (!match.urlRegex.test(url)) {
       ctx.addIssue({
         code: 'custom',
-        message: t('errors.urlInvalid'),
+        message: t('errors.invalidUrl'),
         path: ['url'],
       });
     }

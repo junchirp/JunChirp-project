@@ -94,9 +94,9 @@ export default function TeamClient(): ReactElement {
   const openDeleteMemberPopup = (m: TeamMemberInterface): void =>
     setMember(m.user);
   const closeDeleteMemberPopup = (): void => setMember(null);
-  const openDeclineRequestPopup = (r: TeamRequestInterface): void =>
+  const openRejectRequestPopup = (r: TeamRequestInterface): void =>
     setRequest(r.request);
-  const closeDeclineRequestPopup = (): void => setRequest(null);
+  const closeRejectRequestPopup = (): void => setRequest(null);
 
   const teamViewModel = useMemo(
     () => buildTeamViewModel({ project, requests, invites, isOwner }),
@@ -270,7 +270,7 @@ export default function TeamClient(): ReactElement {
         actionKey: ToastKeysEnum.PARTICIPATION_REQUEST,
       });
     } finally {
-      closeDeclineRequestPopup();
+      closeRejectRequestPopup();
     }
   };
 
@@ -345,7 +345,7 @@ export default function TeamClient(): ReactElement {
         return isOwner ? (
           <RequestsGroupedList
             requests={teamViewModel.grouped.requests}
-            onDecline={openDeclineRequestPopup}
+            onDecline={openRejectRequestPopup}
             onAccept={handleAcceptRequest}
             acceptLoading={acceptRequestLoading}
           />
@@ -389,7 +389,7 @@ export default function TeamClient(): ReactElement {
             tab={activeTab}
             onDeleteMember={openDeleteMemberPopup}
             onDeleteVacancy={deleteVacancy}
-            onDeclineRequest={openDeclineRequestPopup}
+            onDeclineRequest={openRejectRequestPopup}
             onAcceptRequest={handleAcceptRequest}
             onCancelInvite={handleCancelInvite}
             onAddVacancy={addVacancy}
@@ -418,7 +418,7 @@ export default function TeamClient(): ReactElement {
       )}
       {request && project && (
         <RejectRequestPopup
-          onClose={closeDeclineRequestPopup}
+          onClose={closeRejectRequestPopup}
           isOpen={!!(request && project)}
           loading={rejectRequestLoading}
           onConfirm={handleRejectRequest}

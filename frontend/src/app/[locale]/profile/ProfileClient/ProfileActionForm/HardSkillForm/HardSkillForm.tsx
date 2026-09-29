@@ -109,6 +109,8 @@ export default function HardSkillForm(props: HardSkillFormProps): ReactElement {
           status === 409
             ? tForms('hardSkillForm.error409')
             : tForms('hardSkillForm.error'),
+        detail:
+          status === 409 ? undefined : tForms('hardSkillForm.errorDetails'),
         life: 3000,
         actionKey: ToastKeysEnum.HARD_SKILL,
       });

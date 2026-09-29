@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { blackListPasswords } from '@/shared/constants/black-list-passwords';
+import { TFunctionType } from '@/shared/types/t-function.type';
 
 interface PasswordCheckData {
   password: string;
@@ -9,7 +10,7 @@ interface PasswordCheckData {
 }
 
 export const passwordRefinement =
-  (t: (key: string) => string) =>
+  (t: TFunctionType) =>
   (
     {
       password,

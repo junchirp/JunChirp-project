@@ -22,7 +22,7 @@ export default function RejectRequestPopup(
   props: RejectRequestPopupProps,
 ): ReactElement {
   const { data, onClose, isOpen, onConfirm, loading } = props;
-  const t = useTranslations('declineRequestPopup');
+  const t = useTranslations('rejectRequestPopup');
 
   return (
     <Dialog isOpen={isOpen} onClose={onClose}>

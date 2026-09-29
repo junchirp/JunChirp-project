@@ -1,5 +1,6 @@
 import { z, ZodObject, ZodString } from 'zod';
 import { nonEmptyValidator } from '@/shared/forms/validators/nonEmptyValidator';
+import { TFunctionType } from '@/shared/types/t-function.type';
 
 export const inviteSchemaStatic = z.object({
   projectId: z.string(),
@@ -8,7 +9,7 @@ export const inviteSchemaStatic = z.object({
 });
 
 export const inviteSchema = (
-  t: (key: string) => string,
+  t: TFunctionType,
 ): ZodObject<{
   projectId: ZodString;
   projectRoleId: ZodString;

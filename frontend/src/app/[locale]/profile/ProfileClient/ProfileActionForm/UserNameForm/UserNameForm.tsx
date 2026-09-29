@@ -78,6 +78,7 @@ export default function UserNameForm(props: UserNameFormProps): ReactElement {
       showToast({
         severity: 'error',
         summary: tForms('userNameForm.error'),
+        detail: tForms('userNameForm.errorDetails'),
         life: 3000,
         actionKey: ToastKeysEnum.USER_NAME,
       });

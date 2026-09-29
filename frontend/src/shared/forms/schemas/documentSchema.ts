@@ -1,6 +1,7 @@
 import { z, ZodObject, ZodString } from 'zod';
 import { documentNameValidator } from '@/shared/forms/validators/documentNameValidator';
 import { documentUrlValidator } from '@/shared/forms/validators/documentUrlValidator';
+import { TFunctionType } from '@/shared/types/t-function.type';
 
 export const documentSchemaStatic = z.object({
   documentName: z.string(),
@@ -9,7 +10,7 @@ export const documentSchemaStatic = z.object({
 });
 
 export const documentSchema = (
-  t: (key: string) => string,
+  t: TFunctionType,
 ): ZodObject<{
   documentName: ZodString;
   url: ZodString;

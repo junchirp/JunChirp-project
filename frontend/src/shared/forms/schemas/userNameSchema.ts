@@ -1,6 +1,7 @@
 import { z, ZodArray, ZodObject, ZodString } from 'zod';
 import { userNameValidator } from '@/shared/forms/validators/userNameValidator';
 import { desiredRolesValidator } from '@/shared/forms/validators/desiredRolesValidator';
+import { TFunctionType } from '@/shared/types/t-function.type';
 
 export const userNameSchemaBaseStatic = z.object({
   firstName: z.string(),
@@ -12,7 +13,7 @@ export const userNameSchemaStatic = userNameSchemaBaseStatic.extend({
 });
 
 export const userNameSchemaBase = (
-  t: (key: string) => string,
+  t: TFunctionType,
 ): ZodObject<{
   firstName: ZodString;
   lastName: ZodString;
@@ -23,7 +24,7 @@ export const userNameSchemaBase = (
   });
 
 export const userNameSchema = (
-  t: (key: string) => string,
+  t: TFunctionType,
 ): ZodObject<{
   firstName: ZodString;
   lastName: ZodString;

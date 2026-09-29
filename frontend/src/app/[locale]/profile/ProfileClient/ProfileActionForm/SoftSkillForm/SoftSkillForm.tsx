@@ -109,6 +109,8 @@ export default function SoftSkillForm(props: SoftSkillFormProps): ReactElement {
           status === 409
             ? tForms('softSkillForm.error409')
             : tForms('softSkillForm.error'),
+        detail:
+          status === 409 ? undefined : tForms('softSkillForm.errorDetails'),
         life: 3000,
         actionKey: ToastKeysEnum.SOFT_SKILL,
       });

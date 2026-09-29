@@ -106,6 +106,7 @@ export default function EducationForm(props: EducationFormProps): ReactElement {
       showToast({
         severity: 'error',
         summary: tForms('educationForm.error'),
+        detail: tForms('educationForm.errorDetails'),
         life: 3000,
         actionKey: ToastKeysEnum.EDUCATION,
       });
