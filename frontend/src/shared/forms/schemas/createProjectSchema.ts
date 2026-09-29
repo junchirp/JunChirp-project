@@ -2,6 +2,7 @@ import { z, ZodArray, ZodObject, ZodString } from 'zod';
 import { nonEmptyValidator } from '@/shared/forms/validators/nonEmptyValidator';
 import { projectNameValidator } from '@/shared/forms/validators/projectNameValidator';
 import { projectDescriptionValidator } from '@/shared/forms/validators/projectDescriptionValidator';
+import { TFunctionType } from '@/shared/types/t-function.type';
 
 export const createProjectSchemaStatic = z.object({
   projectName: z.string(),
@@ -11,7 +12,7 @@ export const createProjectSchemaStatic = z.object({
 });
 
 export const createProjectSchema = (
-  t: (key: string) => string,
+  t: TFunctionType,
 ): ZodObject<{
   projectName: ZodString;
   description: ZodString;

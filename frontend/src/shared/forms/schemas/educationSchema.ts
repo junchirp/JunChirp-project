@@ -1,5 +1,6 @@
 import { z, ZodObject, ZodString } from 'zod';
 import { educationValidator } from '@/shared/forms/validators/educationValidator';
+import { TFunctionType } from '@/shared/types/t-function.type';
 
 export const educationSchemaStatic = z.object({
   institution: z.string(),
@@ -7,7 +8,7 @@ export const educationSchemaStatic = z.object({
 });
 
 export const educationSchema = (
-  t: (key: string) => string,
+  t: TFunctionType,
 ): ZodObject<{
   institution: ZodString;
   specialization: ZodString;

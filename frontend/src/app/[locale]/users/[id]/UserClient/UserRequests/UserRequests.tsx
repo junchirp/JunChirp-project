@@ -40,7 +40,7 @@ export default function UserRequests({
   const [acceptRequest, { isLoading: acceptRequestLoading }] =
     useAcceptRequestMutation();
   const t = useTranslations('participationsTable');
-  const tPopup = useTranslations('declineRequestPopup');
+  const tPopup = useTranslations('rejectRequestPopup');
   const tRequest = useTranslations('acceptRequest');
   const [declineRequest, { isLoading: declineRequestLoading }] =
     useRejectRequestMutation();

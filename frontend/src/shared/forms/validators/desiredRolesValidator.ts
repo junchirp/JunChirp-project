@@ -1,8 +1,7 @@
 import { z, ZodArray, ZodString } from 'zod';
+import { TFunctionType } from '@/shared/types/t-function.type';
 
-export const desiredRolesValidator = (
-  t: (key: string) => string,
-): ZodArray<ZodString> =>
+export const desiredRolesValidator = (t: TFunctionType): ZodArray<ZodString> =>
   z
     .array(z.string())
     .min(1, t('errors.nonEmpty'))

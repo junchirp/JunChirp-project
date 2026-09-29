@@ -1,10 +1,11 @@
 import { z, ZodString } from 'zod';
+import { TFunctionType } from '@/shared/types/t-function.type';
 
-export const softSkillNameValidator = (t: (key: string) => string): ZodString =>
+export const softSkillNameValidator = (t: TFunctionType): ZodString =>
   z
     .string()
     .trim()
     .nonempty(t('errors.nonEmpty'))
-    .min(2, t('errors.skillLength'))
-    .max(50, t('errors.skillLength'))
-    .regex(/^[A-Za-zА-Яа-яІіЇїЄєҐґ0-9 .'\-+_/,()]+$/, t('errors.skillSymbols'));
+    .min(2, t('errors.length', { min: 2, max: 50 }))
+    .max(50, t('errors.length', { min: 2, max: 50 }))
+    .regex(/^[A-Za-zА-Яа-яІіЇїЄєҐґ0-9 .'\-+_/,()]+$/, t('errors.invalidCharacters'));

@@ -7,6 +7,7 @@ import {
 import { passwordSchema, passwordSchemaStatic } from './passwordSchema';
 import { passwordRefinement } from '@/shared/forms/refinements/passwordRefinement';
 import { z, ZodBoolean, ZodObject, ZodString } from 'zod';
+import { TFunctionType } from '@/shared/types/t-function.type';
 
 export const registrationSchemaStatic = userNameSchemaBaseStatic
   .extend(availableEmailSchemaStatic.shape)
@@ -16,7 +17,7 @@ export const registrationSchemaStatic = userNameSchemaBaseStatic
   });
 
 export const registrationSchema = (
-  t: (key: string) => string,
+  t: TFunctionType,
 ): ZodObject<{
   firstName: ZodString;
   lastName: ZodString;

@@ -1,6 +1,7 @@
 import { z, ZodObject, ZodString } from 'zod';
 import { passwordValidator } from '@/shared/forms/validators/passwordValidator';
 import { nonEmptyValidator } from '@/shared/forms/validators/nonEmptyValidator';
+import { TFunctionType } from '@/shared/types/t-function.type';
 
 export const passwordSchemaStatic = z.object({
   password: z.string(),
@@ -8,7 +9,7 @@ export const passwordSchemaStatic = z.object({
 });
 
 export const passwordSchema = (
-  t: (key: string) => string,
+  t: TFunctionType,
 ): ZodObject<{
   password: ZodString;
   confirmPassword: ZodString;

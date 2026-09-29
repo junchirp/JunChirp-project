@@ -197,10 +197,10 @@ export default function ProfileClient(): ReactElement {
     if (isSocial(item)) {
       setDeletedItem({
         item,
-        title: `${t('deleteItem.socials.title')}`,
+        title: `${t('deleteItemPopup.socials.title')}`,
         message: (
           <p className={styles['profile-client__message']}>
-            {t.rich('deleteItem.socials.description', {
+            {t.rich('deleteItemPopup.socials.description', {
               social: (chunks) => (
                 <span className={styles['profile-client__message--green']}>
                   [{chunks}]
@@ -218,10 +218,10 @@ export default function ProfileClient(): ReactElement {
 
       setDeletedItem({
         item,
-        title: `${t('deleteItem.educations.title')}`,
+        title: `${t('deleteItemPopup.educations.title')}`,
         message: (
           <p className={styles['profile-client__message']}>
-            {t.rich('deleteItem.educations.description', {
+            {t.rich('deleteItemPopup.educations.description', {
               edu: (chunks) => (
                 <span className={styles['profile-client__message--green']}>
                   [{chunks}]
@@ -236,10 +236,10 @@ export default function ProfileClient(): ReactElement {
     if (isHardSkill(item)) {
       setDeletedItem({
         item,
-        title: `${t('deleteItem.hardSkills.title')}`,
+        title: `${t('deleteItemPopup.hardSkills.title')}`,
         message: (
           <p className={styles['profile-client__message']}>
-            {t.rich('deleteItem.hardSkills.description', {
+            {t.rich('deleteItemPopup.hardSkills.description', {
               skill: (chunks) => (
                 <span className={styles['profile-client__message--green']}>
                   [{chunks}]
@@ -254,10 +254,10 @@ export default function ProfileClient(): ReactElement {
     if (isSoftSkill(item)) {
       setDeletedItem({
         item,
-        title: `${t('deleteItem.softSkills.title')}`,
+        title: `${t('deleteItemPopup.softSkills.title')}`,
         message: (
           <p className={styles['profile-client__message']}>
-            {t.rich('deleteItem.softSkills.description', {
+            {t.rich('deleteItemPopup.softSkills.description', {
               skill: (chunks) => (
                 <span className={styles['profile-client__message--green']}>
                   [{chunks}]
@@ -277,15 +277,15 @@ export default function ProfileClient(): ReactElement {
 
       showToast({
         severity: 'success',
-        summary: t('deleteItem.socials.success'),
+        summary: t('deleteItemPopup.socials.success'),
         life: 3000,
         actionKey: ToastKeysEnum.DELETE_SOCIAL,
       });
     } catch {
       showToast({
         severity: 'error',
-        summary: t('deleteItem.socials.error'),
-        detail: t('deleteItem.errorDetails'),
+        summary: t('deleteItemPopup.socials.error'),
+        detail: t('deleteItemPopup.errorDetails'),
         life: 3000,
         actionKey: ToastKeysEnum.DELETE_SOCIAL,
       });
@@ -302,15 +302,15 @@ export default function ProfileClient(): ReactElement {
 
       showToast({
         severity: 'success',
-        summary: t('deleteItem.educations.success'),
+        summary: t('deleteItemPopup.educations.success'),
         life: 3000,
         actionKey: ToastKeysEnum.DELETE_EDUCATION,
       });
     } catch {
       showToast({
         severity: 'error',
-        summary: t('deleteItem.educations.error'),
-        detail: t('deleteItem.errorDetails'),
+        summary: t('deleteItemPopup.educations.error'),
+        detail: t('deleteItemPopup.errorDetails'),
         life: 3000,
         actionKey: ToastKeysEnum.DELETE_EDUCATION,
       });
@@ -327,15 +327,15 @@ export default function ProfileClient(): ReactElement {
 
       showToast({
         severity: 'success',
-        summary: t('deleteItem.softSkills.success'),
+        summary: t('deleteItemPopup.softSkills.success'),
         life: 3000,
         actionKey: ToastKeysEnum.DELETE_SOFT_SKILL,
       });
     } catch {
       showToast({
         severity: 'error',
-        summary: t('deleteItem.softSkills.error'),
-        detail: t('deleteItem.errorDetails'),
+        summary: t('deleteItemPopup.softSkills.error'),
+        detail: t('deleteItemPopup.errorDetails'),
         life: 3000,
         actionKey: ToastKeysEnum.DELETE_SOFT_SKILL,
       });
@@ -352,15 +352,15 @@ export default function ProfileClient(): ReactElement {
 
       showToast({
         severity: 'success',
-        summary: t('deleteItem.hardSkills.success'),
+        summary: t('deleteItemPopup.hardSkills.success'),
         life: 3000,
         actionKey: ToastKeysEnum.DELETE_HARD_SKILL,
       });
     } catch {
       showToast({
         severity: 'error',
-        summary: t('deleteItem.hardSkills.error'),
-        detail: t('deleteItem.errorDetails'),
+        summary: t('deleteItemPopup.hardSkills.error'),
+        detail: t('deleteItemPopup.errorDetails'),
         life: 3000,
         actionKey: ToastKeysEnum.DELETE_HARD_SKILL,
       });

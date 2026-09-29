@@ -53,7 +53,7 @@ export default function RequestFooter({
       showToast({
         severity: 'error',
         summary: tProjectsPage('request.cancelError'),
-        detail: tProjectsPage('request.errorDetails'),
+        detail: tProjectsPage('request.cancelErrorDetails'),
         life: 3000,
         actionKey: ToastKeysEnum.PARTICIPATION_REQUEST,
       });
