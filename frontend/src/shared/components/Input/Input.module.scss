@@ -2,9 +2,20 @@
 
 .input {
   &__label {
+    position: relative;
     display: block;;
     color: variables.$gray-10;
     user-select: none;
+
+    &--required {
+      &::after {
+        content: '*';
+        color: variables.$red-2;
+        position: relative;
+        top: 0;
+        right: -2px;
+      }
+    }
   }
 
   &__input {

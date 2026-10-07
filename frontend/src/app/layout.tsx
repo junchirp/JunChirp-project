@@ -1,4 +1,5 @@
 import './globals.scss';
+import '@daypicker/react/style.css';
 import { ReactNode } from 'react';
 
 export default function RootLayout({

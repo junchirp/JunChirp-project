@@ -1,8 +1,8 @@
-import { TaskStatusInterface } from '@/shared/interfaces/task-status.interface';
+import { TaskStatusWithCountInterface } from '@/shared/interfaces/task-status-with-count.interface';
 
 export interface BoardInterface {
   id: string;
   boardName: string;
   projectId: string;
-  columns: TaskStatusInterface[];
+  columns: TaskStatusWithCountInterface[];
 }

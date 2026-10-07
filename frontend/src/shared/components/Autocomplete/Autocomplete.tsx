@@ -15,6 +15,7 @@ import Input from '@/shared/components/Input/Input';
 import styles from './Autocomplete.module.scss';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { useClickOutside } from '@/hooks/useClickOutside';
+import { useOpenDirection } from '@/hooks/useOpenDirection';
 
 interface AutocompleteProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -24,6 +25,7 @@ interface AutocompleteProps extends InputHTMLAttributes<HTMLInputElement> {
   labelMargin?: number;
   errorMessage?: string;
   withError?: boolean;
+  normalize?: boolean;
   placeholder?: string;
   onSelectOption?: (value: string | null) => void;
   options?: string[];
@@ -43,6 +45,7 @@ function AutocompleteComponent(
     labelMargin = 4,
     errorMessage,
     withError = false,
+    normalize = false,
     placeholder,
     onSelectOption,
     options,
@@ -62,6 +65,17 @@ function AutocompleteComponent(
   const [inputValue, setInputValue] = useState(value?.toString() ?? '');
   const [filtered, setFiltered] = useState<string[]>([]);
   const debouncedValue = useDebouncedValue(inputValue, debounce);
+  const fetcherRef = useRef(fetcher);
+  const { openUp, handleToggle } = useOpenDirection(
+    containerRef,
+    isOpen,
+    setIsOpen,
+    Math.min((options ?? []).length * 41, 205),
+  );
+
+  useEffect(() => {
+    fetcherRef.current = fetcher;
+  }, [fetcher]);
 
   useEffect(() => {
     setInputValue(value?.toString() ?? '');
@@ -84,7 +98,7 @@ function AutocompleteComponent(
       return;
     }
 
-    if (!fetcher) {
+    if (!fetcherRef.current) {
       return;
     }
 
@@ -92,7 +106,8 @@ function AutocompleteComponent(
 
     void (async (): Promise<void> => {
       try {
-        const result = await fetcher(query);
+        const result = await fetcherRef.current?.(query);
+
         if (cancelled) {
           return;
         }
@@ -114,7 +129,7 @@ function AutocompleteComponent(
     return (): void => {
       cancelled = true;
     };
-  }, [debouncedValue, isOpen, minLength, options, fetcher]);
+  }, [debouncedValue, isOpen, minLength, options]);
 
   useClickOutside({
     isOpen,
@@ -143,6 +158,9 @@ function AutocompleteComponent(
     onSelectOption?.(item);
   };
 
+  const labelOffset = label ? labelSize * labelHeight + labelMargin - 4 : -4;
+  const errorOffset = withError ? 16 : -4;
+
   return (
     <div className={styles.autocomplete} ref={containerRef}>
       <Input
@@ -157,12 +175,25 @@ function AutocompleteComponent(
         id={id}
         value={inputValue}
         onChange={handleChange}
+        onFocus={handleToggle}
         onBlur={onBlur}
         withError={withError}
+        normalize={normalize}
         errorMessage={errorMessage}
       />
       {isOpen && filtered.length > 0 && (
-        <ul className={styles.autocomplete__list}>
+        <ul
+          className={styles.autocomplete__list}
+          style={
+            openUp
+              ? {
+                  bottom: `calc(100% - ${labelOffset}px)`,
+                }
+              : {
+                  top: `calc(100% - ${errorOffset}px)`,
+                }
+          }
+        >
           {filtered.map((item: string) => (
             <li
               key={item}

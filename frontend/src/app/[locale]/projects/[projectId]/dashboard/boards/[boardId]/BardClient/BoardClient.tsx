@@ -18,11 +18,12 @@ import { isSortable } from '@dnd-kit/react/sortable';
 import { useGetProjectByIdQuery } from '@/api/projectsApi';
 import { useAppSelector } from '@/hooks/reduxHooks';
 import authSelector from '@/redux/auth/authSelector';
-import { TaskStatusInterface } from '@/shared/interfaces/task-status.interface';
+import { TaskStatusWithCountInterface } from '@/shared/interfaces/task-status-with-count.interface';
 import { useToast } from '@/hooks/useToast';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 import { useShortLocale } from '@/hooks/useShortLocale';
 import { useTranslations } from 'next-intl';
+import CreateTaskPopup from './CreateTaskPopup/CreateTaskPopup';
 
 export default function BoardClient(): ReactElement {
   const { projectId, boardId } = useParams<{
@@ -32,7 +33,7 @@ export default function BoardClient(): ReactElement {
   const { data: board, isLoading: boardLoading } = useGetBoardQuery(boardId);
   const router = useRouter();
   const buttonDisabled = Number(board?.columns.length) >= 5;
-  const [columns, setColumns] = useState<TaskStatusInterface[]>([]);
+  const [columns, setColumns] = useState<TaskStatusWithCountInterface[]>([]);
   const { data: project, isLoading: projectLoading } =
     useGetProjectByIdQuery(projectId);
   const user = useAppSelector(authSelector.selectRequiredUser);
@@ -43,6 +44,13 @@ export default function BoardClient(): ReactElement {
     useCreateColumnMutation();
   const { showToast, isActive } = useToast();
   const locale = useShortLocale();
+  const [createTaskColumnId, setCreateTaskColumnId] = useState<string | null>(
+    null,
+  );
+  const members = [
+    ...(project?.roles.flatMap((role) => role.users) ?? []),
+    ...(project?.owner ? [project.owner] : []),
+  ];
   const t = useTranslations('boards');
 
   useEffect(() => {
@@ -56,6 +64,9 @@ export default function BoardClient(): ReactElement {
       setColumns(board.columns);
     }
   }, [board]);
+
+  const openCreateTaskPopup = (id: string): void => setCreateTaskColumnId(id);
+  const closeCreateTaskPopup = (): void => setCreateTaskColumnId(null);
 
   const addColumn = async (): Promise<void> => {
     if (isActive(ToastKeysEnum.STATUS)) {
@@ -123,34 +134,47 @@ export default function BoardClient(): ReactElement {
   return isLoading ? (
     <ListSkeleton itemHeight={44} noPadding columns={1} />
   ) : (
-    <DragDropProvider onDragEnd={handleDragEnd}>
-      <div className={styles['board-client__wrapper']}>
-        <div className={styles['board-client']}>
-          <div className={styles['board-client__droppable']}>
-            {columns.map((column, index) => (
-              <Column
-                key={column.id}
-                currentColumn={column}
-                columns={columns}
-                index={index}
-                isOwner={isOwner}
-              />
-            ))}
+    <>
+      <DragDropProvider onDragEnd={handleDragEnd}>
+        <div className={styles['board-client__wrapper']}>
+          <div className={styles['board-client']}>
+            <div className={styles['board-client__droppable']}>
+              {columns.map((column, index) => (
+                <Column
+                  key={column.id}
+                  currentColumn={column}
+                  columns={columns}
+                  index={index}
+                  isOwner={isOwner}
+                  addTask={() => openCreateTaskPopup(column.id)}
+                />
+              ))}
+            </div>
+            {isOwner && (
+              <Button
+                color="green"
+                variant="secondary-frame"
+                icon={<Plus />}
+                disabled={buttonDisabled}
+                loading={createColumnLoading}
+                onClick={addColumn}
+              >
+                {!buttonDisabled && t('columnBtn')}
+              </Button>
+            )}
           </div>
-          {isOwner && (
-            <Button
-              color="green"
-              variant="secondary-frame"
-              icon={<Plus />}
-              disabled={buttonDisabled}
-              loading={createColumnLoading}
-              onClick={addColumn}
-            >
-              {!buttonDisabled && t('columnBtn')}
-            </Button>
-          )}
         </div>
-      </div>
-    </DragDropProvider>
+      </DragDropProvider>
+      {createTaskColumnId && (
+        <CreateTaskPopup
+          isOpen={!!createTaskColumnId}
+          onClose={closeCreateTaskPopup}
+          members={members}
+          columns={columns}
+          initialColumnId={createTaskColumnId}
+          boardId={boardId}
+        />
+      )}
+    </>
   );
 }

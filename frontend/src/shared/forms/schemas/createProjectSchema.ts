@@ -23,5 +23,4 @@ export const createProjectSchema = (
     projectName: projectNameValidator(t),
     description: projectDescriptionValidator(t),
     categoryId: nonEmptyValidator(t),
-    rolesIds: z.array(z.string()),
   });

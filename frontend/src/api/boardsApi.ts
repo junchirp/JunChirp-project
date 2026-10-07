@@ -3,7 +3,7 @@ import { BoardInterface } from '@/shared/interfaces/board.interface';
 import { CreateBoardInterface } from '@/shared/interfaces/create-board.interface';
 import { UpdateBoardInterface } from '@/shared/interfaces/update-board.interface';
 import { ColumnOrderInterface } from '@/shared/interfaces/column-order.interface';
-import { TaskStatusInterface } from '@/shared/interfaces/task-status.interface';
+import { TaskStatusWithCountInterface } from '@/shared/interfaces/task-status-with-count.interface';
 import { CreateTaskStatusInterface } from '@/shared/interfaces/create-task-status.interface';
 
 export const boardsApi = mainApi.injectEndpoints({
@@ -84,7 +84,7 @@ export const boardsApi = mainApi.injectEndpoints({
       ],
     }),
     updateColumn: builder.mutation<
-      TaskStatusInterface,
+      TaskStatusWithCountInterface,
       {
         id: string;
         data: { statusName: string; boardId: string };
@@ -100,7 +100,7 @@ export const boardsApi = mainApi.injectEndpoints({
       ],
     }),
     createColumn: builder.mutation<
-      TaskStatusInterface,
+      TaskStatusWithCountInterface,
       CreateTaskStatusInterface
     >({
       query: (data) => ({

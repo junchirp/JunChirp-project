@@ -347,6 +347,23 @@
       "placeholders": {
         "publicUrl": "Введи посилання на готовий сайт"
       }
+    },
+    "taskForm": {
+      "taskName": "Назва завдання",
+      "description": "Опис",
+      "taskStatus": "Статус",
+      "priority": "Пріоритет",
+      "deadline": "Дедлайн",
+      "members": "Виконавець",
+      "placeholders": {
+        "taskName": "Введи назву завдання",
+        "description": "Додай детальний опис завдання...",
+        "deadline": "ДД.ММ.РРРР",
+        "members": "Не призначено"
+      },
+      "createError": "Не вдалося створити завдання.",
+      "createErrorDetails": "Спробуй ще раз.",
+      "createSuccess": "Завдання створено успішно."
     }
   },
   "page404": {
@@ -864,5 +881,11 @@
     "error": "Не вдалося передати право власності.",
     "errorDetails": "Спробуй ще раз.",
     "success": "Право власності передано успішно."
+  },
+  "taskPriority": {
+    "low": "Низький",
+    "medium": "Середній",
+    "high": "Високий",
+    "critical": "Критичний"
   }
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { z } from 'zod';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRegisterMutation } from '@/api/authApi';
 import React, { ReactElement, useEffect } from 'react';
@@ -21,7 +21,6 @@ import {
   registrationSchema,
   registrationSchemaStatic,
 } from '@/shared/forms/schemas/registrationSchema';
-import { normalizeInputValue } from '@/shared/utils/normalizeInputValue';
 import { useTranslations } from 'next-intl';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 import { useShortLocale } from '@/hooks/useShortLocale';
@@ -36,7 +35,6 @@ export default function RegistrationForm(): ReactElement {
     trigger,
     watch,
     handleSubmit,
-    control,
     formState: { errors, dirtyFields, isSubmitted },
   } = useForm<FormData>({
     resolver: zodResolver(registrationSchema(tForms)),
@@ -130,39 +128,21 @@ export default function RegistrationForm(): ReactElement {
         className={styles['registration-form__fieldset']}
         disabled={isLoading}
       >
-        <Controller
-          name="firstName"
-          control={control}
-          render={({ field }) => (
-            <Input
-              label={tForms('registrationForm.firstName')}
-              placeholder={tForms('registrationForm.placeholders.firstName')}
-              {...field}
-              onChange={(e) => {
-                const normalized = normalizeInputValue(e.target.value);
-                field.onChange(normalized);
-              }}
-              withError
-              errorMessage={errors.firstName?.message}
-            />
-          )}
+        <Input
+          label={tForms('registrationForm.firstName')}
+          placeholder={tForms('registrationForm.placeholders.firstName')}
+          {...register('firstName')}
+          normalize
+          withError
+          errorMessage={errors.firstName?.message}
         />
-        <Controller
-          name="lastName"
-          control={control}
-          render={({ field }) => (
-            <Input
-              label={tForms('registrationForm.lastName')}
-              placeholder={tForms('registrationForm.placeholders.lastName')}
-              {...field}
-              onChange={(e) => {
-                const normalized = normalizeInputValue(e.target.value);
-                field.onChange(normalized);
-              }}
-              withError
-              errorMessage={errors.lastName?.message}
-            />
-          )}
+        <Input
+          label={tForms('registrationForm.lastName')}
+          placeholder={tForms('registrationForm.placeholders.lastName')}
+          {...register('lastName')}
+          normalize
+          withError
+          errorMessage={errors.lastName?.message}
         />
         <Input
           label={tForms('registrationForm.email')}

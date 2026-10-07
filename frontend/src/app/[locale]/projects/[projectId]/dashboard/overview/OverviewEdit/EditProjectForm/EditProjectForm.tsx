@@ -19,7 +19,6 @@ import { useTranslations } from 'next-intl';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 import { ProjectInterface } from '@/shared/interfaces/project.interface';
 import Input from '@/shared/components/Input/Input';
-import { normalizeInputValue } from '@/shared/utils/normalizeInputValue';
 import Textarea from '@/shared/components/Textarea/Textarea';
 import Dropdown from '@/shared/components/Dropdown/Dropdown';
 import { useShortLocale } from '@/hooks/useShortLocale';
@@ -42,6 +41,7 @@ export default function EditProjectForm({
   const {
     control,
     reset,
+    register,
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>({
@@ -131,47 +131,29 @@ export default function EditProjectForm({
         className={styles['edit-project-form__fields']}
         disabled={isLoading}
       >
-        <Controller
-          name="projectName"
-          control={control}
-          render={({ field }) => (
-            <Input
-              label={tForms('projectForm.projectName')}
-              labelSize={20}
-              labelHeight={1.4}
-              labelWeight={600}
-              labelMargin={12}
-              placeholder={tForms('projectForm.placeholders.projectName')}
-              withError
-              errorMessage={errors.projectName?.message}
-              {...field}
-              onChange={(e) => {
-                const normalized = normalizeInputValue(e.target.value);
-                field.onChange(normalized);
-              }}
-            />
-          )}
+        <Input
+          label={tForms('projectForm.projectName')}
+          labelSize={20}
+          labelHeight={1.4}
+          labelWeight={600}
+          labelMargin={12}
+          placeholder={tForms('projectForm.placeholders.projectName')}
+          {...register('projectName')}
+          normalize
+          withError
+          errorMessage={errors.projectName?.message}
         />
-        <Controller
-          name="description"
-          control={control}
-          render={({ field }) => (
-            <Textarea
-              label={tForms('projectForm.description')}
-              labelSize={20}
-              labelHeight={1.4}
-              labelWeight={600}
-              labelMargin={12}
-              placeholder={tForms('projectForm.placeholders.description')}
-              withError
-              errorMessage={errors.description?.message}
-              {...field}
-              onChange={(e) => {
-                const normalized = normalizeInputValue(e.target.value);
-                field.onChange(normalized);
-              }}
-            />
-          )}
+        <Textarea
+          label={tForms('projectForm.description')}
+          labelSize={20}
+          labelHeight={1.4}
+          labelWeight={600}
+          labelMargin={12}
+          placeholder={tForms('projectForm.placeholders.description')}
+          {...register('description')}
+          normalize
+          withError
+          errorMessage={errors.description?.message}
         />
         <Controller
           name="categoryId"

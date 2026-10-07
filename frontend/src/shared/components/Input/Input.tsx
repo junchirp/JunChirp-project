@@ -7,9 +7,11 @@ import {
   ForwardedRef,
   ReactElement,
   useId,
+  ChangeEvent,
 } from 'react';
 import styles from './Input.module.scss';
 import Image from 'next/image';
+import { normalizeInputValue } from '@/shared/utils/normalizeInputValue';
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -21,6 +23,8 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   errorMessage?: string;
   className?: string;
   withError?: boolean;
+  normalize?: boolean;
+  required?: boolean;
 }
 
 function InputComponent(
@@ -39,6 +43,9 @@ function InputComponent(
     type = 'text',
     className,
     withError = false,
+    normalize = false,
+    required = false,
+    onChange,
     ...rest
   } = props;
   const [showPassword, setShowPassword] = useState(false);
@@ -59,6 +66,13 @@ function InputComponent(
     .filter(Boolean)
     .join(' ');
 
+  const labelClassNames = [
+    styles.input__label,
+    required && styles['input__label--required'],
+  ]
+    .filter(Boolean)
+    .join(' ');
+
   const labelStyle = {
     fontSize: `${labelSize}px`,
     lineHeight: labelHeight,
@@ -66,10 +80,35 @@ function InputComponent(
     marginBottom: `${labelMargin}px`,
   };
 
+  const handleChange = (
+    event: ChangeEvent<HTMLInputElement, HTMLInputElement>,
+  ): void => {
+    if (!normalize) {
+      onChange?.(event);
+      return;
+    }
+
+    const input = event.target;
+    const cursorPosition = input.selectionStart ?? input.value.length;
+    const valueBeforeCursor = input.value.slice(0, cursorPosition);
+    const normalizedValue = normalizeInputValue(input.value);
+    const normalizedBeforeCursor = normalizeInputValue(valueBeforeCursor);
+
+    input.value = normalizedValue;
+    onChange?.(event);
+
+    requestAnimationFrame(() => {
+      input.setSelectionRange(
+        normalizedBeforeCursor.length,
+        normalizedBeforeCursor.length,
+      );
+    });
+  };
+
   return (
     <div className={`${styles.input} ${className ?? ''}`}>
       {label && (
-        <label className={styles.input__label} style={labelStyle} htmlFor={id}>
+        <label className={labelClassNames} style={labelStyle} htmlFor={id}>
           {label}
         </label>
       )}
@@ -82,6 +121,7 @@ function InputComponent(
           value={value}
           className={inputClassNames}
           placeholder={placeholder}
+          onChange={handleChange}
         />
         {isPasswordField && (
           <button

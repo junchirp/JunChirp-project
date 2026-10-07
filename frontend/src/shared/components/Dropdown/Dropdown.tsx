@@ -7,6 +7,7 @@ import Down from '@/assets/icons/chevron-down.svg';
 import styles from './Dropdown.module.scss';
 import Image from 'next/image';
 import { useClickOutside } from '@/hooks/useClickOutside';
+import { useOpenDirection } from '@/hooks/useOpenDirection';
 
 interface DropdownProps<T> extends Partial<ControllerRenderProps> {
   label?: string;
@@ -56,6 +57,12 @@ export default function Dropdown<T>(props: DropdownProps<T>): ReactElement {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const isControlled = value !== undefined;
   const currentValue = isControlled ? value : internalValue;
+  const { openUp, handleToggle } = useOpenDirection(
+    ref,
+    isOpen,
+    setIsOpen,
+    Math.min(options.length * 41, 205),
+  );
 
   const labelFn = getOptionLabel ?? ((opt: unknown): string => String(opt));
   const valueFn = getOptionValue ?? ((opt: unknown): string => String(opt));
@@ -104,6 +111,9 @@ export default function Dropdown<T>(props: DropdownProps<T>): ReactElement {
     marginBottom: `${labelMargin}px`,
   };
 
+  const labelOffset = label ? labelSize * labelHeight + labelMargin - 4 : -4;
+  const errorOffset = withError ? 16 : -4;
+
   return (
     <div className={styles.dropdown} ref={ref}>
       <div className={styles.dropdown__field}>
@@ -120,7 +130,7 @@ export default function Dropdown<T>(props: DropdownProps<T>): ReactElement {
           id={id}
           className={dropdownClassNames}
           type="button"
-          onClick={() => setIsOpen((prev) => !prev)}
+          onClick={handleToggle}
           onBlur={onBlur}
           ref={buttonRef}
           disabled={disabled}
@@ -157,9 +167,15 @@ export default function Dropdown<T>(props: DropdownProps<T>): ReactElement {
       {isOpen && (
         <div
           className={styles['dropdown__list-wrapper']}
-          style={{
-            top: `${withError ? 'calc(100% - 17px)' : 'calc(100% + 4px)'}`,
-          }}
+          style={
+            openUp
+              ? {
+                  bottom: `calc(100% - ${labelOffset}px)`,
+                }
+              : {
+                  top: `calc(100% - ${errorOffset}px)`,
+                }
+          }
         >
           <ul className={styles.dropdown__list}>
             {options.map((option) => {

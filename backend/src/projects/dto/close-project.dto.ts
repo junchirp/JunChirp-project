@@ -3,8 +3,8 @@ import { IsOptional, IsUrl, Length } from 'class-validator';
 
 export class CloseProjectDto {
   @ApiProperty({
-    example: 'en',
-    description: 'Locale',
+    example: 'https://www.public-url.com',
+    description: 'Public url',
     required: false,
     type: String,
   })

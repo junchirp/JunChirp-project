@@ -430,10 +430,7 @@ export class ProjectsService {
     }
   }
 
-  public async closeProject(
-    id: string,
-    publicUrl?: string,
-  ): Promise<string[]> {
+  public async closeProject(id: string, publicUrl?: string): Promise<string[]> {
     try {
       const result = await this.prisma.$transaction(async (prisma) => {
         const requests = await prisma.participationRequest.findMany({

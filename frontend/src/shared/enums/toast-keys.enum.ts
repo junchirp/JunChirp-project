@@ -31,4 +31,5 @@ export enum ToastKeysEnum {
   BOARD = 'board',
   STATUS = 'status',
   OWNERSHIP = 'ownership',
+  TASK = 'task',
 }

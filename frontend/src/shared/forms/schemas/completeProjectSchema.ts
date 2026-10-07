@@ -3,12 +3,12 @@ import { projectPublicUrlValidator } from '@/shared/forms/validators/projectPubl
 import { TFunctionType } from '@/shared/types/t-function.type';
 
 export const completeProjectSchemaStatic = z.object({
-  publicUrl: z.string(),
+  publicUrl: z.string().optional(),
 });
 
 export const completeProjectSchema = (
   t: TFunctionType,
 ): typeof completeProjectSchemaStatic =>
   completeProjectSchemaStatic.extend({
-    publicUrl: projectPublicUrlValidator(t),
+    publicUrl: projectPublicUrlValidator(t).optional(),
   });

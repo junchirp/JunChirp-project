@@ -14,7 +14,6 @@ import {
   userNameSchema,
   userNameSchemaStatic,
 } from '@/shared/forms/schemas/userNameSchema';
-import { normalizeInputValue } from '@/shared/utils/normalizeInputValue';
 import { useGetProjectRolesListQuery } from '@/api/projectRolesApi';
 import MultiSelectWithChips from '@/shared/components/MultiSelectWithChips/MultiSelectWithChips';
 import { useTranslations } from 'next-intl';
@@ -37,6 +36,7 @@ export default function UserNameForm(props: UserNameFormProps): ReactElement {
     control,
     handleSubmit,
     setFocus,
+    register,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(userNameSchema(tForms)),
@@ -94,43 +94,23 @@ export default function UserNameForm(props: UserNameFormProps): ReactElement {
         className={styles['user-name-form__fieldset']}
         disabled={isLoading}
       >
-        <Controller
-          name="firstName"
-          control={control}
-          render={({ field }) => (
-            <Input
-              label={tForms('userNameForm.firstName')}
-              placeholder={tForms('userNameForm.placeholders.firstName')}
-              autoComplete="given-name"
-              {...field}
-              value={field.value ?? ''}
-              onChange={(e) => {
-                const normalized = normalizeInputValue(e.target.value);
-                field.onChange(normalized);
-              }}
-              withError
-              errorMessage={errors.firstName?.message}
-            />
-          )}
+        <Input
+          label={tForms('userNameForm.firstName')}
+          placeholder={tForms('userNameForm.placeholders.firstName')}
+          autoComplete="given-name"
+          {...register('firstName')}
+          normalize
+          withError
+          errorMessage={errors.firstName?.message}
         />
-        <Controller
-          name="lastName"
-          control={control}
-          render={({ field }) => (
-            <Input
-              label={tForms('userNameForm.lastName')}
-              placeholder={tForms('userNameForm.placeholders.lastName')}
-              autoComplete="family-name"
-              {...field}
-              value={field.value ?? ''}
-              onChange={(e) => {
-                const normalized = normalizeInputValue(e.target.value);
-                field.onChange(normalized);
-              }}
-              withError
-              errorMessage={errors.lastName?.message}
-            />
-          )}
+        <Input
+          label={tForms('userNameForm.lastName')}
+          placeholder={tForms('userNameForm.placeholders.lastName')}
+          autoComplete="family-name"
+          {...register('lastName')}
+          normalize
+          withError
+          errorMessage={errors.lastName?.message}
         />
         <Controller
           name="desiredRolesIds"

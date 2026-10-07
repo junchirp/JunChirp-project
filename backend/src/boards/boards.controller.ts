@@ -31,7 +31,7 @@ import { BoardResponseDto } from './dto/board.response-dto';
 import { User } from '../auth/decorators/user.decorator';
 import { UUIDParam } from '../common/decorators/UUID-param.decorator';
 import { LocaleDto } from '../common/dto/locale.dto';
-import { TaskStatusResponseDto } from './dto/task-status.response-dto';
+import { TaskStatusWithCountResponseDto } from './dto/task-status-with-count.response-dto';
 import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
 import { CreateTaskStatusDto } from './dto/create-task-status.dto';
 
@@ -177,7 +177,7 @@ export class BoardsController {
 
   @Owner('params', 'id', 'taskStatus')
   @ApiOperation({ summary: 'Update column name' })
-  @ApiOkResponse({ type: TaskStatusResponseDto })
+  @ApiOkResponse({ type: TaskStatusWithCountResponseDto })
   @ApiNotFoundResponse({ description: 'Column not found' })
   @ApiConflictResponse({
     description: 'Column name must be unique on the board',
@@ -191,13 +191,13 @@ export class BoardsController {
   public async updateTaskStatus(
     @UUIDParam('id') id: string,
     @Body() updateTaskStatusDto: UpdateTaskStatusDto,
-  ): Promise<TaskStatusResponseDto> {
+  ): Promise<TaskStatusWithCountResponseDto> {
     return this.boardsService.updateColumn(id, updateTaskStatusDto);
   }
 
   @Owner('body', 'boardId', 'board')
   @ApiOperation({ summary: 'Add task status' })
-  @ApiCreatedResponse({ type: TaskStatusResponseDto })
+  @ApiCreatedResponse({ type: TaskStatusWithCountResponseDto })
   @ApiBadRequestResponse({
     description: 'You can only add up to 5 columns on the board',
   })
@@ -213,7 +213,7 @@ export class BoardsController {
   @Post('/columns')
   public async addTaskStatus(
     @Body() createTaskStatusDto: CreateTaskStatusDto,
-  ): Promise<TaskStatusResponseDto> {
+  ): Promise<TaskStatusWithCountResponseDto> {
     return this.boardsService.addColumn(createTaskStatusDto);
   }
 

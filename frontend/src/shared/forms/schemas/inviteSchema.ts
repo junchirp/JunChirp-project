@@ -1,22 +1,9 @@
-import { z, ZodObject, ZodString } from 'zod';
-import { nonEmptyValidator } from '@/shared/forms/validators/nonEmptyValidator';
-import { TFunctionType } from '@/shared/types/t-function.type';
+import { z } from 'zod';
 
 export const inviteSchemaStatic = z.object({
-  projectId: z.string(),
-  projectRoleId: z.string(),
-  userId: z.string(),
+  projectId: z.uuidv4(),
+  projectRoleId: z.uuidv4(),
+  userId: z.uuidv4(),
 });
 
-export const inviteSchema = (
-  t: TFunctionType,
-): ZodObject<{
-  projectId: ZodString;
-  projectRoleId: ZodString;
-  userId: ZodString;
-}> =>
-  inviteSchemaStatic.extend({
-    projectId: nonEmptyValidator(t),
-    projectRoleId: nonEmptyValidator(t),
-    userId: z.string(),
-  });
+export const inviteSchema = inviteSchemaStatic;

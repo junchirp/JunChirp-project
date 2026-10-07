@@ -5,7 +5,7 @@ import styles from './Column.module.scss';
 import { COLUMN_COLOR_SCHEMES } from '@/shared/constants/column-color-schemes';
 import Image from 'next/image';
 import { useSortable } from '@dnd-kit/react/sortable';
-import { TaskStatusInterface } from '@/shared/interfaces/task-status.interface';
+import { TaskStatusWithCountInterface } from '@/shared/interfaces/task-status-with-count.interface';
 import ColumnMenu from './ColumnMenu/ColumnMenu';
 import ColumnForm from './ColumnForm/ColumnForm';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
@@ -15,18 +15,15 @@ import { useTranslations } from 'next-intl';
 import DeleteColumnPopup from './DeleteColumnPopup/DeleteColumnPopup';
 
 interface ColumnProps {
-  currentColumn: TaskStatusInterface;
+  currentColumn: TaskStatusWithCountInterface;
   index: number;
   isOwner: boolean;
-  columns: TaskStatusInterface[];
+  columns: TaskStatusWithCountInterface[];
+  addTask: () => void;
 }
 
-export default function Column({
-  currentColumn,
-  index,
-  isOwner,
-  columns,
-}: ColumnProps): ReactElement {
+export default function Column(props: ColumnProps): ReactElement {
+  const { currentColumn, columns, addTask, isOwner, index } = props;
   const { ref, handleRef, isDragging } = useSortable({
     id: currentColumn.id,
     index,
@@ -124,7 +121,7 @@ export default function Column({
                 onDelete={handleDeleteColumnRequest}
                 onRename={() => setEditMode(true)}
               />
-              <button className={styles.column__button}>
+              <button className={styles.column__button} onClick={addTask}>
                 <Image
                   width={16}
                   height={16}

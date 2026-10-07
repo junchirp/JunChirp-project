@@ -10,6 +10,7 @@ import {
 } from 'react';
 import styles from './Textarea.module.scss';
 import Image from 'next/image';
+import { normalizeInputValue } from '@/shared/utils/normalizeInputValue';
 
 interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string;
@@ -21,6 +22,9 @@ interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   errorMessage?: string;
   className?: string;
   withError?: boolean;
+  normalize?: boolean;
+  height?: number;
+  resize?: 'none' | 'both' | 'horizontal' | 'vertical';
 }
 
 function TextareaComponent(
@@ -38,12 +42,37 @@ function TextareaComponent(
     value,
     className,
     withError = false,
+    normalize = false,
+    onChange,
+    height = 140,
+    resize = 'vertical',
     ...rest
   } = props;
   const id = useId();
 
-  const handleChange = (e: ChangeEvent<HTMLTextAreaElement>): void => {
-    rest.onChange?.(e);
+  const handleChange = (
+    event: ChangeEvent<HTMLTextAreaElement, HTMLTextAreaElement>,
+  ): void => {
+    if (!normalize) {
+      onChange?.(event);
+      return;
+    }
+
+    const textarea = event.target;
+    const cursorPosition = textarea.selectionStart ?? textarea.value.length;
+    const valueBeforeCursor = textarea.value.slice(0, cursorPosition);
+    const normalizedValue = normalizeInputValue(textarea.value);
+    const normalizedBeforeCursor = normalizeInputValue(valueBeforeCursor);
+
+    textarea.value = normalizedValue;
+    onChange?.(event);
+
+    requestAnimationFrame(() => {
+      textarea.setSelectionRange(
+        normalizedBeforeCursor.length,
+        normalizedBeforeCursor.length,
+      );
+    });
   };
 
   const textAreaClassNames = [
@@ -58,6 +87,11 @@ function TextareaComponent(
     lineHeight: labelHeight,
     fontWeight: labelWeight,
     marginBottom: `${labelMargin}px`,
+  };
+
+  const textareaStyle = {
+    height: `${height}px`,
+    resize: resize,
   };
 
   return (
@@ -78,6 +112,7 @@ function TextareaComponent(
         value={value}
         onChange={handleChange}
         className={textAreaClassNames}
+        style={textareaStyle}
         placeholder={placeholder}
       />
       {withError ? (

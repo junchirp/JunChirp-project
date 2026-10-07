@@ -8,10 +8,10 @@ import DialogBody from '@/shared/components/Dialog/DialogBody/DialogBody';
 import DialogFooter from '@/shared/components/Dialog/DialogFooter/DialogFooter';
 import Button from '@/shared/components/Button/Button';
 import { useTranslations } from 'next-intl';
-import { TaskStatusInterface } from '@/shared/interfaces/task-status.interface';
+import { TaskStatusWithCountInterface } from '@/shared/interfaces/task-status-with-count.interface';
 
 interface DeleteColumnPopupProps {
-  column: TaskStatusInterface;
+  column: TaskStatusWithCountInterface;
   onClose: () => void;
   isOpen: boolean;
   onConfirm: () => void;

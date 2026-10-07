@@ -9,6 +9,7 @@ import CheckboxChecked from '@/assets/icons/checkbox-checked.svg';
 import Checkbox from '@/assets/icons/checkbox-empty.svg';
 import Image from 'next/image';
 import { useClickOutside } from '@/hooks/useClickOutside';
+import { useOpenDirection } from '@/hooks/useOpenDirection';
 
 interface MultiSelectProps<T> extends Partial<ControllerRenderProps> {
   label?: string;
@@ -53,15 +54,19 @@ export default function MultiSelect<T>(
   const id = useId();
   const ref = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
-
   const [isOpen, setIsOpen] = useState(false);
+  const { openUp, handleToggle } = useOpenDirection(
+    ref,
+    isOpen,
+    setIsOpen,
+    Math.min(options.length * 41, 205),
+  );
 
   const labelFn = getOptionLabel ?? ((opt: unknown): string => String(opt));
   const valueFn =
     getOptionValue ?? ((opt: unknown): string | number => String(opt));
 
   const selectedValues = Array.isArray(value) ? value : [];
-
   const selectedOptions = options.filter((opt) =>
     selectedValues.includes(valueFn(opt)),
   );
@@ -107,6 +112,9 @@ export default function MultiSelect<T>(
     .filter(Boolean)
     .join(' ');
 
+  const labelOffset = label ? labelSize * labelHeight + labelMargin - 4 : -4;
+  const errorOffset = withError ? 16 : -4;
+
   return (
     <div className={styles['multi-select']} ref={ref}>
       <div className={styles['multi-select__field']}>
@@ -124,7 +132,7 @@ export default function MultiSelect<T>(
           id={id}
           ref={buttonRef}
           className={buttonClassNames}
-          onClick={() => setIsOpen((prev) => !prev)}
+          onClick={handleToggle}
           onBlur={onBlur}
         >
           {selectedLabels.length > 0 ? (
@@ -168,9 +176,15 @@ export default function MultiSelect<T>(
       {isOpen && (
         <ul
           className={styles['multi-select__list']}
-          style={{
-            top: `${withError ? 'calc(100% - 17px)' : 'calc(100% + 4px)'}`,
-          }}
+          style={
+            openUp
+              ? {
+                  bottom: `calc(100% - ${labelOffset}px)`,
+                }
+              : {
+                  top: `calc(100% - ${errorOffset}px)`,
+                }
+          }
         >
           {options.map((option) => {
             const optionLabel = labelFn(option);

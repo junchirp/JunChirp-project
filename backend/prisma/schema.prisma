@@ -203,14 +203,15 @@ model TaskStatus {
 model Task {
   id           String       @id @default(dbgenerated("gen_random_uuid()"))
   taskName     String       @map("task_name")
-  description  String
+  description  String?
   priority     TaskPriority
-  deadline     DateTime
+  deadline     DateTime?
   taskIndex    Int          @default(1) @map("task_index")
   taskStatusId String       @map("task_status_id")
   taskStatus   TaskStatus   @relation(fields: [taskStatusId], references: [id], onDelete: Cascade)
   assignees    User[]
 
+  @@unique([taskStatusId, taskIndex])
   @@map("tasks")
 }
 
@@ -374,8 +375,9 @@ enum ProjectStatus {
 }
 
 enum TaskPriority {
+  critical
   high
-  normal
+  medium
   low
 }
 

@@ -28,10 +28,4 @@ export class TaskStatusResponseDto {
     description: 'Board ID',
   })
   public readonly boardId!: string;
-
-  @ApiProperty({
-    example: 7,
-    description: 'Tasks count',
-  })
-  public readonly tasksCount!: number;
 }

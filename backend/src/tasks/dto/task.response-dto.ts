@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { TaskPriority } from '@prisma/client';
 import { UserBaseResponseDto } from '../../users/dto/user-base.response-dto';
+import { TaskStatusResponseDto } from '../../boards/dto/task-status.response-dto';
 
 export class TaskResponseDto {
   @ApiProperty({
@@ -18,8 +19,10 @@ export class TaskResponseDto {
   @ApiProperty({
     example: 'Task description',
     description: 'Task description',
+    nullable: true,
+    type: String,
   })
-  public readonly description!: string;
+  public readonly description!: string | null;
 
   @ApiProperty({
     example: 'high',
@@ -36,8 +39,10 @@ export class TaskResponseDto {
   @ApiProperty({
     example: '2025-04-11 11:51:05.224',
     description: 'Task deadline',
+    nullable: true,
+    type: Date,
   })
-  public readonly deadline!: Date;
+  public readonly deadline!: Date | null;
 
   @ApiProperty({
     type: () => [UserBaseResponseDto],
@@ -45,8 +50,7 @@ export class TaskResponseDto {
   public readonly assignees!: UserBaseResponseDto[];
 
   @ApiProperty({
-    example: '6446ff53-d993-46b3-a837-25d55fac1392',
-    description: 'Column (Task status) ID',
+    type: () => TaskStatusResponseDto,
   })
-  public readonly taskStatusId!: string;
+  public readonly taskStatus!: TaskStatusResponseDto;
 }
