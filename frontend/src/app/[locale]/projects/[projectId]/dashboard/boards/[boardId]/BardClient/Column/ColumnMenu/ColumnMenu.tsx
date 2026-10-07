@@ -4,12 +4,12 @@ import { ReactElement, useRef, useState } from 'react';
 import styles from './ColumnMenu.module.scss';
 import { useClickOutside } from '@/hooks/useClickOutside';
 import { useTranslations } from 'next-intl';
-import { TaskStatusInterface } from '@/shared/interfaces/task-status.interface';
+import { TaskStatusWithCountInterface } from '@/shared/interfaces/task-status-with-count.interface';
 import Image from 'next/image';
 
 interface ColumnMenuProps {
   columnsCount: number;
-  currentColumn: TaskStatusInterface;
+  currentColumn: TaskStatusWithCountInterface;
   onDelete: (id: string) => void;
   onRename: () => void;
 }

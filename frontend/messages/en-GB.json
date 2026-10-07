@@ -347,6 +347,23 @@
       "placeholders": {
         "publicUrl": "Enter project website URL"
       }
+    },
+    "taskForm": {
+      "taskName": "Task name",
+      "description": "Description",
+      "taskStatus": "Status",
+      "priority": "Priority",
+      "deadline": "Deadline",
+      "members": "Assignee",
+      "placeholders": {
+        "taskName": "Enter task name",
+        "description": "Add a detailed task description...",
+        "deadline": "DD/MM/YYYY",
+        "members": "Unassigned"
+      },
+      "error": "Failed to create task.",
+      "errorDetails": "Please try again.",
+      "success": "Task created successfully."
     }
   },
   "page404": {
@@ -864,5 +881,11 @@
     "error": "Failed to transfer ownership.",
     "errorDetails": "Please try again.",
     "success": "Ownership transferred successfully."
+  },
+  "taskPriority": {
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High",
+    "critical": "Critical"
   }
 }

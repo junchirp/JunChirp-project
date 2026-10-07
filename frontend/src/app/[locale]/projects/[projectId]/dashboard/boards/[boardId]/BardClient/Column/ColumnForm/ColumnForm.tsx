@@ -5,7 +5,7 @@ import styles from './ColumnForm.module.scss';
 import { Controller, useForm } from 'react-hook-form';
 import { normalizeInputValue } from '@/shared/utils/normalizeInputValue';
 import { useUpdateColumnMutation } from '@/api/boardsApi';
-import { TaskStatusInterface } from '@/shared/interfaces/task-status.interface';
+import { TaskStatusWithCountInterface } from '@/shared/interfaces/task-status-with-count.interface';
 
 interface FormData {
   statusName: string;
@@ -14,8 +14,8 @@ interface FormData {
 }
 
 interface ColumnFormProps {
-  currentColumn: TaskStatusInterface;
-  columns: TaskStatusInterface[];
+  currentColumn: TaskStatusWithCountInterface;
+  columns: TaskStatusWithCountInterface[];
   onClose: () => void;
 }
 

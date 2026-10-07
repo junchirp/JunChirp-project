@@ -30,6 +30,10 @@
     flex-direction: column;
     align-items: center;
     gap: 24px;
+
+    &--empty {
+      display: none;
+    }
   }
 
   &__close {

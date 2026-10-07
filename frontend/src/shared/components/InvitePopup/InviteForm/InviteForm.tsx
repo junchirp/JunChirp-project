@@ -41,7 +41,7 @@ export default function InviteForm(props: InviteFormProps): ReactElement {
     setValue,
     formState: { isValid },
   } = useForm<FormData>({
-    resolver: zodResolver(inviteSchema(tForm)),
+    resolver: zodResolver(inviteSchema),
     mode: 'onChange',
     defaultValues: {
       projectId: '',

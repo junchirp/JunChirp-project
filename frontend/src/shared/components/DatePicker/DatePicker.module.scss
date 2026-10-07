@@ -1,0 +1,11 @@
+@use '@/assets/styles/variables';
+
+.date-picker {
+  position: relative;
+
+  &__day-picker {
+    position: absolute !important;
+    background-color: variables.$white-2 !important;
+    z-index: 10;
+  }
+}

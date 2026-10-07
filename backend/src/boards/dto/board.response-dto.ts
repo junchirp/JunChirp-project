@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { TaskStatusResponseDto } from './task-status.response-dto';
+import { TaskStatusWithCountResponseDto } from './task-status-with-count.response-dto';
 
 export class BoardResponseDto {
   @ApiProperty({
@@ -20,6 +20,6 @@ export class BoardResponseDto {
   })
   public readonly projectId!: string;
 
-  @ApiProperty({ type: () => [TaskStatusResponseDto] })
-  public readonly columns!: TaskStatusResponseDto[];
+  @ApiProperty({ type: () => [TaskStatusWithCountResponseDto] })
+  public readonly columns!: TaskStatusWithCountResponseDto[];
 }

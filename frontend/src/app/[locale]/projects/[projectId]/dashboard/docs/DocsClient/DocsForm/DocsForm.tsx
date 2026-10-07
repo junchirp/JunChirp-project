@@ -14,13 +14,12 @@ import {
 } from '@/api/documentsApi';
 import { useToast } from '@/hooks/useToast';
 import { useTranslations } from 'next-intl';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
 import Input from '@/shared/components/Input/Input';
-import { normalizeInputValue } from '@/shared/utils/normalizeInputValue';
 import Button from '@/shared/components/Button/Button';
 import { useParams } from 'next/navigation';
 import { normalizeUrl } from '@/shared/utils/normalizeUrl';
@@ -46,7 +45,6 @@ export default function DocsForm(props: DocsFormProps): ReactElement {
   const {
     register,
     handleSubmit,
-    control,
     reset,
     setFocus,
     formState: { errors },
@@ -171,23 +169,13 @@ export default function DocsForm(props: DocsFormProps): ReactElement {
           className={styles['docs-form__fieldset']}
           disabled={isLoading}
         >
-          <Controller
-            name="documentName"
-            control={control}
-            render={({ field }) => (
-              <Input
-                label={tForms('documentForm.documentName')}
-                placeholder={tForms('documentForm.placeholders.documentName')}
-                {...field}
-                value={field.value ?? ''}
-                onChange={(e) => {
-                  const normalized = normalizeInputValue(e.target.value);
-                  field.onChange(normalized);
-                }}
-                withError
-                errorMessage={errors.documentName?.message}
-              />
-            )}
+          <Input
+            label={tForms('documentForm.documentName')}
+            placeholder={tForms('documentForm.placeholders.documentName')}
+            {...register('documentName')}
+            normalize
+            withError
+            errorMessage={errors.documentName?.message}
           />
           <Input
             {...register('url')}

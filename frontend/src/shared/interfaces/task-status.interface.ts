@@ -6,5 +6,4 @@ export interface TaskStatusInterface {
   columnIndex: number;
   boardId: string;
   color: ColumnColorType;
-  tasksCount: number;
 }

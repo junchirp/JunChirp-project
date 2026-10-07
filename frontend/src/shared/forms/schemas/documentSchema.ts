@@ -19,5 +19,4 @@ export const documentSchema = (
   documentSchemaStatic.extend({
     documentName: documentNameValidator(t),
     url: documentUrlValidator(t),
-    projectId: z.string(),
   });

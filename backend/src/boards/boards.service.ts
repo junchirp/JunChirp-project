@@ -13,7 +13,7 @@ import { UpdateColumnsOrderDto } from './dto/update-columns-order.dto';
 import { DEFAULT_NAMES } from '../common/constants/default-names';
 import { generateUniqName } from '../common/utils/generate-unique-name';
 import { CreateTaskStatusDto } from './dto/create-task-status.dto';
-import { TaskStatusResponseDto } from './dto/task-status.response-dto';
+import { TaskStatusWithCountResponseDto } from './dto/task-status-with-count.response-dto';
 import { TaskStatusMapper } from '../common/mappers/task-status.mapper';
 import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
 import { BoardResponseDto } from './dto/board.response-dto';
@@ -339,7 +339,6 @@ export class BoardsService {
               })),
             },
           },
-
           include: {
             columns: {
               orderBy: {
@@ -376,7 +375,7 @@ export class BoardsService {
 
   public async addColumn(
     createTaskStatusDto: CreateTaskStatusDto,
-  ): Promise<TaskStatusResponseDto> {
+  ): Promise<TaskStatusWithCountResponseDto> {
     try {
       return await this.prisma.$transaction(async (prisma) => {
         const existingColumns = await prisma.taskStatus.findMany({
@@ -436,7 +435,7 @@ export class BoardsService {
           },
         });
 
-        return TaskStatusMapper.toBaseResponse(status);
+        return TaskStatusMapper.toExpandResponse(status);
       });
     } catch (error) {
       throwPrismaError(error, {
@@ -450,7 +449,7 @@ export class BoardsService {
   public async updateColumn(
     id: string,
     updateTaskStatusDto: UpdateTaskStatusDto,
-  ): Promise<TaskStatusResponseDto> {
+  ): Promise<TaskStatusWithCountResponseDto> {
     try {
       const status = await this.prisma.taskStatus.update({
         where: { id },
@@ -466,7 +465,7 @@ export class BoardsService {
         },
       });
 
-      return TaskStatusMapper.toBaseResponse(status);
+      return TaskStatusMapper.toExpandResponse(status);
     } catch (error) {
       throwPrismaError(error, [
         {

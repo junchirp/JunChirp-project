@@ -50,7 +50,7 @@ export default function ParticipationRequestForm({
     handleSubmit,
     formState: { isValid },
   } = useForm<FormData>({
-    resolver: zodResolver(requestSchema(tForm)),
+    resolver: zodResolver(requestSchema),
     mode: 'onChange',
     defaultValues: {
       projectId: project.id,

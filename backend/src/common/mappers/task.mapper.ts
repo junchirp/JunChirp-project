@@ -4,41 +4,17 @@ import {
   type TaskStatus,
   type User,
 } from '@prisma/client';
-import { type TaskResponseDto } from '../../tasks/dto/task.response-dto';
 import { UserMapper } from './user.mapper';
-import { type TaskWithStatusResponseDto } from '../../tasks/dto/task-with-status.response-dto';
+import { type TaskResponseDto } from '../../tasks/dto/task.response-dto';
 import { TaskStatusMapper } from './task-status.mapper';
 
 export class TaskMapper {
-  public static toBaseResponse(
+  public static toResponse(
     task: Task & {
       assignees: (User & { desiredRoles: ProjectRoleType[] })[];
+      taskStatus: TaskStatus;
     },
   ): TaskResponseDto {
-    return {
-      id: task.id,
-      taskName: task.taskName,
-      description: task.description,
-      deadline: task.deadline,
-      priority: task.priority,
-      assignees: task.assignees.map((assignee) =>
-        UserMapper.toBaseResponse(assignee),
-      ),
-      taskStatusId: task.taskStatusId,
-      taskIndex: task.taskIndex,
-    };
-  }
-
-  public static toExpandResponse(
-    task: Task & {
-      assignees: (User & { desiredRoles: ProjectRoleType[] })[];
-      taskStatus: TaskStatus & {
-        _count: {
-          tasks: number;
-        };
-      };
-    },
-  ): TaskWithStatusResponseDto {
     return {
       id: task.id,
       taskName: task.taskName,

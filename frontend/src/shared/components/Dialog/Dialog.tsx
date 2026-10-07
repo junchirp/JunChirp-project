@@ -96,7 +96,13 @@ export default function Dialog(props: DialogProps): ReactPortal | null {
             onClick={onClose}
           />
         )}
-        <div className={styles.dialog__content}>
+        <div
+          className={
+            header || body
+              ? styles.dialog__content
+              : styles['dialog__content--empty']
+          }
+        >
           {header}
           {body}
         </div>

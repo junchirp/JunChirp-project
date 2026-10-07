@@ -188,6 +188,9 @@ const mainApi = createApi({
     // boards
     'boards', // projectId
     'board', // boardId
+
+    // tasks
+    'tasks', // columnId
   ],
   endpoints: () => ({}),
 });
