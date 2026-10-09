@@ -1,4 +1,4 @@
-import { z, ZodArray, ZodDate, ZodNullable, ZodObject, ZodString } from 'zod';
+import { z, ZodDate, ZodNullable, ZodObject, ZodString } from 'zod';
 import { TFunctionType } from '@/shared/types/t-function.type';
 import { taskNameValidator } from '@/shared/forms/validators/taskNameValidator';
 import { taskDescriptionValidator } from '@/shared/forms/validators/taskDescriptionValidator';
@@ -16,7 +16,7 @@ export const taskSchemaStatic = z.object({
   taskStatusId: z.string(),
   priority: taskPrioritySchema,
   deadline: z.date().nullable(),
-  assigneesIds: z.array(z.string()),
+  assigneeId: z.string().nullable(),
 });
 
 export const taskSchema = (
@@ -27,7 +27,7 @@ export const taskSchema = (
   taskStatusId: ZodString;
   priority: typeof taskPrioritySchema;
   deadline: ZodNullable<ZodDate>;
-  assigneesIds: ZodArray<ZodString>;
+  assigneeId: ZodNullable<ZodString>;
 }> =>
   taskSchemaStatic.extend({
     taskName: taskNameValidator(t),

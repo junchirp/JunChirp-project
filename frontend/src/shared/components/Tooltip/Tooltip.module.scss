@@ -2,19 +2,15 @@
 
 .tooltip {
   position: absolute;
-  bottom: 30px;
-  left: 50%;
-  z-index: 100;
+  z-index: 9999;
   transform: translateX(-50%);
-  width: 100%;
+  width: max-content;
+  white-space: nowrap;
   border-radius: 6px;
   background-color: variables.$green-4;
-  opacity: 0;
-  visibility: hidden;
+  opacity: 1;
   pointer-events: none;
-  transition:
-    opacity 150ms ease,
-    visibility 150ms ease;
+  padding: 6px 10px;
 
   &::after {
     content: '';
@@ -30,10 +26,5 @@
   &__wrapper {
     position: relative;
     cursor: help;
-
-    &:hover .tooltip {
-      opacity: 1;
-      visibility: visible;
-    }
   }
 }

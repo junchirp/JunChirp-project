@@ -209,7 +209,8 @@ model Task {
   taskIndex    Int          @default(1) @map("task_index")
   taskStatusId String       @map("task_status_id")
   taskStatus   TaskStatus   @relation(fields: [taskStatusId], references: [id], onDelete: Cascade)
-  assignees    User[]
+  assignee     User?        @relation(fields: [assigneeId], references: [id], onDelete: SetNull)
+  assigneeId   String?      @map("assignee_id")
 
   @@unique([taskStatusId, taskIndex])
   @@map("tasks")

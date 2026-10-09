@@ -45,9 +45,10 @@ export class TaskResponseDto {
   public readonly deadline!: Date | null;
 
   @ApiProperty({
-    type: () => [UserBaseResponseDto],
+    type: () => UserBaseResponseDto,
+    nullable: true,
   })
-  public readonly assignees!: UserBaseResponseDto[];
+  public readonly assignee!: UserBaseResponseDto | null;
 
   @ApiProperty({
     type: () => TaskStatusResponseDto,

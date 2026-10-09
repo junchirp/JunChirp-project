@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactElement, useState } from 'react';
+import { ReactElement, useEffect, useRef, useState } from 'react';
 import styles from './Column.module.scss';
 import { COLUMN_COLOR_SCHEMES } from '@/shared/constants/column-color-schemes';
 import Image from 'next/image';
@@ -13,6 +13,8 @@ import { useToast } from '@/hooks/useToast';
 import { useDeleteColumnMutation } from '@/api/boardsApi';
 import { useTranslations } from 'next-intl';
 import DeleteColumnPopup from './DeleteColumnPopup/DeleteColumnPopup';
+import { useGetTasksInfiniteQuery } from '@/api/tasksApi';
+import Task from './Task/Task';
 
 interface ColumnProps {
   currentColumn: TaskStatusWithCountInterface;
@@ -35,6 +37,36 @@ export default function Column(props: ColumnProps): ReactElement {
   const { showToast, isActive } = useToast();
   const [deleteColumn, { isLoading }] = useDeleteColumnMutation();
   const t = useTranslations('boards');
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useGetTasksInfiniteQuery(currentColumn.id);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+  const tasksRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const element = loadMoreRef.current;
+    const root = tasksRef.current;
+
+    if (!element || !root) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
+          void fetchNextPage();
+        }
+      },
+      {
+        root,
+        threshold: 0,
+      },
+    );
+    observer.observe(element);
+
+    return (): void => {
+      observer.disconnect();
+    };
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   const handleDeleteColumn = async (): Promise<void> => {
     if (isActive(ToastKeysEnum.STATUS) || isLoading) {
@@ -132,7 +164,14 @@ export default function Column(props: ColumnProps): ReactElement {
             </div>
           )}
         </div>
-        {!!currentColumn.tasksCount && <div></div>}
+        {!!currentColumn.tasksCount && (
+          <div ref={tasksRef} className={styles.column__tasks}>
+            {data?.pages.flatMap((page) =>
+              page.tasks.map((task) => <Task key={task.id} task={task} />),
+            )}
+            {hasNextPage && <div ref={loadMoreRef} />}
+          </div>
+        )}
       </div>
       <DeleteColumnPopup
         isOpen={isOpenPopup}

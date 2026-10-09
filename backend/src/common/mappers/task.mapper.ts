@@ -11,7 +11,7 @@ import { TaskStatusMapper } from './task-status.mapper';
 export class TaskMapper {
   public static toResponse(
     task: Task & {
-      assignees: (User & { desiredRoles: ProjectRoleType[] })[];
+      assignee: (User & { desiredRoles: ProjectRoleType[] }) | null;
       taskStatus: TaskStatus;
     },
   ): TaskResponseDto {
@@ -21,9 +21,7 @@ export class TaskMapper {
       description: task.description,
       deadline: task.deadline,
       priority: task.priority,
-      assignees: task.assignees.map((assignee) =>
-        UserMapper.toBaseResponse(assignee),
-      ),
+      assignee: task.assignee ? UserMapper.toBaseResponse(task.assignee) : null,
       taskStatus: TaskStatusMapper.toBaseResponse(task.taskStatus),
       taskIndex: task.taskIndex,
     };

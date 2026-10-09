@@ -21,39 +21,24 @@ export class TasksService {
   public async createTask(
     createTaskDto: CreateTaskDto,
   ): Promise<TaskResponseDto> {
-    const { assigneesIds, taskStatusId, ...taskData } = createTaskDto;
     const maxAttempts = 3;
 
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
       try {
         const tasksCount = await this.prisma.task.count({
           where: {
-            taskStatusId,
+            taskStatusId: createTaskDto.taskStatusId,
           },
         });
 
         const task = await this.prisma.task.create({
           data: {
-            ...taskData,
-            taskStatusId,
+            ...createTaskDto,
             taskIndex: tasksCount + 1,
-            assignees: {
-              connect: assigneesIds.map((id) => ({
-                id,
-              })),
-            },
           },
           include: {
-            taskStatus: {
-              include: {
-                _count: {
-                  select: {
-                    tasks: true,
-                  },
-                },
-              },
-            },
-            assignees: {
+            taskStatus: true,
+            assignee: {
               include: {
                 desiredRoles: true,
               },
@@ -238,7 +223,7 @@ export class TasksService {
       take: limit + 1,
       include: {
         taskStatus: true,
-        assignees: {
+        assignee: {
           include: {
             desiredRoles: true,
           },

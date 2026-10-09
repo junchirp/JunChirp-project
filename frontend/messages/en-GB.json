@@ -361,9 +361,9 @@
         "deadline": "DD/MM/YYYY",
         "members": "Unassigned"
       },
-      "error": "Failed to create task.",
-      "errorDetails": "Please try again.",
-      "success": "Task created successfully."
+      "createError": "Failed to create task.",
+      "createErrorDetails": "Please try again.",
+      "createSuccess": "Task created successfully."
     }
   },
   "page404": {

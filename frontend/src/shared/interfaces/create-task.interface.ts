@@ -6,5 +6,5 @@ export interface CreateTaskInterface {
   taskStatusId: string;
   priority: TaskPriorityType;
   deadline: Date | null;
-  assigneesIds: string[];
+  assigneeId: string | null;
 }
