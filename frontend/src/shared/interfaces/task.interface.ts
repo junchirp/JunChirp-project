@@ -7,7 +7,7 @@ export interface TaskInterface {
   description: string;
   priority: TaskPriorityType;
   deadline: Date;
-  assignees: UserBaseInterface[];
+  assignee: UserBaseInterface;
   taskStatusId: string;
   taskIndex: number;
 }

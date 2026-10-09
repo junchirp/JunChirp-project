@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
-  IsArray,
   IsDate,
   IsIn,
   IsNotEmpty,
@@ -69,11 +68,12 @@ export class CreateTaskDto {
   public readonly taskStatusId!: string;
 
   @ApiProperty({
-    example: ['e960a0fb-891a-4f02-9f39-39ac3bb08621'],
-    description: 'Users IDs',
+    example: 'e960a0fb-891a-4f02-9f39-39ac3bb08621',
+    description: 'User ID',
+    nullable: true,
+    type: String,
   })
-  @IsArray({ message: 'Must be an array of IDs' })
-  @IsUUID(4, { message: 'Must be a string in UUIDv4 format', each: true })
-  @IsNotEmpty({ message: 'User ID is required', each: true })
-  public readonly assigneesIds!: string[];
+  @IsUUID(4, { message: 'Must be a string in UUIDv4 format' })
+  @IsOptional()
+  public readonly assigneeId!: string | null;
 }

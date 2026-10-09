@@ -1,31 +1,27 @@
 import mainApi from './mainApi';
 import { TaskListInterface } from '@/shared/interfaces/task-list.interface';
-import { CursorPaginationInterface } from '@/shared/interfaces/cursor-pagination.interface';
 import { TaskInterface } from '@/shared/interfaces/task.interface';
 import { CreateTaskInterface } from '@/shared/interfaces/create-task.interface';
 
+const TASKS_PAGE_SIZE = 20;
+
 export const tasksApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({
-    getTasks: builder.query<
+    getTasks: builder.infiniteQuery<
       TaskListInterface,
-      { taskStatusId: string; params: CursorPaginationInterface }
+      string,
+      number | undefined
     >({
-      query: ({ taskStatusId, params }) => {
-        const query = new URLSearchParams();
-        Object.entries(params).forEach(([key, value]) => {
-          if (value == null) {
-            return;
-          }
-          query.set(key, value.toString());
-        });
-
-        return {
-          url: `/tasks/${taskStatusId}?${query.toString()}`,
-        };
+      infiniteQueryOptions: {
+        initialPageParam: undefined,
+        getNextPageParam: (lastPage) => lastPage.cursor ?? undefined,
       },
-      providesTags: (_result, _error, { taskStatusId }) => [
-        { type: 'tasks', id: taskStatusId },
-      ],
+
+      query: ({ queryArg: id, pageParam }) => ({
+        url: `/tasks/${id}?limit=${TASKS_PAGE_SIZE}${pageParam !== undefined ? `&cursor=${pageParam}` : ''}`,
+      }),
+
+      providesTags: (_result, _error, id) => [{ type: 'tasks', id }],
     }),
     addTask: builder.mutation<
       TaskInterface,
@@ -68,4 +64,4 @@ export const tasksApi = mainApi.injectEndpoints({
   }),
 });
 
-export const { useGetTasksQuery, useAddTaskMutation } = tasksApi;
+export const { useGetTasksInfiniteQuery, useAddTaskMutation } = tasksApi;

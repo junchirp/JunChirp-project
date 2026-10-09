@@ -7,7 +7,7 @@ import Button from '@/shared/components/Button/Button';
 import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
 import { useTranslations } from 'next-intl';
 import ParticipationTooltip from './ParticipationTooltip/ParticipationTooltip';
-import Tooltip from '@/shared/components/ParticipationsTable/Tooltip/Tooltip';
+import Tooltip from '@/shared/components/Tooltip/Tooltip';
 
 interface ParticipationsTableProps {
   items: ProjectParticipationInterface[];

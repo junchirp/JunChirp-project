@@ -19,7 +19,6 @@ import { taskPriorities } from '@/shared/constants/task-priorities';
 import DatePicker from '../DatePicker/DatePicker';
 import Button from '@/shared/components/Button/Button';
 import Textarea from '@/shared/components/Textarea/Textarea';
-import MultiSelectWithChips from '@/shared/components/MultiSelectWithChips/MultiSelectWithChips';
 import { useShortLocale } from '@/hooks/useShortLocale';
 import { useAddTaskMutation } from '@/api/tasksApi';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
@@ -39,6 +38,7 @@ type FormData = z.infer<typeof taskSchemaStatic>;
 export default function TaskForm(props: TaskFormState): ReactElement {
   const { members, initialColumnId, columns, initialValues, onClose, boardId } =
     props;
+  const assignees = [{ id: null, firstName: '', lastName: '' }, ...members];
   const locale = useShortLocale();
   const tForms = useTranslations('forms');
   const tButtons = useTranslations('buttons');
@@ -58,7 +58,7 @@ export default function TaskForm(props: TaskFormState): ReactElement {
       taskStatusId: initialColumnId,
       priority: 'medium',
       deadline: null,
-      assigneesIds: [],
+      assigneeId: null,
     },
   });
   const [createTask, { isLoading }] = useAddTaskMutation();
@@ -73,7 +73,7 @@ export default function TaskForm(props: TaskFormState): ReactElement {
         deadline: initialValues.deadline
           ? new Date(initialValues.deadline)
           : null,
-        assigneesIds: initialValues.assignees.map((assignee) => assignee.id),
+        assigneeId: initialValues.assignee.id,
       });
     } else {
       reset({
@@ -82,7 +82,7 @@ export default function TaskForm(props: TaskFormState): ReactElement {
         taskStatusId: initialColumnId,
         priority: 'medium',
         deadline: null,
-        assigneesIds: [],
+        assigneeId: null,
       });
     }
   }, [initialValues, initialColumnId, reset]);
@@ -161,15 +161,19 @@ export default function TaskForm(props: TaskFormState): ReactElement {
           )}
         />
         <Controller
-          name="assigneesIds"
+          name="assigneeId"
           control={control}
           render={({ field }) => (
-            <MultiSelectWithChips
+            <Dropdown
               {...field}
               label={tForms('taskForm.members')}
               placeholder={tForms('taskForm.placeholders.members')}
-              options={members}
-              getOptionLabel={(o) => `${o.firstName} ${o.lastName}`}
+              options={assignees}
+              getOptionLabel={(o) =>
+                o.id
+                  ? `${o.firstName} ${o.lastName}`
+                  : tForms('taskForm.placeholders.members')
+              }
               getOptionValue={(o) => o.id}
               withError
             />
