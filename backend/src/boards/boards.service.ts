@@ -48,11 +48,11 @@ export class BoardsService {
 
         const baseName = DEFAULT_NAMES[createBoardDto.locale].board;
 
-        const filteredBoards = existingBoards.filter(
-          (board) =>
-            board.boardName.startsWith(`${baseName} `) ||
-            board.boardName === baseName,
-        );
+        const filteredBoards = existingBoards.filter((board) => {
+          const isBaseName = board.boardName === baseName
+          const hasSuffix = board.boardName.startsWith(`${baseName} `);
+          return isBaseName || hasSuffix;
+        });
 
         const boardName = generateUniqName(
           filteredBoards,
@@ -396,11 +396,11 @@ export class BoardsService {
 
         const baseName = DEFAULT_NAMES[createTaskStatusDto.locale].column;
 
-        const filteredColumns = existingColumns.filter(
-          (column) =>
-            column.statusName.startsWith(`${baseName} `) ||
-            column.statusName === baseName,
-        );
+        const filteredColumns = existingColumns.filter((column) => {
+          const isBaseName = column.statusName === baseName;
+          const hasSuffix = column.statusName.startsWith(`${baseName} `);
+          return isBaseName || hasSuffix;
+        });
 
         const statusName = generateUniqName(
           filteredColumns,
