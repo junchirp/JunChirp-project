@@ -132,11 +132,13 @@ export default function Column(props: ColumnProps): ReactElement {
         index={index}
         isDragDisabled={!isOwner}
       >
-        {(columnProvided) => (
+        {(columnProvided, columnSnapshot) => (
           <div
             ref={columnProvided.innerRef}
             {...columnProvided.draggableProps}
-            className={styles.column}
+            className={`${styles.column} ${
+              columnSnapshot.isDragging ? styles['column--dragging'] : ''
+            }`}
           >
             <Droppable droppableId={currentColumn.id} type="TASK">
               {(tasksProvided, snapshot) => (

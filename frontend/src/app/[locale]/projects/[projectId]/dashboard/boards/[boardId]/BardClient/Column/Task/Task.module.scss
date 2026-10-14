@@ -1,6 +1,7 @@
 @use '@/assets/styles/variables';
 
 .task {
+  box-sizing: border-box;
   height: 100px;
   flex-shrink: 0;
   border-radius: 8px;
@@ -10,13 +11,12 @@
   flex-direction: column;
   justify-content: space-between;
   margin-bottom: 10px;
+  border: 2px solid variables.$white-2;
 
   &--dragging {
     opacity: 0.9;
-    background-color: #e8f2ff;
-    border: 2px solid #4285f4;
-    border-radius: 8px;
-    box-shadow: 0 8px 20px rgb(0 0 0 / 15%);
+    border: 2px solid variables.$blue-1;
+    border-radius: 12px;
   }
 
   &__title {
