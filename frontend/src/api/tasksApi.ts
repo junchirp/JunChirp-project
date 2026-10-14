@@ -2,6 +2,7 @@ import mainApi from './mainApi';
 import { TaskListInterface } from '@/shared/interfaces/task-list.interface';
 import { TaskInterface } from '@/shared/interfaces/task.interface';
 import { CreateTaskInterface } from '@/shared/interfaces/create-task.interface';
+import { MoveTaskInterface } from '@/shared/interfaces/move-task.interface';
 
 const TASKS_PAGE_SIZE = 20;
 
@@ -10,7 +11,7 @@ export const tasksApi = mainApi.injectEndpoints({
     getTasks: builder.infiniteQuery<
       TaskListInterface,
       string,
-      number | undefined
+      string | undefined
     >({
       infiniteQueryOptions: {
         initialPageParam: undefined,
@@ -37,31 +38,30 @@ export const tasksApi = mainApi.injectEndpoints({
         { type: 'board', id: boardId },
       ],
     }),
-    // deleteHardSkill: builder.mutation<string, string>({
-    //   query: (id) => ({
-    //     url: `hard-skills/${id}`,
-    //     method: 'DELETE',
-    //     responseHandler: (response): Promise<string> => response.text(),
-    //   }),
-    //   invalidatesTags: [{ type: 'hard-skills', id: 'LIST' }],
-    // }),
-    // getHardSkillsList: builder.query<string[], string>({
-    //   query: (fragment) => ({
-    //     url: `hard-skills/list?skill=${encodeURIComponent(fragment)}`,
-    //   }),
-    // }),
-    // updateHardSkill: builder.mutation<
-    //   HardSkillInterface,
-    //   { id: string; data: CreateHardSkillInterface }
-    // >({
-    //   query: ({ id, data }) => ({
-    //     url: `hard-skills/${id}`,
-    //     method: 'PUT',
-    //     body: data,
-    //   }),
-    //   invalidatesTags: [{ type: 'hard-skills', id: 'LIST' }],
-    // }),
+    moveTask: builder.mutation<
+      TaskInterface,
+      {
+        id: string;
+        boardId: string;
+        data: MoveTaskInterface;
+      }
+    >({
+      query: ({ id, data }) => ({
+        url: `tasks/${id}/move`,
+        method: 'PATCH',
+        body: data,
+      }),
+      invalidatesTags: (_result, _error, { data, boardId }) => [
+        { type: 'board', id: boardId },
+        { type: 'tasks', id: data.newColumnId },
+        { type: 'tasks', id: data.oldColumnId },
+      ],
+    }),
   }),
 });
 
-export const { useGetTasksInfiniteQuery, useAddTaskMutation } = tasksApi;
+export const {
+  useGetTasksInfiniteQuery,
+  useAddTaskMutation,
+  useMoveTaskMutation,
+} = tasksApi;

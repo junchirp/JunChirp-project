@@ -1,5 +1,6 @@
 import { UserBaseInterface } from '@/shared/interfaces/user-base.interface';
 import { TaskPriorityType } from '@/shared/types/task-proirity.type';
+import { TaskStatusInterface } from '@/shared/interfaces/task-status.interface';
 
 export interface TaskInterface {
   id: string;
@@ -8,6 +9,6 @@ export interface TaskInterface {
   priority: TaskPriorityType;
   deadline: Date;
   assignee: UserBaseInterface;
-  taskStatusId: string;
+  taskStatus: TaskStatusInterface;
   taskIndex: number;
 }

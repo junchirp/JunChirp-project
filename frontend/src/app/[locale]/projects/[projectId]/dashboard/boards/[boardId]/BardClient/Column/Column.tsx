@@ -4,7 +4,7 @@ import { ReactElement, useEffect, useRef, useState } from 'react';
 import styles from './Column.module.scss';
 import { COLUMN_COLOR_SCHEMES } from '@/shared/constants/column-color-schemes';
 import Image from 'next/image';
-import { useSortable } from '@dnd-kit/react/sortable';
+import { Draggable, Droppable } from '@hello-pangea/dnd';
 import { TaskStatusWithCountInterface } from '@/shared/interfaces/task-status-with-count.interface';
 import ColumnMenu from './ColumnMenu/ColumnMenu';
 import ColumnForm from './ColumnForm/ColumnForm';
@@ -15,22 +15,28 @@ import { useTranslations } from 'next-intl';
 import DeleteColumnPopup from './DeleteColumnPopup/DeleteColumnPopup';
 import { useGetTasksInfiniteQuery } from '@/api/tasksApi';
 import Task from './Task/Task';
+import { TaskInterface } from '@/shared/interfaces/task.interface';
 
 interface ColumnProps {
   currentColumn: TaskStatusWithCountInterface;
   index: number;
   isOwner: boolean;
   columns: TaskStatusWithCountInterface[];
+  tasks: TaskInterface[];
   addTask: () => void;
+  onTasksLoaded: (columnId: string, tasks: TaskInterface[]) => void;
 }
 
 export default function Column(props: ColumnProps): ReactElement {
-  const { currentColumn, columns, addTask, isOwner, index } = props;
-  const { ref, handleRef, isDragging } = useSortable({
-    id: currentColumn.id,
+  const {
+    currentColumn,
+    columns,
+    tasks,
+    addTask,
+    isOwner,
     index,
-    disabled: !isOwner,
-  });
+    onTasksLoaded,
+  } = props;
   const colorScheme = COLUMN_COLOR_SCHEMES[currentColumn.color];
   const [isEditMode, setEditMode] = useState(false);
   const [isOpenPopup, setIsOpenPopup] = useState(false);
@@ -41,6 +47,17 @@ export default function Column(props: ColumnProps): ReactElement {
     useGetTasksInfiniteQuery(currentColumn.id);
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const tasksRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!data) {
+      return;
+    }
+
+    onTasksLoaded(
+      currentColumn.id,
+      data.pages.flatMap((page) => page.tasks),
+    );
+  }, [data, currentColumn.id, onTasksLoaded]);
 
   useEffect(() => {
     const element = loadMoreRef.current;
@@ -110,69 +127,100 @@ export default function Column(props: ColumnProps): ReactElement {
 
   return (
     <>
-      <div ref={ref} className={styles.column} data-dragging={isDragging}>
-        <div className={styles.column__header}>
-          <div className={styles['column__title-wrapper']}>
-            {isEditMode ? (
-              <ColumnForm
-                currentColumn={currentColumn}
-                columns={columns}
-                onClose={() => setEditMode(false)}
-              />
-            ) : (
-              <p
-                className={styles.column__title}
-                style={{
-                  color: colorScheme.text,
-                  backgroundColor: colorScheme.background,
-                }}
-              >
-                {currentColumn.statusName}
-              </p>
-            )}
-            <p className={styles['column__tasks-number']}>
-              {currentColumn.tasksCount}
-            </p>
-          </div>
-          {isOwner && (
-            <div className={styles.column__actions}>
-              <button
-                className={`${styles.column__button} ${styles['column__button--drag']}`}
-                ref={handleRef}
-              >
-                <Image
-                  width={16}
-                  height={16}
-                  src="/images/plus-arrows.svg"
-                  alt="arrows"
-                />
-              </button>
-              <ColumnMenu
-                currentColumn={currentColumn}
-                columnsCount={columns.length}
-                onDelete={handleDeleteColumnRequest}
-                onRename={() => setEditMode(true)}
-              />
-              <button className={styles.column__button} onClick={addTask}>
-                <Image
-                  width={16}
-                  height={16}
-                  src="/images/plus.svg"
-                  alt="plus"
-                />
-              </button>
-            </div>
-          )}
-        </div>
-        {!!currentColumn.tasksCount && (
-          <div ref={tasksRef} className={styles.column__tasks}>
-            {data?.pages.flatMap((page) =>
-              page.tasks.map((task) => <Task key={task.id} task={task} />),
-            )}
-            {hasNextPage && <div ref={loadMoreRef} />}
+      <Draggable
+        draggableId={currentColumn.id}
+        index={index}
+        isDragDisabled={!isOwner}
+      >
+        {(columnProvided) => (
+          <div
+            ref={columnProvided.innerRef}
+            {...columnProvided.draggableProps}
+            className={styles.column}
+          >
+            <Droppable droppableId={currentColumn.id} type="TASK">
+              {(tasksProvided, snapshot) => (
+                <div
+                  ref={(element) => {
+                    tasksProvided.innerRef(element);
+                    tasksRef.current = element;
+                  }}
+                  {...tasksProvided.droppableProps}
+                  className={styles.column__drop}
+                  data-drag-over={snapshot.isDraggingOver}
+                >
+                  <div className={styles.column__header}>
+                    <div className={styles['column__title-wrapper']}>
+                      {isEditMode ? (
+                        <ColumnForm
+                          currentColumn={currentColumn}
+                          columns={columns}
+                          onClose={() => setEditMode(false)}
+                        />
+                      ) : (
+                        <p
+                          className={styles.column__title}
+                          style={{
+                            color: colorScheme.text,
+                            backgroundColor: colorScheme.background,
+                          }}
+                        >
+                          {currentColumn.statusName}
+                        </p>
+                      )}
+                      <p className={styles['column__tasks-number']}>
+                        {currentColumn.tasksCount}
+                      </p>
+                    </div>
+                    {isOwner && (
+                      <div className={styles.column__actions}>
+                        <div
+                          className={`${styles.column__button} ${styles['column__button--drag']}`}
+                          {...columnProvided.dragHandleProps}
+                          aria-label="Перемістити колонку"
+                        >
+                          <Image
+                            width={16}
+                            height={16}
+                            src="/images/plus-arrows.svg"
+                            alt="arrows"
+                          />
+                        </div>
+                        <ColumnMenu
+                          currentColumn={currentColumn}
+                          columnsCount={columns.length}
+                          onDelete={handleDeleteColumnRequest}
+                          onRename={() => setEditMode(true)}
+                        />
+                        <button
+                          type="button"
+                          className={styles.column__button}
+                          onClick={addTask}
+                          aria-label="Додати задачу"
+                        >
+                          <Image
+                            width={16}
+                            height={16}
+                            src="/images/plus.svg"
+                            alt="plus"
+                          />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                  <div className={styles.column__tasks}>
+                    {tasks.map((task, taskIndex) => (
+                      <Task key={task.id} task={task} index={taskIndex} />
+                    ))}
+                    {tasksProvided.placeholder}
+                    {hasNextPage && <div ref={loadMoreRef} />}
+                  </div>
+                </div>
+              )}
+            </Droppable>
           </div>
         )}
-      </div>
+      </Draggable>
       <DeleteColumnPopup
         isOpen={isOpenPopup}
         column={currentColumn}

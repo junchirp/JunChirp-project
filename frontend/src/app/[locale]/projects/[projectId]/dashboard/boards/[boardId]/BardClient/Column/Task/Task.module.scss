@@ -9,6 +9,15 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  margin-bottom: 10px;
+
+  &--dragging {
+    opacity: 0.9;
+    background-color: #e8f2ff;
+    border: 2px solid #4285f4;
+    border-radius: 8px;
+    box-shadow: 0 8px 20px rgb(0 0 0 / 15%);
+  }
 
   &__title {
     display: -webkit-box;

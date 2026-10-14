@@ -6,11 +6,13 @@
   flex: 0 0 224px;
   max-height: 600px;
   border-radius: 12px;
+  margin-right: 20px;
 
-  &:has(.column__tasks) {
-    .column__header {
-      border-radius: 12px 12px 0 0;
-    }
+  &__drop {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
   }
 
   &__header {
@@ -21,16 +23,16 @@
     align-items: center;
     justify-content: space-between;
     background-color: variables.$gray-1;
-    border-radius: 12px;
+    border-radius: 12px 12px 0 0;
   }
 
   &__tasks {
     min-height: 0;
     overflow-y: auto;
+    overflow-x: hidden;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    padding: 4px 8px 12px;
+    padding: 4px 8px 0;
     background-color: variables.$gray-1;
     border-radius: 0 0 12px 12px;
     scrollbar-width: thin;
