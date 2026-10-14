@@ -49,7 +49,7 @@ export class BoardsService {
         const baseName = DEFAULT_NAMES[createBoardDto.locale].board;
 
         const filteredBoards = existingBoards.filter((board) => {
-          const isBaseName = board.boardName === baseName
+          const isBaseName = board.boardName === baseName;
           const hasSuffix = board.boardName.startsWith(`${baseName} `);
           return isBaseName || hasSuffix;
         });

@@ -68,7 +68,7 @@ export default function TaskForm(props: TaskFormState): ReactElement {
       reset({
         taskName: initialValues.taskName,
         description: initialValues.description,
-        taskStatusId: initialValues.taskStatusId,
+        taskStatusId: initialValues.taskStatus.id,
         priority: initialValues.priority,
         deadline: initialValues.deadline
           ? new Date(initialValues.deadline)
