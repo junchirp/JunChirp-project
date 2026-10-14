@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Body,
+  Patch,
   // Delete,
   // Put,
   // HttpCode,
@@ -13,10 +14,11 @@ import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 // import { UpdateTaskDto } from './dto/update-task.dto';
 import {
+  ApiConflictResponse,
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiHeader,
-  // ApiNoContentResponse,
+  ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -29,6 +31,7 @@ import { User } from '../auth/decorators/user.decorator';
 import { UUIDParam } from '../common/decorators/UUID-param.decorator';
 import { TaskListResponseDto } from './dto/task-list.response-dto';
 import { CursorPaginationDto } from '../common/dto/cursor-pagination.dto';
+import { MoveTaskDto } from './dto/move-task.dto';
 
 @User('discord')
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
@@ -164,5 +167,29 @@ export class TasksController {
     @Query() query: CursorPaginationDto,
   ): Promise<TaskListResponseDto> {
     return this.tasksService.getTasksByStatus(id, query);
+  }
+
+  @Member('params', 'id', 'task')
+  @ApiOperation({ summary: 'Move task' })
+  @ApiNoContentResponse()
+  @ApiForbiddenResponse({
+    description:
+      'Access denied: you are not a participant of this project / Access denied: email not confirmed / Access denied: discord not confirmed / Access denied: user is not a member of the Discord guild / Invalid CSRF token',
+  })
+  @ApiConflictResponse({
+    description: 'Transaction conflict. Please try again',
+  })
+  @ApiNotFoundResponse({ description: 'Task not found' })
+  @ApiHeader({
+    name: 'x-csrf-token',
+    description: 'CSRF token for the request',
+    required: true,
+  })
+  @Patch(':id/move')
+  public async moveTask(
+    @UUIDParam('id') id: string,
+    @Body() moveTaskDto: MoveTaskDto,
+  ): Promise<void> {
+    return this.tasksService.moveTask(id, moveTaskDto);
   }
 }

@@ -13,6 +13,9 @@ import { throwPrismaError } from '../common/utils/throw-prisma-error';
 import { isPrismaUniqueConstraintConflict } from '../common/utils/is-prisma-unique-constraint-conflict';
 import { TaskListResponseDto } from './dto/task-list.response-dto';
 import { CursorPaginationDto } from '../common/dto/cursor-pagination.dto';
+import { MoveTaskDto } from './dto/move-task.dto';
+import { Prisma } from '@prisma/client';
+import { isPrismaError } from '../common/utils/is-prisma-error';
 
 @Injectable()
 export class TasksService {
@@ -208,12 +211,25 @@ export class TasksService {
     query: CursorPaginationDto,
   ): Promise<TaskListResponseDto> {
     const { cursor, limit = 20 } = query;
+    const cursorTask =
+      cursor !== undefined
+        ? await this.prisma.task.findFirst({
+            where: {
+              id: cursor,
+              taskStatusId,
+            },
+            select: {
+              taskIndex: true,
+            },
+          })
+        : null;
+
     const tasks = await this.prisma.task.findMany({
       where: {
         taskStatusId,
-        ...(cursor !== undefined && {
+        ...(cursorTask && {
           taskIndex: {
-            gt: cursor,
+            gte: cursorTask.taskIndex,
           },
         }),
       },
@@ -238,5 +254,106 @@ export class TasksService {
       tasks: data.map((task) => TaskMapper.toResponse(task)),
       cursor: hasNextPage ? data[data.length - 1].taskIndex : null,
     };
+  }
+
+  public async moveTask(id: string, moveTaskDto: MoveTaskDto): Promise<void> {
+    const { oldIndex, oldColumnId, newIndex, newColumnId } = moveTaskDto;
+    const maxAttempts = 3;
+
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        await this.prisma.$transaction(
+          async (prisma) => {
+            const task = await prisma.task.findUniqueOrThrow({
+              where: { id },
+              select: {
+                taskStatusId: true,
+                taskIndex: true,
+              },
+            });
+
+            if (
+              task.taskStatusId !== oldColumnId ||
+              task.taskIndex !== oldIndex
+            ) {
+              throw new ConflictException(
+                'Transaction conflict. Please try again.',
+              );
+            }
+
+            if (oldColumnId === newColumnId && oldIndex === newIndex) {
+              return;
+            }
+
+            if (oldColumnId === newColumnId) {
+              if (oldIndex < newIndex) {
+                await prisma.task.updateMany({
+                  where: {
+                    taskStatusId: oldColumnId,
+                    taskIndex: { gt: oldIndex, lte: newIndex },
+                  },
+                  data: { taskIndex: { decrement: 1 } },
+                });
+              } else {
+                await prisma.task.updateMany({
+                  where: {
+                    taskStatusId: oldColumnId,
+                    taskIndex: { gte: newIndex, lt: oldIndex },
+                  },
+                  data: { taskIndex: { increment: 1 } },
+                });
+              }
+            } else {
+              await prisma.task.updateMany({
+                where: {
+                  taskStatusId: newColumnId,
+                  taskIndex: { gte: newIndex },
+                },
+                data: { taskIndex: { increment: 1 } },
+              });
+              await prisma.task.updateMany({
+                where: {
+                  taskStatusId: oldColumnId,
+                  taskIndex: { gt: oldIndex },
+                },
+                data: { taskIndex: { decrement: 1 } },
+              });
+            }
+            await prisma.task.update({
+              where: { id },
+              data: {
+                taskStatusId: newColumnId,
+                taskIndex: newIndex,
+              },
+            });
+          },
+          {
+            isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+          },
+        );
+        return;
+      } catch (error) {
+        if (
+          isPrismaError(error) &&
+          error.code === 'P2034' &&
+          attempt < maxAttempts
+        ) {
+          continue;
+        }
+
+        throwPrismaError(error, [
+          {
+            code: 'P2025',
+            exception: NotFoundException,
+            message: 'Task not found',
+          },
+          {
+            code: 'P2034',
+            exception: ConflictException,
+            message: 'Transaction conflict. Please try again.',
+          },
+        ]);
+      }
+    }
   }
 }
