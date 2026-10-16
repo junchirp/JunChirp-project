@@ -35,8 +35,7 @@ interface TaskFormState {
 type FormData = z.infer<typeof taskSchemaStatic>;
 
 export default function TaskForm(props: TaskFormState): ReactElement {
-  const { members, initialColumnId, columns, initialValues, onClose } =
-    props;
+  const { members, initialColumnId, columns, initialValues, onClose } = props;
   const assignees = [{ id: null, firstName: '', lastName: '' }, ...members];
   const locale = useShortLocale();
   const tForms = useTranslations('forms');
