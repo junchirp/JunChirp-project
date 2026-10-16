@@ -96,7 +96,7 @@ export default function BoardsHeader(): ReactElement | null {
     try {
       const board = await duplicateBoard({
         id: boardForRender.id,
-        data: { locale, projectId },
+        locale,
       }).unwrap();
       router.push(`/projects/${projectId}/dashboard/boards/${board.id}`);
     } catch {
@@ -117,7 +117,7 @@ export default function BoardsHeader(): ReactElement | null {
 
     try {
       setIsOpenPopup(false);
-      await deleteBoard({ id, projectId }).unwrap();
+      await deleteBoard(id).unwrap();
 
       showToast({
         severity: 'success',

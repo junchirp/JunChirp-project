@@ -30,14 +30,12 @@ interface TaskFormState {
   columns: TaskStatusWithCountInterface[];
   initialValues?: TaskInterface;
   onClose: () => void;
-  boardId: string;
 }
 
 type FormData = z.infer<typeof taskSchemaStatic>;
 
 export default function TaskForm(props: TaskFormState): ReactElement {
-  const { members, initialColumnId, columns, initialValues, onClose, boardId } =
-    props;
+  const { members, initialColumnId, columns, initialValues, onClose } = props;
   const assignees = [{ id: null, firstName: '', lastName: '' }, ...members];
   const locale = useShortLocale();
   const tForms = useTranslations('forms');
@@ -103,7 +101,7 @@ export default function TaskForm(props: TaskFormState): ReactElement {
       // TODO: create updateTask method
     } else {
       try {
-        await createTask({ data: trimmedData, boardId }).unwrap();
+        await createTask(trimmedData).unwrap();
         onClose();
 
         showToast({

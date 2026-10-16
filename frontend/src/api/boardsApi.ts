@@ -1,11 +1,13 @@
 import mainApi from './mainApi';
 import { BoardInterface } from '@/shared/interfaces/board.interface';
 import { CreateBoardInterface } from '@/shared/interfaces/create-board.interface';
-import { UpdateBoardInterface } from '@/shared/interfaces/update-board.interface';
 import { ColumnOrderInterface } from '@/shared/interfaces/column-order.interface';
 import { TaskStatusWithCountInterface } from '@/shared/interfaces/task-status-with-count.interface';
 import { CreateTaskStatusInterface } from '@/shared/interfaces/create-task-status.interface';
-
+import { ShortLocaleType } from '@/shared/types/short-locale.type';
+/* ---------------------------------------------------------------------------------------------- */
+/* All tags are invalidated in useBoardSocket hook                                                */
+/* ---------------------------------------------------------------------------------------------- */
 export const boardsApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({
     getBoards: builder.query<BoardInterface[], string>({
@@ -26,78 +28,58 @@ export const boardsApi = mainApi.injectEndpoints({
         method: 'POST',
         body: data,
       }),
-      invalidatesTags: (_result, _error, data) => [
-        { type: 'boards', id: data.projectId },
-      ],
     }),
     updateBoard: builder.mutation<
       BoardInterface,
-      { id: string; data: UpdateBoardInterface }
+      { id: string; boardName: string }
     >({
-      query: ({ id, data }) => ({
+      query: ({ id, boardName }) => ({
         url: `boards/${id}`,
         method: 'PUT',
-        body: { boardName: data.boardName },
+        body: { boardName },
       }),
-      invalidatesTags: (_result, _error, { id, data }) => [
-        { type: 'boards', id: data.projectId },
-        { type: 'board', id },
-      ],
     }),
-    deleteBoard: builder.mutation<void, { id: string; projectId: string }>({
-      query: ({ id }) => ({
+    deleteBoard: builder.mutation<void, string>({
+      query: (id) => ({
         url: `boards/${id}`,
         method: 'DELETE',
       }),
-      invalidatesTags: (_result, _error, { projectId }) => [
-        { type: 'boards', id: projectId },
-      ],
     }),
     duplicateBoard: builder.mutation<
       BoardInterface,
-      { id: string; data: CreateBoardInterface }
+      { id: string; locale: ShortLocaleType }
     >({
-      query: ({ id, data }) => ({
+      query: ({ id, locale }) => ({
         url: `boards/${id}/copy`,
         method: 'POST',
-        body: { locale: data.locale },
+        body: { locale },
       }),
-      invalidatesTags: (_result, _error, { data }) => [
-        { type: 'boards', id: data.projectId },
-      ],
     }),
     updateColumnsOrder: builder.mutation<
       BoardInterface,
       {
         id: string;
-        data: { columns: ColumnOrderInterface[]; projectId: string };
+        columns: ColumnOrderInterface[];
       }
     >({
-      query: ({ id, data }) => ({
+      query: ({ id, columns }) => ({
         url: `boards/${id}/reorder-columns`,
         method: 'PATCH',
-        body: { columns: data.columns },
+        body: { columns },
       }),
-      invalidatesTags: (_result, _error, { id, data }) => [
-        { type: 'boards', id: data.projectId },
-        { type: 'board', id },
-      ],
     }),
     updateColumn: builder.mutation<
       TaskStatusWithCountInterface,
       {
         id: string;
-        data: { statusName: string; boardId: string };
+        statusName: string;
       }
     >({
-      query: ({ id, data }) => ({
+      query: ({ id, statusName }) => ({
         url: `boards/columns/${id}`,
         method: 'PATCH',
-        body: { statusName: data.statusName },
+        body: { statusName },
       }),
-      invalidatesTags: (_result, _error, { data }) => [
-        { type: 'board', id: data.boardId },
-      ],
     }),
     createColumn: builder.mutation<
       TaskStatusWithCountInterface,
@@ -108,18 +90,12 @@ export const boardsApi = mainApi.injectEndpoints({
         method: 'POST',
         body: data,
       }),
-      invalidatesTags: (_result, _error, data) => [
-        { type: 'board', id: data.boardId },
-      ],
     }),
-    deleteColumn: builder.mutation<void, { id: string; boardId: string }>({
-      query: ({ id }) => ({
+    deleteColumn: builder.mutation<void, string>({
+      query: (id) => ({
         url: `boards/columns/${id}`,
         method: 'DELETE',
       }),
-      invalidatesTags: (_result, _error, { boardId }) => [
-        { type: 'board', id: boardId },
-      ],
     }),
   }),
 });

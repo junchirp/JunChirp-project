@@ -92,10 +92,7 @@ export default function Column(props: ColumnProps): ReactElement {
 
     try {
       setIsOpenPopup(false);
-      await deleteColumn({
-        id: currentColumn.id,
-        boardId: currentColumn.boardId,
-      }).unwrap();
+      await deleteColumn(currentColumn.id).unwrap();
 
       showToast({
         severity: 'success',
