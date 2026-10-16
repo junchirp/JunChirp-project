@@ -21,16 +21,20 @@ import { generateCopyName } from '../common/utils/generate-copy-name';
 import { LocaleDto } from '../common/dto/locale.dto';
 import { ColumnColor } from '@prisma/client';
 import { throwPrismaError } from '../common/utils/throw-prisma-error';
+import { BoardsGateway } from './boards.gateway';
 
 @Injectable()
 export class BoardsService {
-  public constructor(private readonly prisma: PrismaService) {}
+  public constructor(
+    private readonly prisma: PrismaService,
+    private readonly boardsGateway: BoardsGateway,
+  ) {}
 
   public async addBoard(
     createBoardDto: CreateBoardDto,
   ): Promise<BoardResponseDto> {
     try {
-      return this.prisma.$transaction(async (prisma) => {
+      const newBoard = await this.prisma.$transaction(async (prisma) => {
         const existingBoards = await prisma.board.findMany({
           where: {
             projectId: createBoardDto.projectId,
@@ -60,7 +64,7 @@ export class BoardsService {
           baseName,
         );
 
-        const board = await prisma.board.create({
+        return await prisma.board.create({
           data: {
             boardName,
             projectId: createBoardDto.projectId,
@@ -80,8 +84,15 @@ export class BoardsService {
             },
           },
         });
-        return BoardMapper.toResponse(board);
       });
+
+      this.boardsGateway.notifyBoardUpdated(newBoard.id, {
+        type: 'board.created',
+        boardId: newBoard.id,
+        projectId: createBoardDto.projectId,
+      });
+
+      return BoardMapper.toResponse(newBoard);
     } catch (error) {
       throwPrismaError(error, {
         code: 'P2002',
@@ -140,6 +151,12 @@ export class BoardsService {
         },
       });
 
+      this.boardsGateway.notifyBoardUpdated(id, {
+        type: 'board.renamed',
+        boardId: id,
+        projectId: board.projectId,
+      });
+
       return BoardMapper.toResponse(board);
     } catch (error) {
       throwPrismaError(error, [
@@ -159,7 +176,7 @@ export class BoardsService {
 
   public async deleteBoard(id: string): Promise<void> {
     try {
-      await this.prisma.$transaction(async (prisma) => {
+      const projectId = await this.prisma.$transaction(async (prisma) => {
         const board = await prisma.board.findUniqueOrThrow({
           where: { id },
           select: {
@@ -182,6 +199,14 @@ export class BoardsService {
         await prisma.board.delete({
           where: { id },
         });
+
+        return board.projectId;
+      });
+
+      this.boardsGateway.notifyBoardUpdated(id, {
+        type: 'board.deleted',
+        boardId: id,
+        projectId,
       });
     } catch (error) {
       throwPrismaError(error, {
@@ -265,6 +290,12 @@ export class BoardsService {
     if (!updatedBoard) {
       throw new InternalServerErrorException('Board not found after update');
     }
+
+    this.boardsGateway.notifyBoardUpdated(boardId, {
+      type: 'board.updated',
+      boardId,
+      projectId: updatedBoard.projectId,
+    });
 
     return BoardMapper.toResponse(updatedBoard);
   }
@@ -355,6 +386,12 @@ export class BoardsService {
           },
         });
 
+        this.boardsGateway.notifyBoardUpdated(newBoard.id, {
+          type: 'board.created',
+          boardId: newBoard.id,
+          projectId: newBoard.projectId,
+        });
+
         return BoardMapper.toResponse(newBoard);
       });
     } catch (error) {
@@ -377,7 +414,7 @@ export class BoardsService {
     createTaskStatusDto: CreateTaskStatusDto,
   ): Promise<TaskStatusWithCountResponseDto> {
     try {
-      return await this.prisma.$transaction(async (prisma) => {
+      const newColumn = await this.prisma.$transaction(async (prisma) => {
         const existingColumns = await prisma.taskStatus.findMany({
           where: {
             boardId: createTaskStatusDto.boardId,
@@ -419,7 +456,7 @@ export class BoardsService {
         const color =
           availableColors[Math.floor(Math.random() * availableColors.length)];
 
-        const status = await prisma.taskStatus.create({
+        return await prisma.taskStatus.create({
           data: {
             boardId: createTaskStatusDto.boardId,
             statusName,
@@ -434,9 +471,14 @@ export class BoardsService {
             },
           },
         });
-
-        return TaskStatusMapper.toExpandResponse(status);
       });
+
+      this.boardsGateway.notifyBoardUpdated(newColumn.boardId, {
+        type: 'board.updated',
+        boardId: newColumn.boardId,
+      });
+
+      return TaskStatusMapper.toExpandResponse(newColumn);
     } catch (error) {
       throwPrismaError(error, {
         code: 'P2002',
@@ -465,6 +507,11 @@ export class BoardsService {
         },
       });
 
+      this.boardsGateway.notifyBoardUpdated(status.boardId, {
+        type: 'board.updated',
+        boardId: status.boardId,
+      });
+
       return TaskStatusMapper.toExpandResponse(status);
     } catch (error) {
       throwPrismaError(error, [
@@ -484,7 +531,7 @@ export class BoardsService {
 
   public async deleteColumn(id: string): Promise<void> {
     try {
-      await this.prisma.$transaction(async (prisma) => {
+      const deletedColumn = await this.prisma.$transaction(async (prisma) => {
         const column = await prisma.taskStatus.findUniqueOrThrow({
           where: { id },
           select: {
@@ -522,6 +569,13 @@ export class BoardsService {
             },
           },
         });
+
+        return column;
+      });
+
+      this.boardsGateway.notifyBoardUpdated(deletedColumn.boardId, {
+        type: 'board.updated',
+        boardId: deletedColumn.boardId,
       });
     } catch (error) {
       throwPrismaError(error, {

@@ -46,7 +46,7 @@ async function bootstrap(): Promise<void> {
 
   app.use(helmet());
   app.enableCors({
-    origin: [],
+    origin: ['http://localhost:3000', 'https://junchirp-ugdf.onrender.com'],
     credentials: true,
   });
 
@@ -71,7 +71,9 @@ async function bootstrap(): Promise<void> {
   SwaggerModule.setup('swagger', app, document);
 
   await app.init();
-  server.listen(PORT, () => {
+  const httpServer = app.getHttpServer();
+
+  httpServer.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);
   });
 }

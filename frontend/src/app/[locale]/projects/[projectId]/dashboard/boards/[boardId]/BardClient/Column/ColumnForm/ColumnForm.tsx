@@ -40,10 +40,7 @@ export default function ColumnForm(props: ColumnFormProps): ReactElement {
     try {
       await updateColumn({
         id: data.id,
-        data: {
-          statusName: data.statusName.trim(),
-          boardId: data.boardId,
-        },
+        statusName: data.statusName.trim(),
       }).unwrap();
       onClose();
     } catch {

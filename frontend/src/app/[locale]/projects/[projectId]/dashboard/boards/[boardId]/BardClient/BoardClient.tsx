@@ -26,6 +26,7 @@ import CreateTaskPopup from './CreateTaskPopup/CreateTaskPopup';
 import { useMoveTaskMutation } from '@/api/tasksApi';
 import { TaskInterface } from '@/shared/interfaces/task.interface';
 import { TaskStatusInterface } from '@/shared/interfaces/task-status.interface';
+import { useBoardSocket } from '@/hooks/useBoardSocket';
 
 export default function BoardClient(): ReactElement {
   const { projectId, boardId } = useParams<{
@@ -58,6 +59,8 @@ export default function BoardClient(): ReactElement {
     Record<string, TaskInterface[]>
   >({});
   const t = useTranslations('boards');
+
+  useBoardSocket(boardId);
 
   useEffect(() => {
     if (!isLoading && !board) {
@@ -264,13 +267,10 @@ export default function BoardClient(): ReactElement {
       try {
         await reorderColumns({
           id: board.id,
-          data: {
-            projectId,
-            columns: updatedColumns.map((column) => ({
-              id: column.id,
-              columnIndex: column.columnIndex,
-            })),
-          },
+          columns: updatedColumns.map((column) => ({
+            id: column.id,
+            columnIndex: column.columnIndex,
+          })),
         }).unwrap();
       } catch {
         setColumns(previousColumns);
@@ -312,8 +312,8 @@ export default function BoardClient(): ReactElement {
       try {
         await moveTask({
           id: task.id,
-          boardId,
           data: {
+            boardId,
             oldIndex,
             oldColumnId,
             newIndex,
@@ -389,7 +389,6 @@ export default function BoardClient(): ReactElement {
           members={members}
           columns={columns}
           initialColumnId={createTaskColumnId}
-          boardId={boardId}
         />
       )}
     </>

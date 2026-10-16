@@ -43,10 +43,7 @@ export default function BoardForm(props: BoardFormProps): ReactElement {
     try {
       await updateBoard({
         id: data.id,
-        data: {
-          boardName: data.boardName.trim(),
-          projectId: data.projectId,
-        },
+        boardName: data.boardName.trim(),
       }).unwrap();
       onClose();
     } catch {

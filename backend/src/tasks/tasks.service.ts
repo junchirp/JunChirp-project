@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -16,10 +17,14 @@ import { CursorPaginationDto } from '../common/dto/cursor-pagination.dto';
 import { MoveTaskDto } from './dto/move-task.dto';
 import { Prisma } from '@prisma/client';
 import { isPrismaError } from '../common/utils/is-prisma-error';
+import { BoardsGateway } from '../boards/boards.gateway';
 
 @Injectable()
 export class TasksService {
-  public constructor(private readonly prisma: PrismaService) {}
+  public constructor(
+    private readonly prisma: PrismaService,
+    private readonly boardsGateway: BoardsGateway,
+  ) {}
 
   public async createTask(
     createTaskDto: CreateTaskDto,
@@ -47,6 +52,12 @@ export class TasksService {
               },
             },
           },
+        });
+
+        this.boardsGateway.notifyTasksUpdated(task.taskStatus.boardId, {
+          type: 'task.created',
+          taskId: task.id,
+          columnId: task.taskStatus.id,
         });
 
         return TaskMapper.toResponse(task);
@@ -257,7 +268,8 @@ export class TasksService {
   }
 
   public async moveTask(id: string, moveTaskDto: MoveTaskDto): Promise<void> {
-    const { oldIndex, oldColumnId, newIndex, newColumnId } = moveTaskDto;
+    const { oldIndex, oldColumnId, newIndex, newColumnId, boardId } =
+      moveTaskDto;
     const maxAttempts = 3;
 
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
@@ -271,6 +283,39 @@ export class TasksService {
                 taskIndex: true,
               },
             });
+
+            const columns = await prisma.taskStatus.findMany({
+              where: {
+                id: { in: [oldColumnId, newColumnId] },
+              },
+              select: {
+                id: true,
+                boardId: true,
+              },
+            });
+
+            const expectedColumnCount = oldColumnId === newColumnId ? 1 : 2;
+
+            if (columns.length !== expectedColumnCount) {
+              throw new NotFoundException('Column not found');
+            }
+
+            const oldColumn = columns.find(
+              (column) => column.id === oldColumnId,
+            );
+
+            const newColumn = columns.find(
+              (column) => column.id === newColumnId,
+            );
+
+            if (
+              oldColumn?.boardId !== boardId ||
+              newColumn?.boardId !== boardId
+            ) {
+              throw new BadRequestException(
+                'Columns must belong to the specified board',
+              );
+            }
 
             if (
               task.taskStatusId !== oldColumnId ||
@@ -331,6 +376,16 @@ export class TasksService {
             isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
           },
         );
+
+        if (oldColumnId !== newColumnId || oldIndex !== newIndex) {
+          this.boardsGateway.notifyTasksUpdated(boardId, {
+            type: 'task.moved',
+            taskId: id,
+            oldColumnId,
+            newColumnId,
+          });
+        }
+
         return;
       } catch (error) {
         if (

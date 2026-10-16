@@ -13,19 +13,17 @@ interface CreateTaskPopupProps {
   members: UserBaseInterface[];
   columns: TaskStatusWithCountInterface[];
   initialColumnId: string;
-  boardId: string;
 }
 
 export default function CreateTaskPopup(
   props: CreateTaskPopupProps,
 ): ReactElement {
-  const { isOpen, onClose, members, initialColumnId, columns, boardId } = props;
+  const { isOpen, onClose, members, initialColumnId, columns } = props;
 
   return (
     <Dialog isOpen={isOpen} onClose={onClose}>
       <DialogFooter>
         <TaskForm
-          boardId={boardId}
           members={members}
           columns={columns}
           initialColumnId={initialColumnId}
