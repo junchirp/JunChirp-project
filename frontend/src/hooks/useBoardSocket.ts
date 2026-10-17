@@ -26,14 +26,6 @@ export function useBoardSocket(boardId: string): void {
   const handleBoardUpdated = useCallback(
     (payload: BoardUpdatedPayload) => {
       switch (payload.type) {
-        case 'board.created':
-        case 'board.deleted':
-          dispatch(
-            boardsApi.util.invalidateTags([
-              { type: 'boards', id: payload.projectId },
-            ]),
-          );
-          break;
         case 'board.renamed':
           dispatch(
             boardsApi.util.invalidateTags([
