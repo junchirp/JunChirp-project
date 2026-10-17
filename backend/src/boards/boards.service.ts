@@ -34,7 +34,7 @@ export class BoardsService {
     createBoardDto: CreateBoardDto,
   ): Promise<BoardResponseDto> {
     try {
-      const newBoard = await this.prisma.$transaction(async (prisma) => {
+      return await this.prisma.$transaction(async (prisma) => {
         const existingBoards = await prisma.board.findMany({
           where: {
             projectId: createBoardDto.projectId,
@@ -64,7 +64,7 @@ export class BoardsService {
           baseName,
         );
 
-        return await prisma.board.create({
+        const board = await prisma.board.create({
           data: {
             boardName,
             projectId: createBoardDto.projectId,
@@ -84,15 +84,8 @@ export class BoardsService {
             },
           },
         });
+        return BoardMapper.toResponse(board);
       });
-
-      this.boardsGateway.notifyBoardUpdated(newBoard.id, {
-        type: 'board.created',
-        boardId: newBoard.id,
-        projectId: createBoardDto.projectId,
-      });
-
-      return BoardMapper.toResponse(newBoard);
     } catch (error) {
       throwPrismaError(error, {
         code: 'P2002',
@@ -176,7 +169,7 @@ export class BoardsService {
 
   public async deleteBoard(id: string): Promise<void> {
     try {
-      const projectId = await this.prisma.$transaction(async (prisma) => {
+      await this.prisma.$transaction(async (prisma) => {
         const board = await prisma.board.findUniqueOrThrow({
           where: { id },
           select: {
@@ -199,14 +192,6 @@ export class BoardsService {
         await prisma.board.delete({
           where: { id },
         });
-
-        return board.projectId;
-      });
-
-      this.boardsGateway.notifyBoardUpdated(id, {
-        type: 'board.deleted',
-        boardId: id,
-        projectId,
       });
     } catch (error) {
       throwPrismaError(error, {
@@ -384,12 +369,6 @@ export class BoardsService {
               },
             },
           },
-        });
-
-        this.boardsGateway.notifyBoardUpdated(newBoard.id, {
-          type: 'board.created',
-          boardId: newBoard.id,
-          projectId: newBoard.projectId,
         });
 
         return BoardMapper.toResponse(newBoard);
