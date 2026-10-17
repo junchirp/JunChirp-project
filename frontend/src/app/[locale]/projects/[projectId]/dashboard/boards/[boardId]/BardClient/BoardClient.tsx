@@ -77,26 +77,19 @@ export default function BoardClient(): ReactElement {
   const syncColumnTasks = useCallback(
     (columnId: string, loadedTasks: TaskInterface[]) => {
       setTasksByColumn((prev) => {
-        const existingIds = new Set(
-          Object.values(prev)
-            .flat()
-            .map((task) => task.id),
-        );
-        const currentTasks = prev[columnId] ?? [];
-        const newTasks = loadedTasks.filter(
-          (task) => !existingIds.has(task.id),
-        );
+        const loadedIds = new Set(loadedTasks.map((task) => task.id));
+        const next = { ...prev };
 
-        if (newTasks.length === 0) {
-          return prev;
+        for (const id of Object.keys(next)) {
+          if (id === columnId) {
+            continue;
+          }
+          next[id] = next[id].filter((task) => !loadedIds.has(task.id));
         }
-
-        return {
-          ...prev,
-          [columnId]: [...currentTasks, ...newTasks].sort(
-            (a, b) => a.taskIndex - b.taskIndex,
-          ),
-        };
+        next[columnId] = [...loadedTasks].sort(
+          (a, b) => a.taskIndex - b.taskIndex,
+        );
+        return next;
       });
     },
     [],

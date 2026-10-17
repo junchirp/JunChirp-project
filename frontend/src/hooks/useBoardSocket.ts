@@ -45,7 +45,7 @@ export function useBoardSocket(boardId: string): void {
           return;
       }
     },
-    [dispatch, boardId],
+    [dispatch],
   );
 
   const handleTasksUpdated = useCallback(
@@ -73,10 +73,9 @@ export function useBoardSocket(boardId: string): void {
           [...new Set(columnIds)].map((id) => ({ type: 'tasks', id })),
         ),
       );
-
       dispatch(boardsApi.util.invalidateTags([{ type: 'board', id: boardId }]));
     },
-    [dispatch],
+    [dispatch, boardId],
   );
 
   useEffect(() => {
