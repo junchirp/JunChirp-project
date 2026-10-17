@@ -19,11 +19,9 @@ export const tasksApi = mainApi.injectEndpoints({
         initialPageParam: undefined,
         getNextPageParam: (lastPage) => lastPage.cursor ?? undefined,
       },
-
       query: ({ queryArg: id, pageParam }) => ({
         url: `/tasks/${id}?limit=${TASKS_PAGE_SIZE}${pageParam !== undefined ? `&cursor=${pageParam}` : ''}`,
       }),
-
       providesTags: (_result, _error, id) => [{ type: 'tasks', id }],
     }),
     addTask: builder.mutation<TaskInterface, CreateTaskInterface>({

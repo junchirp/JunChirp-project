@@ -5,7 +5,7 @@ import { ColumnOrderInterface } from '@/shared/interfaces/column-order.interface
 import { TaskStatusWithCountInterface } from '@/shared/interfaces/task-status-with-count.interface';
 import { CreateTaskStatusInterface } from '@/shared/interfaces/create-task-status.interface';
 /* ---------------------------------------------------------------------------------------------- */
-/* All tags are invalidated in useBoardSocket hook                                                */
+/* updateBoard tags and all *column tags are invalidated in useBoardSocket hook                                                */
 /* ---------------------------------------------------------------------------------------------- */
 export const boardsApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({
