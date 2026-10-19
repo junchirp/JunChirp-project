@@ -10,7 +10,7 @@ export default function Dashboard(): null {
 
   useEffect(() => {
     router.replace(`/projects/${projectId}/dashboard/overview`);
-  }, [router]);
+  }, [router, projectId]);
 
   return null;
 }

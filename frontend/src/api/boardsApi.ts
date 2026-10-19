@@ -4,8 +4,9 @@ import { CreateBoardInterface } from '@/shared/interfaces/create-board.interface
 import { ColumnOrderInterface } from '@/shared/interfaces/column-order.interface';
 import { TaskStatusWithCountInterface } from '@/shared/interfaces/task-status-with-count.interface';
 import { CreateTaskStatusInterface } from '@/shared/interfaces/create-task-status.interface';
+import { ShortLocaleType } from '@/shared/types/short-locale.type';
 /* ---------------------------------------------------------------------------------------------- */
-/* updateBoard tags and all *column tags are invalidated in useBoardSocket hook                                                */
+/* all tags are invalidated in useBoardSocket/useProjectSocket hooks                              */
 /* ---------------------------------------------------------------------------------------------- */
 export const boardsApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -27,9 +28,6 @@ export const boardsApi = mainApi.injectEndpoints({
         method: 'POST',
         body: data,
       }),
-      invalidatesTags: (_result, _error, data) => [
-        { type: 'boards', id: data.projectId },
-      ],
     }),
     updateBoard: builder.mutation<
       BoardInterface,
@@ -41,27 +39,21 @@ export const boardsApi = mainApi.injectEndpoints({
         body: { boardName },
       }),
     }),
-    deleteBoard: builder.mutation<void, { id: string; projectId: string }>({
-      query: ({ id }) => ({
+    deleteBoard: builder.mutation<void, string>({
+      query: (id) => ({
         url: `boards/${id}`,
         method: 'DELETE',
       }),
-      invalidatesTags: (_result, _error, data) => [
-        { type: 'boards', id: data.projectId },
-      ],
     }),
     duplicateBoard: builder.mutation<
       BoardInterface,
-      { id: string; data: CreateBoardInterface }
+      { id: string; locale: ShortLocaleType }
     >({
-      query: ({ id, data }) => ({
+      query: ({ id, locale }) => ({
         url: `boards/${id}/copy`,
         method: 'POST',
-        body: { locale: data.locale },
+        body: { locale },
       }),
-      invalidatesTags: (_result, _error, { data }) => [
-        { type: 'boards', id: data.projectId },
-      ],
     }),
     updateColumnsOrder: builder.mutation<
       BoardInterface,
