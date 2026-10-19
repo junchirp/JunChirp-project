@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect } from 'react';
-import { boardsSocket } from '@/api/boardsSocketApi';
+import { projectsSocket } from '@/api/projectsSocketApi';
 import { tasksApi } from '@/api/tasksApi';
 import { useAppDispatch } from '@/hooks/reduxHooks';
 import { boardsApi } from '@/api/boardsApi';
@@ -84,26 +84,26 @@ export function useBoardSocket(boardId: string): void {
     }
 
     const handleConnect = (): void => {
-      boardsSocket.emit('board:join', { boardId });
+      projectsSocket.emit('board:join', { boardId });
     };
 
-    boardsSocket.on('connect', handleConnect);
-    boardsSocket.on('board:updated', handleBoardUpdated);
-    boardsSocket.on('tasks:updated', handleTasksUpdated);
+    projectsSocket.on('connect', handleConnect);
+    projectsSocket.on('board:updated', handleBoardUpdated);
+    projectsSocket.on('tasks:updated', handleTasksUpdated);
 
-    if (boardsSocket.connected) {
+    if (projectsSocket.connected) {
       handleConnect();
     } else {
-      boardsSocket.connect();
+      projectsSocket.connect();
     }
 
     return (): void => {
-      boardsSocket.off('connect', handleConnect);
-      boardsSocket.off('board:updated', handleBoardUpdated);
-      boardsSocket.off('tasks:updated', handleTasksUpdated);
+      projectsSocket.off('connect', handleConnect);
+      projectsSocket.off('board:updated', handleBoardUpdated);
+      projectsSocket.off('tasks:updated', handleTasksUpdated);
 
-      if (boardsSocket.connected) {
-        boardsSocket.emit('board:leave', { boardId });
+      if (projectsSocket.connected) {
+        projectsSocket.emit('board:leave', { boardId });
       }
     };
   }, [boardId, handleBoardUpdated, handleTasksUpdated]);

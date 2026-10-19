@@ -26,6 +26,7 @@ import { useShortLocale } from '@/hooks/useShortLocale';
 import { useTranslations } from 'next-intl';
 import DeleteBoardPopup from './DeleteBoardPopup/DeleteBoardPopup';
 import { BoardInterface } from '@/shared/interfaces/board.interface';
+import { useProjectSocket } from '@/hooks/useProjectSocket';
 
 export default function BoardsHeader(): ReactElement | null {
   const { projectId, boardId } = useParams<{
@@ -59,6 +60,7 @@ export default function BoardsHeader(): ReactElement | null {
   >();
   const boardForRender = currentBoard ?? selectedBoard;
 
+  useProjectSocket(projectId, selectedBoard?.id);
   useEffect(() => {
     if (currentBoard) {
       setSelectedBoard(currentBoard);
@@ -96,7 +98,7 @@ export default function BoardsHeader(): ReactElement | null {
     try {
       const board = await duplicateBoard({
         id: boardForRender.id,
-        data: { locale, projectId },
+        locale,
       }).unwrap();
       router.push(`/projects/${projectId}/dashboard/boards/${board.id}`);
     } catch {
@@ -117,7 +119,7 @@ export default function BoardsHeader(): ReactElement | null {
 
     try {
       setIsOpenPopup(false);
-      await deleteBoard({ id, projectId }).unwrap();
+      await deleteBoard(id).unwrap();
 
       showToast({
         severity: 'success',

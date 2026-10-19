@@ -17,13 +17,13 @@ import { CursorPaginationDto } from '../common/dto/cursor-pagination.dto';
 import { MoveTaskDto } from './dto/move-task.dto';
 import { Prisma } from '@prisma/client';
 import { isPrismaError } from '../common/utils/is-prisma-error';
-import { BoardsGateway } from '../boards/boards.gateway';
+import { ProjectsGateway } from '../projects/projects.gateway';
 
 @Injectable()
 export class TasksService {
   public constructor(
     private readonly prisma: PrismaService,
-    private readonly boardsGateway: BoardsGateway,
+    private readonly projectsGateway: ProjectsGateway,
   ) {}
 
   public async createTask(
@@ -54,7 +54,7 @@ export class TasksService {
           },
         });
 
-        this.boardsGateway.notifyTasksUpdated(task.taskStatus.boardId, {
+        this.projectsGateway.notifyTasksUpdated(task.taskStatus.boardId, {
           type: 'task.created',
           taskId: task.id,
           columnId: task.taskStatus.id,
@@ -378,7 +378,7 @@ export class TasksService {
         );
 
         if (oldColumnId !== newColumnId || oldIndex !== newIndex) {
-          this.boardsGateway.notifyTasksUpdated(boardId, {
+          this.projectsGateway.notifyTasksUpdated(boardId, {
             type: 'task.moved',
             taskId: id,
             oldColumnId,

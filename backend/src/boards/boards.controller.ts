@@ -156,7 +156,6 @@ export class BoardsController {
   @ApiBadRequestResponse({
     description: 'You can only add up to 5 boards in the project',
   })
-  @ApiConflictResponse({ description: 'Board with this name already exists' })
   @ApiNotFoundResponse({ description: 'Board not found' })
   @ApiForbiddenResponse({
     description:
