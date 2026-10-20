@@ -57,7 +57,6 @@ async function bootstrap(): Promise<void> {
   app.use((req: Request, res: Response, nextFunc: NextFunction) =>
     csrfMiddleware.use(req, res, nextFunc),
   );
-
   app.useGlobalPipes(new ValidationPipe());
   app.setGlobalPrefix('api');
 
