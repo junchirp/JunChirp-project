@@ -369,7 +369,7 @@
   },
   "page404": {
     "title": "Page not found",
-    "description": "Oops, you’ve reached a secret page that doesn’t exist! It might have been deleted or moved. Go to our homepage to find what you need.",
+    "description": "Oops! This link turned out to be too fragile. Don’t worry about cracked links — head back home, there's plenty to explore!",
     "support": "Report a Problem",
     "home": "Go to homepage"
   },
