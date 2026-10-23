@@ -132,6 +132,7 @@ export default function EducationForm(props: EducationFormProps): ReactElement {
               fetcher={(query) => getInstitutions(query)}
               onSelectOption={() => {}}
               normalize
+              required
               errorMessage={errors.institution?.message}
               withError
             />
@@ -148,6 +149,7 @@ export default function EducationForm(props: EducationFormProps): ReactElement {
               fetcher={(query) => getSpecializations(query)}
               onSelectOption={() => {}}
               normalize
+              required
               errorMessage={errors.specialization?.message}
               withError
             />

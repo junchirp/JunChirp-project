@@ -461,6 +461,7 @@ export class AuthService {
   }
 
   public async handleDiscordCallback(
+    ip: string,
     req: Request,
     res: Response,
     state: string,
@@ -473,6 +474,12 @@ export class AuthService {
     try {
       const data = await this.redisService.get(state);
       if (!data) {
+        await this.loggerService.log(
+          LogEventType.DISCORD_CONNECTION,
+          'discord connection',
+          { ip },
+        );
+
         const fallbackReturnUrl = this.getSafeReturnUrl('/', 'ua', {
           social: 'discord',
           status: 'failure',
@@ -510,6 +517,12 @@ export class AuthService {
 
       this.csrfService.rotate(req, res);
 
+      await this.loggerService.log(
+        LogEventType.DISCORD_CONNECTION,
+        'discord connection',
+        { ip },
+      );
+
       return res.redirect(redirectUrl);
     } catch {
       const data = await this.redisService.get(state);
@@ -528,6 +541,7 @@ export class AuthService {
   }
 
   public async handleDiscordCancel(
+    ip: string,
     res: Response,
     state: string,
   ): Promise<void> {
@@ -544,6 +558,12 @@ export class AuthService {
         social: 'discord',
         status: 'cancel',
       });
+
+      await this.loggerService.log(
+        LogEventType.DISCORD_CONNECTION,
+        'Discord connection canceled',
+        { ip },
+      );
 
       await this.redisService.del(state);
 

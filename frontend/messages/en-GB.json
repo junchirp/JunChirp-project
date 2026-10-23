@@ -46,10 +46,10 @@
       "addEducation": "Add education",
       "editSocial": "Edit social network",
       "addSocial": "Add social network",
-      "addSoftSkill": "Add Soft Skill",
-      "addHardSkill": "Add Hard Skill",
-      "editSoftSkill": "Edit Soft Skill",
-      "editHardSkill": "Edit Hard Skill",
+      "addSoftSkill": "Add soft skill",
+      "addHardSkill": "Add hard skill",
+      "editSoftSkill": "Edit soft skill",
+      "editHardSkill": "Edit hard skill",
       "empty": "Complete your profile to showcase your strengths and unlock amazing opportunities!",
       "full": {
         "firstFragment": "Profile is ready — ",
@@ -61,10 +61,10 @@
     "userName": "Name and surename",
     "role": "Role",
     "emptyRoles": "Add your desired role to be able to participate in projects.",
-    "socials": "Social media",
+    "socials": "Social Media",
     "educations": "Education",
-    "softSkills": "Soft skills",
-    "hardSkills": "Hard skills",
+    "softSkills": "Soft Skills",
+    "hardSkills": "Hard Skills",
     "contacts" : "Contact details",
     "projects": "User projects",
     "activeProjects": "Active projects",
@@ -152,6 +152,7 @@
   "acceptInvite": {
     "error": "Failed to accept invitation.",
     "errorDetails": "Please try again.",
+    "error400": "Maximum active project limit reached (max 2).",
     "success": "Invitation accepted successfully."
   },
   "acceptRequest": {
@@ -284,7 +285,7 @@
     },
     "changeEmailForm": {
       "email": "Email",
-      "success": "Email changed successfully.",
+      "success": "Email successfully changed.",
       "successDetails": "Please check your inbox to confirm it.",
       "error": "Failed to change email.",
       "errorDetails": "Please try again."
@@ -606,7 +607,7 @@
       "A new link invalidates the previous one: Each time you request a new confirmation link, the previous one becomes invalid. This means the old link will no longer work, and you will need to use the new one.",
       "After 24 hours: If you do not confirm your email address within 24 hours, your data will be deleted from our database, and you will need to start the registration process again."
     ],
-    "success": "Request processed successfully.",
+    "success": "Request successfully processed.",
     "successDetails": "Please check your email for confirmation.",
     "error400": "An error occurred while processing the request.",
     "error400Details": "Email has already been confirmed."

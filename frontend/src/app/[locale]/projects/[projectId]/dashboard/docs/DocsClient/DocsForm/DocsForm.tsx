@@ -175,6 +175,7 @@ export default function DocsForm(props: DocsFormProps): ReactElement {
             {...register('documentName')}
             normalize
             withError
+            required
             errorMessage={errors.documentName?.message}
           />
           <Input
@@ -182,6 +183,7 @@ export default function DocsForm(props: DocsFormProps): ReactElement {
             label={tForms('documentForm.url')}
             placeholder={tForms('documentForm.placeholders.url')}
             withError
+            required
             errorMessage={errors.url?.message}
           />
         </fieldset>

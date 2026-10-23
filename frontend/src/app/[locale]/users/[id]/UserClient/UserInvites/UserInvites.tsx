@@ -92,7 +92,7 @@ export default function UserInvites({
         page={filters.invitesPage}
         limit={filters.invitesLimit}
       />
-      {list.total > filters.invitesLimit && (
+      {list.total > 10 && (
         <Pagination
           total={list.total}
           limit={filters.invitesLimit}

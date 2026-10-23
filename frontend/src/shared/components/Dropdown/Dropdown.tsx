@@ -24,6 +24,7 @@ interface DropdownProps<T> extends Partial<ControllerRenderProps> {
   errorMessage?: string;
   autoFocus?: boolean;
   defaultValue?: string | number | null;
+  required?: boolean;
 }
 
 export default function Dropdown<T>(props: DropdownProps<T>): ReactElement {
@@ -46,6 +47,7 @@ export default function Dropdown<T>(props: DropdownProps<T>): ReactElement {
     autoFocus = false,
     defaultValue,
     disabled = false,
+    required = false,
   } = props;
 
   const [internalValue, setInternalValue] = useState<
@@ -111,6 +113,13 @@ export default function Dropdown<T>(props: DropdownProps<T>): ReactElement {
     marginBottom: `${labelMargin}px`,
   };
 
+  const labelClassNames = [
+    styles.dropdown__label,
+    required && styles['dropdown__label--required'],
+  ]
+    .filter(Boolean)
+    .join(' ');
+
   const labelOffset = label ? labelSize * labelHeight + labelMargin - 4 : -4;
   const errorOffset = withError ? 16 : -4;
 
@@ -118,11 +127,7 @@ export default function Dropdown<T>(props: DropdownProps<T>): ReactElement {
     <div className={styles.dropdown} ref={ref}>
       <div className={styles.dropdown__field}>
         {label && (
-          <label
-            className={styles.dropdown__label}
-            style={labelStyle}
-            htmlFor={id}
-          >
+          <label className={labelClassNames} style={labelStyle} htmlFor={id}>
             {label}
           </label>
         )}

@@ -115,6 +115,7 @@ export default function RequestPasswordResetForm(): ReactElement {
           label="Email"
           placeholder="example@email.com"
           type="email"
+          required
           {...register('email')}
         />
       </fieldset>

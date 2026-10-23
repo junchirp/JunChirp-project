@@ -134,6 +134,7 @@ export default function RegistrationForm(): ReactElement {
           {...register('firstName')}
           normalize
           withError
+          required
           errorMessage={errors.firstName?.message}
         />
         <Input
@@ -142,6 +143,7 @@ export default function RegistrationForm(): ReactElement {
           {...register('lastName')}
           normalize
           withError
+          required
           errorMessage={errors.lastName?.message}
         />
         <Input
@@ -150,6 +152,7 @@ export default function RegistrationForm(): ReactElement {
           type="email"
           {...register('email')}
           withError
+          required
           errorMessage={errors.email?.message}
         />
         <Input
@@ -159,6 +162,7 @@ export default function RegistrationForm(): ReactElement {
           type="password"
           {...register('password')}
           withError
+          required
           errorMessage={
             (dirtyFields.password || isSubmitted) && errors.password?.message
               ? errors.password?.message
@@ -172,6 +176,7 @@ export default function RegistrationForm(): ReactElement {
           type="password"
           {...register('confirmPassword')}
           withError
+          required
           errorMessage={
             (dirtyFields.confirmPassword || isSubmitted) &&
             errors.confirmPassword?.message

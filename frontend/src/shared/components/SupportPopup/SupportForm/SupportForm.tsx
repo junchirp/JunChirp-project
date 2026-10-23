@@ -124,6 +124,7 @@ export default function SupportForm(props: SupportFormProps): ReactElement {
               label={t('supportForm.requestText')}
               placeholder={t('supportForm.placeholders.requestText')}
               withError
+              required
               errorMessage={errors.requestText?.message}
             />
           )}
@@ -141,6 +142,7 @@ export default function SupportForm(props: SupportFormProps): ReactElement {
               type="email"
               {...register('email')}
               withError
+              required
               errorMessage={errors.email?.message}
             />
           </fieldset>

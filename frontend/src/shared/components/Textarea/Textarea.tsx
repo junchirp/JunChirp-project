@@ -25,6 +25,7 @@ interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   normalize?: boolean;
   height?: number;
   resize?: 'none' | 'both' | 'horizontal' | 'vertical';
+  required?: boolean;
 }
 
 function TextareaComponent(
@@ -46,6 +47,7 @@ function TextareaComponent(
     onChange,
     height = 140,
     resize = 'vertical',
+    required = false,
     ...rest
   } = props;
   const id = useId();
@@ -94,14 +96,17 @@ function TextareaComponent(
     resize: resize,
   };
 
+  const labelClassNames = [
+    styles.textarea__label,
+    required && styles['textarea__label--required'],
+  ]
+    .filter(Boolean)
+    .join(' ');
+
   return (
     <div className={`${styles.textarea} ${className ?? ''}`}>
       {label && (
-        <label
-          className={styles.textarea__label}
-          style={labelStyle}
-          htmlFor={id}
-        >
+        <label className={labelClassNames} style={labelStyle} htmlFor={id}>
           {label}
         </label>
       )}

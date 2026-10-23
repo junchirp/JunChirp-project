@@ -1,7 +1,7 @@
 'use client';
 
 import { ReactElement } from 'react';
-import styles from './ParticipationTooltip.module.scss';
+import styles from './ParticipationStatusTooltip.module.scss';
 import { useFormatter, useTranslations } from 'next-intl';
 
 interface ParticipationTooltipProps {
@@ -12,7 +12,7 @@ interface ParticipationTooltipProps {
   reservedAt: Date | null;
 }
 
-export default function ParticipationTooltip({
+export default function ParticipationStatusTooltip({
   createdAt,
   acceptedAt,
   reservedAt,
@@ -29,7 +29,7 @@ export default function ParticipationTooltip({
   const t = useTranslations('participationsTable');
 
   return (
-    <div className={styles['participation-tooltip']}>
+    <div className={styles['participation-status-tooltip']}>
       <div>
         {t('created')} - {formattedDate(createdAt)}
       </div>

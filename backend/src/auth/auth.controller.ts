@@ -178,14 +178,15 @@ export class AuthController {
   @HttpCode(HttpStatus.FOUND)
   @Get('discord/callback')
   public async handleDiscordCallback(
+    @Ip() ip: string,
     @Req() req: Request,
     @Res() res: Response,
     @Query('state') state: string,
     @Query('error') error?: string,
   ): Promise<void> {
     return error === 'access_denied'
-      ? this.authService.handleDiscordCancel(res, state)
-      : this.authService.handleDiscordCallback(req, res, state, error);
+      ? this.authService.handleDiscordCancel(ip, res, state)
+      : this.authService.handleDiscordCallback(ip, req, res, state, error);
   }
 
   @ApiOperation({ summary: 'Resend confirmation email' })

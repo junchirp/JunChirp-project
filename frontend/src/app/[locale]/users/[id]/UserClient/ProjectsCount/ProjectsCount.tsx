@@ -13,17 +13,12 @@ interface ProjectsCountProps {
 
 export default function ProjectsCount(props: ProjectsCountProps): ReactElement {
   const { status, count, active, onClick } = props;
-
-  const classNameStatus =
-    status === 'active'
-      ? styles['projects-count--active']
-      : styles['projects-count--done'];
   const activeClass = active ? styles['projects-count--selected'] : '';
   const t = useTranslations('profile');
 
   return (
     <div
-      className={`${styles['projects-count']} ${classNameStatus} ${activeClass}`}
+      className={`${styles['projects-count']} ${activeClass}`}
       onClick={onClick}
     >
       <p className={styles['projects-count__title']}>

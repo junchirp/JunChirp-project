@@ -21,6 +21,8 @@ import { limitOptions } from '@/shared/constants/limit-options';
 import { useDiscord } from '@/hooks/useDiscord';
 import { isDiscordNotConnectedError } from '@/shared/utils/isDiscordNotConnectedError';
 import { isDiscordNotInGuildError } from '@/shared/utils/isDiscordNotInGuildError';
+import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
+import { SerializedError } from '@reduxjs/toolkit';
 
 interface MyInvitesProps {
   user: AuthInterface;
@@ -95,13 +97,30 @@ export default function MyInvites({
         return;
       }
 
-      showToast({
-        severity: 'error',
-        summary: tInvite('error'),
-        detail: tInvite('errorDetails'),
-        life: 3000,
-        actionKey: ToastKeysEnum.PARTICIPATION_INVITE,
-      });
+      const errorData = error as
+        | ((FetchBaseQueryError | SerializedError) & {
+            status: number;
+          })
+        | undefined;
+
+      const status = errorData?.status;
+
+      if (status === 400) {
+        showToast({
+          severity: 'error',
+          summary: tInvite('error400'),
+          life: 3000,
+          actionKey: ToastKeysEnum.PARTICIPATION_INVITE,
+        });
+      } else {
+        showToast({
+          severity: 'error',
+          summary: tInvite('error'),
+          detail: tInvite('errorDetails'),
+          life: 3000,
+          actionKey: ToastKeysEnum.PARTICIPATION_INVITE,
+        });
+      }
     }
   };
 
@@ -131,7 +150,7 @@ export default function MyInvites({
           limit={filters.invitesLimit}
           accept={handleAcceptInvite}
         />
-        {list.total > filters.invitesLimit && (
+        {list.total > 10 && (
           <Pagination
             total={list.total}
             limit={filters.invitesLimit}

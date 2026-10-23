@@ -66,7 +66,7 @@ export default function MyRequests({
           limit={filters.requestsLimit}
           isLoading={false}
         />
-        {list.total > filters.requestsLimit && (
+        {list.total > 10 && (
           <Pagination
             total={list.total}
             limit={filters.requestsLimit}

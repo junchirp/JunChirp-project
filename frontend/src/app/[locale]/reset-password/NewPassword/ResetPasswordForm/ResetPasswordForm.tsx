@@ -138,6 +138,7 @@ export default function ResetPasswordForm({
             type="password"
             {...register('password')}
             withError
+            required
             errorMessage={
               (dirtyFields.password || isSubmitted) && errors.password?.message
                 ? errors.password?.message
@@ -151,6 +152,7 @@ export default function ResetPasswordForm({
             type="password"
             {...register('confirmPassword')}
             withError
+            required
             errorMessage={
               (dirtyFields.confirmPassword || isSubmitted) &&
               errors.confirmPassword?.message
