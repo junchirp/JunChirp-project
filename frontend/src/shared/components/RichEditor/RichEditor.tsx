@@ -51,7 +51,7 @@ export function RichEditor(props: RichEditorProps): ReactElement {
   return (
     <div className={styles['rich-editor']}>
       {label && (
-        <span className={styles['rich-editor__label']} style={labelStyle}>
+        <span className={labelClassNames} style={labelStyle}>
           {label}
         </span>
       )}
