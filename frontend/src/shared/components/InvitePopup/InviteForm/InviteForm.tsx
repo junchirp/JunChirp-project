@@ -139,6 +139,7 @@ export default function InviteForm(props: InviteFormProps): ReactElement {
               }}
               getOptionLabel={(o) => o.projectName}
               getOptionValue={(o) => o.id}
+              required
             />
           )}
         />
@@ -157,6 +158,7 @@ export default function InviteForm(props: InviteFormProps): ReactElement {
               isOptionDisabled={(o) =>
                 !allowedRoleTypeIds.includes(o.roleType.id)
               }
+              required
             />
           )}
         />

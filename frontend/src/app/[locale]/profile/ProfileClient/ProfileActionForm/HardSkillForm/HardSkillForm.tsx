@@ -136,6 +136,7 @@ export default function HardSkillForm(props: HardSkillFormProps): ReactElement {
               fetcher={(query) => getSkills(query)}
               onSelectOption={() => {}}
               normalize
+              required
               errorMessage={errors.hardSkillName?.message}
               withError
             />

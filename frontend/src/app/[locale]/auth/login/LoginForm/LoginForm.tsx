@@ -155,11 +155,13 @@ export default function LoginForm(): ReactElement {
           type="email"
           placeholder="example@email.com"
           {...register('email')}
+          required
         />
         <Input
           label={tForms('loginForm.password')}
           type="password"
           {...register('password')}
+          required
         />
       </fieldset>
       <div className={styles['login-form__button-wrapper']}>

@@ -17,6 +17,11 @@
     padding: 12px;
     font-weight: 600;
     line-height: 1.4;
+    border-right: 1px solid variables.$gray-11;
+
+    &:last-child {
+      border-right: none;
+    }
 
     &--header {
       background-color: variables.$green-5;
@@ -46,7 +51,23 @@
   }
 
   &__row {
+    &:nth-child(odd) {
+      .participations-table__cell--body {
+        background-color: variables.$white-2;
+      }
+    }
+
+    &:nth-child(even) {
+      .participations-table__cell--body {
+        background-color: variables.$gray-5;
+      }
+    }
+
     &:not(:last-child) {
+      border-bottom: 1px solid variables.$gray-11;
+    }
+
+    &--header {
       border-bottom: 1px solid variables.$gray-11;
     }
 
@@ -65,6 +86,10 @@
 
   &__link {
     color: variables.$black-2;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   &__actions {

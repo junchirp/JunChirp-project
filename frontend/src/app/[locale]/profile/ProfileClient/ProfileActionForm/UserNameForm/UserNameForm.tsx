@@ -101,6 +101,7 @@ export default function UserNameForm(props: UserNameFormProps): ReactElement {
           {...register('firstName')}
           normalize
           withError
+          required
           errorMessage={errors.firstName?.message}
         />
         <Input
@@ -110,6 +111,7 @@ export default function UserNameForm(props: UserNameFormProps): ReactElement {
           {...register('lastName')}
           normalize
           withError
+          required
           errorMessage={errors.lastName?.message}
         />
         <Controller
@@ -124,6 +126,7 @@ export default function UserNameForm(props: UserNameFormProps): ReactElement {
               getOptionLabel={(o) => o.roleName}
               getOptionValue={(o) => o.id}
               withError
+              required
               errorMessage={errors.desiredRolesIds?.message}
             />
           )}

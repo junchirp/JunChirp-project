@@ -153,6 +153,7 @@ export default function NewProjectForm(): ReactElement {
             {...register('projectName')}
             normalize
             withError
+            required
             errorMessage={errors.projectName?.message}
           />
           <Textarea
@@ -165,6 +166,7 @@ export default function NewProjectForm(): ReactElement {
             {...register('description')}
             normalize
             withError
+            required
             errorMessage={errors.description?.message}
           />
           <Controller
@@ -183,6 +185,7 @@ export default function NewProjectForm(): ReactElement {
                 getOptionLabel={(o) => o.categoryName[locale]}
                 getOptionValue={(o) => o.id}
                 withError
+                required
                 errorMessage={errors.categoryId?.message}
               />
             )}

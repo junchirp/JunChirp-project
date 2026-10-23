@@ -84,6 +84,7 @@ export default function ChangeEmailForm({ onClose }: FormProps): ReactElement {
           type="email"
           {...register('email')}
           withError
+          required
           errorMessage={errors.email?.message}
         />
       </fieldset>

@@ -46,10 +46,10 @@
       "addEducation": "Додати освіту",
       "editSocial": "Редагувати соцмережу",
       "addSocial": "Додати соцмережу",
-      "addSoftSkill": "Додати Софт-скіл",
-      "addHardSkill": "Додати Хард-скіл",
-      "editSoftSkill": "Редагувати Софт-скіл",
-      "editHardSkill": "Редагувати Хард-скіл",
+      "addSoftSkill": "Додати софт-скіл",
+      "addHardSkill": "Додати хард-скіл",
+      "editSoftSkill": "Редагувати софт-скіл",
+      "editHardSkill": "Редагувати хард-скіл",
       "empty": "Заповни профіль, щоб показати свої сильні сторони та долучитись до крутих можливостей!",
       "full": {
         "firstFragment": "Профіль готовий — ",
@@ -152,6 +152,7 @@
   "acceptInvite": {
     "error": "Не вдалося прийняти запрошення.",
     "errorDetails": "Спробуй ще раз.",
+    "error400": "Досягнуто максимального ліміту активних проєктів (максимум 2).",
     "success": "Запрошення прийнято успішно."
   },
   "acceptRequest": {
@@ -211,7 +212,7 @@
       "success": "Зміни збережено успішно."
     },
     "hardSkillForm": {
-      "hardSkillName": "Хард скіл",
+      "hardSkillName": "Хард-скіл",
       "placeholders": {
         "hardSkillName": "JavaScript, Figma, SQL..."
       },
@@ -221,7 +222,7 @@
       "success": "Зміни збережено успішно."
     },
     "softSkillForm": {
-      "softSkillName": "Софт скіл",
+      "softSkillName": "Софт-скіл",
       "placeholders": {
         "softSkillName": "Командна робота, Тайм-менеджмент..."
       },

@@ -1,13 +1,14 @@
 'use client';
 
-import { ReactElement } from 'react';
+import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 import styles from './ParticipationsTable.module.scss';
 import { Link, usePathname } from '@/i18n/routing';
 import Button from '@/shared/components/Button/Button';
 import { ProjectParticipationInterface } from '@/shared/interfaces/project-participation.interface';
 import { useTranslations } from 'next-intl';
-import ParticipationTooltip from './ParticipationTooltip/ParticipationTooltip';
+import ParticipationStatusTooltip from '@/shared/components/ParticipationsTable/ParticipationStatusTooltip/ParticipationStatusTooltip';
 import Tooltip from '@/shared/components/Tooltip/Tooltip';
+import ProjectTooltip from '@/shared/components/ParticipationsTable/ProjectTooltip/ProjectTooltip';
 
 interface ParticipationsTableProps {
   items: ProjectParticipationInterface[];
@@ -38,6 +39,63 @@ export default function ParticipationsTable(
   const cancelEvent = openModal ?? cancel;
   const pathname = usePathname();
   const isProfilePage = pathname === '/profile';
+  const projectLinkRefs = useRef(new Map<string, HTMLAnchorElement>());
+  const resizeObserver = useRef<ResizeObserver | null>(null);
+
+  const [truncatedProjects, setTruncatedProjects] = useState<Set<string>>(
+    new Set(),
+  );
+
+  const checkTruncation = useCallback((): void => {
+    setTruncatedProjects((previous) => {
+      const next = new Set<string>();
+
+      projectLinkRefs.current.forEach((element, id) => {
+        if (element.scrollWidth > element.clientWidth) {
+          next.add(id);
+        }
+      });
+
+      if (
+        previous.size === next.size &&
+        [...previous].every((id) => next.has(id))
+      ) {
+        return previous;
+      }
+
+      return next;
+    });
+  }, []);
+
+  const observeProjectLink = useCallback(
+    (id: string, element: HTMLAnchorElement | null): void => {
+      const previousElement = projectLinkRefs.current.get(id);
+      if (previousElement) {
+        resizeObserver.current?.unobserve(previousElement);
+      }
+      if (element) {
+        projectLinkRefs.current.set(id, element);
+        resizeObserver.current?.observe(element);
+      } else {
+        projectLinkRefs.current.delete(id);
+      }
+      checkTruncation();
+    },
+    [checkTruncation],
+  );
+
+  useEffect(() => {
+    const observer = new ResizeObserver(checkTruncation);
+    resizeObserver.current = observer;
+    projectLinkRefs.current.forEach((element) => {
+      observer.observe(element);
+    });
+    checkTruncation();
+    return (): void => {
+      observer.disconnect();
+      resizeObserver.current = null;
+    };
+  }, [items, checkTruncation]);
 
   return (
     <table className={styles['participations-table']}>
@@ -49,7 +107,7 @@ export default function ParticipationsTable(
         <col style={{ width: `${actionColumnWidth}px` }} />
       </colgroup>
       <thead>
-        <tr>
+        <tr className={styles['participations-table__row--header']}>
           <th
             className={`${styles['participations-table__cell']} ${styles['participations-table__cell--header']}`}
             scope="col"
@@ -58,21 +116,25 @@ export default function ParticipationsTable(
           </th>
           <th
             className={`${styles['participations-table__cell']} ${styles['participations-table__cell--header']}`}
+            scope="col"
           >
             {tTable('colProject')}
           </th>
           <th
             className={`${styles['participations-table__cell']} ${styles['participations-table__cell--header']}`}
+            scope="col"
           >
             {tTable('colRole')}
           </th>
           <th
             className={`${styles['participations-table__cell']} ${styles['participations-table__cell--header']}`}
+            scope="col"
           >
             {tTable('colStatus')}
           </th>
           <th
             className={`${styles['participations-table__cell']} ${styles['participations-table__cell--header']}`}
+            scope="col"
           >
             {tTable('colActions')}
           </th>
@@ -81,6 +143,21 @@ export default function ParticipationsTable(
       <tbody>
         {items.map((item, index) => {
           const totalIndex = (page - 1) * limit + index + 1;
+          const projectName = item.projectRole.project.projectName;
+          const projectLink = (
+            <Link
+              className={styles['participations-table__link']}
+              href={
+                isProfilePage
+                  ? `/projects/${item.projectRole.project.id}`
+                  : `/projects/${item.projectRole.project.id}/dashboard/team`
+              }
+              target={isProfilePage ? '_blank' : undefined}
+              ref={(element) => observeProjectLink(item.id, element)}
+            >
+              {projectName}
+            </Link>
+          );
 
           return (
             <tr key={item.id} className={styles['participations-table__row']}>
@@ -92,21 +169,14 @@ export default function ParticipationsTable(
               <td
                 className={`${styles['participations-table__cell']} ${styles['participations-table__cell--body']}`}
               >
-                {isProfilePage ? (
-                  <Link
-                    className={styles['participations-table__link']}
-                    href={`/projects/${item.projectRole.project.id}`}
-                    target="_blank"
+                {truncatedProjects.has(item.id) ? (
+                  <Tooltip
+                    content={<ProjectTooltip projectName={projectName} />}
                   >
-                    {item.projectRole.project.projectName}
-                  </Link>
+                    {projectLink}
+                  </Tooltip>
                 ) : (
-                  <Link
-                    className={styles['participations-table__link']}
-                    href={`/projects/${item.projectRole.project.id}/dashboard/team`}
-                  >
-                    {item.projectRole.project.projectName}
-                  </Link>
+                  projectLink
                 )}
               </td>
               <td
@@ -115,14 +185,11 @@ export default function ParticipationsTable(
                 {item.projectRole.roleType.roleName}
               </td>
               <td
-                className={`
-                  ${styles['participations-table__cell']}
-                  ${styles['participations-table__cell--body']}
-                `}
+                className={`${styles['participations-table__cell']} ${styles['participations-table__cell--body']}`}
               >
                 <Tooltip
                   content={
-                    <ParticipationTooltip
+                    <ParticipationStatusTooltip
                       createdAt={item.createdAt}
                       acceptedAt={item.acceptedAt}
                       canceledAt={item.canceledAt}

@@ -141,6 +141,7 @@ export default function EditProjectForm({
           {...register('projectName')}
           normalize
           withError
+          required
           errorMessage={errors.projectName?.message}
         />
         <Textarea
@@ -153,6 +154,7 @@ export default function EditProjectForm({
           {...register('description')}
           normalize
           withError
+          required
           errorMessage={errors.description?.message}
         />
         <Controller
@@ -171,6 +173,7 @@ export default function EditProjectForm({
               getOptionLabel={(o) => o.categoryName[locale]}
               getOptionValue={(o) => o.id}
               withError
+              required
               errorMessage={errors.categoryId?.message}
             />
           )}

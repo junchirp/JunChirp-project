@@ -27,6 +27,7 @@ interface MultiSelectWithChipsProps<T> extends Partial<ControllerRenderProps> {
   withError?: boolean;
   errorMessage?: string;
   autoFocus?: boolean;
+  required?: boolean;
 }
 
 export default function MultiSelectWithChips<T>(
@@ -49,6 +50,7 @@ export default function MultiSelectWithChips<T>(
     withError = false,
     errorMessage,
     autoFocus = false,
+    required = false,
   } = props;
 
   const id = useId();
@@ -119,15 +121,18 @@ export default function MultiSelectWithChips<T>(
   const labelOffset = label ? labelSize * labelHeight + labelMargin - 4 : -4;
   const errorOffset = withError ? 16 : -4;
 
+  const labelClassNames = [
+    styles['multi-select-with-chips__label'],
+    required && styles['multi-select-with-chips__label--required'],
+  ]
+    .filter(Boolean)
+    .join(' ');
+
   return (
     <div className={styles['multi-select-with-chips']} ref={ref}>
       <div className={styles['multi-select-with-chips__field']}>
         {label && (
-          <label
-            className={styles['multi-select-with-chips__label']}
-            style={labelStyle}
-            htmlFor={id}
-          >
+          <label className={labelClassNames} style={labelStyle} htmlFor={id}>
             {label}
           </label>
         )}

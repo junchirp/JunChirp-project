@@ -149,6 +149,7 @@ export default function SocialForm(props: SocialFormProps): ReactElement {
               withError
               errorMessage={errors.network?.message}
               autoFocus
+              required
             />
           )}
         />
@@ -157,6 +158,7 @@ export default function SocialForm(props: SocialFormProps): ReactElement {
           label={tForms('socialForm.url')}
           placeholder={tForms('socialForm.placeholders.url')}
           withError
+          required
           errorMessage={errors.url?.message}
         />
       </fieldset>

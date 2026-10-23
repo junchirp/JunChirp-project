@@ -34,6 +34,7 @@ interface AutocompleteProps extends InputHTMLAttributes<HTMLInputElement> {
   ) => Promise<{ data?: string[] } | string[] | undefined>;
   minLength?: number;
   debounce?: number;
+  required?: boolean;
 }
 
 function AutocompleteComponent(
@@ -55,6 +56,7 @@ function AutocompleteComponent(
     value,
     onChange,
     onBlur,
+    required = false,
     ...rest
   }: AutocompleteProps,
   ref: ForwardedRef<HTMLInputElement>,
@@ -180,6 +182,7 @@ function AutocompleteComponent(
         withError={withError}
         normalize={normalize}
         errorMessage={errorMessage}
+        required={required}
       />
       {isOpen && filtered.length > 0 && (
         <ul

@@ -138,6 +138,7 @@ export default function SoftSkillForm(props: SoftSkillFormProps): ReactElement {
               normalize
               errorMessage={errors.softSkillName?.message}
               withError
+              required
             />
           )}
         />

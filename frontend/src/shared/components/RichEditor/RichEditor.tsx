@@ -17,6 +17,7 @@ interface RichEditorProps {
   placeholder?: string;
   errorMessage?: string;
   withError?: boolean;
+  required?: boolean;
 }
 
 export function RichEditor(props: RichEditorProps): ReactElement {
@@ -30,6 +31,7 @@ export function RichEditor(props: RichEditorProps): ReactElement {
     placeholder,
     errorMessage,
     withError = false,
+    required = false,
   } = props;
 
   const labelStyle = {
@@ -39,10 +41,17 @@ export function RichEditor(props: RichEditorProps): ReactElement {
     marginBottom: `${labelMargin}px`,
   };
 
+  const labelClassNames = [
+    styles['rich-editor__label'],
+    required && styles['rich-editor__label--required'],
+  ]
+    .filter(Boolean)
+    .join(' ');
+
   return (
     <div className={styles['rich-editor']}>
       {label && (
-        <span className={styles['rich-editor__label']} style={labelStyle}>
+        <span className={labelClassNames} style={labelStyle}>
           {label}
         </span>
       )}
