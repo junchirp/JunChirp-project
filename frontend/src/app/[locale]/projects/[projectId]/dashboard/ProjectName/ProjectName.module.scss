@@ -1,21 +1,12 @@
 @use '@/assets/styles/variables';
 
 .project-name {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-  padding: 40px 0;
-
-  &__title {
-    font-family: variables.$montserrat;
-    font-weight: 600;
-    font-size: 56px;
-    line-height: 1.2;
-    text-align: center;
-  }
+  font-family: variables.$montserrat;
+  font-weight: 600;
+  font-size: 32px;
+  line-height: 1.2;
+  text-align: left;
+  margin-bottom: -60px;
 
   &__skeleton {
     border-radius: 32px;

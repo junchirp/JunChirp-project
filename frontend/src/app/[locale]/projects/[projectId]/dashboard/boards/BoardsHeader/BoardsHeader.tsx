@@ -10,7 +10,6 @@ import {
   useGetBoardsQuery,
 } from '@/api/boardsApi';
 import ListSkeleton from '@/shared/components/ListSkeleton/ListSkeleton';
-import DataContainer from '@/shared/components/DataContainer/DataContainer';
 import Dropdown from '@/shared/components/Dropdown/Dropdown';
 import { useRouter } from '@/i18n/routing';
 import BoardForm from './BoardForm/BoardForm';
@@ -35,9 +34,7 @@ export default function BoardsHeader(): ReactElement | null {
   }>();
   const { data: boards = [], isLoading: boardsLoading } =
     useGetBoardsQuery(projectId);
-  const currentBoard = !boardId
-    ? undefined
-    : boards.find((board) => board.id === boardId);
+  const currentBoard = boards.find((board) => board.id === boardId);
   const router = useRouter();
   const [isEditMode, setEditMode] = useState(false);
   const { data: project, isLoading: projectLoading } =
@@ -59,6 +56,8 @@ export default function BoardsHeader(): ReactElement | null {
     BoardInterface | undefined
   >();
   const boardForRender = currentBoard ?? selectedBoard;
+  const index = boards.findIndex((board) => board.id === currentBoard?.id);
+  const currentBoardIndex = index === -1 ? 1 : index + 1;
 
   useProjectSocket(projectId, selectedBoard?.id);
   useEffect(() => {
@@ -163,56 +162,52 @@ export default function BoardsHeader(): ReactElement | null {
 
   return (
     <>
-      <DataContainer
-        title={t('title')}
-        counterMaxSize={5}
-        counterSize={boards.length}
-      >
-        {isEditMode && boardForRender ? (
-          <div className={styles['boards-header__dropdown-header']}>
-            <BoardForm
-              currentBoard={boardForRender}
-              boards={boards}
-              onClose={() => setEditMode(false)}
+      {isEditMode ? (
+        <div className={styles['boards-header__dropdown-header']}>
+          <BoardForm
+            currentBoard={boardForRender}
+            boards={boards}
+            onClose={() => setEditMode(false)}
+          />
+        </div>
+      ) : (
+        <div className={styles['boards-header']}>
+          <div className={styles['boards-header__dropdown']}>
+            <Dropdown
+              options={boards}
+              getOptionLabel={(o) => o.boardName}
+              getOptionValue={(o) => o.id}
+              value={boardForRender.id}
+              onChange={(v) => {
+                if (typeof v !== 'string' || v === boardId) {
+                  return;
+                }
+                router.push(`/projects/${projectId}/dashboard/boards/${v}`);
+              }}
             />
           </div>
-        ) : (
-          <div className={styles['boards-header']}>
-            <div className={styles['boards-header__dropdown']}>
-              <Dropdown
-                options={boards}
-                getOptionLabel={(o) => o.boardName}
-                getOptionValue={(o) => o.id}
-                value={boardForRender.id}
-                onChange={(v) => {
-                  if (typeof v !== 'string' || v === boardId) {
-                    return;
-                  }
-                  router.push(`/projects/${projectId}/dashboard/boards/${v}`);
-                }}
+          {isOwner && project.status === 'active' && (
+            <>
+              <BoardMenu
+                boardsCount={boards.length}
+                currentBoard={boardForRender}
+                onDuplicate={handleCopyBoard}
+                onDelete={handleDeleteBoardRequest}
+                onRename={() => setEditMode(true)}
               />
-            </div>
-            {isOwner && (
-              <>
-                <BoardMenu
-                  boardsCount={boards.length}
-                  currentBoard={boardForRender}
-                  onDuplicate={handleCopyBoard}
-                  onDelete={handleDeleteBoardRequest}
-                  onRename={() => setEditMode(true)}
-                />
-                <Button
-                  color="green"
-                  icon={<Plus />}
-                  disabled={boards.length >= 5}
-                  onClick={handleAddBoard}
-                  loading={createBoardLoading}
-                />
-              </>
-            )}
-          </div>
-        )}
-      </DataContainer>
+              <span className={styles['boards-header__counter']}>
+                {currentBoardIndex} / {boards.length}
+              </span>
+              <Button
+                color="green"
+                icon={<Plus />}
+                onClick={handleAddBoard}
+                loading={createBoardLoading}
+              />
+            </>
+          )}
+        </div>
+      )}
       <DeleteBoardPopup
         isOpen={isOpenPopup}
         board={boardForRender}
