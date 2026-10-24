@@ -44,12 +44,6 @@ export class BoardsService {
           },
         });
 
-        if (existingBoards.length >= 5) {
-          throw new BadRequestException(
-            'You can only add up to 5 boards in the project',
-          );
-        }
-
         const baseName = DEFAULT_NAMES[createBoardDto.locale].board;
 
         const filteredBoards = existingBoards.filter((board) => {

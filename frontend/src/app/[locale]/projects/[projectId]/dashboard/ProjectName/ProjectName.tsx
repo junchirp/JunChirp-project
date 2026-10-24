@@ -14,14 +14,8 @@ export default function ProjectName({
   const t = useTranslations('dashboard');
 
   return projectName ? (
-    <div className={styles['project-name']}>
-      <h2 className={styles['project-name__title']}>{t('title')}</h2>
-      <h2 className={styles['project-name__title']}>{projectName}</h2>
-    </div>
+    <h2 className={styles['project-name']}>{projectName}</h2>
   ) : (
-    <div className={styles['project-name']}>
-      <div className={styles['project-name__skeleton']} />
-      <div className={styles['project-name__skeleton']} />
-    </div>
+    <div className={styles['project-name__skeleton']} />
   );
 }

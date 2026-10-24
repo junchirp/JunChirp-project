@@ -699,7 +699,6 @@
     "description": "Are you sure you want to cancel project creation? This action cannot be undone."
   },
   "dashboard": {
-    "title": "Project dashboard",
     "menu": {
       "info": "Overview",
       "docs": "Documentation",

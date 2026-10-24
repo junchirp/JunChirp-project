@@ -44,9 +44,6 @@ export class BoardsController {
   @Owner('body', 'projectId', 'project')
   @ApiOperation({ summary: 'Add a board' })
   @ApiCreatedResponse({ type: BoardResponseDto })
-  @ApiBadRequestResponse({
-    description: 'You can only add up to 5 boards in the project',
-  })
   @ApiConflictResponse({ description: 'Board with this name already exists' })
   @ApiForbiddenResponse({
     description:
