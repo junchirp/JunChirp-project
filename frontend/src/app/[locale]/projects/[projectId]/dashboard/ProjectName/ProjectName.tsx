@@ -2,7 +2,6 @@
 
 import { ReactElement } from 'react';
 import styles from './ProjectName.module.scss';
-import { useTranslations } from 'next-intl';
 
 interface ProjectNameProps {
   projectName: string | undefined;
