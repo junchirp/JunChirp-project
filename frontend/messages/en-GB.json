@@ -174,7 +174,7 @@
       "passwordIncludes": "The password must not contain your first or last name",
       "blackList": "Avoid overly simple or obvious passwords",
       "confirmPassword": "Passwords do not match",
-      "bordNameError": "A board with this name already exists"
+      "bordNameError": "A board with this name already exists in this project"
     },
     "userNameForm": {
       "firstName": "First name",
