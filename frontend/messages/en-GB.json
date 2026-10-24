@@ -173,7 +173,8 @@
       "emailTaken": "This email is already in use",
       "passwordIncludes": "The password must not contain your first or last name",
       "blackList": "Avoid overly simple or obvious passwords",
-      "confirmPassword": "Passwords do not match"
+      "confirmPassword": "Passwords do not match",
+      "bordNameError": "A board with this name already exists"
     },
     "userNameForm": {
       "firstName": "First name",
@@ -365,6 +366,11 @@
       "createError": "Failed to create task.",
       "createErrorDetails": "Please try again.",
       "createSuccess": "Task created successfully."
+    },
+    "boardForm": {
+      "error": "Failed to update board name.",
+      "errorDetails": "Please try again.",
+      "success": "Board name updated successfully."
     }
   },
   "page404": {
@@ -842,7 +848,6 @@
   "boards": {
     "title": "Board",
     "columnBtn": "Add column",
-    "bordNameError": "A board with this name already exists",
     "menu": {
       "rename": "Rename",
       "duplicate": "Duplicate",
