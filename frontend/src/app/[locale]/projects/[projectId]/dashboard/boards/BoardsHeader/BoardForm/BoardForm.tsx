@@ -3,17 +3,23 @@
 import React, { ReactElement, useEffect } from 'react';
 import styles from './BoardForm.module.scss';
 import { BoardInterface } from '@/shared/interfaces/board.interface';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import Input from '@/shared/components/Input/Input';
-import { normalizeInputValue } from '@/shared/utils/normalizeInputValue';
 import { useUpdateBoardMutation } from '@/api/boardsApi';
 import { useTranslations } from 'next-intl';
+import {
+  boardSchema,
+  boardSchemaStatic,
+} from '@/shared/forms/schemas/boardSchena';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import Button from '@/shared/components/Button/Button';
+import X from '@/assets/icons/x.svg';
+import Check from '@/assets/icons/check.svg';
+import { useToast } from '@/hooks/useToast';
+import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 
-interface FormData {
-  boardName: string;
-  projectId: string;
-  id: string;
-}
+type FormData = z.infer<typeof boardSchemaStatic>;
 
 interface BoardFormProps {
   currentBoard: BoardInterface;
@@ -23,9 +29,15 @@ interface BoardFormProps {
 
 export default function BoardForm(props: BoardFormProps): ReactElement {
   const { currentBoard, boards, onClose } = props;
-  const t = useTranslations('boards');
-  const { handleSubmit, control, setFocus, setError } = useForm<FormData>({
-    mode: 'onBlur',
+  const t = useTranslations('forms');
+  const {
+    register,
+    handleSubmit,
+    setFocus,
+    formState: { errors },
+  } = useForm<FormData>({
+    resolver: zodResolver(boardSchema(t, boards, currentBoard.id)),
+    mode: 'onChange',
     defaultValues: {
       boardName: currentBoard.boardName,
       projectId: currentBoard.projectId,
@@ -38,59 +50,52 @@ export default function BoardForm(props: BoardFormProps): ReactElement {
   }, [setFocus]);
 
   const [updateBoard, { isLoading }] = useUpdateBoardMutation();
+  const { showToast, isActive } = useToast();
 
   const onSubmit = async (data: FormData): Promise<void> => {
+    if (isActive(ToastKeysEnum.BOARD)) {
+      return;
+    }
+
     try {
       await updateBoard({
         id: data.id,
         boardName: data.boardName.trim(),
       }).unwrap();
+
+      showToast({
+        severity: 'success',
+        summary: t('boardForm.success'),
+        life: 3000,
+        actionKey: ToastKeysEnum.BOARD,
+      });
       onClose();
     } catch {
-      setError('boardName', {
-        type: 'server',
-        message: t('bordNameError'),
+      showToast({
+        severity: 'error',
+        summary: t('boardForm.error'),
+        detail: t('boardForm.errorDetails'),
+        life: 3000,
+        actionKey: ToastKeysEnum.BOARD,
       });
-
-      setFocus('boardName');
     }
   };
 
   return (
     <form className={styles['board-form']} onSubmit={handleSubmit(onSubmit)}>
       <fieldset className={styles['board-form__fieldset']} disabled={isLoading}>
-        <Controller
-          name="boardName"
-          control={control}
-          rules={{
-            validate: (value) => {
-              const normalizedValue = value.trim();
-              const isDuplicate = boards.some(
-                (item) =>
-                  item.id !== currentBoard.id &&
-                  item.boardName.trim() === normalizedValue,
-              );
-              return isDuplicate ? t('bordNameError') : true;
-            },
-          }}
-          render={({ field, fieldState }) => (
-            <Input
-              {...field}
-              maxLength={50}
-              withError={fieldState.invalid}
-              errorMessage={fieldState.error?.message}
-              onChange={(e) => {
-                const normalized = normalizeInputValue(e.target.value);
-                field.onChange(normalized);
-              }}
-              onBlur={async () => {
-                field.onBlur();
-                void handleSubmit(onSubmit)();
-              }}
-            />
-          )}
+        <Input
+          {...register('boardName')}
+          withError
+          required
+          normalize
+          errorMessage={errors.boardName?.message}
         />
       </fieldset>
+      <div className={styles['board-form__actions']}>
+        <Button type="submit" color="green" icon={<Check />} />
+        <Button color="red" icon={<X />} onClick={onClose} />
+      </div>
     </form>
   );
 }
