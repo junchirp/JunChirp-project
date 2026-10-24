@@ -7,7 +7,10 @@ import { useForm } from 'react-hook-form';
 import Input from '@/shared/components/Input/Input';
 import { useUpdateBoardMutation } from '@/api/boardsApi';
 import { useTranslations } from 'next-intl';
-import { boardSchema, boardSchemaStatic, } from '@/shared/forms/schemas/boardSchena';
+import {
+  boardSchema,
+  boardSchemaStatic,
+} from '@/shared/forms/schemas/boardSchena';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Button from '@/shared/components/Button/Button';
