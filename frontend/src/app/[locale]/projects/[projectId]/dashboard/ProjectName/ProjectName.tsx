@@ -11,8 +11,6 @@ interface ProjectNameProps {
 export default function ProjectName({
   projectName,
 }: ProjectNameProps): ReactElement {
-  const t = useTranslations('dashboard');
-
   return projectName ? (
     <h2 className={styles['project-name']}>{projectName}</h2>
   ) : (
