@@ -5,7 +5,7 @@ import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 
 @Controller('developers')
 export class DevelopersController {
-  constructor(private readonly developersService: DevelopersService) {}
+  public constructor(private readonly developersService: DevelopersService) {}
 
   @ApiOperation({ summary: 'Get developers list' })
   @ApiOkResponse({ type: [DeveloperResponseDto] })
