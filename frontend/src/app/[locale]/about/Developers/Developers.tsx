@@ -6,12 +6,15 @@ import { Link } from '@/i18n/routing';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useGetDevelopersQuery } from '@/api/developersApi';
+import { useAppSelector } from '@/hooks/reduxHooks';
+import authSelector from '@/redux/auth/authSelector';
 
 const VISIBLE = 3;
 const CLONES = (VISIBLE + 1) / 2;
 const slideWidth = 308;
 
 export default function Developers(): ReactElement {
+  const user = useAppSelector(authSelector.selectUser);
   const { data: developers = [] } = useGetDevelopersQuery();
   const [index, setIndex] = useState(CLONES);
   const [transition, setTransition] = useState(true);
@@ -155,7 +158,11 @@ export default function Developers(): ReactElement {
                     <div className={styles.developers__name}>
                       <Link
                         className={styles['developers__platform-link']}
-                        href={`/users/${item.userId}`}
+                        href={
+                          user
+                            ? `/users/${item.userId}`
+                            : `/auth/login?next=${encodeURIComponent(`/users/${item.userId}`)}`
+                        }
                       >
                         {tDev(item.developerName)}
                       </Link>
