@@ -9,7 +9,7 @@ datasource db {
 
 model User {
   id                    String                 @id @default(dbgenerated("gen_random_uuid()"))
-  googleId              String?                @map("google_id")
+  googleId              String?                @unique @map("google_id")
   discordId             String?                @map("discord_id")
   email                 String                 @unique
   avatarUrl             String                 @map("avatar_url")
@@ -35,6 +35,7 @@ model User {
   participationInvites  ParticipationInvite[]
   participationRequests ParticipationRequest[]
   desiredRoles          ProjectRoleType[]
+  developer             Developer?
 
   @@index([activeProjectsCount])
   @@map("users")
@@ -375,6 +376,19 @@ model HardSkill {
 
   @@index([hardSkillName])
   @@map("hard_skills")
+}
+
+model Developer {
+  id            String @id @default(dbgenerated("gen_random_uuid()"))
+  developerName String @map("developer_name")
+  description   String
+  photoUrl      String @map("photo_url")
+  linkedinUrl   String @map("linkedin_url")
+  role          String
+  userId        String @unique @map("user_id")
+  user          User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("developers")
 }
 
 enum ProjectStatus {
