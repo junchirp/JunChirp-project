@@ -1,6 +1,5 @@
 import dotenv from 'dotenv';
 import type { PrismaConfig } from 'prisma';
-import { env } from 'prisma/config';
 
 if (process.env.NODE_ENV !== 'production') {
   dotenv.config({
@@ -16,6 +15,6 @@ export default {
     seed: 'tsx prisma/seed.ts',
   },
   datasource: {
-    url: env('DATABASE_URL'),
+    url: process.env.DATABASE_URL ?? '',
   },
 } satisfies PrismaConfig;

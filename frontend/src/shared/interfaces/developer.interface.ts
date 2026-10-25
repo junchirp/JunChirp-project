@@ -1,8 +1,9 @@
 export interface DeveloperInterface {
+  id: string;
   developerName: string;
   linkedinUrl: string;
-  platformUrl: string;
   role: string;
   description: string;
   photoUrl: string;
+  userId: string;
 }

@@ -1,25 +1,29 @@
 'use client';
 
-import { ReactElement, useEffect, useState } from 'react';
+import { ReactElement, useEffect, useRef, useState } from 'react';
 import styles from './Developers.module.scss';
-import { developers } from '@/shared/constants/developers';
 import { Link } from '@/i18n/routing';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
+import { useGetDevelopersQuery } from '@/api/developersApi';
 
 const VISIBLE = 3;
 const CLONES = (VISIBLE + 1) / 2;
-const items = [
-  ...developers.slice(-CLONES),
-  ...developers,
-  ...developers.slice(0, CLONES),
-];
 const slideWidth = 308;
 
 export default function Developers(): ReactElement {
+  const { data: developers = [] } = useGetDevelopersQuery();
   const [index, setIndex] = useState(CLONES);
   const [transition, setTransition] = useState(true);
   const tDev = useTranslations('about.developers');
+  const [isAutoplayEnabled, setIsAutoplayEnabled] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
+  const developersRef = useRef<HTMLDivElement>(null);
+  const items = [
+    ...developers.slice(-CLONES),
+    ...developers,
+    ...developers.slice(0, CLONES),
+  ];
 
   const handleTransitionEnd = (): void => {
     if (index >= developers.length + CLONES) {
@@ -32,8 +36,15 @@ export default function Developers(): ReactElement {
     }
   };
 
-  const next = (): void => setIndex((i) => i + 1);
-  const prev = (): void => setIndex((i) => i - 1);
+  const next = (): void => {
+    setIsAutoplayEnabled(false);
+    setIndex((i) => i + 1);
+  };
+
+  const prev = (): void => {
+    setIsAutoplayEnabled(false);
+    setIndex((i) => i - 1);
+  };
 
   useEffect(() => {
     if (!transition) {
@@ -46,18 +57,43 @@ export default function Developers(): ReactElement {
   }, [transition]);
 
   useEffect(() => {
-    const t = setInterval(() => {
-      next();
+    if (!isAutoplayEnabled || !isVisible) {
+      return;
+    }
+
+    const timer = setInterval(() => {
+      setIndex((i) => i + 1);
     }, 10000);
-    return (): void => clearInterval(t);
-  }, [index]);
+
+    return (): void => clearInterval(timer);
+  }, [isAutoplayEnabled, isVisible]);
+
+  useEffect(() => {
+    const element = developersRef.current;
+
+    if (!element) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setIsVisible(true);
+      } else {
+        setIsVisible(false);
+        setIsAutoplayEnabled(true);
+      }
+    });
+    observer.observe(element);
+
+    return (): void => observer.disconnect();
+  }, []);
 
   const itemTransitionStyle = transition
     ? { transition: 'all 0.5s ease' }
     : { transition: 'none' };
 
   return (
-    <div className={styles.developers}>
+    <div className={styles.developers} ref={developersRef}>
       <h2 className={styles.developers__title}>
         {tDev('title')}
         <span className={styles['developers__green-text']}>[JunChirp]</span>
@@ -119,7 +155,7 @@ export default function Developers(): ReactElement {
                     <div className={styles.developers__name}>
                       <Link
                         className={styles['developers__platform-link']}
-                        href={item.platformUrl}
+                        href={`/users/${item.userId}`}
                       >
                         {tDev(item.developerName)}
                       </Link>

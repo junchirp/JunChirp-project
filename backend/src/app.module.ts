@@ -30,6 +30,7 @@ import { ValidationPipe } from './common/pipes/validation/validation.pipe';
 import { CookieConfigModule } from './cookie-config/cookie-config.module';
 import { PassportConfigModule } from './passport-config/passport-config.module';
 import { HttpThrottlerGuard } from './common/guards/http-throttler/http-throttler.guard';
+import { DevelopersModule } from './developers/developers.module';
 
 @Module({
   imports: [
@@ -75,6 +76,7 @@ import { HttpThrottlerGuard } from './common/guards/http-throttler/http-throttle
     }),
     CookieConfigModule,
     PassportConfigModule,
+    DevelopersModule,
   ],
   providers: [
     CronTasksService,
