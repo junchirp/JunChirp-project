@@ -28,7 +28,8 @@
     "confirm": "Confirm",
     "edit": "Edit",
     "add": "Add",
-    "leave": "Leave"
+    "leave": "Leave",
+    "close": "Close"
   },
   "discord": {
     "description": "Connect your Discord to continue. This is required to join projects and access project chats.",
@@ -174,7 +175,8 @@
       "passwordIncludes": "The password must not contain your first or last name",
       "blackList": "Avoid overly simple or obvious passwords",
       "confirmPassword": "Passwords do not match",
-      "bordNameError": "A board with this name already exists in this project"
+      "bordNameError": "A board with this name already exists in this project",
+      "columnNameError": "A column with this name already exists in this board"
     },
     "userNameForm": {
       "firstName": "First name",
@@ -364,8 +366,10 @@
         "members": "Unassigned"
       },
       "createError": "Failed to create task.",
-      "createErrorDetails": "Please try again.",
-      "createSuccess": "Task created successfully."
+      "errorDetails": "Please try again.",
+      "createSuccess": "Task created successfully.",
+      "updateSuccess": "Changes saved successfully.",
+      "updateError": "Failed to save changes."
     },
     "boardForm": {
       "error": "Failed to update board name.",
@@ -892,5 +896,24 @@
     "medium": "Medium",
     "high": "High",
     "critical": "Critical"
+  },
+  "task": {
+    "taskName": "Task name",
+    "description": "Description",
+    "status": "Status",
+    "assignee": "Assignee",
+    "priority": "Priority",
+    "deadline": "Deadline",
+    "menu": {
+      "edit": "Edit",
+      "delete": "Delete"
+    }
+  },
+  "deleteTaskPopup": {
+    "title": "Delete task",
+    "description": "Are you sure you want to delete the task <task>{taskName}</task>? This action cannot be undone.",
+    "success": "Task deleted successfully.",
+    "error": "Failed to delete task.",
+    "errorDetails": "Please try again."
   }
 }

@@ -1,0 +1,48 @@
+.view-task-popup {
+  &__body {
+    font-weight: 400;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  &__label {
+    font-weight: 600;
+    font-size: 16px;
+  }
+
+  &__text {
+    font-size: 20px;
+    line-height: 1.2;
+  }
+
+  &__assignee {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    font-size: 14px;
+  }
+
+  &__assignee-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  &__priority {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  &__deadline {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+}

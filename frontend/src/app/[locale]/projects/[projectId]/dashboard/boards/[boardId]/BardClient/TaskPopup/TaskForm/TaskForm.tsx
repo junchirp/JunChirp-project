@@ -1,6 +1,6 @@
 'use client';
 
-import React, { ReactElement, useEffect } from 'react';
+import { ReactElement, useEffect } from 'react';
 import styles from './TaskForm.module.scss';
 import { UserBaseInterface } from '@/shared/interfaces/user-base.interface';
 import { TaskStatusWithCountInterface } from '@/shared/interfaces/task-status-with-count.interface';
@@ -16,75 +16,81 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import Input from '@/shared/components/Input/Input';
 import Dropdown from '@/shared/components/Dropdown/Dropdown';
 import { taskPriorities } from '@/shared/constants/task-priorities';
-import DatePicker from '../DatePicker/DatePicker';
+import DatePicker from '@/shared/components/DatePicker/DatePicker';
 import Button from '@/shared/components/Button/Button';
 import Textarea from '@/shared/components/Textarea/Textarea';
 import { useShortLocale } from '@/hooks/useShortLocale';
-import { useAddTaskMutation } from '@/api/tasksApi';
+import { useAddTaskMutation, useUpdateTaskMutation } from '@/api/tasksApi';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 import { useToast } from '@/hooks/useToast';
 
-interface TaskFormState {
+type TaskFormProps = {
   members: UserBaseInterface[];
-  initialColumnId: string;
   columns: TaskStatusWithCountInterface[];
-  initialValues?: TaskInterface;
   onClose: () => void;
-}
+} & (
+  | {
+      mode: 'create';
+      initialColumnId: string;
+      initialValues?: never;
+    }
+  | {
+      mode: 'edit';
+      initialValues: TaskInterface;
+      initialColumnId?: never;
+    }
+);
 
 type FormData = z.infer<typeof taskSchemaStatic>;
 
-export default function TaskForm(props: TaskFormState): ReactElement {
-  const { members, initialColumnId, columns, initialValues, onClose } = props;
+export default function TaskForm(props: TaskFormProps): ReactElement {
+  const { members, initialColumnId, columns, initialValues, onClose, mode } =
+    props;
   const assignees = [{ id: null, firstName: '', lastName: '' }, ...members];
   const locale = useShortLocale();
   const tForms = useTranslations('forms');
   const tButtons = useTranslations('buttons');
   const tPriority = useTranslations('taskPriority');
+  const defaultValues: FormData =
+    mode === 'edit'
+      ? {
+          taskName: initialValues.taskName,
+          description: initialValues.description ?? null,
+          taskStatusId: initialValues.taskStatus.id,
+          priority: initialValues.priority,
+          deadline: initialValues.deadline
+            ? new Date(initialValues.deadline)
+            : null,
+          assigneeId: initialValues.assignee?.id ?? null,
+        }
+      : {
+          taskName: '',
+          description: null,
+          taskStatusId: initialColumnId,
+          priority: 'medium',
+          deadline: null,
+          assigneeId: null,
+        };
   const {
     register,
     handleSubmit,
+    setFocus,
     control,
-    reset,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(taskSchema(tForms)),
     mode: 'onChange',
-    defaultValues: {
-      taskName: '',
-      description: null,
-      taskStatusId: initialColumnId,
-      priority: 'medium',
-      deadline: null,
-      assigneeId: null,
-    },
+    defaultValues,
   });
-  const [createTask, { isLoading }] = useAddTaskMutation();
+  const [createTask, { isLoading: createTaskLoading }] = useAddTaskMutation();
+  const [updateTask, { isLoading: updateTaskLoading }] =
+    useUpdateTaskMutation();
+  const isLoading = createTaskLoading || updateTaskLoading;
+  const { showToast, isActive } = useToast();
 
   useEffect(() => {
-    if (initialValues) {
-      reset({
-        taskName: initialValues.taskName,
-        description: initialValues.description,
-        taskStatusId: initialValues.taskStatus.id,
-        priority: initialValues.priority,
-        deadline: initialValues.deadline
-          ? new Date(initialValues.deadline)
-          : null,
-        assigneeId: initialValues.assignee.id,
-      });
-    } else {
-      reset({
-        taskName: '',
-        description: null,
-        taskStatusId: initialColumnId,
-        priority: 'medium',
-        deadline: null,
-        assigneeId: null,
-      });
-    }
-  }, [initialValues, initialColumnId, reset]);
-  const { showToast, isActive } = useToast();
+    setFocus('taskName');
+  }, [setFocus]);
 
   const onSubmit = async (data: FormData): Promise<void> => {
     if (isActive(ToastKeysEnum.TASK)) {
@@ -97,8 +103,26 @@ export default function TaskForm(props: TaskFormState): ReactElement {
       description: data.description?.trim() ? data.description.trim() : null,
     };
 
-    if (initialValues) {
-      // TODO: create updateTask method
+    if (mode === 'edit') {
+      try {
+        await updateTask({ id: initialValues.id, data }).unwrap();
+        onClose();
+
+        showToast({
+          severity: 'success',
+          summary: tForms('taskForm.updateSuccess'),
+          life: 3000,
+          actionKey: ToastKeysEnum.TASK,
+        });
+      } catch {
+        showToast({
+          severity: 'error',
+          summary: tForms('taskForm.updateError'),
+          detail: tForms('taskForm.errorDetails'),
+          life: 3000,
+          actionKey: ToastKeysEnum.TASK,
+        });
+      }
     } else {
       try {
         await createTask(trimmedData).unwrap();
@@ -114,7 +138,7 @@ export default function TaskForm(props: TaskFormState): ReactElement {
         showToast({
           severity: 'error',
           summary: tForms('taskForm.createError'),
-          detail: tForms('taskForm.createErrorDetails'),
+          detail: tForms('taskForm.errorDetails'),
           life: 3000,
           actionKey: ToastKeysEnum.TASK,
         });

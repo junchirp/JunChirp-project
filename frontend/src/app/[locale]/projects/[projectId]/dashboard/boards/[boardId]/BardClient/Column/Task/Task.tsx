@@ -5,20 +5,27 @@ import styles from './Task.module.scss';
 import { TaskInterface } from '@/shared/interfaces/task.interface';
 import { TASK_PRIORITY_CONFIG } from '@/shared/constants/task-priority-config';
 import Flag from '@/assets/icons/flag.svg';
-import Button from '@/shared/components/Button/Button';
-import More from '@/assets/icons/more-horizontal.svg';
 import { useFormatter, useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { getAssigneeColor } from '@/shared/utils/getAssigneeColor';
 import Tooltip from '@/shared/components/Tooltip/Tooltip';
 import { Draggable } from '@hello-pangea/dnd';
+import { ProjectInterface } from '@/shared/interfaces/project.interface';
+import { AuthInterface } from '@/shared/interfaces/auth.interface';
+import TaskMenu from './TaskMenu/TaskMenu';
 
 interface TaskProps {
   task: TaskInterface;
   index: number;
+  project: ProjectInterface;
+  user: AuthInterface;
+  editTask: (task: TaskInterface) => void;
+  viewTask: (task: TaskInterface) => void;
+  deleteTask: (task: TaskInterface) => void;
 }
 
-export default function Task({ task, index }: TaskProps): ReactElement {
+export default function Task(props: TaskProps): ReactElement {
+  const { task, index, project, user, editTask, viewTask, deleteTask } = props;
   const priority = TASK_PRIORITY_CONFIG[task.priority];
   const t = useTranslations('taskPriority');
   const format = useFormatter();
@@ -27,9 +34,24 @@ export default function Task({ task, index }: TaskProps): ReactElement {
     month: '2-digit',
     year: 'numeric',
   });
+  const isEditPermission =
+    project.status === 'active' &&
+    (task.authorId === user.id || project.ownerId === user.id);
+
+  const handleTaskClick = (): void => {
+    if (isEditPermission) {
+      editTask(task);
+    } else {
+      viewTask(task);
+    }
+  };
 
   return (
-    <Draggable draggableId={task.id} index={index}>
+    <Draggable
+      draggableId={task.id}
+      index={index}
+      isDragDisabled={project.status === 'done'}
+    >
       {(provided, snapshot) => (
         <div
           ref={provided.innerRef}
@@ -39,6 +61,7 @@ export default function Task({ task, index }: TaskProps): ReactElement {
             snapshot.isDragging ? styles['task--dragging'] : ''
           }`}
           data-dragging={snapshot.isDragging}
+          onClick={handleTaskClick}
         >
           <div className={styles['task__header-wrapper']}>
             <div className={styles.task__header}>
@@ -52,12 +75,9 @@ export default function Task({ task, index }: TaskProps): ReactElement {
                   {t(task.priority)}
                 </p>
               </div>
-              <Button
-                size="ssm"
-                color="green"
-                variant="tertiary"
-                icon={<More />}
-              />
+              {isEditPermission && (
+                <TaskMenu task={task} onDelete={deleteTask} onEdit={editTask} />
+              )}
             </div>
             <h6 className={styles.task__title}>{task.taskName}</h6>
           </div>

@@ -1,8 +1,17 @@
 @use '@/assets/styles/variables';
 
 .column-form {
-  &__fieldset {
-    width: 95px;
+  padding: 8px;
+  background-color: variables.$gray-1;
+  border-radius: 12px 12px 0 0;
+
+  &:has(.column-form__error) {
+    padding-bottom: 0;
+  }
+
+  &__input-wrapper {
+    display: flex;
+    flex-direction: column;
   }
 
   &__input {
@@ -32,5 +41,15 @@
         box-shadow: 0 0 0 4px variables.$red-3;
       }
     }
+  }
+
+  &__error {
+    //height: 12px;
+    margin: 4px 0;
+    font-size: 12px;
+    color: variables.$red-2;
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
 }

@@ -51,7 +51,11 @@ export class TaskResponseDto {
   public readonly assignee!: UserBaseResponseDto | null;
 
   @ApiProperty({
-    type: () => TaskStatusResponseDto,
+    example: 'a4d4eb0c-1a10-455e-b9e9-1af147a77762',
+    description: 'Author ID',
   })
+  public readonly authorId!: string;
+
+  @ApiProperty({ type: () => TaskStatusResponseDto })
   public readonly taskStatus!: TaskStatusResponseDto;
 }

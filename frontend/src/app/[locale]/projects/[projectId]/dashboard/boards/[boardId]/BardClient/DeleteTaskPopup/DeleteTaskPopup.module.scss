@@ -1,0 +1,7 @@
+@use '@/assets/styles/variables';
+
+.delete-task-popup {
+  &__description {
+    color: variables.$green-2;
+  }
+}

@@ -22,11 +22,14 @@ import { useToast } from '@/hooks/useToast';
 import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 import { useShortLocale } from '@/hooks/useShortLocale';
 import { useTranslations } from 'next-intl';
-import CreateTaskPopup from './CreateTaskPopup/CreateTaskPopup';
+import TaskPopup from './TaskPopup/TaskPopup';
 import { useMoveTaskMutation } from '@/api/tasksApi';
 import { TaskInterface } from '@/shared/interfaces/task.interface';
 import { TaskStatusInterface } from '@/shared/interfaces/task-status.interface';
 import { useBoardSocket } from '@/hooks/useBoardSocket';
+import { TaskPopupModeType } from '@/shared/types/task-popup-mode.type';
+import ViewTaskPopup from './ViewTaskPopap/ViewTaskPopup';
+import DeleteTaskPopup from './DeleteTaskPopup/DeleteTaskPopup';
 
 export default function BoardClient(): ReactElement {
   const { projectId, boardId } = useParams<{
@@ -58,6 +61,10 @@ export default function BoardClient(): ReactElement {
   const [tasksByColumn, setTasksByColumn] = useState<
     Record<string, TaskInterface[]>
   >({});
+  const [activeTaskPopup, setActiveTaskPopup] = useState<{
+    mode: TaskPopupModeType;
+    task: TaskInterface;
+  } | null>(null);
   const t = useTranslations('boards');
 
   useBoardSocket(boardId);
@@ -73,6 +80,17 @@ export default function BoardClient(): ReactElement {
       setColumns(board.columns);
     }
   }, [board]);
+
+  const openTaskPopup = (
+    mode: TaskPopupModeType,
+    task: TaskInterface,
+  ): void => {
+    setActiveTaskPopup({ mode, task });
+  };
+
+  const closeTaskPopup = (): void => {
+    setActiveTaskPopup(null);
+  };
 
   const syncColumnTasks = useCallback(
     (columnId: string, loadedTasks: TaskInterface[]) => {
@@ -326,7 +344,7 @@ export default function BoardClient(): ReactElement {
     }
   };
 
-  return isLoading ? (
+  return isLoading || !project ? (
     <ListSkeleton itemHeight={44} noPadding columns={1} />
   ) : (
     <>
@@ -353,14 +371,19 @@ export default function BoardClient(): ReactElement {
                       index={index}
                       isOwner={isOwner}
                       addTask={() => openCreateTaskPopup(column.id)}
+                      editTask={(task) => openTaskPopup('edit', task)}
+                      viewTask={(task) => openTaskPopup('view', task)}
+                      deleteTask={(task) => openTaskPopup('delete', task)}
                       onTasksLoaded={syncColumnTasks}
+                      project={project}
+                      user={user}
                     />
                   ))}
                   {provided.placeholder}
                 </div>
               )}
             </Droppable>
-            {isOwner && (
+            {isOwner && project.status === 'active' && (
               <Button
                 color="green"
                 variant="secondary-frame"
@@ -376,13 +399,36 @@ export default function BoardClient(): ReactElement {
         </div>
       </DragDropContext>
       {createTaskColumnId && (
-        <CreateTaskPopup
+        <TaskPopup
+          mode="create"
           isOpen={!!createTaskColumnId}
           onClose={closeCreateTaskPopup}
           members={members}
           columns={columns}
           initialColumnId={createTaskColumnId}
         />
+      )}
+      {activeTaskPopup && (
+        <>
+          <TaskPopup
+            mode="edit"
+            isOpen={activeTaskPopup.mode === 'edit'}
+            onClose={closeTaskPopup}
+            members={members}
+            columns={columns}
+            initialValues={activeTaskPopup.task}
+          />
+          <ViewTaskPopup
+            task={activeTaskPopup.task}
+            isOpen={activeTaskPopup.mode === 'view'}
+            onClose={closeTaskPopup}
+          />
+          <DeleteTaskPopup
+            task={activeTaskPopup.task}
+            isOpen={activeTaskPopup.mode === 'delete'}
+            onClose={closeTaskPopup}
+          />
+        </>
       )}
     </>
   );

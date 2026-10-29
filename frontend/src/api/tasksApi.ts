@@ -44,6 +44,25 @@ export const tasksApi = mainApi.injectEndpoints({
         body: data,
       }),
     }),
+    updateTask: builder.mutation<
+      TaskInterface,
+      {
+        id: string;
+        data: CreateTaskInterface;
+      }
+    >({
+      query: ({ id, data }) => ({
+        url: `tasks/${id}`,
+        method: 'PUT',
+        body: data,
+      }),
+    }),
+    deleteTask: builder.mutation<void, string>({
+      query: (id) => ({
+        url: `tasks/${id}`,
+        method: 'DELETE',
+      }),
+    }),
   }),
 });
 
@@ -51,4 +70,6 @@ export const {
   useGetTasksInfiniteQuery,
   useAddTaskMutation,
   useMoveTaskMutation,
+  useUpdateTaskMutation,
+  useDeleteTaskMutation,
 } = tasksApi;

@@ -17,7 +17,6 @@ import {
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiHeader,
-  ApiMethodNotAllowedResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -34,9 +33,6 @@ import { UUIDParam } from '../common/decorators/UUID-param.decorator';
   description: `Access denied: you are not the project owner /
      Access denied: email not confirmed / Access denied: discord not confirmed /
      Access denied: user is not a member of the Discord guild / Invalid CSRF token`,
-})
-@ApiMethodNotAllowedResponse({
-  description: 'Cannot update a completed project',
 })
 @Controller('documents')
 export class DocumentsController {

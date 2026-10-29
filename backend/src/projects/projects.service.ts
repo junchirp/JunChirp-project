@@ -3,7 +3,6 @@ import {
   ConflictException,
   ForbiddenException,
   Injectable,
-  MethodNotAllowedException,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateProjectDto } from './dto/create-project.dto';
@@ -359,7 +358,7 @@ export class ProjectsService {
       });
 
       if (currentProject.status === ProjectStatus.done) {
-        throw new MethodNotAllowedException(
+        throw new ForbiddenException(
           'Cannot update a completed project',
         );
       }
@@ -586,7 +585,7 @@ export class ProjectsService {
     }
 
     if (project.status === ProjectStatus.done) {
-      throw new MethodNotAllowedException('Cannot delete a completed project');
+      throw new ForbiddenException('Cannot delete a completed project');
     }
 
     try {
@@ -1037,7 +1036,7 @@ export class ProjectsService {
     }
 
     if (project.status === ProjectStatus.done) {
-      throw new MethodNotAllowedException('Cannot modify a completed project');
+      throw new ForbiddenException('Cannot modify a completed project');
     }
   }
 }

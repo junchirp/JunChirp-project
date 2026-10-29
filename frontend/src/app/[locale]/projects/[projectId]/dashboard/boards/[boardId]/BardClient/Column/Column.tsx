@@ -16,6 +16,8 @@ import DeleteColumnPopup from './DeleteColumnPopup/DeleteColumnPopup';
 import { useGetTasksInfiniteQuery } from '@/api/tasksApi';
 import Task from './Task/Task';
 import { TaskInterface } from '@/shared/interfaces/task.interface';
+import { ProjectInterface } from '@/shared/interfaces/project.interface';
+import { AuthInterface } from '@/shared/interfaces/auth.interface';
 
 interface ColumnProps {
   currentColumn: TaskStatusWithCountInterface;
@@ -24,7 +26,12 @@ interface ColumnProps {
   columns: TaskStatusWithCountInterface[];
   tasks: TaskInterface[];
   addTask: () => void;
+  editTask: (task: TaskInterface) => void;
+  viewTask: (task: TaskInterface) => void;
+  deleteTask: (task: TaskInterface) => void;
   onTasksLoaded: (columnId: string, tasks: TaskInterface[]) => void;
+  project: ProjectInterface;
+  user: AuthInterface;
 }
 
 export default function Column(props: ColumnProps): ReactElement {
@@ -33,9 +40,14 @@ export default function Column(props: ColumnProps): ReactElement {
     columns,
     tasks,
     addTask,
+    editTask,
+    viewTask,
+    deleteTask,
     isOwner,
     index,
     onTasksLoaded,
+    project,
+    user,
   } = props;
   const colorScheme = COLUMN_COLOR_SCHEMES[currentColumn.color];
   const [isEditMode, setEditMode] = useState(false);
@@ -127,7 +139,7 @@ export default function Column(props: ColumnProps): ReactElement {
       <Draggable
         draggableId={currentColumn.id}
         index={index}
-        isDragDisabled={!isOwner}
+        isDragDisabled={!isOwner || project.status === 'done' || isEditMode}
       >
         {(columnProvided, columnSnapshot) => (
           <div
@@ -148,15 +160,15 @@ export default function Column(props: ColumnProps): ReactElement {
                   className={styles.column__drop}
                   data-drag-over={snapshot.isDraggingOver}
                 >
-                  <div className={styles.column__header}>
-                    <div className={styles['column__title-wrapper']}>
-                      {isEditMode ? (
-                        <ColumnForm
-                          currentColumn={currentColumn}
-                          columns={columns}
-                          onClose={() => setEditMode(false)}
-                        />
-                      ) : (
+                  {isEditMode ? (
+                    <ColumnForm
+                      currentColumn={currentColumn}
+                      columns={columns}
+                      onClose={() => setEditMode(false)}
+                    />
+                  ) : (
+                    <div className={styles.column__header}>
+                      <div className={styles['column__title-wrapper']}>
                         <p
                           className={styles.column__title}
                           style={{
@@ -166,50 +178,63 @@ export default function Column(props: ColumnProps): ReactElement {
                         >
                           {currentColumn.statusName}
                         </p>
-                      )}
-                      <p className={styles['column__tasks-number']}>
-                        {currentColumn.tasksCount}
-                      </p>
-                    </div>
-                    {isOwner && (
-                      <div className={styles.column__actions}>
-                        <div
-                          className={`${styles.column__button} ${styles['column__button--drag']}`}
-                          {...columnProvided.dragHandleProps}
-                          aria-label="Перемістити колонку"
-                        >
-                          <Image
-                            width={16}
-                            height={16}
-                            src="/images/plus-arrows.svg"
-                            alt="arrows"
-                          />
-                        </div>
-                        <ColumnMenu
-                          currentColumn={currentColumn}
-                          columnsCount={columns.length}
-                          onDelete={handleDeleteColumnRequest}
-                          onRename={() => setEditMode(true)}
-                        />
-                        <button
-                          type="button"
-                          className={styles.column__button}
-                          onClick={addTask}
-                          aria-label="Додати задачу"
-                        >
-                          <Image
-                            width={16}
-                            height={16}
-                            src="/images/plus.svg"
-                            alt="plus"
-                          />
-                        </button>
+                        <p className={styles['column__tasks-number']}>
+                          {currentColumn.tasksCount}
+                        </p>
                       </div>
-                    )}
-                  </div>
+                      {project.status === 'active' && (
+                        <div className={styles.column__actions}>
+                          {isOwner && (
+                            <>
+                              <div
+                                className={`${styles.column__button} ${styles['column__button--drag']}`}
+                                {...columnProvided.dragHandleProps}
+                                aria-label="Перемістити колонку"
+                              >
+                                <Image
+                                  width={16}
+                                  height={16}
+                                  src="/images/plus-arrows.svg"
+                                  alt="arrows"
+                                />
+                              </div>
+                              <ColumnMenu
+                                currentColumn={currentColumn}
+                                columnsCount={columns.length}
+                                onDelete={handleDeleteColumnRequest}
+                                onRename={() => setEditMode(true)}
+                              />
+                            </>
+                          )}
+                          <button
+                            type="button"
+                            className={styles.column__button}
+                            onClick={addTask}
+                            aria-label="Додати задачу"
+                          >
+                            <Image
+                              width={16}
+                              height={16}
+                              src="/images/plus.svg"
+                              alt="plus"
+                            />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
                   <div className={styles.column__tasks}>
                     {tasks.map((task, taskIndex) => (
-                      <Task key={task.id} task={task} index={taskIndex} />
+                      <Task
+                        key={task.id}
+                        task={task}
+                        index={taskIndex}
+                        project={project}
+                        user={user}
+                        editTask={editTask}
+                        viewTask={viewTask}
+                        deleteTask={deleteTask}
+                      />
                     ))}
                     {tasksProvided.placeholder}
                     {hasNextPage && <div ref={loadMoreRef} />}
