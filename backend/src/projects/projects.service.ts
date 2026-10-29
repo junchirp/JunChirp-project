@@ -358,9 +358,7 @@ export class ProjectsService {
       });
 
       if (currentProject.status === ProjectStatus.done) {
-        throw new ForbiddenException(
-          'Cannot update a completed project',
-        );
+        throw new ForbiddenException('Cannot update a completed project');
       }
 
       const updatedProject = await this.prisma.project.update({

@@ -8,7 +8,10 @@ import { useUpdateColumnMutation } from '@/api/boardsApi';
 import { TaskStatusWithCountInterface } from '@/shared/interfaces/task-status-with-count.interface';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
-import { columnSchema, columnSchemaStatic, } from '@/shared/forms/schemas/columnSchema';
+import {
+  columnSchema,
+  columnSchemaStatic,
+} from '@/shared/forms/schemas/columnSchema';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useToast } from '@/hooks/useToast';
