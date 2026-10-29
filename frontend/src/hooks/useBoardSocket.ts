@@ -58,12 +58,12 @@ export function useBoardSocket(boardId: string): void {
           );
           break;
         case 'task.created':
-          // TODO: case 'task.deleted':
+        case 'task.updated':
+        case 'task.deleted':
           if (payload.columnId) {
             columnIds = [payload.columnId];
           }
           break;
-        // TODO: case 'task.updated':
         default:
           return;
       }

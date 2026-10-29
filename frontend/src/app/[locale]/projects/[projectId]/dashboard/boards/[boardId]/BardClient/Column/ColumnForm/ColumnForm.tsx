@@ -6,12 +6,18 @@ import { Controller, useForm } from 'react-hook-form';
 import { normalizeInputValue } from '@/shared/utils/normalizeInputValue';
 import { useUpdateColumnMutation } from '@/api/boardsApi';
 import { TaskStatusWithCountInterface } from '@/shared/interfaces/task-status-with-count.interface';
+import Image from 'next/image';
+import { useTranslations } from 'next-intl';
+import {
+  columnSchema,
+  columnSchemaStatic,
+} from '@/shared/forms/schemas/columnSchema';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useToast } from '@/hooks/useToast';
+import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 
-interface FormData {
-  statusName: string;
-  boardId: string;
-  id: string;
-}
+type FormData = z.infer<typeof columnSchemaStatic>;
 
 interface ColumnFormProps {
   currentColumn: TaskStatusWithCountInterface;
@@ -21,8 +27,16 @@ interface ColumnFormProps {
 
 export default function ColumnForm(props: ColumnFormProps): ReactElement {
   const { currentColumn, columns, onClose } = props;
-  const { handleSubmit, control, setFocus, setError } = useForm<FormData>({
-    mode: 'onBlur',
+  const t = useTranslations('forms');
+  const { showToast, isActive } = useToast();
+  const {
+    handleSubmit,
+    control,
+    setFocus,
+    formState: { errors },
+  } = useForm<FormData>({
+    resolver: zodResolver(columnSchema(t, columns, currentColumn.id)),
+    mode: 'onChange',
     defaultValues: {
       statusName: currentColumn.statusName,
       boardId: currentColumn.boardId,
@@ -37,55 +51,70 @@ export default function ColumnForm(props: ColumnFormProps): ReactElement {
   const [updateColumn, { isLoading }] = useUpdateColumnMutation();
 
   const onSubmit = async (data: FormData): Promise<void> => {
+    if (isActive(ToastKeysEnum.COLUMN)) {
+      return;
+    }
+
     try {
       await updateColumn({
         id: data.id,
         statusName: data.statusName.trim(),
       }).unwrap();
+
+      showToast({
+        severity: 'success',
+        summary: t('columnForm.success'),
+        life: 3000,
+        actionKey: ToastKeysEnum.COLUMN,
+      });
       onClose();
     } catch {
-      setError('statusName', { type: 'server' });
+      showToast({
+        severity: 'error',
+        summary: t('columnForm.error'),
+        detail: t('columnForm.errorDetails'),
+        life: 3000,
+        actionKey: ToastKeysEnum.COLUMN,
+      });
       setFocus('statusName');
     }
   };
 
   return (
     <form className={styles['column-form']} onSubmit={handleSubmit(onSubmit)}>
-      <fieldset
-        className={styles['column-form__fieldset']}
-        disabled={isLoading}
-      >
+      <fieldset disabled={isLoading}>
         <Controller
           name="statusName"
           control={control}
-          rules={{
-            validate: (value) => {
-              const normalizedValue = value.trim();
-              const isDuplicate = columns.some(
-                (item) =>
-                  item.id !== currentColumn.id &&
-                  item.statusName.trim() === normalizedValue,
-              );
-              return !isDuplicate;
-            },
-          }}
-          render={({ field, fieldState }) => (
-            <input
-              className={`
+          render={({ field }) => (
+            <div className={styles['column-form__input-wrapper']}>
+              <input
+                className={`
                 ${styles['column-form__input']}
-                ${fieldState.invalid ? styles['column-form__input--invalid'] : ''}
+                ${errors.statusName ? styles['column-form__input--invalid'] : ''}
               `}
-              {...field}
-              maxLength={30}
-              onChange={(e) => {
-                const normalized = normalizeInputValue(e.target.value);
-                field.onChange(normalized);
-              }}
-              onBlur={async () => {
-                field.onBlur();
-                void handleSubmit(onSubmit)();
-              }}
-            />
+                {...field}
+                onChange={(e) => {
+                  const normalized = normalizeInputValue(e.target.value);
+                  field.onChange(normalized);
+                }}
+                onBlur={async () => {
+                  field.onBlur();
+                  void handleSubmit(onSubmit)();
+                }}
+              />
+              {errors.statusName?.message && (
+                <p className={styles['column-form__error']}>
+                  <Image
+                    src="/images/alert-circle.svg"
+                    alt={'alert'}
+                    width={12}
+                    height={12}
+                  />
+                  {errors.statusName.message}
+                </p>
+              )}
+            </div>
           )}
         />
       </fieldset>

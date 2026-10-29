@@ -26,7 +26,8 @@ model User {
   loginAttempt          LoginAttempt?
   ownProjects           Project[]
   socials               Social[]
-  tasks                 Task[]
+  assignedTasks         Task[]                 @relation("Assignee")
+  ownTasks              Task[]                 @relation("Author")
   role                  Role                   @relation(fields: [roleId], references: [id])
   verificationTokens    VerificationToken[]
   projectRoles          ProjectRole[]
@@ -210,8 +211,10 @@ model Task {
   taskIndex    Int          @default(1) @map("task_index")
   taskStatusId String       @map("task_status_id")
   taskStatus   TaskStatus   @relation(fields: [taskStatusId], references: [id], onDelete: Cascade)
-  assignee     User?        @relation(fields: [assigneeId], references: [id], onDelete: SetNull)
+  assignee     User?        @relation("Assignee", fields: [assigneeId], references: [id], onDelete: SetNull)
+  author       User         @relation("Author", fields: [authorId], references: [id], onDelete: Restrict)
   assigneeId   String?      @map("assignee_id")
+  authorId     String       @map("author_id")
 
   // check unique index after transaction
   // DROP INDEX "tasks_task_status_id_task_index_key";

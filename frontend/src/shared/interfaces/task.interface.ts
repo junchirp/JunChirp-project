@@ -8,7 +8,8 @@ export interface TaskInterface {
   description: string;
   priority: TaskPriorityType;
   deadline: Date;
-  assignee: UserBaseInterface;
+  assignee: UserBaseInterface | null;
   taskStatus: TaskStatusInterface;
   taskIndex: number;
+  authorId: string;
 }

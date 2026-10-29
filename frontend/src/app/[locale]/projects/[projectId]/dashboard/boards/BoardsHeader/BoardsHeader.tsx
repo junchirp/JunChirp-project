@@ -157,7 +157,7 @@ export default function BoardsHeader(): ReactElement | null {
   };
 
   if (isInitialLoading || !boardForRender) {
-    return <ListSkeleton itemHeight={207} noPadding columns={1} />;
+    return <ListSkeleton itemHeight={44} noPadding columns={1} />;
   }
 
   return (

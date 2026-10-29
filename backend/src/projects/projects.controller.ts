@@ -25,7 +25,6 @@ import {
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiHeader,
-  ApiMethodNotAllowedResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -109,12 +108,11 @@ export class ProjectsController {
   @ApiOperation({ summary: 'Update project' })
   @ApiCreatedResponse({ type: ProjectResponseDto })
   @ApiNotFoundResponse({ description: 'Project not found' })
-  @ApiMethodNotAllowedResponse({
-    description: 'Cannot update a completed project',
-  })
   @ApiForbiddenResponse({
-    description:
-      'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Access denied: user is not a member of the Discord guild / Invalid CSRF token',
+    description: `Access denied: you are not the project owner /
+      Access denied: email not confirmed / Access denied: discord not confirmed /
+      Access denied: user is not a member of the Discord guild / Invalid CSRF token /
+      Cannot update a completed project`,
   })
   @ApiBadRequestResponse({
     description: 'Some role type IDs or category ID are invalid',
@@ -164,11 +162,10 @@ export class ProjectsController {
   @ApiNoContentResponse()
   @ApiNotFoundResponse({ description: 'Project or user in team not found' })
   @ApiForbiddenResponse({
-    description:
-      'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Access denied: user is not a member of the Discord guild / Invalid CSRF token',
-  })
-  @ApiMethodNotAllowedResponse({
-    description: 'Cannot delete a completed project',
+    description: `Access denied: you are not the project owner /
+      Access denied: email not confirmed / Access denied: discord not confirmed /
+      Access denied: user is not a member of the Discord guild / Invalid CSRF token /
+      Cannot delete a completed project`,
   })
   @ApiHeader({
     name: 'x-csrf-token',

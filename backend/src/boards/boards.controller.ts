@@ -42,8 +42,12 @@ export class BoardsController {
   public constructor(private readonly boardsService: BoardsService) {}
 
   @Owner('body', 'projectId', 'project')
-  @ApiOperation({ summary: 'Add a board' })
+  @ApiOperation({ summary: 'Add board' })
   @ApiCreatedResponse({ type: BoardResponseDto })
+  @ApiNotFoundResponse({ description: 'Project not found' })
+  @ApiForbiddenResponse({
+    description: 'Cannot create boards in a completed project',
+  })
   @ApiConflictResponse({ description: 'Board with this name already exists' })
   @ApiForbiddenResponse({
     description:
@@ -82,8 +86,10 @@ export class BoardsController {
   @ApiNotFoundResponse({ description: 'Board not found' })
   @ApiConflictResponse({ description: 'Board with this name already exists' })
   @ApiForbiddenResponse({
-    description:
-      'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Access denied: user is not a member of the Discord guild / Invalid CSRF token',
+    description: `Access denied: you are not the project owner /
+      Access denied: email not confirmed / Access denied: discord not confirmed /
+      Access denied: user is not a member of the Discord guild / Invalid CSRF token /
+      Cannot update boards in a completed project`,
   })
   @ApiHeader({
     name: 'x-csrf-token',
@@ -106,8 +112,10 @@ export class BoardsController {
     description: 'A project must have at least one board',
   })
   @ApiForbiddenResponse({
-    description:
-      'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Access denied: user is not a member of the Discord guild / Invalid CSRF token',
+    description: `Access denied: you are not the project owner /
+      Access denied: email not confirmed / Access denied: discord not confirmed /
+      Access denied: user is not a member of the Discord guild / Invalid CSRF token /
+      Cannot delete boards in a completed project`,
   })
   @ApiHeader({
     name: 'x-csrf-token',
@@ -126,13 +134,14 @@ export class BoardsController {
   @ApiNotFoundResponse({ description: 'Board not found' })
   @ApiBadRequestResponse({
     description: `Column with id does not belong to the board / 
-                  Columns list must match existing columns exactly / 
-                  Indices must not be repeated / 
-                  Indices must be between 1 and max`,
+      Columns list must match existing columns exactly / 
+      Indices must not be repeated / Indices must be between 1 and max`,
   })
   @ApiForbiddenResponse({
-    description:
-      'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Access denied: user is not a member of the Discord guild / Invalid CSRF token',
+    description: `Access denied: you are not the project owner /
+      Access denied: email not confirmed / Access denied: discord not confirmed /
+      Access denied: user is not a member of the Discord guild / Invalid CSRF token /
+      Cannot reorder columns in a completed project`,
   })
   @ApiHeader({
     name: 'x-csrf-token',
@@ -150,13 +159,12 @@ export class BoardsController {
   @Owner('params', 'id', 'board')
   @ApiOperation({ summary: 'Copy the board' })
   @ApiCreatedResponse({ type: BoardResponseDto })
-  @ApiBadRequestResponse({
-    description: 'You can only add up to 5 boards in the project',
-  })
   @ApiNotFoundResponse({ description: 'Board not found' })
   @ApiForbiddenResponse({
-    description:
-      'Access denied: you are not the project owner / Access denied: email not confirmed / Access denied: discord not confirmed / Access denied: user is not a member of the Discord guild / Invalid CSRF token',
+    description: `Access denied: you are not the project owner /
+      Access denied: email not confirmed / Access denied: discord not confirmed /
+      Access denied: user is not a member of the Discord guild / Invalid CSRF token /
+      Cannot duplicate boards in a completed project`,
   })
   @ApiHeader({
     name: 'x-csrf-token',
@@ -177,6 +185,12 @@ export class BoardsController {
   @ApiNotFoundResponse({ description: 'Column not found' })
   @ApiConflictResponse({
     description: 'Column name must be unique on the board',
+  })
+  @ApiForbiddenResponse({
+    description: `Access denied: you are not the project owner /
+      Access denied: email not confirmed / Access denied: discord not confirmed /
+      Access denied: user is not a member of the Discord guild / Invalid CSRF token /
+      Cannot update columns in a completed project`,
   })
   @ApiHeader({
     name: 'x-csrf-token',
@@ -201,6 +215,12 @@ export class BoardsController {
   @ApiConflictResponse({
     description: 'Column name must be unique on the board',
   })
+  @ApiForbiddenResponse({
+    description: `Access denied: you are not the project owner /
+      Access denied: email not confirmed / Access denied: discord not confirmed /
+      Access denied: user is not a member of the Discord guild / Invalid CSRF token /
+      Cannot add columns to a completed project`,
+  })
   @ApiHeader({
     name: 'x-csrf-token',
     description: 'CSRF token for the request',
@@ -219,6 +239,12 @@ export class BoardsController {
   @ApiNotFoundResponse({ description: 'Column not found' })
   @ApiBadRequestResponse({
     description: 'A board must have at least one column',
+  })
+  @ApiForbiddenResponse({
+    description: `Access denied: you are not the project owner /
+      Access denied: email not confirmed / Access denied: discord not confirmed /
+      Access denied: user is not a member of the Discord guild / Invalid CSRF token /
+      Cannot delete columns in a completed project`,
   })
   @ApiHeader({
     name: 'x-csrf-token',

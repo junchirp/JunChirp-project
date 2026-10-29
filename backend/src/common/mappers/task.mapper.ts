@@ -24,6 +24,7 @@ export class TaskMapper {
       assignee: task.assignee ? UserMapper.toBaseResponse(task.assignee) : null,
       taskStatus: TaskStatusMapper.toBaseResponse(task.taskStatus),
       taskIndex: task.taskIndex,
+      authorId: task.authorId,
     };
   }
 }

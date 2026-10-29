@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ConflictException,
+  ForbiddenException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -35,6 +36,25 @@ export class BoardsService {
   ): Promise<BoardResponseDto> {
     try {
       const newBoard = await this.prisma.$transaction(async (prisma) => {
+        const project = await prisma.project.findUnique({
+          where: {
+            id: createBoardDto.projectId,
+          },
+          select: {
+            status: true,
+          },
+        });
+
+        if (!project) {
+          throw new NotFoundException('Project not found');
+        }
+
+        if (project.status === 'done') {
+          throw new ForbiddenException(
+            'Cannot create boards in a completed project',
+          );
+        }
+
         const existingBoards = await prisma.board.findMany({
           where: {
             projectId: createBoardDto.projectId,
@@ -128,20 +148,44 @@ export class BoardsService {
     updateBoardDto: UpdateBoardDto,
   ): Promise<BoardResponseDto> {
     try {
-      const board = await this.prisma.board.update({
-        where: { id },
-        data: updateBoardDto,
-        include: {
-          columns: {
-            include: {
-              _count: {
-                select: {
-                  tasks: true,
+      const board = await this.prisma.$transaction(async (prisma) => {
+        const existingBoard = await prisma.board.findUnique({
+          where: { id },
+          select: {
+            projectId: true,
+            project: {
+              select: {
+                status: true,
+              },
+            },
+          },
+        });
+
+        if (!existingBoard) {
+          throw new NotFoundException('Board not found');
+        }
+
+        if (existingBoard.project.status === 'done') {
+          throw new ForbiddenException(
+            'Cannot update boards in a completed project',
+          );
+        }
+
+        return prisma.board.update({
+          where: { id },
+          data: updateBoardDto,
+          include: {
+            columns: {
+              include: {
+                _count: {
+                  select: {
+                    tasks: true,
+                  },
                 },
               },
             },
           },
-        },
+        });
       });
 
       this.projectsGateway.notifyBoardUpdated(id, {
@@ -152,18 +196,11 @@ export class BoardsService {
 
       return BoardMapper.toResponse(board);
     } catch (error) {
-      throwPrismaError(error, [
-        {
-          code: 'P2025',
-          exception: NotFoundException,
-          message: 'Board not found',
-        },
-        {
-          code: 'P2002',
-          exception: ConflictException,
-          message: 'Board with this name already exists',
-        },
-      ]);
+      throwPrismaError(error, {
+        code: 'P2002',
+        exception: ConflictException,
+        message: 'Board with this name already exists',
+      });
     }
   }
 
@@ -174,8 +211,19 @@ export class BoardsService {
           where: { id },
           select: {
             projectId: true,
+            project: {
+              select: {
+                status: true,
+              },
+            },
           },
         });
+
+        if (board.project.status === 'done') {
+          throw new ForbiddenException(
+            'Cannot delete boards in a completed project',
+          );
+        }
 
         const boardsCount = await prisma.board.count({
           where: {
@@ -213,75 +261,95 @@ export class BoardsService {
     boardId: string,
     updateColumnsOrderDto: UpdateColumnsOrderDto,
   ): Promise<BoardResponseDto> {
-    const board = await this.prisma.board.findUnique({
-      where: { id: boardId },
-      select: { id: true },
-    });
-
-    if (!board) {
-      throw new NotFoundException('Board not found');
-    }
-
-    const existingColumns = await this.prisma.taskStatus.findMany({
-      where: { boardId },
-    });
-    const existingIdsSet = new Set(existingColumns.map((col) => col.id));
-
-    if (updateColumnsOrderDto.columns.length !== existingIdsSet.size) {
-      throw new BadRequestException(
-        'Columns list must match existing columns exactly',
-      );
-    }
-
-    const indices = updateColumnsOrderDto.columns.map((col) => col.columnIndex);
-    const unique = new Set(indices);
-
-    if (unique.size !== indices.length) {
-      throw new BadRequestException('Indices must not be repeated');
-    }
-
-    if (unique.size !== Math.max(...indices)) {
-      throw new BadRequestException(
-        `Indices must be between 1 and ${unique.size}`,
-      );
-    }
-
-    for (const col of updateColumnsOrderDto.columns) {
-      if (!existingIdsSet.has(col.id)) {
-        throw new BadRequestException(
-          `Column with id ${col.id} does not belong to the board`,
-        );
-      }
-    }
-
-    await this.prisma.$transaction(
-      updateColumnsOrderDto.columns.map((col) =>
-        this.prisma.taskStatus.update({
-          where: { id: col.id },
-          data: { columnIndex: col.columnIndex },
-        }),
-      ),
-    );
-
-    const updatedBoard = await this.prisma.board.findUnique({
-      where: { id: boardId },
-      include: {
-        columns: {
-          include: {
-            _count: {
-              select: {
-                tasks: true,
-              },
+    const updatedBoard = await this.prisma.$transaction(async (prisma) => {
+      const board = await prisma.board.findUnique({
+        where: { id: boardId },
+        select: {
+          id: true,
+          projectId: true,
+          project: {
+            select: {
+              status: true,
             },
           },
-          orderBy: { columnIndex: 'asc' },
         },
-      },
-    });
+      });
 
-    if (!updatedBoard) {
-      throw new InternalServerErrorException('Board not found after update');
-    }
+      if (!board) {
+        throw new NotFoundException('Board not found');
+      }
+
+      if (board.project.status === 'done') {
+        throw new ForbiddenException(
+          'Cannot reorder columns in a completed project',
+        );
+      }
+
+      const existingColumns = await prisma.taskStatus.findMany({
+        where: { boardId },
+      });
+      const existingIdsSet = new Set(existingColumns.map((col) => col.id));
+
+      if (updateColumnsOrderDto.columns.length !== existingIdsSet.size) {
+        throw new BadRequestException(
+          'Columns list must match existing columns exactly',
+        );
+      }
+
+      const indices = updateColumnsOrderDto.columns.map(
+        (col) => col.columnIndex,
+      );
+      const unique = new Set(indices);
+
+      if (unique.size !== indices.length) {
+        throw new BadRequestException('Indices must not be repeated');
+      }
+
+      if (unique.size !== Math.max(...indices)) {
+        throw new BadRequestException(
+          `Indices must be between 1 and ${unique.size}`,
+        );
+      }
+
+      for (const col of updateColumnsOrderDto.columns) {
+        if (!existingIdsSet.has(col.id)) {
+          throw new BadRequestException(
+            `Column with id ${col.id} does not belong to the board`,
+          );
+        }
+      }
+
+      await Promise.all(
+        updateColumnsOrderDto.columns.map((col) =>
+          prisma.taskStatus.update({
+            where: { id: col.id },
+            data: { columnIndex: col.columnIndex },
+          }),
+        ),
+      );
+
+      const result = await prisma.board.findUnique({
+        where: { id: boardId },
+        include: {
+          columns: {
+            include: {
+              _count: {
+                select: {
+                  tasks: true,
+                },
+              },
+            },
+            orderBy: { columnIndex: 'asc' },
+          },
+        },
+      });
+
+      if (!result) {
+        throw new InternalServerErrorException('Board not found after update');
+      }
+
+      return result;
+    });
 
     this.projectsGateway.notifyBoardUpdated(boardId, {
       type: 'board.updated',
@@ -301,6 +369,11 @@ export class BoardsService {
         const sourceBoard = await prisma.board.findUniqueOrThrow({
           where: { id },
           include: {
+            project: {
+              select: {
+                status: true,
+              },
+            },
             columns: {
               orderBy: {
                 columnIndex: 'asc',
@@ -316,6 +389,12 @@ export class BoardsService {
           },
         });
 
+        if (sourceBoard.project.status === 'done') {
+          throw new ForbiddenException(
+            'Cannot duplicate boards in a completed project',
+          );
+        }
+
         const boards = await prisma.board.findMany({
           where: {
             projectId: sourceBoard.projectId,
@@ -325,14 +404,7 @@ export class BoardsService {
           },
         });
 
-        if (boards.length >= 5) {
-          throw new BadRequestException(
-            'You can only add up to 5 boards in the project',
-          );
-        }
-
         const boardNames = new Set(boards.map((b) => b.boardName));
-
         const boardName = generateCopyName(
           sourceBoard.boardName,
           localeDto.locale,
@@ -343,13 +415,11 @@ export class BoardsService {
           data: {
             boardName,
             projectId: sourceBoard.projectId,
-
             columns: {
               create: sourceBoard.columns.map((column) => ({
                 statusName: column.statusName,
                 columnIndex: column.columnIndex,
                 color: column.color,
-
                 tasks: {
                   create: column.tasks.map((task) => ({
                     taskName: task.taskName,
@@ -357,6 +427,7 @@ export class BoardsService {
                     priority: task.priority,
                     deadline: task.deadline,
                     taskIndex: task.taskIndex,
+                    authorId: task.authorId,
                   })),
                 },
               })),
@@ -399,6 +470,27 @@ export class BoardsService {
   ): Promise<TaskStatusWithCountResponseDto> {
     try {
       const newColumn = await this.prisma.$transaction(async (prisma) => {
+        const board = await prisma.board.findUnique({
+          where: { id: createTaskStatusDto.boardId },
+          select: {
+            project: {
+              select: {
+                status: true,
+              },
+            },
+          },
+        });
+
+        if (!board) {
+          throw new NotFoundException('Board not found');
+        }
+
+        if (board.project.status === 'done') {
+          throw new ForbiddenException(
+            'Cannot add columns to a completed project',
+          );
+        }
+
         const existingColumns = await prisma.taskStatus.findMany({
           where: {
             boardId: createTaskStatusDto.boardId,
@@ -432,11 +524,9 @@ export class BoardsService {
         const usedColors = new Set(
           existingColumns.map((column) => column.color),
         );
-
         const availableColors = Object.values(ColumnColor).filter(
           (color) => !usedColors.has(color),
         );
-
         const color =
           availableColors[Math.floor(Math.random() * availableColors.length)];
 
@@ -477,18 +567,44 @@ export class BoardsService {
     updateTaskStatusDto: UpdateTaskStatusDto,
   ): Promise<TaskStatusWithCountResponseDto> {
     try {
-      const status = await this.prisma.taskStatus.update({
-        where: { id },
-        data: {
-          ...updateTaskStatusDto,
-        },
-        include: {
-          _count: {
-            select: {
-              tasks: true,
+      const status = await this.prisma.$transaction(async (prisma) => {
+        const column = await prisma.taskStatus.findUnique({
+          where: { id },
+          select: {
+            boardId: true,
+            board: {
+              select: {
+                project: {
+                  select: { status: true },
+                },
+              },
             },
           },
-        },
+        });
+
+        if (!column) {
+          throw new NotFoundException('Column not found');
+        }
+
+        if (column.board.project.status === 'done') {
+          throw new ForbiddenException(
+            'Cannot update columns in a completed project',
+          );
+        }
+
+        return prisma.taskStatus.update({
+          where: { id },
+          data: {
+            ...updateTaskStatusDto,
+          },
+          include: {
+            _count: {
+              select: {
+                tasks: true,
+              },
+            },
+          },
+        });
       });
 
       this.projectsGateway.notifyBoardUpdated(status.boardId, {
@@ -498,18 +614,11 @@ export class BoardsService {
 
       return TaskStatusMapper.toExpandResponse(status);
     } catch (error) {
-      throwPrismaError(error, [
-        {
-          code: 'P2025',
-          exception: NotFoundException,
-          message: 'Column not found',
-        },
-        {
-          code: 'P2002',
-          exception: ConflictException,
-          message: 'Column name must be unique on the board',
-        },
-      ]);
+      throwPrismaError(error, {
+        code: 'P2002',
+        exception: ConflictException,
+        message: 'Column name must be unique on the board',
+      });
     }
   }
 
@@ -521,8 +630,21 @@ export class BoardsService {
           select: {
             columnIndex: true,
             boardId: true,
+            board: {
+              select: {
+                project: {
+                  select: { status: true },
+                },
+              },
+            },
           },
         });
+
+        if (column.board.project.status === 'done') {
+          throw new ForbiddenException(
+            'Cannot delete columns in a completed project',
+          );
+        }
 
         const columnsCount = await prisma.taskStatus.count({
           where: {
