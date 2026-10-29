@@ -375,6 +375,11 @@
       "error": "Failed to update board name.",
       "errorDetails": "Please try again.",
       "success": "Board name updated successfully."
+    },
+    "columnForm": {
+      "success": "Column name updated successfully.",
+      "error": "Failed to update column name.",
+      "errorDetails": "Please try again."
     }
   },
   "page404": {

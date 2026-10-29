@@ -8,12 +8,11 @@ import { useUpdateColumnMutation } from '@/api/boardsApi';
 import { TaskStatusWithCountInterface } from '@/shared/interfaces/task-status-with-count.interface';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
-import {
-  columnSchema,
-  columnSchemaStatic,
-} from '@/shared/forms/schemas/columnSchema';
+import { columnSchema, columnSchemaStatic, } from '@/shared/forms/schemas/columnSchema';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useToast } from '@/hooks/useToast';
+import { ToastKeysEnum } from '@/shared/enums/toast-keys.enum';
 
 type FormData = z.infer<typeof columnSchemaStatic>;
 
@@ -26,11 +25,11 @@ interface ColumnFormProps {
 export default function ColumnForm(props: ColumnFormProps): ReactElement {
   const { currentColumn, columns, onClose } = props;
   const t = useTranslations('forms');
+  const { showToast, isActive } = useToast();
   const {
     handleSubmit,
     control,
     setFocus,
-    setError,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(columnSchema(t, columns, currentColumn.id)),
@@ -49,14 +48,31 @@ export default function ColumnForm(props: ColumnFormProps): ReactElement {
   const [updateColumn, { isLoading }] = useUpdateColumnMutation();
 
   const onSubmit = async (data: FormData): Promise<void> => {
+    if (isActive(ToastKeysEnum.COLUMN)) {
+      return;
+    }
+
     try {
       await updateColumn({
         id: data.id,
         statusName: data.statusName.trim(),
       }).unwrap();
+
+      showToast({
+        severity: 'success',
+        summary: t('columnForm.success'),
+        life: 3000,
+        actionKey: ToastKeysEnum.COLUMN,
+      });
       onClose();
     } catch {
-      setError('statusName', { type: 'server' });
+      showToast({
+        severity: 'error',
+        summary: t('columnForm.error'),
+        detail: t('columnForm.errorDetails'),
+        life: 3000,
+        actionKey: ToastKeysEnum.COLUMN,
+      });
       setFocus('statusName');
     }
   };
